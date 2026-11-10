@@ -1,0 +1,72 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contact_messages",
+  "info": {
+    "singularName": "contact-message",
+    "pluralName": "contact-messages",
+    "displayName": "Contact Message",
+    "description": "Submissions from the public contact form"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 30
+    },
+    "topic": {
+      "type": "enumeration",
+      "enum": [
+        "general",
+        "admissions",
+        "examinations",
+        "fees",
+        "jobs",
+        "media",
+        "other"
+      ],
+      "default": "general",
+      "required": true
+    },
+    "subject": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "message": {
+      "type": "text",
+      "required": true,
+      "maxLength": 5000
+    },
+    "language": {
+      "type": "string",
+      "maxLength": 5
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "new",
+        "in_progress",
+        "replied",
+        "spam"
+      ],
+      "default": "new",
+      "private": true
+    },
+    "staffNotes": {
+      "type": "text",
+      "private": true
+    }
+  }
+}

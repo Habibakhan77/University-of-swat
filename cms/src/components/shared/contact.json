@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_shared_contacts",
+  "info": {
+    "displayName": "Contact details",
+    "icon": "phone"
+  },
+  "options": {},
+  "attributes": {
+    "email": {
+      "type": "email"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "extension": {
+      "type": "string"
+    },
+    "fax": {
+      "type": "string"
+    },
+    "address": {
+      "type": "text"
+    },
+    "officeHours": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_shared_persons",
+  "info": {
+    "displayName": "Person",
+    "icon": "user",
+    "description": "Leadership card. Tick isPlaceholder for non-real data."
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "designation": {
+      "type": "string",
+      "required": true
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "bio": {
+      "type": "text"
+    },
+    "email": {
+      "type": "email"
+    },
+    "isPlaceholder": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

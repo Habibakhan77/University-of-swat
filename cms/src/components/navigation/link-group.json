@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_navigation_link_groups",
+  "info": {
+    "displayName": "Link group",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "links": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": true
+    }
+  }
+}

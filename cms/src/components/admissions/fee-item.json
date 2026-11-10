@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_admissions_fee_items",
+  "info": {
+    "displayName": "Fee item",
+    "icon": "priceTag"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "amount": {
+      "type": "integer",
+      "required": true,
+      "min": 0
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

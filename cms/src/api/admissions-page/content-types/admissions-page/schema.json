@@ -1,0 +1,25 @@
+{
+  "kind": "singleType",
+  "collectionName": "admissions_pages",
+  "info": {
+    "singularName": "admissions-page",
+    "pluralName": "admissions-pages",
+    "displayName": "Admissions Page",
+    "description": "Admissions hub: dates, steps and calls to action. Programs, FAQs and merit lists come from their own types."
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": { "i18n": { "localized": true } },
+  "attributes": {
+    "title": { "type": "string", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "intro": { "type": "text", "pluginOptions": { "i18n": { "localized": true } } },
+    "heroImage": { "type": "media", "multiple": false, "allowedTypes": ["images"], "pluginOptions": { "i18n": { "localized": false } } },
+    "applyUrl": { "type": "string", "pluginOptions": { "i18n": { "localized": false } } },
+    "banner": { "type": "component", "component": "shared.cta", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } },
+    "importantDates": { "type": "component", "component": "admissions.important-date", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "howToApply": { "type": "component", "component": "shared.value-item", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "eligibility": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "feeNote": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "scholarships": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "seo": { "type": "component", "component": "shared.seo", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } }
+  }
+}

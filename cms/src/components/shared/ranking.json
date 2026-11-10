@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_shared_rankings",
+  "info": {
+    "displayName": "Ranking",
+    "icon": "trophy"
+  },
+  "options": {},
+  "attributes": {
+    "body": {
+      "type": "string",
+      "required": true
+    },
+    "category": {
+      "type": "string"
+    },
+    "rank": {
+      "type": "string",
+      "required": true
+    },
+    "year": {
+      "type": "integer"
+    },
+    "url": {
+      "type": "string"
+    }
+  }
+}

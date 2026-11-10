@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_shared_ctas",
+  "info": {
+    "displayName": "Call to action",
+    "icon": "cursor"
+  },
+  "options": {},
+  "attributes": {
+    "isVisible": {
+      "type": "boolean",
+      "default": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text"
+    },
+    "buttonLabel": {
+      "type": "string"
+    },
+    "buttonUrl": {
+      "type": "string"
+    },
+    "deadline": {
+      "type": "datetime"
+    }
+  }
+}

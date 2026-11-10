@@ -1,0 +1,41 @@
+{
+  "name": "uswat-cms",
+  "version": "0.1.0",
+  "private": true,
+  "description": "University of Swat website CMS (Strapi v5)",
+  "scripts": {
+    "build": "strapi build",
+    "console": "strapi console",
+    "dev": "strapi develop",
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "strapi": "strapi",
+    "upgrade": "npx @strapi/upgrade latest",
+    "upgrade:dry": "npx @strapi/upgrade latest --dry",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@strapi/database": "5.61.1",
+    "@strapi/plugin-users-permissions": "5.61.1",
+    "@strapi/strapi": "5.61.1",
+    "pg": "8.20.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.30.3",
+    "styled-components": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=22.0.0 <=26.x.x",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "uuid": "e098620e-9159-453e-9381-3f562d46ddee",
+    "installId": "af3b027d7711f3e9a09af00acc40d48da119ef5855026a1c8e6f7b0aedaa901e"
+  }
+}

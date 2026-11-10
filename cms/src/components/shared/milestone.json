@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_shared_milestones",
+  "info": {
+    "displayName": "Milestone",
+    "icon": "clock"
+  },
+  "options": {},
+  "attributes": {
+    "year": {
+      "type": "integer",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}
