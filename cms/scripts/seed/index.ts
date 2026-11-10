@@ -19,9 +19,9 @@ import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE
 
 /** Real photo for each hero slide (see data/photos.ts). */
 const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], PhotoKey> = {
-  admissions: 'campusMountains',
-  gandhara: 'niibsMou',
-  solar: 'solarization',
+  admissions: 'campusAerial',
+  campus: 'campusMountains',
+  gateway: 'mainGate',
 };
 
 export interface SeedOptions {
@@ -122,7 +122,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
       const campusPhoto = CAMPUS_PHOTOS[c.slug];
       const image = campusPhoto
         ? await media.photo(campusPhoto, 'original')
-        : await media.image({ ratio: 'cover', key: `campus-${c.slug}`, title: c.name, kicker: 'Campus' });
+        : await media.image({ ratio: 'cover', key: `campus-${c.slug}`, title: c.name, kicker: 'Campus', theme: 'maroon' });
       const id = await w.create(
         'api::campus.campus',
         {
@@ -147,7 +147,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     log('Offices and directorates…');
     const officeIds = new Map<string, string>();
     const headPhoto = await media.image({ ratio: 'portrait', key: 'office-head', title: 'Office head', kicker: 'Photo', theme: 'slate' });
-    const vcPhoto = await media.image({ ratio: 'portrait', key: 'vice-chancellor', title: 'Prof. Dr. Husnul Amin', kicker: 'Vice Chancellor', theme: 'slate' });
+    const vcPhoto = await media.photo('vcPortrait', 'portrait');
     for (const [i, o] of OFFICES.entries()) {
       const isVc = o.slug === 'vc-secretariat';
       const id = await w.create(
@@ -180,7 +180,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     let deptOrder = 0;
 
     for (const [fi, f] of FACULTIES.entries()) {
-      const fImage = await media.image({ ratio: 'cover', key: `faculty-${f.slug}`, title: f.shortName, kicker: f.type === 'center' ? 'Centre' : 'Faculty' });
+      const fImage = await media.image({ ratio: 'cover', key: `faculty-${f.slug}`, title: f.shortName, kicker: f.type === 'center' ? 'Centre' : 'Faculty', theme: f.accent });
       const facultyId = await w.create(
         'api::faculty.faculty',
         {
@@ -194,6 +194,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           deanIsPlaceholder: f.deanIsPlaceholder,
           image: fImage,
           icon: f.icon,
+          accent: f.accent,
           order: fi + 1,
           contact: { address: MAIN_ADDRESS },
           seo: seo(f.name, f.summary),

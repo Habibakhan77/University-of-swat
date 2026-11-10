@@ -32,6 +32,8 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ["image/avif", "image/webp"],
+    // 75 for photos; 90 for the crest, whose fine embossed detail shows compression at small sizes.
+    qualities: [75, 90],
     remotePatterns: strapiImagePatterns(),
     // Next.js 16 refuses to optimise images from private addresses. Local development serves them from
     // Strapi on localhost:1337, so allow it there only; production builds keep the protection.

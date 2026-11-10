@@ -32,11 +32,12 @@ export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", cl
         alt=""
         width={crest.width}
         height={crest.height}
-        sizes="44px"
+        sizes="48px"
+        quality={90}
         className={cn(
-          "size-10 shrink-0 object-contain xl:size-11",
-          // The crest's dark green edge would vanish on the dark footer: give it a light rim there.
-          tone === "inverted" && "rounded-full bg-white/90 p-0.5",
+          "size-11 shrink-0 object-contain xl:size-12",
+          // On the dark footer a faint ring keeps the round edge visible.
+          tone === "inverted" && "rounded-full ring-1 ring-white/25",
         )}
         priority
       />

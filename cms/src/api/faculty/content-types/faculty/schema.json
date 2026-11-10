@@ -112,6 +112,16 @@
         }
       }
     },
+    "accent": {
+      "type": "enumeration",
+      "enum": ["green", "maroon", "teal", "blue", "coral", "gold"],
+      "default": "green",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "order": {
       "type": "integer",
       "default": 0,

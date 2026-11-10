@@ -64,7 +64,8 @@ export interface EventItem {
   start: string;
   day: string;
   month: string;
-  time: string;
+  /** Null for all-day items (entered as starting at 00:00 Pakistan time), e.g. a holiday closure. */
+  time: string | null;
   location: string | null;
   upcoming: boolean;
   lang: Locale;
@@ -79,6 +80,9 @@ export interface VcTeaser {
   lang: Locale;
 }
 
+/** Card colour per faculty (Strapi: Faculty → accent). */
+export type FacultyAccent = "green" | "maroon" | "teal" | "blue" | "coral" | "gold";
+
 export interface FacultyCard {
   id: string;
   name: string;
@@ -86,6 +90,7 @@ export interface FacultyCard {
   summary: string | null;
   image: SiteImage | null;
   icon: string | null;
+  accent: FacultyAccent;
   departments: number;
   isCenter: boolean;
   lang: Locale;
@@ -209,6 +214,7 @@ interface StrapiFaculty extends Doc {
   type: "faculty" | "center" | "institute";
   summary: string | null;
   icon: string | null;
+  accent: FacultyAccent | null;
   image: StrapiMedia | null;
   departments: { count: number } | null;
 }
@@ -239,6 +245,9 @@ const formatters = (locale: Locale) => ({
 });
 
 /** A plain date ("2026-11-06") is a calendar day, so it is formatted at noon in Pakistan time. */
+/** Pakistan has no daylight saving: local midnight is always 19:00 UTC the day before. */
+const isMidnightInPakistan = (date: Date) => (date.getTime() + 5 * 3_600_000) % 86_400_000 === 0;
+
 const calendarDay = (iso: string) => new Date(iso.length === 10 ? `${iso}T12:00:00+05:00` : iso);
 
 function toImage(media: StrapiMedia | null | undefined, fallbackAlt = ""): SiteImage | null {
@@ -525,7 +534,7 @@ async function loadEventsAndNotices(locale: Locale): Promise<EventsAndNotices> {
           start: e.eventStart,
           day: fmt.day.format(start),
           month: fmt.month.format(start),
-          time: fmt.time.format(start),
+          time: isMidnightInPakistan(start) ? null : fmt.time.format(start),
           location: e.eventLocation,
           upcoming: Date.parse(e.eventStart) >= now,
           lang: e.lang,
@@ -568,6 +577,7 @@ async function loadFaculties(locale: Locale): Promise<FacultyCard[]> {
         "fields[2]": "type",
         "fields[3]": "summary",
         "fields[4]": "icon",
+        "fields[5]": "accent",
         "populate[departments][count]": true,
         ...populateImage("image"),
       },
@@ -579,7 +589,9 @@ async function loadFaculties(locale: Locale): Promise<FacultyCard[]> {
       name: f.name,
       href: `/academics/${f.slug}`,
       summary: f.summary,
-      image: toImage(f.image),
+      // Placeholder images are replaced by a drawn card in the faculty accent (see FacultyArt).
+      image: f.image?.name.toLowerCase().startsWith("placeholder") ? null : toImage(f.image),
+      accent: f.accent ?? "green",
       icon: f.icon,
       departments: f.departments?.count ?? 0,
       isCenter: f.type !== "faculty",
@@ -612,7 +624,8 @@ async function loadCampuses(locale: Locale): Promise<CampusCard[]> {
       name: c.name,
       href: `/about#${c.slug}`,
       summary: c.summary,
-      image: toImage(c.image),
+      // A placeholder is replaced by a drawn card (see CampusesSection) until a real photo is uploaded.
+      image: c.image?.name.toLowerCase().startsWith("placeholder") ? null : toImage(c.image),
       established: c.establishedYear,
       lang: c.lang,
     }));

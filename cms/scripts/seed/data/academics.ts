@@ -38,6 +38,8 @@ export interface FacultySeed {
   shortName: string;
   type: 'faculty' | 'center' | 'institute';
   icon: string;
+  /** Card colour on the website (Faculty → accent in Strapi). */
+  accent: 'green' | 'maroon' | 'teal' | 'blue' | 'coral' | 'gold';
   summary: string;
   urSummary: string;
   deanName?: string;
@@ -67,6 +69,7 @@ const phd = (subject: string): ProgramSeed => ({ level: 'phd', subject });
 export const FACULTIES: FacultySeed[] = [
   {
     slug: 'religious-languages-humanities-legal-studies',
+    accent: 'maroon',
     name: 'Faculty of Religious, Languages, Humanities and Legal Studies',
     ur: 'فیکلٹی آف مذہبی علوم، زبانیں، ہیومینیٹیز و قانونی مطالعات',
     shortName: 'Languages, Humanities & Law',
@@ -123,6 +126,7 @@ export const FACULTIES: FacultySeed[] = [
   },
   {
     slug: 'physical-numerical-computational-sciences',
+    accent: 'teal',
     name: 'Faculty of Physical, Numerical and Computational Sciences',
     ur: 'فیکلٹی آف فزیکل، نیومریکل و کمپیوٹیشنل سائنسز',
     shortName: 'Physical & Computational Sciences',
@@ -176,6 +180,7 @@ export const FACULTIES: FacultySeed[] = [
   },
   {
     slug: 'management-art-social-sciences',
+    accent: 'blue',
     name: 'Faculty of Management, Art and Social Sciences',
     ur: 'فیکلٹی آف مینجمنٹ، آرٹ و سوشل سائنسز',
     shortName: 'Management & Social Sciences',
@@ -267,6 +272,7 @@ export const FACULTIES: FacultySeed[] = [
   },
   {
     slug: 'biological-chemical-sciences',
+    accent: 'green',
     name: 'Faculty of Biological and Chemical Sciences',
     ur: 'فیکلٹی آف حیاتیاتی و کیمیائی علوم',
     shortName: 'Biological & Chemical Sciences',
@@ -331,6 +337,7 @@ export const FACULTIES: FacultySeed[] = [
   },
   {
     slug: 'allied-health-sciences',
+    accent: 'coral',
     name: 'Faculty of Allied Health Sciences',
     ur: 'فیکلٹی آف الائیڈ ہیلتھ سائنسز',
     shortName: 'Allied Health Sciences',
@@ -370,6 +377,7 @@ export const FACULTIES: FacultySeed[] = [
   },
   {
     slug: 'hunerkada',
+    accent: 'gold',
     name: 'Hunerkada — Center of Excellence for Art & Culture',
     ur: 'ہنرکدہ — مرکزِ فضیلت برائے فن و ثقافت',
     shortName: 'Hunerkada',

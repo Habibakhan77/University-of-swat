@@ -9,6 +9,7 @@ import { Card, CardBody, CardDescription, CardFooter, CardLink, CardMedia, CardT
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
+import { FACULTY_ACCENTS, FacultyArt } from "./faculty-art";
 
 interface FacultiesGridProps {
   faculties: FacultyCard[];
@@ -52,8 +53,14 @@ export function FacultiesGrid({ faculties, locale, labels }: FacultiesGridProps)
                     <CardMedia ratio="16/9">
                       {faculty.image ? (
                         <Image src={faculty.image.src} alt={faculty.image.alt} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" />
-                      ) : null}
-                      <span className="absolute start-4 bottom-4 flex size-11 items-center justify-center rounded-xl bg-surface text-primary-text shadow-md">
+                      ) : (
+                        <FacultyArt id={faculty.id} accent={faculty.accent} icon={Icon} />
+                      )}
+                      {/* Always white with the accent icon, so it reads on any photo and in dark mode. */}
+                      <span
+                        className="absolute start-4 bottom-4 flex size-11 items-center justify-center rounded-xl bg-white shadow-md ring-1 ring-black/5"
+                        style={{ color: FACULTY_ACCENTS[faculty.accent].base }}
+                      >
                         <Icon aria-hidden className="size-5" strokeWidth={1.75} />
                       </span>
                       {faculty.isCenter ? (

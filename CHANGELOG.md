@@ -234,3 +234,23 @@
 - Seed: `data/photos.ts` (`PHOTOS`, `POST_PHOTOS`, `CAMPUS_PHOTOS`, `LOGO`), assets in
   `scripts/seed/assets/{photos,brand}`; `MediaFactory.photo(key, ratio)` crops to hero/OG size, 16:9 covers or
   keeps the original ratio; `MediaFactory.logo()`. The seed fails loudly if `POST_PHOTOS` names an unknown post.
+
+## Phase 5.3 — Homepage review fixes
+
+- Crest: the full-size original (1254px) cut out of its opaque white square with a circular mask, so it sits
+  cleanly on the cream header and the dark footer; shown at 44–48px with `quality={90}`
+  (`images.qualities: [75, 90]`). Favicon and Apple touch icon regenerated from it.
+- Hero: campus photos only (Main Campus aerial, campus with mountains, main gate), each with a matching
+  headline in English and Urdu. The MoU and solarization photos are now only the covers of their news posts.
+- Vice Chancellor: the real portrait of Prof. Dr. Husnul Amin from the uswat.edu.pk homepage in the VC message
+  and About leadership.
+- Women Campus: no usable published photo (all under 800px), so the card draws its own maroon design with
+  Gandhara rosettes over a mountain ridge (`CampusArt`).
+- Faculty cards: new Strapi field Faculty → `accent` (green, maroon, teal, blue, coral, gold). Until a real
+  photo is uploaded, each card draws a gradient in its accent with its icon repeated as a faint pattern
+  (`FacultyArt`); white icon badges with accent icons, every accent ≥ 5.8:1 against white.
+- Events: the invented "Spring 2027 Admissions Information Session" and "Annual Sports Gala" are removed. Real
+  events corrected from their source posts: One Planet One Health conference (3–5 February 2027, Department of
+  Zoology, abstracts due 31 December 2026), Allama Iqbal Day (university closed on 9 November 2026), Swat
+  Lectures (Department of English and Foreign Languages, talk by Dr Shahid Rasheed). All-day events show no time.
+- Spacing: `--spacing-section` 48–88px (was 64–128px) and `--spacing-section-sm` 32–56px.

@@ -32,24 +32,24 @@ export const PHOTOS = {
     'Aerial view of the University of Swat Main Campus at Charbagh, with lawns, academic blocks and the valley beyond',
     '/maincampus/',
   ),
-  niibsMou: photo(
-    'hero-niibs-mou.jpg',
-    'University of Swat leadership welcoming the NIIBS delegation from Sri Lanka with flowers',
-    '/2026/11/university-of-swat-and-sri-lankan-niibs-sign-landmark-mou-to-strengthen-research-on-gandhara-civilization/',
+  mainGate: photo(
+    'hero-main-gate.jpg',
+    'The arched main gate of the University of Swat with mountains behind it',
+    '/maincampus/',
   ),
-  solarization: photo(
-    'hero-solarization.jpg',
-    'University officials and partners at a meeting on the campus solarization project',
-    '/2026/10/university-of-swat-became-the-first-in-the-province-to-launch-a-major-solarization-project/',
+  vcPortrait: photo(
+    'vc-husnul-amin.jpg',
+    'Prof. Dr. Husnul Amin, Vice Chancellor of the University of Swat',
+    '/',
   ),
   postSolarization: photo(
     'post-solarization.jpg',
-    'University officials at the signing of the solar power purchase agreement',
+    'University officials and partners at a meeting on the campus solarization project',
     '/2026/10/university-of-swat-became-the-first-in-the-province-to-launch-a-major-solarization-project/',
   ),
   postNiibs: photo(
     'post-niibs-mou.jpg',
-    'Guests from NIIBS Sri Lanka being welcomed at the University of Swat',
+    'University of Swat leadership welcoming the NIIBS delegation from Sri Lanka with flowers',
     '/2026/11/university-of-swat-and-sri-lankan-niibs-sign-landmark-mou-to-strengthen-research-on-gandhara-civilization/',
   ),
   cervicalCancer: photo(

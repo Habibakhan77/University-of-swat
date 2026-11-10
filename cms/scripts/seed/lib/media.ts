@@ -40,6 +40,9 @@ const THEMES = {
   maroon: { from: '#7d2233', to: '#3f0f19', line: '#d4a72c', ridge: '#26080e' },
   gold: { from: '#a67f17', to: '#5e4512', line: '#f7f3e8', ridge: '#2c1f08' },
   slate: { from: '#2f4650', to: '#162126', line: '#d4a72c', ridge: '#0c1417' },
+  teal: { from: '#0f6e6e', to: '#073b3d', line: '#e3c060', ridge: '#032224' },
+  blue: { from: '#1f4e8c', to: '#0c2547', line: '#e3c060', ridge: '#06152b' },
+  coral: { from: '#b2453a', to: '#5a1d17', line: '#f7f3e8', ridge: '#33100d' },
 } as const;
 
 export type Theme = keyof typeof THEMES;
@@ -222,19 +225,19 @@ export class MediaFactory {
 
   /**
    * Uploads a real photo from assets/photos as WebP with its credit as the caption.
-   * - `hero` / `og`: cropped (saliency-aware) to exactly that size, enlarging small photos if needed.
+   * - `hero` / `og` / `portrait`: cropped (saliency-aware) to exactly that size, enlarging if needed.
    * - `cover`: cropped to 16:9, never enlarged (max 1600×900).
    * - `original`: the photo's own aspect ratio, max 1600px wide (e.g. campus cards, which crop to
    *   3:2 or 4:5 depending on the screen).
    */
-  async photo(key: PhotoKey, ratio: 'hero' | 'og' | 'cover' | 'original' = 'hero'): Promise<number> {
+  async photo(key: PhotoKey, ratio: 'hero' | 'og' | 'portrait' | 'cover' | 'original' = 'hero'): Promise<number> {
     const cacheKey = `photo:${ratio}:${key}`;
     const hit = this.cache.get(cacheKey);
     if (hit) return hit.id;
     const photo = PHOTOS[key];
     const source = sharp(await readFile(path.join(this.strapi.dirs.app.root, PHOTO_DIR, photo.file))).rotate();
     let resized: ReturnType<typeof sharp>;
-    if (ratio === 'hero' || ratio === 'og') {
+    if (ratio === 'hero' || ratio === 'og' || ratio === 'portrait') {
       const { width, height } = RATIOS[ratio];
       resized = source.resize(width, height, { fit: 'cover', position: 'attention', kernel: 'lanczos3' });
     } else if (ratio === 'cover') {

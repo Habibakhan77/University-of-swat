@@ -7,6 +7,8 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
 import { ImageCredit } from "@/components/ui/image-credit";
+import { MountainRidge, Rosette } from "@/components/brand/motifs";
+import { cn } from "@/lib/cn";
 
 interface CampusesSectionProps {
   campuses: CampusCard[];
@@ -28,7 +30,12 @@ export function CampusesSection({ campuses, locale, labels }: CampusesSectionPro
             return (
               <li key={campus.id}>
                 <Reveal delay={0.08 * i} className="h-full">
-                  <article className="group/campus relative isolate flex aspect-4/5 flex-col justify-end overflow-hidden rounded-3xl bg-forest-900 text-white shadow-lg has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-canvas sm:aspect-3/2">
+                  <article
+                    className={cn(
+                      "group/campus relative isolate flex aspect-4/5 flex-col justify-end overflow-hidden rounded-3xl text-white shadow-lg has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-canvas sm:aspect-3/2",
+                      campus.image ? "bg-forest-900" : "bg-maroon-800",
+                    )}
+                  >
                     {campus.image ? (
                       <Image
                         src={campus.image.src}
@@ -37,8 +44,18 @@ export function CampusesSection({ campuses, locale, labels }: CampusesSectionPro
                         sizes="(min-width: 768px) 50vw, 100vw"
                         className="-z-20 object-cover transition-transform duration-700 ease-out-expo group-hover/campus:scale-[1.04] motion-reduce:transition-none"
                       />
-                    ) : null}
-                    <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-forest-950/95 via-forest-950/55 to-forest-950/5" />
+                    ) : (
+                      <CampusArt />
+                    )}
+                    <div
+                      aria-hidden
+                      className={cn(
+                        "absolute inset-0 -z-10 bg-linear-to-t",
+                        campus.image
+                          ? "from-forest-950/95 via-forest-950/55 to-forest-950/5"
+                          : "from-maroon-950/90 via-maroon-950/40 to-transparent",
+                      )}
+                    />
                     {campus.image?.credit ? (
                       <div className="absolute end-3 top-3 flex max-w-[calc(100%-1.5rem)] justify-end">
                         <ImageCredit credit={campus.image.credit} className="max-w-full" />
@@ -74,5 +91,21 @@ export function CampusesSection({ campuses, locale, labels }: CampusesSectionPro
         </ul>
       </Container>
     </section>
+  );
+}
+
+/**
+ * Cover for a campus without a published photo yet (the Women Campus): maroon, the logo's second colour,
+ * so it is clearly different from the green faculty cards, with Gandhara rosettes over a mountain ridge.
+ */
+function CampusArt() {
+  return (
+    <div aria-hidden className="absolute inset-0 -z-20 bg-linear-to-br from-maroon-600 via-maroon-800 to-maroon-950">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_15%,rgb(255_255_255/0.14),transparent_55%)]" />
+      <Rosette className="absolute end-[8%] top-[10%] size-40 text-gold-300/25 sm:size-52" />
+      <Rosette className="absolute end-[42%] top-[22%] size-16 text-gold-300/20" />
+      <Rosette className="absolute start-[10%] top-[8%] size-24 text-gold-300/15" />
+      <MountainRidge className="absolute inset-x-0 bottom-0 h-2/5 text-maroon-950/70" />
+    </div>
   );
 }

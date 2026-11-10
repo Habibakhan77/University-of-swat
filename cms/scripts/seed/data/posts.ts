@@ -2,8 +2,8 @@
  * News, announcements and events.
  *
  * Titles and dates are the real items on uswat.edu.pk (November 2026); the body text is rewritten in our
- * own words and kept short. Entries marked `sample: true` are demo upcoming events so the homepage
- * "Upcoming events" block has content; their dates must be confirmed or the entries deleted.
+ * own words and kept short. Only real items: event dates, places and facts come from the original post
+ * (or its poster / notification).
  */
 import { blocks, h, ul, type Block } from '../lib/blocks';
 
@@ -21,7 +21,6 @@ export interface PostSeed {
   eventStart?: string;
   eventEnd?: string;
   eventLocation?: string;
-  sample?: boolean;
   ur?: { title: string; excerpt: string };
 }
 
@@ -31,19 +30,20 @@ export const POSTS: PostSeed[] = [
     title: 'International Conference: One Planet One Health; Nature, Climate & Humanity',
     category: 'event',
     date: '2026-11-08',
-    eventStart: '2026-11-08T09:00:00+05:00',
-    eventEnd: '2026-11-08T16:00:00+05:00',
-    eventLocation: 'Main Campus, Charbagh',
-    excerpt: 'Researchers and practitioners met at the university to discuss how the health of people, animals and the environment are linked in a changing climate.',
+    eventStart: '2027-02-03T09:00:00+05:00',
+    eventEnd: '2027-02-05T17:00:00+05:00',
+    eventLocation: 'University of Swat, Charbagh',
+    excerpt: 'An international conference on biodiversity, climate resilience and the health of all life, organized by the Department of Zoology. Abstracts are due by 31 December 2026.',
     content: blocks(
-      'The University of Swat hosted an international conference under the theme “One Planet One Health”, bringing together scientists, health professionals and policy makers.',
-      'Sessions covered climate change and disease, biodiversity loss, food security and the role of universities in community health. Faculty and research students from the biological, environmental and allied health sciences presented their work.',
+      'The Department of Zoology, University of Swat, with the university’s Office of Research, Innovation and Commercialization (ORIC), will host the international conference “One Planet, One Health: Nature, Climate & Humanity” from 3 to 5 February 2027. Its theme is connecting biodiversity, climate resilience and the health of all life.',
+      'The abstract submission deadline is 31 December 2026. Registration fees are PKR 3,000 for students, PKR 4,000 for faculty and industry, and PKR 1,000 for virtual participants.',
+      'Registration details and the full call for papers are on the conference poster published by the university.',
     ),
-    department: 'Department of Environmental Sciences',
+    department: 'Department of Zoology',
     isFeatured: true,
     ur: {
       title: 'بین الاقوامی کانفرنس: ون پلینٹ ون ہیلتھ؛ فطرت، موسم اور انسانیت',
-      excerpt: 'محققین اور ماہرین نے بدلتے موسم میں انسان، جانور اور ماحول کی صحت کے باہمی تعلق پر تبادلۂ خیال کیا۔',
+      excerpt: 'شعبۂ حیوانیات کے زیرِ اہتمام حیاتیاتی تنوع، موسمیاتی لچک اور تمام جانداروں کی صحت پر بین الاقوامی کانفرنس، 3 تا 5 فروری 2027۔ خلاصے 31 دسمبر 2026 تک جمع کرائیں۔',
     },
   },
   {
@@ -51,14 +51,14 @@ export const POSTS: PostSeed[] = [
     title: 'Allama Iqbal Day',
     category: 'event',
     date: '2026-11-08',
-    eventStart: '2026-11-08T10:00:00+05:00',
-    eventLocation: 'Main Campus, Charbagh',
-    excerpt: 'Students and faculty marked Iqbal Day with speeches and poetry recitals on the poet-philosopher’s message of selfhood and service.',
+    eventStart: '2026-11-09T00:00:00+05:00',
+    eventLocation: 'All campuses',
+    excerpt: 'The university will remain closed on Monday, 9 November 2026, on the occasion of Allama Iqbal Day. Announced exams, tests and interviews will be rescheduled.',
     content: blocks(
-      'The university commemorated the birth anniversary of Allama Muhammad Iqbal. Students recited his Urdu and Persian poetry, and speakers reflected on his ideas of Khudi (selfhood), education and the role of youth.',
+      'Under the Government of Pakistan’s Cabinet Division press release of 30 October 2026, the University of Swat will remain closed on Monday, 9 November 2026, on the occasion of Allama Iqbal Day (notification No. UoS/Acad/363, Office of the Registrar, Academics Section, 5 November 2026).',
+      'Examinations, tests and interviews already scheduled for that day will be rescheduled accordingly.',
     ),
-    department: 'Department of Urdu',
-    ur: { title: 'یومِ اقبال', excerpt: 'طلبہ اور اساتذہ نے تقاریر اور کلامِ اقبال کے ذریعے شاعرِ مشرق کے پیغامِ خودی کو یاد کیا۔' },
+    ur: { title: 'یومِ اقبال', excerpt: 'یومِ اقبال کے موقع پر جامعہ پیر 9 نومبر 2026 کو بند رہے گی۔ اس دن کے امتحانات، ٹیسٹ اور انٹرویو دوبارہ شیڈول کیے جائیں گے۔' },
   },
   {
     slug: 'kpef-merit-cum-inaffordability-scholarship-2025-26',
@@ -178,10 +178,13 @@ export const POSTS: PostSeed[] = [
     date: '2026-10-27',
     eventStart: '2026-10-27T11:00:00+05:00',
     eventLocation: 'Main Campus, Charbagh',
-    excerpt: 'A new public lecture series, “Khutbat-e-Swat”, opened with its first talk on campus.',
+    excerpt: 'The new Swat Lectures series opened with a talk by Dr Shahid Rasheed on Panini, Sanskrit and the intellectual heritage of Gandhara.',
     content: blocks(
-      'The university launched “Swat Lectures” (Khutbat-e-Swat), a public lecture series that invites leading scholars to speak on ideas, society and culture. The inaugural lecture drew faculty, students and guests from the community.',
+      'The inaugural lecture of Swat Lectures (خطباتِ سوات), organized by the Department of English and Foreign Languages, brought Panini, Sanskrit and the intellectual heritage of Gandhara into conversation with modern scholarship.',
+      'Dr Shahid Rasheed (Associate Professor of Sociology, FCCU, Lahore), a scholar of classical Sanskrit, traced the kinship of language, culture and knowledge from Panini to William Jones.',
+      'The series, under the patronage of Vice Chancellor Prof. Dr. Husnul Amin and convened by Dr. Syed Hanif Rasool, Chairman of the department, aims to give students access to local and global scholars and build a lasting intellectual culture on campus.',
     ),
+    department: 'Department of English and Foreign Languages',
   },
   {
     slug: 'kashmir-black-day-2026',
@@ -236,31 +239,5 @@ export const POSTS: PostSeed[] = [
     ),
     isFeatured: true,
     ur: { title: 'جامعہ سوات صوبے میں بڑا سولرائزیشن منصوبہ شروع کرنے والی پہلی یونیورسٹی بن گئی', excerpt: 'شمسی توانائی کا بڑا منصوبہ بجلی کے اخراجات کم اور کیمپس کو ماحول دوست بنائے گا۔' },
-  },
-  {
-    slug: 'spring-2027-admissions-orientation',
-    title: 'Spring 2027 Admissions Information Session',
-    category: 'event',
-    // Older post date so demo items never outrank real news; the event itself is upcoming.
-    date: '2026-10-01',
-    eventStart: '2026-12-03T10:00:00+05:00',
-    eventEnd: '2026-12-03T13:00:00+05:00',
-    eventLocation: 'Main Campus, Charbagh',
-    excerpt: 'Sample event (date to be confirmed): prospective students and parents can learn about programs, eligibility and fees.',
-    content: blocks('SAMPLE EVENT — created by the website seed script for demonstration. The Media Cell should replace or delete it.'),
-    sample: true,
-  },
-  {
-    slug: 'annual-sports-gala-2026',
-    title: 'Annual Sports Gala',
-    category: 'event',
-    // Older post date so demo items never outrank real news; the event itself is upcoming.
-    date: '2026-10-01',
-    eventStart: '2026-12-15T09:00:00+05:00',
-    eventEnd: '2026-12-18T17:00:00+05:00',
-    eventLocation: 'University Sports Ground, Charbagh',
-    excerpt: 'Sample event (dates to be confirmed): inter-departmental cricket, football, volleyball and athletics.',
-    content: blocks('SAMPLE EVENT — created by the website seed script for demonstration. The Directorate of Sports should confirm the dates or delete it.'),
-    sample: true,
   },
 ];

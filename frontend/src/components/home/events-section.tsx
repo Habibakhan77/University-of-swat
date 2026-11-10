@@ -76,10 +76,12 @@ export function EventsSection({ events, announcements, locale, labels }: EventsS
                         </Link>
                       </h3>
                       <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-caption text-fg-subtle">
-                        <span className="inline-flex items-center gap-1.5">
-                          <Clock aria-hidden className="size-3.5" />
-                          <bdi>{event.time}</bdi>
-                        </span>
+                        {event.time ? (
+                          <span className="inline-flex items-center gap-1.5">
+                            <Clock aria-hidden className="size-3.5" />
+                            <bdi>{event.time}</bdi>
+                          </span>
+                        ) : null}
                         {event.location ? (
                           <span className="inline-flex min-w-0 items-center gap-1.5">
                             <MapPin aria-hidden className="size-3.5 shrink-0" />

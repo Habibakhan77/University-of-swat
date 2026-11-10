@@ -7,18 +7,18 @@ converts them to WebP.
 
 Picked for sharpness and light, at least 800px wide. Posters, notices and text-heavy images were skipped: the
 Allama Iqbal Day notification, the KPEF scholarship poster and the One Planet One Health conference poster.
-Those posts, and posts with no matching article (HEC DLSEI Cohort 4, Spring 2027 information session, Annual
-Sports Gala), get a text-free branded gradient.
+Those posts, and HEC DLSEI 3.0 Cohort 4 (only a flow-chart graphic), get a text-free branded gradient.
 
 | File | Used for | Source page |
 | --- | --- | --- |
-| `hero-campus-mountains.jpg` | Hero (admissions), admissions page, Open Graph | `/maincampus/` |
-| `campus-main-aerial.jpg` | Main Campus card, About page hero (crest in the corner cropped out) | `/maincampus/` |
-| `hero-niibs-mou.jpg` | Hero (Gandhara) | NIIBS MoU news post |
-| `hero-solarization.jpg` | Hero (solarization) | Solarization news post |
-| `post-*.jpg` | Cover of the matching news, announcement or event | That post |
+| `campus-main-aerial.jpg` | Hero (admissions), Main Campus card, About page hero (crest in the corner cropped out) | `/maincampus/` |
+| `hero-campus-mountains.jpg` | Hero (campus), Admissions page hero, Open Graph image | `/maincampus/` |
+| `hero-main-gate.jpg` | Hero (gateway) | Media library (`2020/12/gate.jpeg`) |
+| `vc-husnul-amin.jpg` | Vice Chancellor (homepage VC message, About leadership) | Homepage VC message |
+| `post-*.jpg` | Cover of the matching news, announcement or event (event and meeting photos are never used in the hero) | That post |
 
-The Women Campus has no published photo of 800px or wider yet (the largest is 655px), so its card keeps a
-gradient placeholder. Add one here and in `CAMPUS_PHOTOS` when available.
+The Women Campus has no usable published photo yet (the campus page only has images of 450px and smaller; the
+largest Women Campus image in the media library is 655px), so the website draws a maroon card for it. Add a
+photo here and in `CAMPUS_PHOTOS` when one is available.
 
 The crest in `../brand/uswat-logo.png` is from the uswat.edu.pk header.
