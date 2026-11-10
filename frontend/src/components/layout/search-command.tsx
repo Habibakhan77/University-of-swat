@@ -126,8 +126,8 @@ export function SearchCommand({ groups, labels }: SearchCommandProps) {
         aria-haspopup="dialog"
         aria-keyshortcuts="Control+K Meta+K /"
         className={cn(
-          "group/search hidden h-10 w-56 items-center xl:hidden! 2xl:inline-flex! gap-2.5 rounded-full border border-line bg-surface ps-3.5 pe-1.5 text-body-sm text-fg-subtle shadow-xs transition-colors lg:inline-flex",
-          "hover:border-line-strong hover:text-fg-muted 2xl:w-64",
+          "group/search hidden h-10 w-56 items-center xl:hidden! min-[105rem]:inline-flex! gap-2.5 rounded-full border border-line bg-surface ps-3.5 pe-1.5 text-body-sm text-fg-subtle shadow-xs transition-colors lg:inline-flex",
+          "hover:border-line-strong hover:text-fg-muted min-[105rem]:w-64",
         )}
       >
         <Search aria-hidden className="size-4 shrink-0" />
@@ -144,7 +144,7 @@ export function SearchCommand({ groups, labels }: SearchCommandProps) {
         type="button"
         onClick={open}
         aria-haspopup="dialog"
-        className="inline-flex size-11 items-center justify-center rounded-lg text-fg transition-colors hover:bg-canvas-subtle lg:hidden xl:inline-flex 2xl:hidden"
+        className="inline-flex size-11 items-center justify-center rounded-lg text-fg transition-colors hover:bg-canvas-subtle lg:hidden xl:inline-flex min-[105rem]:hidden"
       >
         <Search aria-hidden className="size-5" />
         <span className="sr-only">{labels.button}</span>

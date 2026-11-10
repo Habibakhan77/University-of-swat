@@ -164,3 +164,16 @@
   fallback); other panels keep the Admissions promo card
 - Seed: navigation moved to `cms/scripts/seed/data/navigation.ts` with a description and icon for every link
   (EN + UR); external URLs shared in `external.ts`. More icons in `frontend/src/lib/icons.ts`
+
+## Phase 4.2 — Build without Strapi, dev images, tagline
+
+- `next build` no longer needs a running Strapi (GitHub Actions CI has none): inside the cached Strapi fetches,
+  an unreachable CMS during the build is logged as a warning and treated as empty data with a short cache life,
+  so a deployed site picks up real content within minutes. At request time errors still go to the callers'
+  fallbacks and are never cached (`buildTimeFallback` in `lib/strapi/client.ts`)
+- Site settings: a missing Urdu translation (404) is now detected inside the cached fetch, so the English
+  fallback also works in production builds, where errors from cached functions arrive without their status
+- `images.dangerouslyAllowLocalIP` only in development, so Strapi images from localhost load under `next dev`;
+  production keeps Next.js's private-address protection
+- Header tagline shown in full from 1440px and hidden below, instead of being cut off with "…". The full search
+  box now appears from 1680px (icon button below) so the bar never overflows; checked 1280–1920px in EN and UR

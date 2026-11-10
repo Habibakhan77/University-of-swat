@@ -38,6 +38,22 @@ export async function strapiGet<T>(path: string, query: Record<string, QueryValu
   return (await response.json()) as T;
 }
 
+/** True while `next build` prerenders pages. CI builds run without a Strapi server. */
+export const isBuildTime = process.env.NEXT_PHASE === "phase-production-build";
+
+/**
+ * Error handling for code inside a "use cache" function. An error thrown there fails the whole
+ * build, so while building, an unreachable Strapi is logged and `fallback` is returned instead (with
+ * a short cache life, so a deployed site picks up real content within minutes). At request time
+ * the error is rethrown and handled by the caller, and nothing is cached.
+ */
+export function buildTimeFallback<T>(error: unknown, what: string, fallback: T, setShortLife: () => void): T {
+  if (!isBuildTime) throw error;
+  console.warn(`[strapi] ${what} unavailable during build, using empty data:`, error instanceof Error ? error.message : error);
+  setShortLife();
+  return fallback;
+}
+
 /** Absolute URL for a Strapi media file. */
 export function strapiMediaUrl(url: string): string {
   return /^https?:\/\//.test(url) ? url : `${STRAPI_PUBLIC_URL}${url}`;

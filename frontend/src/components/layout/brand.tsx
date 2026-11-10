@@ -58,7 +58,8 @@ export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", cl
         {tagline ? (
           <span
             className={cn(
-              "hidden truncate text-caption sm:block xl:hidden 2xl:block",
+              // Shown in full from 1440px; below that it's hidden rather than cut off with "…".
+              "hidden text-caption whitespace-nowrap min-[90rem]:block",
               tone === "surface" ? "text-fg-subtle" : "text-forest-100",
             )}
           >

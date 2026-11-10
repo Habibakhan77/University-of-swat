@@ -104,7 +104,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
             tagline={chrome?.tagline}
             logo={chrome?.logo ?? null}
             homeLabel={homeLabel}
-            className="me-auto xl:me-0"
+            className="me-auto xl:me-0 min-[90rem]:shrink-0"
           />
 
           <div className="hidden h-full flex-1 justify-center xl:flex">

@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
-import { strapiGet, strapiMediaUrl } from "./client";
+import { buildTimeFallback, strapiGet, strapiMediaUrl } from "./client";
 import type { StrapiMedia } from "./types";
 
 interface StrapiPostSummary {
@@ -39,23 +39,28 @@ async function fetchLatest(locale: Locale, category: StrapiPostSummary["category
   cacheTag("posts", `posts:${locale}`);
   cacheLife("minutes");
 
-  const response = await strapiGet<StrapiCollectionResponse<StrapiPostSummary>>("/posts", {
-    locale,
-    "filters[category][$eq]": category,
-    "sort[0]": "date:desc",
-    "sort[1]": "publishedAt:desc",
-    "pagination[pageSize]": 1,
-    "fields[0]": "title",
-    "fields[1]": "slug",
-    "fields[2]": "category",
-    "fields[3]": "date",
-    "fields[4]": "publishedAt",
-    "populate[coverImage][fields][0]": "url",
-    "populate[coverImage][fields][1]": "alternativeText",
-    "populate[coverImage][fields][2]": "width",
-    "populate[coverImage][fields][3]": "height",
-    "populate[coverImage][fields][4]": "name",
-  });
+  let response: StrapiCollectionResponse<StrapiPostSummary>;
+  try {
+    response = await strapiGet<StrapiCollectionResponse<StrapiPostSummary>>("/posts", {
+      locale,
+      "filters[category][$eq]": category,
+      "sort[0]": "date:desc",
+      "sort[1]": "publishedAt:desc",
+      "pagination[pageSize]": 1,
+      "fields[0]": "title",
+      "fields[1]": "slug",
+      "fields[2]": "category",
+      "fields[3]": "date",
+      "fields[4]": "publishedAt",
+      "populate[coverImage][fields][0]": "url",
+      "populate[coverImage][fields][1]": "alternativeText",
+      "populate[coverImage][fields][2]": "width",
+      "populate[coverImage][fields][3]": "height",
+      "populate[coverImage][fields][4]": "name",
+    });
+  } catch (error) {
+    return buildTimeFallback(error, `latest ${category} (${locale})`, null, () => cacheLife("minutes"));
+  }
   return response.data[0] ?? null;
 }
 
