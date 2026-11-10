@@ -2,7 +2,7 @@
  * Seeds Strapi with University of Swat content. Run with `npm run seed` (see scripts/seed.js).
  *
  * - Refuses to run when content already exists, unless `--reset` is passed, which first deletes all
- *   website content and every `placeholder-*` media file (contact messages and admin users are kept).
+ *   website content and every `placeholder-*` and `seed-photo-*` media file (contact messages and admin users are kept).
  * - Everything is created published, in English, with Urdu localizations for the main structure
  *   (faculties, departments, campuses, offices, stats, slides, single types and featured news).
  */
@@ -10,11 +10,19 @@ import type { Core, UID } from '@strapi/strapi';
 import { blocks, h, ul, type Block } from './lib/blocks';
 import { Writer } from './lib/docs';
 import { MediaFactory, type Theme } from './lib/media';
+import type { PhotoKey } from './data/photos';
 import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type Level, type ProgramSeed } from './data/academics';
 import { CAMPUSES, MAIN_ADDRESS, OFFICES } from './data/organisation';
 import { POSTS } from './data/posts';
 import { DOWNLOADS, FAQS, JOBS, RESEARCH, TENDERS } from './data/notices';
 import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE_SETTINGS, STATS, VC_MESSAGE } from './data/site';
+
+/** Real photo for each hero slide (see data/photos.ts). */
+const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], PhotoKey> = {
+  admissions: 'valley',
+  gandhara: 'gandhara',
+  solar: 'sunset',
+};
 
 export interface SeedOptions {
   reset: boolean;
@@ -319,7 +327,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     // ---------- Homepage pieces ----------
     log('Hero slides, stats and single types…');
     for (const [i, s] of HERO_SLIDES.entries()) {
-      const image = await media.image({ ratio: 'hero', key: `hero-${s.key}`, title: s.title, kicker: 'Hero slide', theme: i % 2 ? 'maroon' : 'green' });
+      const image = await media.photo(HERO_PHOTOS[s.key]);
       const { key: _key, ur, ...en } = s;
       await w.create('api::hero-slide.hero-slide', { ...en, image, order: i + 1 }, { ctaUrl: en.ctaUrl, secondaryCtaUrl: en.secondaryCtaUrl, ...ur });
     }
@@ -376,7 +384,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
 
   log('Done. Created:');
   for (const [uid, n] of w.counts) log(`  ${String(n).padStart(3)} × ${uid}`);
-  log(`  ${String(media.uploaded).padStart(3)} × placeholder media files`);
+  log(`  ${String(media.uploaded).padStart(3)} × media files (${media.photos} real photos)`);
   log(`Finished in ${((Date.now() - started) / 1000).toFixed(1)}s`);
 }
 

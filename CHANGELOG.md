@@ -198,3 +198,21 @@
   from Site Settings (`NEXT_PUBLIC_SITE_URL` for absolute URLs)
 - RTL details: mixed English/Urdu runs isolated with `<bdi>`, stat numbers always left-to-right, Nastaliq-safe
   spacing; checked at 390px and 1440px in English (light) and Urdu (dark)
+
+## Phase 5.1 — Real hero photos, credits, legible hero, wider mega menu
+
+- Seed placeholders no longer contain any text (it showed through behind the real hero heading). They are
+  a brand gradient, faint Gandhara rosettes and a mountain or portrait silhouette, varied per image, and are
+  still marked by their `placeholder-*` file name, alt text and caption.
+- Hero slides use three freely licensed Wikimedia Commons photos (Mahodand Lake, Butkara I stupa, sunset
+  over Mingora), stored in `cms/scripts/seed/assets/photos/` with `CREDITS.md` and `data/photos.ts`. The seed
+  converts them to 1920×1080 WebP (`seed-photo-*`, also removed by `--reset`) and writes the credit to the
+  Media Library caption as `Photo: Author · Licence · Wikimedia Commons | <source URL>`.
+- Frontend reads `caption` into `SiteImage.credit` (`parseImageCredit`, placeholder captions ignored) and
+  shows it as a small linked chip (`ImageCredit`) on the hero and on campus cards.
+- Hero legibility: even dark wash plus a bottom-up gradient on phones and a side gradient from lg, soft text
+  shadows, lighter gold eyebrow. Measured against a pure white image, text contrast is ≥ 6.3:1 (eyebrow
+  ≥ 4.5:1 in gold-200).
+- Mega menu: links grid fills the middle column and the side columns are narrower at xl, so no description
+  is truncated (checked at 1280, 1366, 1440 and 1920 px, English and Urdu).
+- No freely licensed photo of either campus was found; campus cards keep placeholders for now.

@@ -9,6 +9,7 @@ import type { HeroSlide } from "@/lib/strapi/home";
 import { buttonVariants } from "@/components/ui/button";
 import { MountainRidge, Rosette } from "@/components/brand/motifs";
 import { SmartLink } from "@/components/layout/smart-link";
+import { ImageCredit } from "@/components/ui/image-credit";
 
 export interface HeroLabels {
   region: string;
@@ -71,6 +72,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
   }, [running, index, go]);
 
   if (!count) return null;
+  const activeCredit = slides[index]?.image?.credit;
 
   return (
     <section
@@ -110,16 +112,28 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
           ) : null}
         </div>
       ))}
-      {/* Legibility: dark wash from the text side and from the bottom (mirrored in RTL). */}
+      {/*
+        Legibility on any photo: an even dark wash over the whole image, then a gradient behind the
+        text. On phones the text spans the width at the bottom, so the gradient runs bottom to top; from
+        lg it runs from the text side (mirrored in RTL). Behind the heading the image is always covered
+        by at least ~75% dark, enough for white text to pass WCAG AA on a white photo.
+      */}
+      <div aria-hidden className="absolute inset-0 -z-10 bg-forest-950/35" />
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-linear-to-r from-forest-950/95 via-forest-950/70 to-forest-950/15 rtl:bg-linear-to-l"
+        className="absolute inset-0 -z-10 bg-linear-to-t from-forest-950/95 via-forest-950/80 to-forest-950/45 lg:bg-linear-to-r lg:from-forest-950/90 lg:via-forest-950/60 lg:to-transparent lg:rtl:bg-linear-to-l"
       />
-      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-2/3 bg-linear-to-t from-forest-950/90 to-transparent" />
+      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 hidden h-1/2 bg-linear-to-t from-forest-950/80 to-transparent lg:block" />
+
+      {activeCredit ? (
+        <div className="absolute end-3 top-3 z-10 flex max-w-[min(32rem,calc(100%-1.5rem))] justify-end sm:end-5 sm:top-4">
+          <ImageCredit key={index} credit={activeCredit} className="max-w-full" />
+        </div>
+      ) : null}
 
       <div className="mx-auto flex min-h-[30rem] w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] flex-col justify-end px-gutter pt-14 pb-36 sm:min-h-[38rem] sm:pt-20 sm:pb-40 lg:min-h-[44rem] lg:pb-48">
-        <h1 className="mb-5 inline-flex items-center gap-2.5 text-overline text-gold-300 uppercase">
-          <Rosette className="size-5" />
+        <h1 className="mb-5 inline-flex items-center gap-2.5 text-overline text-gold-200 uppercase [text-shadow:0_1px_8px_rgb(0_0_0/0.4)]">
+          <Rosette className="size-5 text-gold-300" />
           {heading}
         </h1>
 
@@ -142,11 +156,11 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                   active ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0 motion-reduce:translate-y-0",
                 )}
               >
-                <p lang={lang} className="text-display-xl text-balance text-white [&:lang(ur)]:text-display-lg">
+                <p lang={lang} className="text-display-xl text-balance text-white [text-shadow:0_2px_24px_rgb(0_0_0/0.35)] [&:lang(ur)]:text-display-lg">
                   {slide.title}
                 </p>
                 {slide.subtitle ? (
-                  <p lang={lang} className="max-w-2xl text-body-lg text-pretty text-sand-100/90">
+                  <p lang={lang} className="max-w-2xl text-body-lg text-pretty text-sand-50 [text-shadow:0_1px_12px_rgb(0_0_0/0.4)]">
                     {slide.subtitle}
                   </p>
                 ) : null}

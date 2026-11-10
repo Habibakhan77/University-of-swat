@@ -22,11 +22,36 @@ export interface NavGroup {
   links: NavLink[];
 }
 
+export interface ImageCredit {
+  /** E.g. "Photo: Murtaza Mahmud · CC BY-SA 4.0 · Wikimedia Commons". */
+  text: string;
+  /** Source page with the full licence, when given. */
+  href: string | null;
+}
+
 export interface SiteImage {
   src: string;
   alt: string;
   width: number;
   height: number;
+  /** Shown in small text on the image (required by CC BY / CC BY-SA). */
+  credit?: ImageCredit | null;
+}
+
+/**
+ * Reads a photo credit from the Media Library caption, written as `<text>` or `<text> | <https URL>`.
+ * Placeholder captions ("PLACEHOLDER — …") are notes for staff and are never shown.
+ */
+export function parseImageCredit(caption: string | null | undefined): ImageCredit | null {
+  const raw = caption?.trim();
+  if (!raw || raw.toUpperCase().startsWith("PLACEHOLDER")) return null;
+  const bar = raw.lastIndexOf("|");
+  const url = bar === -1 ? "" : raw.slice(bar + 1).trim();
+  if (bar !== -1 && /^https?:\/\/\S+$/.test(url)) {
+    const text = raw.slice(0, bar).trim();
+    return text ? { text, href: url } : null;
+  }
+  return { text: raw, href: null };
 }
 
 export interface SiteChrome {

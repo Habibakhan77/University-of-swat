@@ -286,13 +286,13 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                 <Container
                   size="wide"
                   className={cn(
-                    "grid gap-8 py-8",
+                    "grid gap-5 py-8 2xl:gap-8",
                     feature || promo
-                      ? "grid-cols-[minmax(0,15rem)_minmax(0,1fr)_minmax(0,19rem)]"
-                      : "grid-cols-[minmax(0,15rem)_minmax(0,1fr)]",
+                      ? "grid-cols-[minmax(0,11rem)_minmax(0,1fr)_minmax(0,13rem)] 2xl:grid-cols-[minmax(0,14rem)_minmax(0,1fr)_minmax(0,18rem)]"
+                      : "grid-cols-[minmax(0,11rem)_minmax(0,1fr)] 2xl:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]",
                   )}
                 >
-                  <div className="flex flex-col items-start gap-2.5 border-e border-line py-1 pe-8">
+                  <div className="flex flex-col items-start gap-2.5 border-e border-line py-1 pe-6 2xl:pe-8">
                     <p className="text-overline text-accent-text uppercase">{group.label}</p>
                     {group.description ? <p className="text-heading-md text-fg">{group.description}</p> : null}
                     {group.href ? (
@@ -310,7 +310,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                       </SmartLink>
                     ) : null}
                   </div>
-                  <ul className="grid max-w-[40rem] grid-cols-2 content-start gap-x-2 gap-y-0.5">
+                  <ul className="grid grid-cols-2 content-start gap-x-2 gap-y-0.5">
                     {group.links.map((link) => {
                       const Icon = iconFor(link.icon);
                       return (
@@ -359,7 +359,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                             src={feature.post.image.src}
                             alt={feature.post.image.alt}
                             fill
-                            sizes="304px"
+                            sizes="(min-width: 96rem) 288px, 208px"
                             className="object-cover transition-transform duration-700 ease-out-expo group-hover/feat:scale-[1.04] motion-reduce:transition-none"
                           />
                         ) : null}

@@ -1,36 +1,43 @@
 /**
- * Placeholder media for the seed.
+ * Media for the seed: real photos (scripts/seed/assets/photos, see data/photos.ts) and generated
+ * placeholders.
  *
- * Every image is generated locally (no external image service) in one of four fixed ratios so the
- * frontend can rely on consistent aspect ratios. Each one is visibly stamped "PLACEHOLDER", named
- * `placeholder-*`, and has alt text / caption saying so, which lets the Media Cell find and replace them
- * (filter the Media Library by "placeholder").
+ * Placeholders are generated locally in fixed ratios so the frontend can rely on consistent aspect
+ * ratios. They contain NO text (a heading laid over an image must never compete with words baked into
+ * it): just a brand gradient, a faint Gandhara rosette pattern and a mountain or portrait silhouette,
+ * varied per image. They are marked as placeholders by their file name (`placeholder-*`), alt text and
+ * caption, so the Media Cell can find and replace them (filter the Media Library by "placeholder").
  */
-import { mkdtemp, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 import type { Core } from '@strapi/strapi';
+import { PHOTOS, photoCaption, type PhotoKey } from '../data/photos';
 
 export const PLACEHOLDER_PREFIX = 'placeholder-';
+/** Real photos uploaded by the seed; removed and re-uploaded by `--reset` like placeholders. */
+export const PHOTO_PREFIX = 'seed-photo-';
+
+const PHOTO_DIR = path.resolve(__dirname, '../assets/photos');
 
 /** Fixed sizes: the frontend uses the same ratios in next/image. */
 export const RATIOS = {
-  hero: { width: 1920, height: 1080, label: '16:9' },
-  cover: { width: 1600, height: 900, label: '16:9' },
-  portrait: { width: 800, height: 1000, label: '4:5' },
-  square: { width: 600, height: 600, label: '1:1' },
-  og: { width: 1200, height: 630, label: '1.91:1' },
+  hero: { width: 1920, height: 1080 },
+  cover: { width: 1600, height: 900 },
+  portrait: { width: 800, height: 1000 },
+  square: { width: 600, height: 600 },
+  og: { width: 1200, height: 630 },
 } as const;
 
 export type Ratio = keyof typeof RATIOS;
 
 /** Brand palette from the university logo. */
 const THEMES = {
-  green: { bg: '#0f4d32', bg2: '#0b3a26', fg: '#f7f3e8', accent: '#d4a72c' },
-  maroon: { bg: '#6d1a2a', bg2: '#521320', fg: '#f7f3e8', accent: '#d4a72c' },
-  gold: { bg: '#8a6a12', bg2: '#6b520d', fg: '#fffaf0', accent: '#f7f3e8' },
-  slate: { bg: '#24343b', bg2: '#1a272c', fg: '#f7f3e8', accent: '#d4a72c' },
+  green: { from: '#145c3c', to: '#082a1b', line: '#d4a72c', ridge: '#04170e' },
+  maroon: { from: '#7d2233', to: '#3f0f19', line: '#d4a72c', ridge: '#26080e' },
+  gold: { from: '#a67f17', to: '#5e4512', line: '#f7f3e8', ridge: '#2c1f08' },
+  slate: { from: '#2f4650', to: '#162126', line: '#d4a72c', ridge: '#0c1417' },
 } as const;
 
 export type Theme = keyof typeof THEMES;
@@ -49,80 +56,75 @@ interface UploadService {
   remove(file: unknown): Promise<unknown>;
 }
 
-const escapeXml = (s: string): string =>
-  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-function wrap(text: string, maxChars: number, maxLines: number): string[] {
-  const lines: string[] = [];
-  let line = '';
-  for (const word of text.split(/\s+/)) {
-    if ((line + ' ' + word).trim().length > maxChars && line) {
-      lines.push(line);
-      line = word;
-    } else line = (line + ' ' + word).trim();
-  }
-  if (line) lines.push(line);
-  if (lines.length > maxLines) {
-    const kept = lines.slice(0, maxLines);
-    kept[maxLines - 1] = kept[maxLines - 1].replace(/\s*\S*$/, '') + '…';
-    return kept;
-  }
-  return lines;
+/** Small deterministic hash, so each placeholder gets its own (stable) composition. */
+function hash(text: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i += 1) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+  return h >>> 0;
 }
 
-/** Layered Swat-valley mountain silhouette along the bottom of the image. */
-function mountains(w: number, h: number, color: string): string {
-  const y = (f: number): number => Math.round(h * f);
-  const x = (f: number): number => Math.round(w * f);
-  return `
-    <path d="M0 ${y(0.78)} L${x(0.12)} ${y(0.6)} L${x(0.22)} ${y(0.7)} L${x(0.36)} ${y(0.5)} L${x(0.5)} ${y(0.68)}
-      L${x(0.63)} ${y(0.55)} L${x(0.78)} ${y(0.72)} L${x(0.9)} ${y(0.58)} L${w} ${y(0.7)} L${w} ${h} L0 ${h} Z"
-      fill="${color}" opacity="0.35"/>
-    <path d="M${x(0.31)} ${y(0.56)} L${x(0.36)} ${y(0.5)} L${x(0.41)} ${y(0.56)} L${x(0.38)} ${y(0.55)} L${x(0.36)} ${y(0.57)} Z"
-      fill="#ffffff" opacity="0.25"/>
-    <path d="M0 ${y(0.88)} L${x(0.18)} ${y(0.74)} L${x(0.3)} ${y(0.82)} L${x(0.46)} ${y(0.7)} L${x(0.6)} ${y(0.84)}
-      L${x(0.74)} ${y(0.73)} L${x(0.88)} ${y(0.85)} L${w} ${y(0.78)} L${w} ${h} L0 ${h} Z" fill="${color}" opacity="0.6"/>`;
+/** Eight-petal lotus rosette, as carved on Gandhara stupas. */
+function rosette(cx: number, cy: number, r: number, color: string, opacity: number): string {
+  const petals = Array.from({ length: 8 }, (_, i) => {
+    const a = (i * Math.PI) / 4;
+    const x = cx + Math.cos(a) * r * 0.55;
+    const y = cy + Math.sin(a) * r * 0.55;
+    return `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="${(r * 0.42).toFixed(1)}" ry="${(r * 0.18).toFixed(1)}"
+      transform="rotate(${i * 45} ${x.toFixed(1)} ${y.toFixed(1)})" fill="none" stroke="${color}" stroke-width="${(r * 0.05).toFixed(1)}"/>`;
+  }).join('');
+  return `<g opacity="${opacity}">${petals}<circle cx="${cx}" cy="${cy}" r="${(r * 0.16).toFixed(1)}" fill="${color}"/></g>`;
 }
 
-function personIcon(w: number, h: number, color: string): string {
+/** Layered ridgelines along the bottom; `seed` shifts the peaks so images differ. */
+function mountains(w: number, h: number, color: string, seed: number): string {
+  const ridge = (base: number, amp: number, phase: number, opacity: number) => {
+    const points: string[] = [];
+    const steps = 9;
+    for (let i = 0; i <= steps; i += 1) {
+      const x = (w * i) / steps;
+      const n = Math.sin(i * 1.7 + phase) + Math.sin(i * 0.9 + phase * 2.3) * 0.6;
+      points.push(`${x.toFixed(0)} ${(h * base - n * h * amp).toFixed(0)}`);
+    }
+    return `<path d="M0 ${h} L${points.join(' L')} L${w} ${h} Z" fill="${color}" opacity="${opacity}"/>`;
+  };
+  const p = (seed % 628) / 100;
+  return ridge(0.7, 0.08, p, 0.35) + ridge(0.8, 0.06, p + 1.3, 0.6) + ridge(0.9, 0.035, p + 2.1, 0.9);
+}
+
+function portraitSilhouette(w: number, h: number): string {
   const cx = w / 2;
-  return `
-    <circle cx="${cx}" cy="${h * 0.36}" r="${w * 0.17}" fill="${color}" opacity="0.5"/>
-    <path d="M${cx - w * 0.32} ${h * 0.78} Q${cx} ${h * 0.46} ${cx + w * 0.32} ${h * 0.78} Z" fill="${color}" opacity="0.5"/>`;
+  return `<circle cx="${cx}" cy="${h * 0.38}" r="${w * 0.16}" fill="#ffffff" opacity="0.16"/>
+    <path d="M${cx - w * 0.34} ${h} Q${cx - w * 0.3} ${h * 0.62} ${cx} ${h * 0.6} Q${cx + w * 0.3} ${h * 0.62} ${cx + w * 0.34} ${h} Z"
+      fill="#ffffff" opacity="0.16"/>`;
 }
 
-function placeholderSvg(ratio: Ratio, theme: Theme, title: string, kicker: string): string {
-  const { width: w, height: h, label } = RATIOS[ratio];
+/** A text-free placeholder: gradient, faint rosettes, silhouette. */
+export function placeholderSvg(ratio: Ratio, theme: Theme, key: string): string {
+  const { width: w, height: h } = RATIOS[ratio];
   const t = THEMES[theme];
-  const portrait = ratio === 'portrait' || ratio === 'square';
-  const fontSize = Math.round(w * (portrait ? 0.06 : 0.042));
-  const lines = wrap(title, portrait ? 18 : 34, portrait ? 3 : 3);
-  const textTop = portrait ? h * 0.84 - (lines.length - 1) * fontSize * 1.2 : h * 0.42 - ((lines.length - 1) * fontSize * 1.2) / 2;
-  const badgeW = Math.round(w * (portrait ? 0.62 : 0.3));
-  const badgeH = Math.round(fontSize * 1.25);
-  const pad = Math.round(w * 0.04);
-  const textY = (i: number): number => Math.round(textTop + i * fontSize * 1.2);
+  const seed = hash(key);
+  const angle = 20 + (seed % 50);
+  const people = ratio === 'portrait';
+  const big = Math.min(w, h);
+  const rosettes = [
+    rosette(w * (0.12 + ((seed >> 3) % 20) / 100), h * 0.22, big * 0.12, t.line, 0.1),
+    rosette(w * (0.78 + ((seed >> 7) % 12) / 100), h * 0.3, big * 0.2, t.line, 0.07),
+    rosette(w * 0.5, h * (0.12 + ((seed >> 11) % 10) / 100), big * 0.07, t.line, 0.08),
+  ].join('');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="${t.bg}"/><stop offset="1" stop-color="${t.bg2}"/></linearGradient></defs>
+  <defs>
+    <linearGradient id="g" gradientTransform="rotate(${angle} 0.5 0.5)">
+      <stop offset="0" stop-color="${t.from}"/><stop offset="1" stop-color="${t.to}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="${0.2 + (seed % 60) / 100}" cy="0.15" r="0.7">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
   <rect width="${w}" height="${h}" fill="url(#g)"/>
-  ${portrait ? personIcon(w, h, t.fg) : mountains(w, h, t.bg2)}
-  <rect x="${pad}" y="${pad}" width="${badgeW}" height="${badgeH}" rx="${badgeH / 2}" fill="${t.accent}"/>
-  <text x="${pad + badgeW / 2}" y="${pad + badgeH * 0.7}" font-family="Segoe UI, Arial, sans-serif" font-size="${Math.round(badgeH * 0.55)}"
-    font-weight="700" letter-spacing="2" fill="${t.bg2}" text-anchor="middle">PLACEHOLDER IMAGE</text>
-  <text x="${w - pad}" y="${pad + badgeH * 0.7}" font-family="Segoe UI, Arial, sans-serif" font-size="${Math.round(badgeH * 0.5)}"
-    fill="${t.fg}" opacity="0.8" text-anchor="end">${label} · ${w}×${h}</text>
-  <text x="${w / 2}" y="${textY(-1) - fontSize * 0.2}" font-family="Segoe UI, Arial, sans-serif" font-size="${Math.round(fontSize * 0.55)}"
-    font-weight="600" letter-spacing="3" fill="${t.accent}" text-anchor="middle">${escapeXml(kicker.toUpperCase())}</text>
-  ${lines
-    .map(
-      (line, i) =>
-        `<text x="${w / 2}" y="${textY(i) + fontSize * 0.6}" font-family="Segoe UI, Arial, sans-serif" font-size="${fontSize}" font-weight="700" fill="${t.fg}" text-anchor="middle">${escapeXml(line)}</text>`,
-    )
-    .join('\n  ')}
-  <text x="${w / 2}" y="${h - pad * 0.7}" font-family="Segoe UI, Arial, sans-serif" font-size="${Math.round(fontSize * 0.42)}"
-    fill="${t.fg}" opacity="0.75" text-anchor="middle">University of Swat · replace with a real photo</text>
+  <rect width="${w}" height="${h}" fill="url(#glow)"/>
+  ${people ? "" : rosettes}
+  ${people ? portraitSilhouette(w, h) : mountains(w, h, t.ridge, seed)}
 </svg>`;
 }
 
@@ -159,16 +161,19 @@ export interface ImageRequest {
   ratio: Ratio;
   /** Stable key, becomes part of the file name (e.g. "news-allama-iqbal-day"). */
   key: string;
+  /** What the image should show; used in the alt text ("Placeholder image: …"). */
   title: string;
-  kicker: string;
+  /** Kept for call sites; no longer drawn on the image. */
+  kicker?: string;
   theme?: Theme;
 }
 
-/** Generates and uploads placeholder media, caching by key so shared images are uploaded once. */
+/** Generates and uploads seed media, caching by key so shared images are uploaded once. */
 export class MediaFactory {
   private readonly cache = new Map<string, UploadedFile>();
   private dir = '';
   uploaded = 0;
+  photos = 0;
 
   constructor(private readonly strapi: Core.Strapi) {}
 
@@ -200,8 +205,8 @@ export class MediaFactory {
     const cacheKey = `${req.ratio}:${req.key}`;
     const hit = this.cache.get(cacheKey);
     if (hit) return hit.id;
-    const svg = placeholderSvg(req.ratio, req.theme ?? 'green', req.title, req.kicker);
-    const buffer = await sharp(Buffer.from(svg)).webp({ quality: 78 }).toBuffer();
+    const svg = placeholderSvg(req.ratio, req.theme ?? 'green', req.key);
+    const buffer = await sharp(Buffer.from(svg)).webp({ quality: 80 }).toBuffer();
     const file = await this.push(
       `${PLACEHOLDER_PREFIX}${req.ratio}-${req.key}.webp`,
       buffer,
@@ -209,6 +214,21 @@ export class MediaFactory {
       `Placeholder image: ${req.title}`,
       'PLACEHOLDER — replace with a real photo',
     );
+    this.cache.set(cacheKey, file);
+    return file.id;
+  }
+
+  /** Uploads a real photo from assets/photos as WebP (16:9, 1920px) with its credit as the caption. */
+  async photo(key: PhotoKey): Promise<number> {
+    const cacheKey = `photo:${key}`;
+    const hit = this.cache.get(cacheKey);
+    if (hit) return hit.id;
+    const photo = PHOTOS[key];
+    const source = await readFile(path.join(PHOTO_DIR, photo.file));
+    const { width, height } = RATIOS.hero;
+    const buffer = await sharp(source).resize(width, height, { fit: 'cover', position: 'attention' }).webp({ quality: 80 }).toBuffer();
+    const file = await this.push(`${PHOTO_PREFIX}${key}.webp`, buffer, 'image/webp', photo.alt, photoCaption(photo));
+    this.photos += 1;
     this.cache.set(cacheKey, file);
     return file.id;
   }
@@ -228,11 +248,11 @@ export class MediaFactory {
     return file.id;
   }
 
-  /** Deletes every placeholder file uploaded by a previous seed run. */
+  /** Deletes every placeholder and seed photo uploaded by a previous seed run. */
   static async removeAll(strapi: Core.Strapi): Promise<number> {
-    const files = (await strapi.db
-      .query('plugin::upload.file')
-      .findMany({ where: { name: { $startsWith: PLACEHOLDER_PREFIX } } })) as unknown[];
+    const files = (await strapi.db.query('plugin::upload.file').findMany({
+      where: { $or: [{ name: { $startsWith: PLACEHOLDER_PREFIX } }, { name: { $startsWith: PHOTO_PREFIX } }] },
+    })) as unknown[];
     const service = strapi.plugin('upload').service('upload') as unknown as UploadService;
     for (const file of files) await service.remove(file);
     return files.length;

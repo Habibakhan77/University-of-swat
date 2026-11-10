@@ -6,6 +6,8 @@ export interface StrapiMedia {
   name: string;
   url: string;
   alternativeText: string | null;
+  /** Credit for real photos: "Photo: Author · Licence · Source | https://source-page". */
+  caption?: string | null;
   width: number | null;
   height: number | null;
   mime: string;

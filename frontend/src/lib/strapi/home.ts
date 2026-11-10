@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
 import { StrapiError, buildTimeFallback, strapiGet, strapiMediaUrl, type QueryValue } from "./client";
-import { normalizeHref, isExternalHref, toNavLink, type NavLink, type SiteImage } from "./site";
+import { normalizeHref, isExternalHref, parseImageCredit, toNavLink, type NavLink, type SiteImage } from "./site";
 import type { StrapiLink, StrapiMedia } from "./types";
 
 /*
@@ -248,6 +248,7 @@ function toImage(media: StrapiMedia | null | undefined, fallbackAlt = ""): SiteI
     alt: media.alternativeText ?? fallbackAlt,
     width: media.width ?? 1600,
     height: media.height ?? 900,
+    credit: parseImageCredit(media.caption),
   };
 }
 
@@ -257,7 +258,7 @@ function toCta(label: string | null, url: string | null): Cta | null {
   return { label, href, external: isExternalHref(href) };
 }
 
-const imageFields = ["url", "alternativeText", "width", "height", "name"] as const;
+const imageFields = ["url", "alternativeText", "caption", "width", "height", "name"] as const;
 
 /** `populate[<field>][fields][n]` for a media field, keeping responses small. */
 function populateImage(field: string): Record<string, string> {

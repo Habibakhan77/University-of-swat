@@ -6,6 +6,7 @@ import type { CampusCard } from "@/lib/strapi/home";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
+import { ImageCredit } from "@/components/ui/image-credit";
 
 interface CampusesSectionProps {
   campuses: CampusCard[];
@@ -38,6 +39,11 @@ export function CampusesSection({ campuses, locale, labels }: CampusesSectionPro
                       />
                     ) : null}
                     <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-t from-forest-950/95 via-forest-950/55 to-forest-950/5" />
+                    {campus.image?.credit ? (
+                      <div className="absolute end-3 top-3 flex max-w-[calc(100%-1.5rem)] justify-end">
+                        <ImageCredit credit={campus.image.credit} className="max-w-full" />
+                      </div>
+                    ) : null}
                     <div className="flex flex-col items-start gap-4 p-6 sm:p-8">
                       {campus.established ? (
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-caption font-semibold ring-1 ring-white/25 backdrop-blur-sm ring-inset">
