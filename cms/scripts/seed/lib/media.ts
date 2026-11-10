@@ -19,7 +19,8 @@ export const PLACEHOLDER_PREFIX = 'placeholder-';
 /** Real photos uploaded by the seed; removed and re-uploaded by `--reset` like placeholders. */
 export const PHOTO_PREFIX = 'seed-photo-';
 
-const PHOTO_DIR = path.resolve(__dirname, '../assets/photos');
+/** Relative to the Strapi app root: the seed runs compiled from dist/, where these files are not copied. */
+const PHOTO_DIR = path.join('scripts', 'seed', 'assets', 'photos');
 
 /** Fixed sizes: the frontend uses the same ratios in next/image. */
 export const RATIOS = {
@@ -224,7 +225,7 @@ export class MediaFactory {
     const hit = this.cache.get(cacheKey);
     if (hit) return hit.id;
     const photo = PHOTOS[key];
-    const source = await readFile(path.join(PHOTO_DIR, photo.file));
+    const source = await readFile(path.join(this.strapi.dirs.app.root, PHOTO_DIR, photo.file));
     const { width, height } = RATIOS.hero;
     const buffer = await sharp(source).resize(width, height, { fit: 'cover', position: 'attention' }).webp({ quality: 80 }).toBuffer();
     const file = await this.push(`${PHOTO_PREFIX}${key}.webp`, buffer, 'image/webp', photo.alt, photoCaption(photo));
