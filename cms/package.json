@@ -12,7 +12,8 @@
     "strapi": "strapi",
     "upgrade": "npx @strapi/upgrade latest",
     "upgrade:dry": "npx @strapi/upgrade latest --dry",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "seed": "node scripts/seed.js"
   },
   "dependencies": {
     "@strapi/database": "5.61.1",
@@ -29,6 +30,7 @@
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "sharp": "^0.35.5",
     "typescript": "^5"
   },
   "engines": {

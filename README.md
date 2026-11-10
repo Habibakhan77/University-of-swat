@@ -30,3 +30,14 @@ docker-compose.yml        Production stack
 - Copy `cms/.env.example` to `cms/.env` and set `DATABASE_PASSWORD`
 
 Full setup instructions, architecture diagram, screenshots and Lighthouse scores will be added as the project is built.
+
+### Seed content
+
+```bash
+cd cms
+npm run seed             # fill an empty database with University of Swat content
+npm run seed -- --reset  # wipe website content and reseed
+```
+
+See [`cms/scripts/seed/README.md`](cms/scripts/seed/README.md) for what is created and what staff still
+need to replace (placeholders, unverified contacts).

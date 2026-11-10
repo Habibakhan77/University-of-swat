@@ -55,3 +55,24 @@
   downloads, research projects), which would have let them pull other departments' entries into their own.
 - Verified end to end through the content-manager HTTP API with a real Department Editor login (11/11 cases).
 - Strapi no longer opens a browser on `npm run dev` (`admin.autoOpen`, override with `ADMIN_AUTO_OPEN=true`).
+
+## Phase 2 — Seed content
+
+- `npm run seed` (`cms/scripts/seed/`, TypeScript strict, compiled by Strapi): boots Strapi headless and fills
+  it with real University of Swat structure. It creates 2 campuses, 6 faculties/centres, 27 departments,
+  80 programs, 22 offices, 19 news/announcements/events, 7 tenders, 5 jobs, 18 downloads, 2 research
+  projects, 11 FAQs, 3 hero slides, 4 stats and all 5 single types. Everything is published, and the
+  main structure has Urdu localizations.
+- Content is based on uswat.edu.pk: department and office names, real news, tender and job titles with
+  their dates and reference numbers. All text is rewritten. Every invented person is flagged as a
+  placeholder. Unverified phone numbers and emails are left empty instead of guessed.
+- Homepage stats are live counters (campuses 2, faculties 5, departments 27, programs 80), counted by
+  `GET /api/stats`, so they can never show 0.
+- Placeholder media is generated locally with `sharp` in fixed ratios (hero 16:9 1920×1080, cards 16:9
+  1600×900, portraits 4:5, logos 1:1, OG 1200×630). Each file is stamped "PLACEHOLDER" and named
+  `placeholder-*`, with matching alt text. Attachments are placeholder PDFs.
+- `--reset` wipes website content and placeholder media and keeps admin users and contact messages.
+  Refuses to run on a non-empty database without it.
+- The seed's Writer copies non-localized fields into new Urdu locales. Strapi's document service doesn't do
+  this, and without it a new locale failed validation (missing slug).
+- Added `sharp` as an explicit dev dependency.
