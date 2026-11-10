@@ -111,3 +111,40 @@
 - Verified in a headless browser at 1440px and 375px, light and dark: no console errors, no horizontal
   scroll, images load, skip link works, tab arrow keys work in LTR and RTL, and the theme persists across
   reloads. Lint, typecheck and build are clean.
+
+## Phase 4 — Layout, navigation, languages
+
+- **i18n with next-intl 4**: all routes under `src/app/[locale]/`. English has no URL prefix and Urdu is
+  `/ur/…` with `lang="ur" dir="rtl"`. The locale proxy is in `src/proxy.ts` (Next 16 name for middleware).
+  UI strings are in `messages/en.json` / `messages/ur.json`, typed through `AppConfig`. `/en/…` redirects to
+  the clean URL. Unknown paths get a localized 404 inside the normal header and footer.
+- **Strapi client** (`src/lib/strapi/`): typed REST client and `getSiteChrome(locale)`, which loads Site
+  Settings with `"use cache"`, tagged `site-settings[:locale]` for Phase 10's publish webhook. It falls back to
+  English if an Urdu translation is missing and degrades to a CMS-less header/footer if Strapi is down, so a
+  CMS outage never takes the site down. External URLs are forced to `https://`.
+- **Header**: a dark utility bar with the daily portals from Strapi (CMS Portal, Exam Portal, e-Office,
+  SUJRIS, Campus TV — all HTTPS), the language switcher and a compact theme toggle. Below it a sticky main bar
+  with brand, mega menu, search, a gold **Apply** button and the mobile menu button.
+- **Mega menu** (desktop ≥1280px): WAI-ARIA disclosure pattern, two levels only. Each panel has the section
+  intro and Overview link, the section's links, and an **Apply** card, so admissions is one click from any
+  menu. Keyboard: Enter/Space, ↓ into the panel, ↑/↓ inside it, ←/→ between sections (mirrored in RTL),
+  Home/End, Esc returns focus, and tabbing out closes it. Mouse: hover intent delays, a dimmed scrim, and
+  clicking outside closes it. Focus is never lost when a panel closes.
+- **Mobile menu**: native `<dialog>` side sheet (slides from the inline end, so from the left in Urdu) with
+  focus containment, Esc, inert page, scroll lock, and focus returned to the button. Sections are an exclusive
+  `<details>` accordion with 44px+ targets, plus online-service tiles, language and theme controls, and a
+  sticky full-width **Apply now** button.
+- **Search (UI)**: Ctrl/⌘+K or `/` opens a command palette (combobox + listbox, ↑/↓/Enter/Esc). Until the
+  search API exists (Phase 10) it filters the navigation, so typing "fee" jumps to Fee Structure.
+- **Language switcher**: real links with `hreflang`, keeping the visitor on the same page in the other
+  language. English fragments inside Urdu pages keep the Inter font.
+- **Footer**: Swat ridgeline rising into a dark green footer with the Gandhara pattern, address, email,
+  directions, social links (CC0 Simple Icons paths copied locally), CMS-managed columns and all online
+  services. Has "Back to top" and no "best viewed in Chrome".
+- Design-system links (ButtonLink, CardLink, Breadcrumbs, Pagination) now use the locale-aware Link.
+- **Seed**: `utilityLinks` now holds the five portals (it used to hold internal pages). Alumni and Contact
+  moved into the footer's University column. The Digital Library link is now HTTPS (verified). There are no
+  `http://` links left in seed data. Reseeded.
+- Verified in a headless browser against live Strapi data at 1440/768/375px, in English and Urdu, light and
+  dark: no horizontal scroll and no console errors (except prefetches of pages that come in later phases).
+  All external links are HTTPS, every keyboard path above works, and the skip link focuses `<main>`.

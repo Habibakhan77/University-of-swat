@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Accessibility, Languages, MoonStar, Smartphone } from "lucide-react";
-import { GandharaPattern, MountainRidge, Rosette } from "@/components/brand/motifs";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { resolveLocale } from "@/i18n/locale";
+import { GandharaPattern, MountainRidge } from "@/components/brand/motifs";
 import { Container } from "@/components/ui/container";
 import { StyleguideNav, type NavEntry } from "./_components/styleguide-nav";
 import { ColourSection, SpacingSection, TypographySection } from "./_sections/foundations";
@@ -44,25 +43,12 @@ const principles = [
   { icon: Smartphone, label: "Mobile first", detail: "44px targets, fluid type" },
 ];
 
-export default function StyleguidePage() {
+export default async function StyleguidePage({ params }: PageProps<"/[locale]/styleguide">) {
+  await resolveLocale(params);
+
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-md supports-[backdrop-filter]:bg-canvas/70">
-        <Container size="wide" className="flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2.5 rounded-md">
-            <span className="flex size-9 items-center justify-center rounded-lg bg-primary text-gold-300 shadow-sm dark:text-forest-950">
-              <Rosette className="size-5" />
-            </span>
-            <span className="flex flex-col leading-tight">
-              <span className="text-body-sm font-semibold">University of Swat</span>
-              <span className="text-caption text-fg-subtle">Design system · v0.1</span>
-            </span>
-          </Link>
-          <ThemeToggle />
-        </Container>
-      </header>
 
-      <main id="main">
         <section className="relative isolate overflow-hidden bg-forest-800 text-sand-50 dark:bg-forest-950">
           <GandharaPattern className="-z-10 text-white opacity-[0.05]" />
           <div
@@ -102,7 +88,7 @@ export default function StyleguidePage() {
         </section>
 
         <Container size="wide" className="pt-6 lg:grid lg:grid-cols-[13rem_1fr] lg:gap-16 lg:pt-16">
-          <aside className="sticky top-16 z-30 -mx-gutter bg-canvas/90 px-gutter backdrop-blur-md lg:top-28 lg:mx-0 lg:self-start lg:bg-transparent lg:px-0 lg:backdrop-blur-none">
+          <aside className="sticky top-16 z-30 xl:top-20 -mx-gutter bg-canvas/90 px-gutter backdrop-blur-md lg:top-28 xl:top-32 lg:mx-0 lg:self-start lg:bg-transparent lg:px-0 lg:backdrop-blur-none">
             <StyleguideNav entries={entries} />
           </aside>
           <div className="min-w-0 pt-10 lg:pt-0">
@@ -119,7 +105,6 @@ export default function StyleguidePage() {
             <MotifsSection />
           </div>
         </Container>
-      </main>
     </>
   );
 }

@@ -12,7 +12,7 @@ export const EXTERNAL = {
   sujris: 'https://sujris.uswat.edu.pk/',
   eOffice: 'https://uswat.edu.pk/e-office/',
   office365: 'https://www.office.com/',
-  digitalLibrary: 'http://www.digitallibrary.edu.pk/uniofswat.html',
+  digitalLibrary: 'https://www.digitallibrary.edu.pk/uniofswat.html',
   campusTv: 'https://www.youtube.com/@Campus_Tv_UoS',
   facebook: 'https://www.facebook.com/universityofswat/',
   linkedin: 'https://www.linkedin.com/company/university-of-swat1/',
@@ -111,12 +111,13 @@ export const SITE_SETTINGS = {
         ],
       },
     ],
+    // Top utility bar: the portals students and staff open every day. All HTTPS.
     utilityLinks: [
-      link('Downloads', '/downloads', undefined, 'download'),
-      link('Tenders', '/tenders', undefined, 'gavel'),
-      link('Jobs', '/jobs', undefined, 'briefcase'),
-      link('Alumni', '/administration/alumni-association', undefined, 'users'),
-      link('Contact', '/contact', undefined, 'phone'),
+      link('CMS Portal', EXTERNAL.cms, 'Student and admission portal', 'monitor', true),
+      link('Exam Portal', EXTERNAL.exam, 'Results and date sheets', 'file-check', true),
+      link('e-Office', EXTERNAL.eOffice, 'Staff file tracking', 'inbox', true),
+      link('SUJRIS', EXTERNAL.sujris, 'University research journal', 'book', true),
+      link('Campus TV', EXTERNAL.campusTv, 'University YouTube channel', 'tv', true),
     ],
     externalSystems: [
       link('CMS Portal', EXTERNAL.cms, 'Student and admission portal', 'monitor', true),
@@ -134,7 +135,7 @@ export const SITE_SETTINGS = {
       },
       {
         title: 'University',
-        links: [link('About', '/about'), link('Administration', '/administration'), link('Research', '/research'), link('Campus Life', '/campus-life')],
+        links: [link('About', '/about'), link('Administration', '/administration'), link('Research', '/research'), link('Campus Life', '/campus-life'), link('Alumni', '/administration/alumni-association'), link('Contact', '/contact')],
       },
       {
         title: 'Resources',
@@ -167,7 +168,13 @@ export const SITE_SETTINGS = {
       { label: 'خبریں و تقریبات', url: '/news', children: [link('تمام خبریں', '/news'), link('اعلانات', '/news?category=announcement'), link('تقریبات', '/news?category=event'), link('ٹینڈرز', '/tenders'), link('ملازمتیں', '/jobs')] },
       { label: 'کیمپس لائف', url: '/campus-life', children: [link('لائبریری', '/campus-life/library'), link('کھیل', '/campus-life/sports'), link('ہاسٹل', '/campus-life/hostels'), link('ٹرانسپورٹ', '/campus-life/transport'), link('سوسائٹیز', '/campus-life/societies'), link('ہنرکدہ', '/academics/hunerkada')] },
     ],
-    utilityLinks: [link('ڈاؤن لوڈز', '/downloads', undefined, 'download'), link('ٹینڈرز', '/tenders', undefined, 'gavel'), link('ملازمتیں', '/jobs', undefined, 'briefcase'), link('سابق طلبہ', '/administration/alumni-association', undefined, 'users'), link('رابطہ', '/contact', undefined, 'phone')],
+    utilityLinks: [
+      link('سی ایم ایس پورٹل', EXTERNAL.cms, 'طلبہ و داخلہ پورٹل', 'monitor', true),
+      link('امتحانی پورٹل', EXTERNAL.exam, 'نتائج اور ڈیٹ شیٹس', 'file-check', true),
+      link('ای آفس', EXTERNAL.eOffice, 'عملے کے لیے فائل ٹریکنگ', 'inbox', true),
+      link('سُجرس', EXTERNAL.sujris, 'جامعہ کا تحقیقی جریدہ', 'book', true),
+      link('کیمپس ٹی وی', EXTERNAL.campusTv, 'یونیورسٹی کا یوٹیوب چینل', 'tv', true),
+    ],
     externalSystems: [
       link('سی ایم ایس پورٹل', EXTERNAL.cms, 'طلبہ و داخلہ پورٹل', 'monitor', true),
       link('امتحانی پورٹل', EXTERNAL.exam, 'نتائج اور ڈیٹ شیٹس', 'file-check', true),
@@ -179,7 +186,7 @@ export const SITE_SETTINGS = {
     ],
     footerColumns: [
       { title: 'تعلیم', links: [link('داخلے', '/admissions'), link('پروگرام', '/academics/programs'), link('فیس اسٹرکچر', '/admissions#fees'), link('وظائف', '/admissions#scholarships')] },
-      { title: 'جامعہ', links: [link('تعارف', '/about'), link('انتظامیہ', '/administration'), link('تحقیق', '/research'), link('کیمپس لائف', '/campus-life')] },
+      { title: 'جامعہ', links: [link('تعارف', '/about'), link('انتظامیہ', '/administration'), link('تحقیق', '/research'), link('کیمپس لائف', '/campus-life'), link('سابق طلبہ', '/administration/alumni-association'), link('رابطہ', '/contact')] },
       { title: 'وسائل', links: [link('ڈاؤن لوڈز', '/downloads'), link('ٹینڈرز', '/tenders'), link('ملازمتیں', '/jobs'), link('اساتذہ کی فہرست', '/faculty-directory')] },
     ],
     copyright: '© جامعہ سوات۔ جملہ حقوق محفوظ ہیں۔',

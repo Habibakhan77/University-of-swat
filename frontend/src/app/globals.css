@@ -383,6 +383,10 @@
   :lang(ur) :is(h1, h2, h3, h4, h5, h6) {
     --tw-leading: 1.75;
   }
+  /* English fragments inside Urdu pages (language names, emails, codes) keep the Latin UI font. */
+  :lang(ur) :lang(en) {
+    font-family: var(--font-sans);
+  }
 
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -392,6 +396,98 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+}
+
+/*
+ * Native <dialog> surfaces. Enter/exit animate with @starting-style + allow-discrete, so they need
+ * no JavaScript animation library and stay accessible (top layer, focus trap, Esc, inert page).
+ */
+@layer components {
+  dialog.sheet,
+  dialog.command {
+    padding: 0;
+    border: 0;
+    max-width: none;
+    max-height: none;
+    transition:
+      translate 0.45s var(--ease-out-expo),
+      opacity 0.3s var(--ease-out-expo),
+      scale 0.3s var(--ease-out-expo),
+      display 0.45s allow-discrete,
+      overlay 0.45s allow-discrete;
+  }
+
+  dialog.sheet::backdrop,
+  dialog.command::backdrop {
+    background: rgb(4 26 17 / 0.45);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition:
+      opacity 0.3s ease,
+      display 0.3s allow-discrete,
+      overlay 0.3s allow-discrete;
+  }
+  dialog.sheet[open]::backdrop,
+  dialog.command[open]::backdrop {
+    opacity: 1;
+  }
+  @starting-style {
+    dialog.sheet[open]::backdrop,
+    dialog.command[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /* Side sheet: slides in from the inline end (right in English, left in Urdu). */
+  dialog.sheet {
+    margin: 0;
+    inset-block: 0;
+    inset-inline: auto 0;
+    width: min(100%, 26rem);
+    height: 100dvh;
+    box-shadow: var(--shadow-xl);
+    translate: 100% 0;
+  }
+  [dir="rtl"] dialog.sheet {
+    translate: -100% 0;
+  }
+  dialog.sheet[open] {
+    translate: 0 0;
+  }
+  @starting-style {
+    dialog.sheet[open] {
+      translate: 100% 0;
+    }
+    [dir="rtl"] dialog.sheet[open] {
+      translate: -100% 0;
+    }
+  }
+
+  /* Command palette: centred near the top, scales in. Full width with margins on phones. */
+  dialog.command {
+    margin: min(12vh, 7rem) auto auto;
+    width: min(100% - 2rem, 40rem);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl), 0 0 0 1px var(--line);
+    overflow: hidden;
+    opacity: 0;
+    scale: 0.97;
+  }
+  dialog.command[open] {
+    opacity: 1;
+    scale: 1;
+  }
+  @starting-style {
+    dialog.command[open] {
+      opacity: 0;
+      scale: 0.97;
+    }
+  }
+
+  /* No page scroll behind an open modal. */
+  html:has(dialog[open]:modal) {
+    overflow: hidden;
   }
 }
 

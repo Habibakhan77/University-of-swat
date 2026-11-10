@@ -1,0 +1,171 @@
+import "server-only";
+import { cacheLife, cacheTag } from "next/cache";
+import { routing, type Locale } from "@/i18n/routing";
+import { StrapiError, strapiGet, strapiMediaUrl } from "./client";
+import type { StrapiLink, StrapiMedia, StrapiSingleResponse, StrapiSiteSettings, StrapiSocialPlatform } from "./types";
+
+/* ---------- View models used by the header and footer ---------- */
+
+export interface NavLink {
+  label: string;
+  href: string;
+  description: string | null;
+  icon: string | null;
+  external: boolean;
+}
+
+/** Level 1 of the navigation. Its `links` are level 2; there is no level 3 by design. */
+export interface NavGroup {
+  label: string;
+  href: string | null;
+  description: string | null;
+  links: NavLink[];
+}
+
+export interface SiteImage {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+}
+
+export interface SiteChrome {
+  locale: Locale;
+  siteName: string;
+  shortName: string | null;
+  tagline: string | null;
+  logo: SiteImage | null;
+  applyHref: string | null;
+  applyExternal: boolean;
+  mainNavigation: NavGroup[];
+  /** Top utility bar: the portals people use daily (CMS, Exam, e-Office, SUJRIS, Campus TV). */
+  utilityLinks: NavLink[];
+  /** Every external system, listed in the footer and the mobile menu. */
+  externalSystems: NavLink[];
+  footerColumns: { title: string; links: NavLink[] }[];
+  socialLinks: { platform: StrapiSocialPlatform; url: string }[];
+  contact: { email: string | null; phone: string | null; address: string | null };
+  mapUrl: string | null;
+  copyright: string | null;
+}
+
+/* ---------- Normalisation ---------- */
+
+const ABSOLUTE = /^[a-z][a-z0-9+.-]*:/i;
+
+/**
+ * External systems must always be HTTPS (the current site still links some over plain http).
+ * Internal paths are returned unchanged and rendered with the locale-aware Link.
+ */
+export function normalizeHref(url: string): string {
+  const trimmed = url.trim();
+  return trimmed.replace(/^http:\/\//i, "https://");
+}
+
+export function isExternalHref(href: string): boolean {
+  return ABSOLUTE.test(href) && !href.startsWith("mailto:") && !href.startsWith("tel:");
+}
+
+function toNavLink(link: StrapiLink): NavLink {
+  const href = normalizeHref(link.url);
+  return {
+    label: link.label,
+    href,
+    description: link.description || null,
+    icon: link.icon || null,
+    external: Boolean(link.isExternal) || isExternalHref(href),
+  };
+}
+
+/**
+ * The seed uploads a stamped "placeholder" logo. Until staff upload the real crest, the site shows its
+ * built-in rosette mark instead of a picture that says PLACEHOLDER in the header.
+ */
+function toLogo(media: StrapiMedia | null, siteName: string): SiteImage | null {
+  if (!media || media.name.toLowerCase().startsWith("placeholder")) return null;
+  return {
+    src: strapiMediaUrl(media.url),
+    alt: media.alternativeText || siteName,
+    width: media.width ?? 96,
+    height: media.height ?? 96,
+  };
+}
+
+function toChrome(locale: Locale, data: StrapiSiteSettings): SiteChrome {
+  const applyHref = data.applyUrl ? normalizeHref(data.applyUrl) : null;
+  return {
+    locale,
+    siteName: data.siteName,
+    shortName: data.shortName,
+    tagline: data.tagline,
+    logo: toLogo(data.logo, data.siteName),
+    applyHref,
+    applyExternal: applyHref ? isExternalHref(applyHref) : false,
+    mainNavigation: (data.mainNavigation ?? []).map((item) => ({
+      label: item.label,
+      href: item.url ? normalizeHref(item.url) : null,
+      description: item.description || null,
+      links: (item.children ?? []).map(toNavLink),
+    })),
+    utilityLinks: (data.utilityLinks ?? []).map(toNavLink),
+    externalSystems: (data.externalSystems ?? []).map(toNavLink),
+    footerColumns: (data.footerColumns ?? []).map((group) => ({
+      title: group.title,
+      links: (group.links ?? []).map(toNavLink),
+    })),
+    socialLinks: (data.socialLinks ?? []).map((s) => ({ platform: s.platform, url: normalizeHref(s.url) })),
+    contact: {
+      email: data.contact?.email ?? null,
+      phone: data.contact?.phone ?? null,
+      address: data.contact?.address ?? null,
+    },
+    mapUrl: data.mapUrl ? normalizeHref(data.mapUrl) : null,
+    copyright: data.copyright,
+  };
+}
+
+/* ---------- Data loading ---------- */
+
+const SITE_SETTINGS_QUERY = {
+  "populate[logo]": true,
+  "populate[contact]": true,
+  "populate[mainNavigation][populate][children]": true,
+  "populate[utilityLinks]": true,
+  "populate[externalSystems]": true,
+  "populate[footerColumns][populate][links]": true,
+  "populate[socialLinks]": true,
+} as const;
+
+/** Cached per locale. Tagged so the Strapi publish webhook can revalidate it on demand. */
+async function fetchSiteSettings(locale: Locale): Promise<StrapiSiteSettings> {
+  "use cache";
+  cacheTag("site-settings", `site-settings:${locale}`);
+  cacheLife("hours");
+
+  const response = await strapiGet<StrapiSingleResponse<StrapiSiteSettings>>("/site-setting", {
+    ...SITE_SETTINGS_QUERY,
+    locale,
+  });
+  return response.data;
+}
+
+/**
+ * Header/footer data for a locale. Falls back to English if the Urdu translation hasn't been
+ * published yet, and returns null (header/footer render without CMS links) if Strapi is unreachable,
+ * so a CMS outage never takes the whole website down. Errors are not cached.
+ */
+export async function getSiteChrome(locale: Locale): Promise<SiteChrome | null> {
+  try {
+    return toChrome(locale, await fetchSiteSettings(locale));
+  } catch (error) {
+    if (error instanceof StrapiError && error.status === 404 && locale !== routing.defaultLocale) {
+      try {
+        return toChrome(locale, await fetchSiteSettings(routing.defaultLocale));
+      } catch {
+        // fall through to the logged error below
+      }
+    }
+    console.error(`[strapi] site settings unavailable for "${locale}":`, error instanceof Error ? error.message : error);
+    return null;
+  }
+}

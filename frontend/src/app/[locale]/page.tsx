@@ -1,12 +1,15 @@
 import { ArrowRight } from "lucide-react";
-import { MountainRidge, Rosette } from "@/components/brand/motifs";
+import { resolveLocale } from "@/i18n/locale";
+import { Rosette } from "@/components/brand/motifs";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 
 /** Temporary landing page until the homepage is built (Phase 5). */
-export default function HomePage() {
+export default async function HomePage({ params }: PageProps<"/[locale]">) {
+  await resolveLocale(params);
+
   return (
-    <main id="main" className="relative flex min-h-dvh flex-col justify-center overflow-hidden">
+    <div className="relative flex min-h-[70dvh] flex-col justify-center overflow-hidden">
       <Container size="narrow" className="flex flex-col items-start gap-6 py-24">
         <Rosette className="size-10 text-accent-text" />
         <h1 className="text-display-xl">University of Swat</h1>
@@ -17,7 +20,6 @@ export default function HomePage() {
           Open the design system
         </ButtonLink>
       </Container>
-      <MountainRidge className="absolute inset-x-0 bottom-0 h-24 text-primary/15" />
-    </main>
+    </div>
   );
 }

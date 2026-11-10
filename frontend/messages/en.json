@@ -1,0 +1,63 @@
+{
+  "common": {
+    "siteName": "University of Swat",
+    "skipToContent": "Skip to main content",
+    "opensInNewTab": "(opens in a new tab)",
+    "home": "Home",
+    "close": "Close"
+  },
+  "header": {
+    "mainNavigation": "Main",
+    "utilityNavigation": "Online services",
+    "apply": "Apply",
+    "applyNow": "Apply now",
+    "overview": "Overview",
+    "goTo": "Go to {section}",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "menu": "Menu",
+    "homeLink": "{siteName} — home",
+    "quickLinks": "Quick links",
+    "preferences": "Preferences",
+    "promoEyebrow": "Admissions",
+    "promoTitle": "Begin your journey in the valley",
+    "promoText": "Programs, eligibility, fees and merit lists — all in one place."
+  },
+  "language": {
+    "label": "Language",
+    "switchTo": "Switch to {language}"
+  },
+  "theme": {
+    "label": "Colour theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "search": {
+    "button": "Search",
+    "buttonLong": "Search the site…",
+    "dialogTitle": "Search the University of Swat",
+    "placeholder": "Search news, departments, people, notices…",
+    "shortcut": "Keyboard shortcut",
+    "comingSoon": "Full-site search is being connected. Meanwhile, jump straight to a section:",
+    "sections": "Sections",
+    "noMatches": "No sections match “{query}”.",
+    "hintNavigate": "to navigate",
+    "hintOpen": "to open",
+    "hintClose": "to close"
+  },
+  "footer": {
+    "onlineServices": "Online services",
+    "followUs": "Follow the University",
+    "contact": "Contact",
+    "getDirections": "Get directions",
+    "backToTop": "Back to top",
+    "footerNavigation": "Footer"
+  },
+  "notFound": {
+    "eyebrow": "Error 404",
+    "title": "This page has wandered off the trail",
+    "text": "The page you were looking for doesn’t exist or has moved. Try the search, or start again from one of these:",
+    "home": "Back to the homepage"
+  }
+}

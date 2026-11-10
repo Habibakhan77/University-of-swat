@@ -1,0 +1,63 @@
+{
+  "common": {
+    "siteName": "جامعہ سوات",
+    "skipToContent": "مرکزی مواد پر جائیں",
+    "opensInNewTab": "(نئے ٹیب میں کھلتا ہے)",
+    "home": "سرورق",
+    "close": "بند کریں"
+  },
+  "header": {
+    "mainNavigation": "مرکزی",
+    "utilityNavigation": "آن لائن خدمات",
+    "apply": "درخواست",
+    "applyNow": "ابھی درخواست دیں",
+    "overview": "جائزہ",
+    "goTo": "{section} پر جائیں",
+    "openMenu": "مینو کھولیں",
+    "closeMenu": "مینو بند کریں",
+    "menu": "مینو",
+    "homeLink": "{siteName} — سرورق",
+    "quickLinks": "فوری روابط",
+    "preferences": "ترجیحات",
+    "promoEyebrow": "داخلے",
+    "promoTitle": "وادی میں اپنے سفر کا آغاز کریں",
+    "promoText": "پروگرام، اہلیت، فیس اور میرٹ لسٹیں — سب ایک جگہ۔"
+  },
+  "language": {
+    "label": "زبان",
+    "switchTo": "{language} میں دیکھیں"
+  },
+  "theme": {
+    "label": "رنگ کا انداز",
+    "light": "روشن",
+    "dark": "تاریک",
+    "system": "سسٹم"
+  },
+  "search": {
+    "button": "تلاش",
+    "buttonLong": "ویب سائٹ میں تلاش کریں…",
+    "dialogTitle": "جامعہ سوات میں تلاش",
+    "placeholder": "خبریں، شعبہ جات، اساتذہ، اعلانات تلاش کریں…",
+    "shortcut": "کی بورڈ شارٹ کٹ",
+    "comingSoon": "مکمل تلاش جلد دستیاب ہوگی۔ فی الحال براہِ راست کسی حصے پر جائیں:",
+    "sections": "حصے",
+    "noMatches": "“{query}” سے کوئی حصہ نہیں ملا۔",
+    "hintNavigate": "منتخب کرنے کے لیے",
+    "hintOpen": "کھولنے کے لیے",
+    "hintClose": "بند کرنے کے لیے"
+  },
+  "footer": {
+    "onlineServices": "آن لائن خدمات",
+    "followUs": "جامعہ کو فالو کریں",
+    "contact": "رابطہ",
+    "getDirections": "راستہ دیکھیں",
+    "backToTop": "اوپر جائیں",
+    "footerNavigation": "فوٹر"
+  },
+  "notFound": {
+    "eyebrow": "خرابی ۴۰۴",
+    "title": "یہ صفحہ راستے سے بھٹک گیا ہے",
+    "text": "آپ جو صفحہ تلاش کر رہے تھے وہ موجود نہیں یا منتقل ہو چکا ہے۔ تلاش استعمال کریں یا یہاں سے دوبارہ شروع کریں:",
+    "home": "سرورق پر واپس جائیں"
+  }
+}

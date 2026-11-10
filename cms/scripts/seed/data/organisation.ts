@@ -266,7 +266,7 @@ export const OFFICES: OfficeSeed[] = [
     summary: 'Books, journals and the HEC Digital Library for students and researchers.',
     responsibilities: ['Lending and reference services', 'Access to the HEC Digital Library', 'Reading halls and research support'],
     headDesignation: 'Librarian',
-    websiteUrl: 'http://www.digitallibrary.edu.pk/uniofswat.html',
+    websiteUrl: 'https://www.digitallibrary.edu.pk/uniofswat.html',
   },
   {
     slug: 'alumni-association',
