@@ -76,3 +76,38 @@
 - The seed's Writer copies non-localized fields into new Urdu locales. Strapi's document service doesn't do
   this, and without it a new locale failed validation (missing slug).
 - Added `sharp` as an explicit dev dependency.
+
+## Phase 3 — Frontend scaffold + design system
+
+- Scaffolded **Next.js 16.4** (App Router, Turbopack, Cache Components) in `frontend/` with React 19,
+  TypeScript strict and **Tailwind CSS 4**. Added `npm run typecheck` (`next typegen && tsc --noEmit`).
+  Dependencies: `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`, `framer-motion`.
+- **Tokens** (`src/app/globals.css`): forest green / maroon / gold ramps built around the crest colours
+  already used by the seed placeholders (`#0f4d32`, `#6d1a2a`, `#d4a72c`), a warm `sand` neutral and a
+  green-tinted `ink` for dark mode. Semantic tokens on top (canvas, surface, fg, primary, secondary,
+  accent, status colours) that switch in dark mode. The default Tailwind palette is removed so off-brand
+  colours can't creep in. Fluid type scale (display → overline), layout tokens (gutter, section rhythm,
+  container widths), radii, tinted layered shadows, easing.
+- **Contrast checked** for every semantic text/background pair in both themes (all ≥ 4.5:1). Two pairs failed
+  on the first try and were fixed: dark-mode primary button label (now forest-400 background, 5.6:1) and
+  gold text on green (use gold-300, 5.6:1).
+- **Fonts** via `next/font`: Inter (variable, optical-size axis) and Noto Nastaliq Urdu (not preloaded, so
+  English pages never download it). `:lang(ur)` switches font, sets line height 2 and removes letter-spacing,
+  which breaks Nastaliq joins.
+- **Dark mode** without a dependency: pre-paint inline script (no flash), `useTheme` hook on
+  `useSyncExternalStore` (syncs across tabs and follows the OS in "system"), and an accessible 3-way
+  `ThemeToggle` radio group.
+- **Components** (`src/components/ui/`): Button + ButtonLink (7 variants, 5 sizes, loading state), Badge
+  (11 tones, status dot), Card family (fixed-ratio media, single stretched link per card), Container,
+  SectionHeading, Breadcrumbs (compact "‹ parent" on phones, schema.org BreadcrumbList), Pagination
+  (link-based, constant width, "Page x of y" on phones, page 1 keeps canonical URL), Tabs (WAI-ARIA keyboard
+  model mirrored in RTL, sliding indicator, 3 styles), Skeletons (card, list, person, text, with a single
+  screen-reader "Loading" status), Reveal (framer-motion LazyMotion, off for reduced motion).
+- **Swat identity** (`src/components/brand/motifs.tsx`): Hindu Kush ridgeline, Gandhara lotus-rosette
+  pattern, rosette and ornament divider, all `currentColor` SVG.
+- **`/styleguide`** page (noindex) with a scroll-spy chapter nav showing every token and component in both
+  themes, including an Urdu RTL specimen. Root layout has a skip link; the homepage is a placeholder until
+  Phase 5.
+- Verified in a headless browser at 1440px and 375px, light and dark: no console errors, no horizontal
+  scroll, images load, skip link works, tab arrow keys work in LTR and RTL, and the theme persists across
+  reloads. Lint, typecheck and build are clean.
