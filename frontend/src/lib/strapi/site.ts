@@ -103,8 +103,8 @@ export function toNavLink(link: StrapiLink): NavLink {
 }
 
 /**
- * The seed uploads a stamped "placeholder" logo. Until staff upload the real crest, the site shows its
- * built-in rosette mark instead of a picture that says PLACEHOLDER in the header.
+ * A logo whose file name starts with "placeholder" is ignored, so the header shows the built-in crest
+ * (public/brand/uswat-logo.png) instead of a stand-in image.
  */
 function toLogo(media: StrapiMedia | null, siteName: string): SiteImage | null {
   if (!media || media.name.toLowerCase().startsWith("placeholder")) return null;

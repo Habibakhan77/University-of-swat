@@ -46,6 +46,8 @@ const pathOf = (href: string) => href.split(/[?#]/)[0] || "/";
  * the item that links to this exact page. Shown with the gold underline and aria-current.
  */
 function activeGroupIndex(groups: NavGroup[], pathname: string): number {
+  // "Home" (/) is active on the homepage only; it would otherwise prefix every path.
+  if (pathname === "/") return groups.findIndex((g) => g.href !== null && pathOf(g.href) === "/");
   const byPrefix = groups.findIndex((g) => {
     if (!g.href) return false;
     const base = pathOf(g.href);

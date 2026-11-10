@@ -1,5 +1,5 @@
 /**
- * Media for the seed: real photos (scripts/seed/assets/photos, see data/photos.ts) and generated
+ * Media for the seed: real University of Swat photos and crest (scripts/seed/assets, see data/photos.ts) and generated
  * placeholders.
  *
  * Placeholders are generated locally in fixed ratios so the frontend can rely on consistent aspect
@@ -13,7 +13,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 import type { Core } from '@strapi/strapi';
-import { PHOTOS, photoCaption, type PhotoKey } from '../data/photos';
+import { LOGO, PHOTOS, photoCaption, type PhotoKey } from '../data/photos';
 
 export const PLACEHOLDER_PREFIX = 'placeholder-';
 /** Real photos uploaded by the seed; removed and re-uploaded by `--reset` like placeholders. */
@@ -21,6 +21,7 @@ export const PHOTO_PREFIX = 'seed-photo-';
 
 /** Relative to the Strapi app root: the seed runs compiled from dist/, where these files are not copied. */
 const PHOTO_DIR = path.join('scripts', 'seed', 'assets', 'photos');
+const BRAND_DIR = path.join('scripts', 'seed', 'assets', 'brand');
 
 /** Fixed sizes: the frontend uses the same ratios in next/image. */
 export const RATIOS = {
@@ -219,18 +220,45 @@ export class MediaFactory {
     return file.id;
   }
 
-  /** Uploads a real photo from assets/photos as WebP (16:9, 1920px) with its credit as the caption. */
-  async photo(key: PhotoKey): Promise<number> {
-    const cacheKey = `photo:${key}`;
+  /**
+   * Uploads a real photo from assets/photos as WebP with its credit as the caption.
+   * - `hero` / `og`: cropped (saliency-aware) to exactly that size, enlarging small photos if needed.
+   * - `cover`: cropped to 16:9, never enlarged (max 1600×900).
+   * - `original`: the photo's own aspect ratio, max 1600px wide (e.g. campus cards, which crop to
+   *   3:2 or 4:5 depending on the screen).
+   */
+  async photo(key: PhotoKey, ratio: 'hero' | 'og' | 'cover' | 'original' = 'hero'): Promise<number> {
+    const cacheKey = `photo:${ratio}:${key}`;
     const hit = this.cache.get(cacheKey);
     if (hit) return hit.id;
     const photo = PHOTOS[key];
-    const source = await readFile(path.join(this.strapi.dirs.app.root, PHOTO_DIR, photo.file));
-    const { width, height } = RATIOS.hero;
-    const buffer = await sharp(source).resize(width, height, { fit: 'cover', position: 'attention' }).webp({ quality: 80 }).toBuffer();
-    const file = await this.push(`${PHOTO_PREFIX}${key}.webp`, buffer, 'image/webp', photo.alt, photoCaption(photo));
+    const source = sharp(await readFile(path.join(this.strapi.dirs.app.root, PHOTO_DIR, photo.file))).rotate();
+    let resized: ReturnType<typeof sharp>;
+    if (ratio === 'hero' || ratio === 'og') {
+      const { width, height } = RATIOS[ratio];
+      resized = source.resize(width, height, { fit: 'cover', position: 'attention', kernel: 'lanczos3' });
+    } else if (ratio === 'cover') {
+      const { width = 0, height = 0 } = await source.metadata();
+      const w = Math.round(Math.min(RATIOS.cover.width, width, (height * 16) / 9));
+      resized = source.resize(w, Math.round((w * 9) / 16), { fit: 'cover', position: 'attention' });
+    } else {
+      resized = source.resize({ width: 1600, withoutEnlargement: true });
+    }
+    const buffer = await resized.webp({ quality: 80 }).toBuffer();
+    const name = `${PHOTO_PREFIX}${ratio === 'hero' ? '' : `${ratio}-`}${key}.webp`;
+    const file = await this.push(name, buffer, 'image/webp', photo.alt, photoCaption(photo));
     this.photos += 1;
     this.cache.set(cacheKey, file);
+    return file.id;
+  }
+
+  /** Uploads the university crest (transparent PNG) from assets/brand. */
+  async logo(): Promise<number> {
+    const hit = this.cache.get('logo');
+    if (hit) return hit.id;
+    const buffer = await readFile(path.join(this.strapi.dirs.app.root, BRAND_DIR, LOGO.file));
+    const file = await this.push(`${PHOTO_PREFIX}logo.png`, buffer, 'image/png', LOGO.alt, '');
+    this.cache.set('logo', file);
     return file.id;
   }
 

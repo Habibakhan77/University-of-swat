@@ -10,7 +10,7 @@ import type { Core, UID } from '@strapi/strapi';
 import { blocks, h, ul, type Block } from './lib/blocks';
 import { Writer } from './lib/docs';
 import { MediaFactory, type Theme } from './lib/media';
-import type { PhotoKey } from './data/photos';
+import { CAMPUS_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
 import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type Level, type ProgramSeed } from './data/academics';
 import { CAMPUSES, MAIN_ADDRESS, OFFICES } from './data/organisation';
 import { POSTS } from './data/posts';
@@ -19,9 +19,9 @@ import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE
 
 /** Real photo for each hero slide (see data/photos.ts). */
 const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], PhotoKey> = {
-  admissions: 'valley',
-  gandhara: 'gandhara',
-  solar: 'sunset',
+  admissions: 'campusMountains',
+  gandhara: 'niibsMou',
+  solar: 'solarization',
 };
 
 export interface SeedOptions {
@@ -119,7 +119,10 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     log('Campuses…');
     const campusIds = new Map<string, string>();
     for (const c of CAMPUSES) {
-      const image = await media.image({ ratio: 'cover', key: `campus-${c.slug}`, title: c.name, kicker: 'Campus' });
+      const campusPhoto = CAMPUS_PHOTOS[c.slug];
+      const image = campusPhoto
+        ? await media.photo(campusPhoto, 'original')
+        : await media.image({ ratio: 'cover', key: `campus-${c.slug}`, title: c.name, kicker: 'Campus' });
       const id = await w.create(
         'api::campus.campus',
         {
@@ -230,9 +233,14 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
 
     // ---------- Posts ----------
     log('News, announcements and events…');
+    const unknownPhotoSlugs = Object.keys(POST_PHOTOS).filter((slug) => !POSTS.some((p) => p.slug === slug));
+    if (unknownPhotoSlugs.length) throw new Error(`POST_PHOTOS lists unknown posts: ${unknownPhotoSlugs.join(', ')}`);
     const postTheme: Record<string, Theme> = { news: 'green', announcement: 'gold', event: 'maroon' };
     for (const p of POSTS) {
-      const coverImage = await media.image({ ratio: 'cover', key: `post-${p.slug}`, title: p.title, kicker: p.category, theme: postTheme[p.category] });
+      const postPhoto = POST_PHOTOS[p.slug];
+      const coverImage = postPhoto
+        ? await media.photo(postPhoto, 'cover')
+        : await media.image({ ratio: 'cover', key: `post-${p.slug}`, title: p.title, kicker: p.category, theme: postTheme[p.category] });
       const department = p.department ? departmentIds.get(p.department) : undefined;
       if (p.department && !department) throw new Error(`Unknown department "${p.department}" in post ${p.slug}`);
       await w.create(
@@ -350,8 +358,8 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
       { ...HOMEPAGE.ur, quickActions: QUICK_ACTIONS.ur, partners },
     );
 
-    const ogImage = await media.image({ ratio: 'og', key: 'default-og', title: 'University of Swat', kicker: 'Open Graph image' });
-    const logo = await media.image({ ratio: 'square', key: 'logo', title: 'University of Swat logo', kicker: 'Logo' });
+    const ogImage = await media.photo('campusMountains', 'og');
+    const logo = await media.logo();
     await w.single(
       'api::site-setting.site-setting',
       { ...SITE_SETTINGS.en, logo, logoDark: logo, defaultSeo: { ...SITE_SETTINGS.en.defaultSeo, ogImage } },
@@ -369,14 +377,14 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
         isPlaceholder: true,
       })),
     ];
-    const aboutHero = await media.image({ ratio: 'hero', key: 'about', title: 'University of Swat, Charbagh', kicker: 'About' });
+    const aboutHero = await media.photo('campusAerial');
     await w.single(
       'api::about.about',
       { ...ABOUT.en, heroImage: aboutHero, leadership },
       { ...ABOUT.ur, leadership: leadership.map((p, i) => (i === 0 ? { ...p, name: VC_MESSAGE.ur.name, designation: 'وائس چانسلر' } : p)) },
     );
 
-    const admissionsHero = await media.image({ ratio: 'hero', key: 'admissions', title: 'Admissions', kicker: 'Admissions', theme: 'maroon' });
+    const admissionsHero = await media.photo('campusMountains');
     await w.single('api::admissions-page.admissions-page', { ...ADMISSIONS.en, heroImage: admissionsHero }, ADMISSIONS.ur);
   } finally {
     await media.dispose();

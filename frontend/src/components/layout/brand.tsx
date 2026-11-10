@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { Rosette } from "@/components/brand/motifs";
 import { cn } from "@/lib/cn";
 import type { SiteImage } from "@/lib/strapi/site";
 
@@ -15,8 +14,12 @@ interface BrandProps {
   onNavigate?: () => void;
 }
 
-/** Logo + name lockup linking home. Uses the crest from Strapi, or the rosette mark until one is uploaded. */
+/** Built-in copy of the crest, used until (or unless) one is uploaded in Site Settings. */
+const FALLBACK_LOGO = { src: "/brand/uswat-logo.png", width: 256, height: 256 } as const;
+
+/** Logo + name lockup linking home. Uses the crest from Strapi Site Settings, else the built-in copy. */
 export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", className, onNavigate }: BrandProps) {
+  const crest = logo ?? FALLBACK_LOGO;
   return (
     <Link
       href="/"
@@ -24,28 +27,19 @@ export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", cl
       onClick={onNavigate}
       className={cn("group/brand inline-flex min-w-0 items-center gap-3 rounded-lg", className)}
     >
-      {logo ? (
-        <Image
-          src={logo.src}
-          alt=""
-          width={logo.width}
-          height={logo.height}
-          className="size-10 shrink-0 object-contain xl:size-11"
-          priority
-        />
-      ) : (
-        <span
-          aria-hidden
-          className={cn(
-            "flex size-10 shrink-0 items-center justify-center rounded-xl shadow-sm ring-1 ring-inset xl:size-11",
-            tone === "surface"
-              ? "bg-forest-700 text-gold-300 ring-white/10 dark:bg-forest-800"
-              : "bg-white/10 text-gold-300 ring-white/15",
-          )}
-        >
-          <Rosette className="size-6 transition-transform duration-700 ease-out-expo group-hover/brand:rotate-45 motion-reduce:transition-none" />
-        </span>
-      )}
+      <Image
+        src={crest.src}
+        alt=""
+        width={crest.width}
+        height={crest.height}
+        sizes="44px"
+        className={cn(
+          "size-10 shrink-0 object-contain xl:size-11",
+          // The crest's dark green edge would vanish on the dark footer: give it a light rim there.
+          tone === "inverted" && "rounded-full bg-white/90 p-0.5",
+        )}
+        priority
+      />
       <span className="flex min-w-0 flex-col">
         <span
           className={cn(

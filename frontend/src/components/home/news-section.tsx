@@ -7,6 +7,7 @@ import { Card, CardBody, CardDescription, CardLink, CardMedia, CardMeta, CardTit
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
+import { ImageCredit } from "@/components/ui/image-credit";
 
 interface NewsSectionProps {
   news: NewsItem[];
@@ -50,6 +51,11 @@ export function NewsSection({ news, locale, labels }: NewsSectionProps) {
               <CardMedia ratio="16/9">
                 {lead.image ? (
                   <Image src={lead.image.src} alt={lead.image.alt} fill sizes="(min-width: 1024px) 58vw, 100vw" />
+                ) : null}
+                {lead.image?.credit ? (
+                  <div className="absolute end-2 bottom-2 z-10 flex max-w-[calc(100%-1rem)] justify-end">
+                    <ImageCredit credit={lead.image.credit} className="max-w-full" />
+                  </div>
                 ) : null}
               </CardMedia>
               <CardBody>

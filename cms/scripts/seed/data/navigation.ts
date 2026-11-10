@@ -29,6 +29,7 @@ const l = (label: string, url: string, description: string, icon: string, isExte
 });
 
 export const NAV_EN: NavItem[] = [
+  { label: 'Home', url: '/', description: '', children: [] },
   {
     label: 'About',
     url: '/about',
@@ -106,6 +107,7 @@ export const NAV_EN: NavItem[] = [
 ];
 
 export const NAV_UR: NavItem[] = [
+  { label: 'ہوم', url: '/', description: '', children: [] },
   {
     label: 'تعارف',
     url: '/about',

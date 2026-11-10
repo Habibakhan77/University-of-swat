@@ -216,3 +216,21 @@
 - Mega menu: links grid fills the middle column and the side columns are narrower at xl, so no description
   is truncated (checked at 1280, 1366, 1440 and 1920 px, English and Urdu).
 - No freely licensed photo of either campus was found; campus cards keep placeholders for now.
+
+## Phase 5.2 — Real University of Swat photos and crest
+
+- Main navigation starts with **Home** (ہوم in Urdu), on desktop and in the mobile menu; it is marked
+  active (gold underline, `aria-current`) on the homepage only.
+- The real crest from the uswat.edu.pk header is uploaded to Site Settings by the seed and shown in the
+  header, mobile menu and footer (with a light rim on the dark footer). A built-in copy in
+  `public/brand/uswat-logo.png` replaces the lotus rosette as the fallback. Favicon and Apple touch icon
+  (`app/icon.png`, `app/apple-icon.png`) come from the crest; the default Next.js favicon is removed.
+- Hero slides, the Main Campus card, the About and Admissions heroes and the default Open Graph image use
+  real University of Swat photos; 13 of the 19 seeded posts get the first good photo from their
+  uswat.edu.pk article. Posters, notices and images under 800px were skipped, so those posts and the
+  Women Campus (no published photo wider than 655px) keep a text-free branded gradient.
+- All photos are credited "Photo: University of Swat", linked to their source page; the credit also shows on
+  the lead news story. The Wikimedia Commons scenery photos are removed.
+- Seed: `data/photos.ts` (`PHOTOS`, `POST_PHOTOS`, `CAMPUS_PHOTOS`, `LOGO`), assets in
+  `scripts/seed/assets/{photos,brand}`; `MediaFactory.photo(key, ratio)` crops to hero/OG size, 16:9 covers or
+  keeps the original ratio; `MediaFactory.logo()`. The seed fails loudly if `POST_PHOTOS` names an unknown post.
