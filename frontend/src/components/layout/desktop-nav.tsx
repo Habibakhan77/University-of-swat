@@ -1,10 +1,12 @@
 "use client";
 
-import { ArrowRight, ArrowUpRight, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, ArrowUpRight, CalendarDays, ChevronDown } from "lucide-react";
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
+import type { PostTeaser } from "@/lib/strapi/posts";
 import type { NavGroup } from "@/lib/strapi/site";
 import { Container } from "@/components/ui/container";
 import { buttonVariants } from "@/components/ui/button";
@@ -20,12 +22,37 @@ export interface NavPromo {
   external: boolean;
 }
 
+/** Featured content for the end column of one panel, matched by the menu item's URL. */
+export interface NavFeature {
+  groupHref: string;
+  eyebrow: string;
+  post: PostTeaser;
+}
+
 interface DesktopNavProps {
   groups: NavGroup[];
   label: string;
   overviewLabel: string;
-  /** Apply card shown in every panel, so the admissions path is one click from any menu. */
+  /** Panels with live featured content (e.g. latest news in News & Events). */
+  features: NavFeature[];
+  /** Apply card for every other panel, so the admissions path is one click from any menu. */
   promo: NavPromo | null;
+}
+
+const pathOf = (href: string) => href.split(/[?#]/)[0] || "/";
+
+/**
+ * Which top-level item the current page belongs to: the item whose URL prefixes the path, otherwise
+ * the item that links to this exact page. Shown with the gold underline and aria-current.
+ */
+function activeGroupIndex(groups: NavGroup[], pathname: string): number {
+  const byPrefix = groups.findIndex((g) => {
+    if (!g.href) return false;
+    const base = pathOf(g.href);
+    return base !== "/" && (pathname === base || pathname.startsWith(`${base}/`));
+  });
+  if (byPrefix !== -1) return byPrefix;
+  return groups.findIndex((g) => g.links.some((l) => !l.external && pathOf(l.href) === pathname));
 }
 
 const HOVER_OPEN_DELAY = 90;
@@ -39,8 +66,9 @@ const HOVER_CLOSE_DELAY = 220;
  * top-level items (mirrored in RTL) · Esc closes and returns focus · Tab out of the nav closes it.
  * Mouse: opens on hover with a short intent delay; clicking a trigger pins it open.
  */
-export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavProps) {
+export function DesktopNav({ groups, label, overviewLabel, features, promo }: DesktopNavProps) {
   const pathname = usePathname();
+  const active = activeGroupIndex(groups, pathname);
   // The open panel is remembered together with the path it was opened on, so navigating closes it
   // without a state update inside an effect.
   const [openState, setOpenState] = useState<{ index: number; path: string } | null>(null);
@@ -178,12 +206,18 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
       <ul className="flex h-full items-stretch gap-0.5">
         {groups.map((group, index) => {
           const isOpen = open === index;
+          const isActive = active === index;
           const hasPanel = group.links.length > 0;
+          const feature = group.href
+            ? features.find((f) => pathOf(f.groupHref) === pathOf(group.href ?? ""))
+            : undefined;
+          // Cream text on the green bar; a gold underline grows on hover, on the open item and on the
+          // section the current page belongs to.
           const triggerClass = cn(
-            "relative inline-flex h-full items-center gap-1 px-3 text-body-sm font-semibold text-fg-muted transition-colors duration-200 hover:text-fg",
-            "after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:origin-center after:scale-x-0 after:rounded-full after:bg-accent after:transition-transform after:duration-300 after:ease-out-expo",
-            "focus-visible:outline-offset-[-4px]",
-            isOpen && "text-fg after:scale-x-100",
+            "relative inline-flex h-full items-center gap-1 px-3 text-body-sm font-semibold text-cream/85 transition-colors duration-200 hover:text-cream",
+            "after:absolute after:inset-x-3 after:bottom-4 after:h-0.5 after:origin-center after:scale-x-0 after:rounded-full after:bg-gold-400 after:transition-transform after:duration-300 after:ease-out-expo xl:after:bottom-5",
+            "hover:after:scale-x-100 focus-visible:outline-offset-[-6px]",
+            (isOpen || isActive) && "text-cream after:scale-x-100",
           );
 
           if (!hasPanel) {
@@ -196,6 +230,7 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
                     }}
                     href={group.href}
                     external={false}
+                    aria-current={isActive ? "page" : undefined}
                     className={triggerClass}
                     onKeyDown={(event) => onTriggerKeyDown(event, index)}
                   >
@@ -223,6 +258,7 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
                 type="button"
                 aria-expanded={isOpen}
                 aria-controls={`${baseId}-panel-${index}`}
+                aria-current={isActive ? "true" : undefined}
                 onClick={() => setOpen(isOpen ? null : index)}
                 onKeyDown={(event) => onTriggerKeyDown(event, index)}
                 className={triggerClass}
@@ -230,7 +266,7 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
                 {group.label}
                 <ChevronDown
                   aria-hidden
-                  className={cn("size-3.5 opacity-60 transition-transform duration-300 ease-out-expo", isOpen && "rotate-180")}
+                  className={cn("size-3.5 text-gold-300/80 transition-transform duration-300 ease-out-expo", isOpen && "rotate-180")}
                 />
               </button>
 
@@ -238,7 +274,8 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
                 id={`${baseId}-panel-${index}`}
                 onKeyDown={(event) => onPanelKeyDown(event, index)}
                 className={cn(
-                  "absolute inset-x-0 top-full z-40 border-b border-line bg-surface-raised shadow-xl",
+                  // Panels stay cream (raised surface in dark mode) for readability, with the normal focus ring.
+                  "absolute inset-x-0 top-full z-40 border-b border-line bg-canvas text-fg shadow-xl [--ring:var(--ring-base)] dark:bg-surface-raised",
                   "duration-300 ease-out-expo",
                   // Opening: visibility flips instantly, so the first link can take focus at once (ArrowDown).
                   // Closing: visibility is transitioned too, so the panel stays visible while it fades out.
@@ -250,11 +287,13 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
                 <Container
                   size="wide"
                   className={cn(
-                    "grid gap-10 py-10",
-                    promo ? "grid-cols-[minmax(0,17rem)_minmax(0,1fr)_minmax(0,19rem)]" : "grid-cols-[minmax(0,17rem)_minmax(0,1fr)]",
+                    "grid gap-8 py-8",
+                    feature || promo
+                      ? "grid-cols-[minmax(0,15rem)_minmax(0,1fr)_minmax(0,19rem)]"
+                      : "grid-cols-[minmax(0,15rem)_minmax(0,1fr)]",
                   )}
                 >
-                  <div className="flex flex-col items-start gap-3 border-e border-line pe-8">
+                  <div className="flex flex-col items-start gap-2.5 border-e border-line py-1 pe-8">
                     <p className="text-overline text-accent-text uppercase">{group.label}</p>
                     {group.description ? <p className="text-heading-md text-fg">{group.description}</p> : null}
                     {group.href ? (
@@ -272,7 +311,7 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
                       </SmartLink>
                     ) : null}
                   </div>
-                  <ul className="grid max-w-3xl grid-cols-2 content-start gap-x-4 gap-y-1">
+                  <ul className="grid max-w-[40rem] grid-cols-2 content-start gap-x-2 gap-y-0.5">
                     {group.links.map((link) => {
                       const Icon = iconFor(link.icon);
                       return (
@@ -281,28 +320,26 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
                             href={link.href}
                             external={link.external}
                             onNavigate={() => setOpen(null)}
-                            className="group/link flex items-start gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-canvas-subtle"
+                            className="group/link flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-surface dark:hover:bg-white/5"
                           >
-                            {link.icon ? (
-                              <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md bg-primary-soft text-primary-soft-fg">
-                                <Icon aria-hidden className="size-4" />
-                              </span>
-                            ) : null}
-                            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                              <span className="inline-flex items-center gap-1.5 text-body font-semibold text-fg group-hover/link:text-primary-text">
+                            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg ring-1 ring-primary-text/10 transition-colors duration-200 ring-inset group-hover/link:bg-primary group-hover/link:text-primary-fg">
+                              <Icon aria-hidden className="size-[1.125rem]" strokeWidth={1.75} />
+                            </span>
+                            <span className="flex min-w-0 flex-1 flex-col">
+                              <span className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-fg group-hover/link:text-primary-text">
                                 {link.label}
                                 {link.external ? (
                                   <ArrowUpRight aria-hidden className="size-3.5 text-fg-subtle rtl:-scale-x-100" />
                                 ) : null}
                               </span>
                               {link.description ? (
-                                <span className="text-caption text-fg-subtle">{link.description}</span>
+                                <span className="truncate text-caption text-fg-subtle">{link.description}</span>
                               ) : null}
                             </span>
                             {!link.external ? (
                               <ArrowRight
                                 aria-hidden
-                                className="mt-1 size-4 shrink-0 -translate-x-1 text-primary-text opacity-0 transition-[opacity,translate] duration-300 group-hover/link:translate-x-0 group-hover/link:opacity-100 rtl:translate-x-1 rtl:-scale-x-100 rtl:group-hover/link:translate-x-0"
+                                className="size-4 shrink-0 -translate-x-1 text-primary-text opacity-0 transition-[opacity,translate] duration-300 group-hover/link:translate-x-0 group-hover/link:opacity-100 rtl:translate-x-1 rtl:-scale-x-100 rtl:group-hover/link:translate-x-0"
                               />
                             ) : null}
                           </SmartLink>
@@ -310,8 +347,43 @@ export function DesktopNav({ groups, label, overviewLabel, promo }: DesktopNavPr
                       );
                     })}
                   </ul>
-                  {promo ? (
-                    <div className="relative isolate flex flex-col items-start gap-3 overflow-hidden rounded-2xl bg-forest-800 p-6 text-sand-50 dark:bg-forest-900">
+                  {feature ? (
+                    <SmartLink
+                      href={feature.post.href}
+                      external={false}
+                      onNavigate={() => setOpen(null)}
+                      className="group/feat flex flex-col self-start overflow-hidden rounded-2xl border border-line bg-surface shadow-sm transition-shadow hover:shadow-md"
+                    >
+                      <span className="relative block aspect-video overflow-hidden bg-surface-sunken">
+                        {feature.post.image ? (
+                          <Image
+                            src={feature.post.image.src}
+                            alt={feature.post.image.alt}
+                            fill
+                            sizes="304px"
+                            className="object-cover transition-transform duration-700 ease-out-expo group-hover/feat:scale-[1.04] motion-reduce:transition-none"
+                          />
+                        ) : null}
+                      </span>
+                      <span className="flex flex-col gap-1.5 p-4">
+                        <span className="text-overline text-accent-text uppercase">{feature.eyebrow}</span>
+                        <span
+                          lang={feature.post.lang}
+                          className="line-clamp-2 text-heading-sm text-fg group-hover/feat:text-primary-text"
+                        >
+                          {feature.post.title}
+                        </span>
+                        <time
+                          dateTime={feature.post.date}
+                          className="inline-flex items-center gap-1.5 text-caption text-fg-subtle"
+                        >
+                          <CalendarDays aria-hidden className="size-3.5" />
+                          {feature.post.dateLabel}
+                        </time>
+                      </span>
+                    </SmartLink>
+                  ) : promo ? (
+                    <div className="relative isolate flex flex-col items-start gap-2.5 self-start overflow-hidden rounded-2xl bg-forest-800 p-6 text-cream [--ring:var(--color-gold-300)] dark:bg-forest-900">
                       <GandharaPattern className="-z-10 text-white opacity-[0.06]" />
                       <p className="text-overline text-gold-300 uppercase">{promo.eyebrow}</p>
                       <p className="text-heading-md">{promo.title}</p>

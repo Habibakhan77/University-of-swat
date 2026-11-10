@@ -40,7 +40,7 @@ export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", cl
             "flex size-10 shrink-0 items-center justify-center rounded-xl shadow-sm ring-1 ring-inset xl:size-11",
             tone === "surface"
               ? "bg-forest-700 text-gold-300 ring-white/10 dark:bg-forest-800"
-              : "bg-white/10 text-gold-300 ring-white/15",
+              : "bg-white/10 text-gold-300 ring-white/15 group-hover/brand:bg-white/15",
           )}
         >
           <Rosette className="size-6 transition-transform duration-700 ease-out-expo group-hover/brand:rotate-45 motion-reduce:transition-none" />
@@ -50,7 +50,7 @@ export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", cl
         <span
           className={cn(
             "truncate text-body font-bold tracking-[-0.01em] xl:text-[1.0625rem]",
-            tone === "surface" ? "text-fg" : "text-white",
+            tone === "surface" ? "text-fg" : "text-cream",
           )}
         >
           {siteName}

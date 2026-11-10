@@ -4,20 +4,10 @@
  */
 import { blocks, h, ul, pLink } from '../lib/blocks';
 import { MAIN_ADDRESS, WEBMASTER_EMAIL } from './organisation';
+import { EXTERNAL_LINKS } from './external';
+import { NAV_EN, NAV_UR } from './navigation';
 
-export const EXTERNAL = {
-  cms: 'https://cms1.uswat.edu.pk/',
-  meritList: 'https://cms1.uswat.edu.pk/admission/program/list/final',
-  exam: 'https://exam.uswat.edu.pk/',
-  sujris: 'https://sujris.uswat.edu.pk/',
-  eOffice: 'https://uswat.edu.pk/e-office/',
-  office365: 'https://www.office.com/',
-  digitalLibrary: 'https://www.digitallibrary.edu.pk/uniofswat.html',
-  campusTv: 'https://www.youtube.com/@Campus_Tv_UoS',
-  facebook: 'https://www.facebook.com/universityofswat/',
-  linkedin: 'https://www.linkedin.com/company/university-of-swat1/',
-  tiktok: 'https://www.tiktok.com/@universityofswat2010',
-} as const;
+export const EXTERNAL = EXTERNAL_LINKS;
 
 const link = (label: string, url: string, description?: string, icon?: string, isExternal = false) => ({
   label,
@@ -35,82 +25,7 @@ export const SITE_SETTINGS = {
     contact: { email: WEBMASTER_EMAIL, address: MAIN_ADDRESS },
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=University+of+Swat+Charbagh',
     applyUrl: EXTERNAL.cms,
-    mainNavigation: [
-      {
-        label: 'About',
-        url: '/about',
-        description: 'History, leadership and campuses',
-        children: [
-          link('About the University', '/about'),
-          link('Vice Chancellor’s Message', '/about/vice-chancellor'),
-          link('Leadership', '/about#leadership'),
-          link('Campuses', '/about#campuses'),
-          link('Administration & Offices', '/administration'),
-        ],
-      },
-      {
-        label: 'Academics',
-        url: '/academics',
-        description: 'Faculties, departments and programs',
-        children: [
-          link('Faculties & Departments', '/academics'),
-          link('All Programs', '/academics/programs'),
-          link('Faculty Directory', '/faculty-directory'),
-          link('Academic Calendar', '/downloads?category=academic_calendar'),
-          link('Central Library', '/campus-life/library'),
-        ],
-      },
-      {
-        label: 'Admissions',
-        url: '/admissions',
-        description: 'Apply, eligibility, fees and merit lists',
-        children: [
-          link('Admissions Hub', '/admissions'),
-          link('How to Apply', '/admissions#how-to-apply'),
-          link('Fee Structure', '/admissions#fees'),
-          link('Merit Lists', '/downloads?category=merit_list'),
-          link('Scholarships & Financial Aid', '/admissions#scholarships'),
-          link('FAQs', '/admissions#faqs'),
-        ],
-      },
-      {
-        label: 'Research',
-        url: '/research',
-        description: 'ORIC, QEC, journal and projects',
-        children: [
-          link('Research at UoS', '/research'),
-          link('ORIC', '/administration/oric'),
-          link('Quality Enhancement Cell', '/administration/qec'),
-          link('SUJRIS Journal', EXTERNAL.sujris, undefined, undefined, true),
-          link('Research Projects', '/research#projects'),
-        ],
-      },
-      {
-        label: 'News & Events',
-        url: '/news',
-        description: 'News, announcements and events',
-        children: [
-          link('All News', '/news'),
-          link('Announcements', '/news?category=announcement'),
-          link('Events', '/news?category=event'),
-          link('Tenders', '/tenders'),
-          link('Jobs', '/jobs'),
-        ],
-      },
-      {
-        label: 'Campus Life',
-        url: '/campus-life',
-        description: 'Library, sports, hostels and societies',
-        children: [
-          link('Library', '/campus-life/library'),
-          link('Sports', '/campus-life/sports'),
-          link('Hostels', '/campus-life/hostels'),
-          link('Transport', '/campus-life/transport'),
-          link('Societies & YDC', '/campus-life/societies'),
-          link('Hunerkada', '/academics/hunerkada'),
-        ],
-      },
-    ],
+    mainNavigation: NAV_EN,
     // Top utility bar: the portals students and staff open every day. All HTTPS.
     utilityLinks: [
       link('CMS Portal', EXTERNAL.cms, 'Student and admission portal', 'monitor', true),
@@ -160,14 +75,7 @@ export const SITE_SETTINGS = {
     shortName: 'جامعہ سوات',
     tagline: 'سوات کے دل میں علم، ورثہ اور خدمت',
     contact: { email: WEBMASTER_EMAIL, address: 'جامعہ سوات، مرکزی کیمپس، چارباغ، ضلع سوات، خیبر پختونخوا، پاکستان' },
-    mainNavigation: [
-      { label: 'تعارف', url: '/about', children: [link('جامعہ کا تعارف', '/about'), link('وائس چانسلر کا پیغام', '/about/vice-chancellor'), link('قیادت', '/about#leadership'), link('کیمپس', '/about#campuses'), link('انتظامیہ و دفاتر', '/administration')] },
-      { label: 'تعلیم', url: '/academics', children: [link('فیکلٹیز و شعبہ جات', '/academics'), link('تمام پروگرام', '/academics/programs'), link('اساتذہ کی فہرست', '/faculty-directory'), link('تعلیمی کیلنڈر', '/downloads?category=academic_calendar'), link('مرکزی لائبریری', '/campus-life/library')] },
-      { label: 'داخلے', url: '/admissions', children: [link('داخلہ مرکز', '/admissions'), link('درخواست کا طریقہ', '/admissions#how-to-apply'), link('فیس اسٹرکچر', '/admissions#fees'), link('میرٹ لسٹیں', '/downloads?category=merit_list'), link('وظائف و مالی معاونت', '/admissions#scholarships'), link('عمومی سوالات', '/admissions#faqs')] },
-      { label: 'تحقیق', url: '/research', children: [link('جامعہ میں تحقیق', '/research'), link('اورک', '/administration/oric'), link('کوالٹی انہانسمنٹ سیل', '/administration/qec'), link('سُجرس جریدہ', EXTERNAL.sujris, undefined, undefined, true), link('تحقیقی منصوبے', '/research#projects')] },
-      { label: 'خبریں و تقریبات', url: '/news', children: [link('تمام خبریں', '/news'), link('اعلانات', '/news?category=announcement'), link('تقریبات', '/news?category=event'), link('ٹینڈرز', '/tenders'), link('ملازمتیں', '/jobs')] },
-      { label: 'کیمپس لائف', url: '/campus-life', children: [link('لائبریری', '/campus-life/library'), link('کھیل', '/campus-life/sports'), link('ہاسٹل', '/campus-life/hostels'), link('ٹرانسپورٹ', '/campus-life/transport'), link('سوسائٹیز', '/campus-life/societies'), link('ہنرکدہ', '/academics/hunerkada')] },
-    ],
+    mainNavigation: NAV_UR,
     utilityLinks: [
       link('سی ایم ایس پورٹل', EXTERNAL.cms, 'طلبہ و داخلہ پورٹل', 'monitor', true),
       link('امتحانی پورٹل', EXTERNAL.exam, 'نتائج اور ڈیٹ شیٹس', 'file-check', true),

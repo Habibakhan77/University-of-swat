@@ -70,7 +70,7 @@ export function MobileMenu({ groups, services, apply, brand, labels }: MobileMen
         onClick={show}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "xl:hidden")}
+        className="inline-flex size-11 items-center justify-center rounded-lg text-cream transition-colors hover:bg-white/10 xl:hidden"
       >
         <Menu aria-hidden className="size-5!" />
         <span className="sr-only">{labels.open}</span>
@@ -84,7 +84,7 @@ export function MobileMenu({ groups, services, apply, brand, labels }: MobileMen
           // A click on the dialog element itself (not its content) is a click on the backdrop.
           if (event.target === event.currentTarget) hide();
         }}
-        className="sheet bg-canvas text-fg xl:hidden"
+        className="sheet bg-canvas text-fg [--ring:var(--ring-base)] xl:hidden"
       >
         <div className="flex h-full flex-col">
           <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-line px-5">

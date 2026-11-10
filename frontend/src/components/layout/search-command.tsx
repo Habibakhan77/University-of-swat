@@ -126,15 +126,17 @@ export function SearchCommand({ groups, labels }: SearchCommandProps) {
         aria-haspopup="dialog"
         aria-keyshortcuts="Control+K Meta+K /"
         className={cn(
-          "group/search hidden h-10 w-56 items-center xl:hidden! 2xl:inline-flex! gap-2.5 rounded-full border border-line bg-surface ps-3.5 pe-1.5 text-body-sm text-fg-subtle shadow-xs transition-colors lg:inline-flex",
-          "hover:border-line-strong hover:text-fg-muted 2xl:w-64",
+          // Translucent "glass" field on the green bar.
+          "group/search hidden h-10 w-56 items-center gap-2.5 rounded-full ps-3.5 pe-1.5 text-body-sm lg:inline-flex xl:hidden! 2xl:inline-flex! 2xl:w-64",
+          "bg-white/10 text-cream/80 ring-1 ring-white/15 ring-inset backdrop-blur-md transition-colors",
+          "hover:bg-white/15 hover:text-cream hover:ring-white/25 dark:bg-white/8",
         )}
       >
         <Search aria-hidden className="size-4 shrink-0" />
         <span className="flex-1 truncate text-start">{labels.buttonLong}</span>
         <kbd
           aria-label={labels.shortcut}
-          className="inline-flex h-7 items-center gap-0.5 rounded-full bg-canvas-subtle px-2 font-sans text-[0.6875rem] font-semibold text-fg-muted ring-1 ring-line ring-inset"
+          className="inline-flex h-7 items-center gap-0.5 rounded-full bg-white/10 px-2 font-sans text-[0.6875rem] font-semibold text-cream/85 ring-1 ring-white/15 ring-inset"
         >
           <span>{modifier}</span>
           <span>K</span>
@@ -144,7 +146,7 @@ export function SearchCommand({ groups, labels }: SearchCommandProps) {
         type="button"
         onClick={open}
         aria-haspopup="dialog"
-        className="inline-flex size-11 items-center justify-center rounded-lg text-fg transition-colors hover:bg-canvas-subtle lg:hidden xl:inline-flex 2xl:hidden"
+        className="inline-flex size-11 items-center justify-center rounded-lg text-cream transition-colors hover:bg-white/10 lg:hidden xl:inline-flex 2xl:hidden"
       >
         <Search aria-hidden className="size-5" />
         <span className="sr-only">{labels.button}</span>
@@ -156,7 +158,7 @@ export function SearchCommand({ groups, labels }: SearchCommandProps) {
         onClick={(event) => {
           if (event.target === event.currentTarget) close();
         }}
-        className="command bg-surface-raised text-fg"
+        className="command bg-surface-raised text-fg [--ring:var(--ring-base)]"
       >
         <h2 id={`${id}-title`} className="sr-only">
           {labels.dialogTitle}

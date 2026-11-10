@@ -94,9 +94,9 @@ export function ThemeToggle({
               size === "sm" ? "size-7" : "h-10 min-w-10",
               showLabels && "flex-1 px-3 text-body-sm",
               tone === "surface" && "text-fg-muted hover:text-fg",
-              tone === "inverted" && "text-forest-100 hover:text-white",
+              tone === "inverted" && "text-cream/75 hover:text-cream",
               checked && tone === "surface" && "bg-primary text-primary-fg shadow-xs hover:text-primary-fg",
-              checked && tone === "inverted" && "bg-white/15 text-white",
+              checked && tone === "inverted" && "bg-white/15 text-cream",
             )}
           >
             <Icon aria-hidden className={size === "sm" ? "size-3.5" : "size-4"} strokeWidth={1.75} />
