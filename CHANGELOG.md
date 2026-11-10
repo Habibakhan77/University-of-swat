@@ -254,3 +254,13 @@
   Zoology, abstracts due 31 December 2026), Allama Iqbal Day (university closed on 9 November 2026), Swat
   Lectures (Department of English and Foreign Languages, talk by Dr Shahid Rasheed). All-day events show no time.
 - Spacing: `--spacing-section` 48–88px (was 64–128px) and `--spacing-section-sm` 32–56px.
+
+## Phase 5.4 — Evergreen admissions band
+
+- Homepage admissions band no longer claims "Spring 2027 admissions": heading "Admissions at the University of
+  Swat", text "Explore programs, eligibility, fee structure and merit lists in one place." (Urdu included).
+- New Strapi field Homepage → `admissionsLinks` (repeatable link, localized) for the links beside the band; the
+  first one is highlighted in gold. Seeded with the real "Final Merit List Fall 2026 (Self Finance)" link from
+  the uswat.edu.pk homepage (cms1.uswat.edu.pk), then Programs & eligibility and Fee Structure.
+- Admissions page seed: the "Spring 2027" banner and the four invented "tentative" important dates are removed;
+  the banner now points to the CMS admission portal and the dates are left for the Admissions Directorate.

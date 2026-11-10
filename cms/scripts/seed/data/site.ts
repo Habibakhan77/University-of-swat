@@ -123,11 +123,17 @@ export const HOMEPAGE = {
   en: {
     admissionsBanner: {
       isVisible: true,
-      title: 'Spring 2027 admissions',
-      text: 'Admissions for selected programs open soon. Check eligibility, fees and important dates in the Admissions hub.',
+      title: 'Admissions at the University of Swat',
+      text: 'Explore programs, eligibility, fee structure and merit lists in one place.',
       buttonLabel: 'Go to Admissions',
       buttonUrl: '/admissions',
     },
+    // The first link is highlighted on the homepage: keep the latest published merit list there.
+    admissionsLinks: [
+      link('Final Merit List Fall 2026 (Self Finance)', EXTERNAL.meritList, 'On the university CMS admissions portal', 'list-checks', true),
+      link('Programs & eligibility', '/academics/programs', 'Undergraduate and postgraduate programs', 'graduation-cap'),
+      link('Fee Structure', '/admissions#fees', 'Semester fees and challans', 'wallet'),
+    ],
     statsHeading: 'The University at a glance',
     newsHeading: 'Latest news',
     eventsHeading: 'Events',
@@ -140,11 +146,16 @@ export const HOMEPAGE = {
   ur: {
     admissionsBanner: {
       isVisible: true,
-      title: 'بہار ۲۰۲۷ داخلے',
-      text: 'منتخب پروگراموں میں داخلے جلد شروع ہوں گے۔ اہلیت، فیس اور اہم تاریخیں داخلہ مرکز میں دیکھیں۔',
+      title: 'جامعہ سوات میں داخلے',
+      text: 'پروگرام، اہلیت، فیس اسٹرکچر اور میرٹ لسٹیں ایک ہی جگہ دیکھیں۔',
       buttonLabel: 'داخلہ مرکز',
       buttonUrl: '/admissions',
     },
+    admissionsLinks: [
+      link('حتمی میرٹ لسٹ خزاں ۲۰۲۶ (سیلف فنانس)', EXTERNAL.meritList, 'یونیورسٹی کے سی ایم ایس داخلہ پورٹل پر', 'list-checks', true),
+      link('پروگرام اور اہلیت', '/academics/programs', 'انڈرگریجویٹ اور پوسٹ گریجویٹ پروگرام', 'graduation-cap'),
+      link('فیس اسٹرکچر', '/admissions#fees', 'سمسٹر فیس اور چالان', 'wallet'),
+    ],
     statsHeading: 'جامعہ ایک نظر میں',
     newsHeading: 'تازہ خبریں',
     eventsHeading: 'تقریبات',
@@ -300,17 +311,13 @@ export const ADMISSIONS = {
     applyUrl: EXTERNAL.cms,
     banner: {
       isVisible: true,
-      title: 'Spring 2027 admissions',
-      text: 'Admissions for selected programs are expected to open soon. Dates below are tentative until the official advertisement is published.',
+      title: 'Apply through the CMS admission portal',
+      text: 'Applications, merit lists and admission notices for every program are published on the university CMS portal.',
       buttonLabel: 'Open the CMS portal',
       buttonUrl: EXTERNAL.cms,
     },
-    importantDates: [
-      { label: 'Online applications open', startDate: '2026-12-01', note: 'Tentative — confirm with the official advertisement' },
-      { label: 'Last date to apply', startDate: '2027-01-05', note: 'Tentative' },
-      { label: 'First merit list', startDate: '2027-01-15', note: 'Tentative' },
-      { label: 'Classes begin', startDate: '2027-02-01', note: 'Tentative' },
-    ],
+    // Only dates from an official admission advertisement: Admissions Directorate to add them.
+    importantDates: [],
     howToApply: [
       { title: 'Choose your program', description: 'Browse programs by faculty and check the eligibility criteria.', icon: 'search' },
       { title: 'Create an account', description: 'Sign up on the CMS admission portal with a valid email and CNIC / B-Form number.', icon: 'user-plus' },
@@ -344,17 +351,12 @@ export const ADMISSIONS = {
     intro: 'جامعہ سوات میں داخلے کے لیے سب کچھ: پروگرام، اہلیت، فیس، اہم تاریخیں اور میرٹ لسٹیں۔',
     banner: {
       isVisible: true,
-      title: 'بہار ۲۰۲۷ داخلے',
-      text: 'منتخب پروگراموں میں داخلے جلد متوقع ہیں۔ درج ذیل تاریخیں سرکاری اشتہار تک عارضی ہیں۔',
+      title: 'سی ایم ایس داخلہ پورٹل کے ذریعے درخواست دیں',
+      text: 'تمام پروگراموں کی درخواستیں، میرٹ لسٹیں اور داخلہ نوٹس یونیورسٹی کے سی ایم ایس پورٹل پر شائع ہوتے ہیں۔',
       buttonLabel: 'سی ایم ایس پورٹل کھولیں',
       buttonUrl: EXTERNAL.cms,
     },
-    importantDates: [
-      { label: 'آن لائن درخواستوں کا آغاز', startDate: '2026-12-01', note: 'عارضی — سرکاری اشتہار سے تصدیق کریں' },
-      { label: 'درخواست کی آخری تاریخ', startDate: '2027-01-05', note: 'عارضی' },
-      { label: 'پہلی میرٹ لسٹ', startDate: '2027-01-15', note: 'عارضی' },
-      { label: 'کلاسوں کا آغاز', startDate: '2027-02-01', note: 'عارضی' },
-    ],
+    importantDates: [],
     howToApply: [
       { title: 'پروگرام منتخب کریں', description: 'فیکلٹی کے لحاظ سے پروگرام دیکھیں اور اہلیت چیک کریں۔', icon: 'search' },
       { title: 'اکاؤنٹ بنائیں', description: 'سی ایم ایس پورٹل پر درست ای میل اور شناختی کارڈ / ب فارم نمبر کے ساتھ اندراج کریں۔', icon: 'user-plus' },

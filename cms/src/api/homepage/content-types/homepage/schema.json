@@ -35,6 +35,16 @@
         }
       }
     },
+    "admissionsLinks": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "statsHeading": {
       "type": "string",
       "pluginOptions": {

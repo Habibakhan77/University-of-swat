@@ -58,9 +58,8 @@ Tender, job and download attachments are one-page placeholder PDFs.
 - [ ] **Program list**: representative of each department. The Admissions Directorate should confirm it,
       and also which programs run at the Women Campus (programs are linked to the Main Campus for now).
 - [ ] **Fees and seats**: not set on programs. Upload the official fee structure PDF.
-- [ ] **Admissions important dates** (Spring 2027): marked *Tentative*.
-- [ ] **Sample events**: "Spring 2027 Admissions Information Session" and "Annual Sports Gala" are
-      demo items so the homepage has upcoming events. Confirm or delete them.
+- [ ] **Admissions important dates**: left empty; add them from the official admission advertisement.
+- [ ] **Homepage admissions links**: the first link is highlighted; keep the latest merit list there.
 - [ ] **Campus map coordinates**: not set, maps use a search link.
 - [ ] **Urdu**: programs, faculty members, tenders, jobs, downloads and most posts are English only. The
       frontend should fall back to English.

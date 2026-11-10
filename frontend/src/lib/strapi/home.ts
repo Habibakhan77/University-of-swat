@@ -125,6 +125,8 @@ export interface AdmissionsBanner {
 export interface HomeContent {
   quickActions: NavLink[];
   banner: AdmissionsBanner | null;
+  /** Links beside the admissions banner (Homepage → Admissions links); the first is highlighted. */
+  admissionsLinks: NavLink[];
   headings: {
     stats: string | null;
     news: string | null;
@@ -153,6 +155,7 @@ interface Doc {
 
 interface StrapiHomepage extends Doc {
   quickActions: StrapiLink[];
+  admissionsLinks: StrapiLink[] | null;
   admissionsBanner: {
     isVisible: boolean | null;
     title: string | null;
@@ -361,6 +364,7 @@ async function loadHome(locale: Locale): Promise<HomeContent | null> {
       {
         "populate[quickActions]": true,
         "populate[admissionsBanner]": true,
+        "populate[admissionsLinks]": true,
         "populate[partners][populate][logo][fields][0]": "url",
         "populate[partners][populate][logo][fields][1]": "alternativeText",
         "populate[partners][populate][logo][fields][2]": "width",
@@ -376,6 +380,7 @@ async function loadHome(locale: Locale): Promise<HomeContent | null> {
     const b = data.admissionsBanner;
     return {
       quickActions: (data.quickActions ?? []).map(toNavLink),
+      admissionsLinks: (data.admissionsLinks ?? []).map(toNavLink),
       banner:
         b && b.isVisible !== false && b.title
           ? {

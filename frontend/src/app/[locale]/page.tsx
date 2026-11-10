@@ -133,7 +133,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
       {home?.banner ? (
         <AdmissionsBand
           banner={home.banner}
-          links={quickActions.slice(1).filter((a) => a.href !== home.banner?.cta?.href).slice(0, 3)}
+          links={home.admissionsLinks}
           labels={{ eyebrow: t("admissionsEyebrow"), applyBy: t.raw("applyBy") as string }}
         />
       ) : null}

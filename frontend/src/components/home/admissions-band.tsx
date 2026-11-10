@@ -10,7 +10,7 @@ import { SmartLink } from "@/components/layout/smart-link";
 
 interface AdmissionsBandProps {
   banner: AdmissionsBanner;
-  /** Quick actions after the first (Merit Lists, Fee…), repeated here as next steps. */
+  /** Homepage → Admissions links. The first (e.g. the latest merit list) is highlighted. */
   links: NavLink[];
   labels: { eyebrow: string; applyBy: string };
 }
@@ -63,25 +63,41 @@ export function AdmissionsBand({ banner, links, labels }: AdmissionsBandProps) {
 
           {links.length ? (
             <ul className="flex flex-col gap-2.5">
-              {links.map((link) => {
+              {links.map((link, i) => {
                 const Icon = iconFor(link.icon);
+                const featured = i === 0;
                 return (
                   <li key={link.href}>
                     <SmartLink
                       href={link.href}
                       external={link.external}
-                      className="group/al flex items-center gap-4 rounded-2xl bg-white/8 p-4 ring-1 ring-white/12 backdrop-blur-sm transition-colors ring-inset hover:bg-white/14"
+                      className={cn(
+                        "group/al flex items-center gap-4 rounded-2xl p-4 ring-1 ring-inset transition-colors",
+                        featured
+                          ? "bg-gold-400 text-ink-950 shadow-lg ring-gold-200/60 hover:bg-gold-300"
+                          : "bg-white/8 ring-white/12 backdrop-blur-sm hover:bg-white/14",
+                      )}
                     >
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gold-400 text-ink-950">
+                      <span
+                        className={cn(
+                          "flex size-10 shrink-0 items-center justify-center rounded-xl",
+                          featured ? "bg-maroon-800 text-gold-200" : "bg-gold-400 text-ink-950",
+                        )}
+                      >
                         <Icon aria-hidden className="size-5" strokeWidth={1.75} />
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="font-semibold text-white">{link.label}</span>
-                        {link.description ? <span className="text-caption text-maroon-100">{link.description}</span> : null}
+                        <span className={cn("font-semibold", featured ? "text-ink-950" : "text-white")}>{link.label}</span>
+                        {link.description ? (
+                          <span className={cn("text-caption", featured ? "text-ink-800" : "text-maroon-100")}>{link.description}</span>
+                        ) : null}
                       </span>
                       <ArrowRight
                         aria-hidden
-                        className="size-4 shrink-0 text-gold-300 transition-transform duration-300 group-hover/al:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/al:-translate-x-0.5"
+                        className={cn(
+                          "size-4 shrink-0 transition-transform duration-300 group-hover/al:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/al:-translate-x-0.5",
+                          featured ? "text-maroon-800" : "text-gold-300",
+                        )}
                       />
                     </SmartLink>
                   </li>
