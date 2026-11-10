@@ -211,13 +211,13 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
           const feature = group.href
             ? features.find((f) => pathOf(f.groupHref) === pathOf(group.href ?? ""))
             : undefined;
-          // Cream text on the green bar; a gold underline grows on hover, on the open item and on the
-          // section the current page belongs to.
+          // A gold underline grows on hover, on the open item and on the section the current page belongs
+          // to. Labels never wrap ("News & Events" stays on one line).
           const triggerClass = cn(
-            "relative inline-flex h-full items-center gap-1 px-3 text-body-sm font-semibold text-cream/85 transition-colors duration-200 hover:text-cream",
-            "after:absolute after:inset-x-3 after:bottom-4 after:h-0.5 after:origin-center after:scale-x-0 after:rounded-full after:bg-gold-400 after:transition-transform after:duration-300 after:ease-out-expo xl:after:bottom-5",
+            "relative inline-flex h-full items-center gap-1 px-2.5 text-body-sm font-semibold whitespace-nowrap text-fg-muted transition-colors duration-200 hover:text-fg 2xl:px-3",
+            "after:absolute after:inset-x-3 after:bottom-4 after:h-0.5 after:origin-center after:scale-x-0 after:rounded-full after:bg-accent after:transition-transform after:duration-300 after:ease-out-expo xl:after:bottom-5",
             "hover:after:scale-x-100 focus-visible:outline-offset-[-6px]",
-            (isOpen || isActive) && "text-cream after:scale-x-100",
+            (isOpen || isActive) && "text-fg after:scale-x-100",
           );
 
           if (!hasPanel) {
@@ -266,7 +266,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                 {group.label}
                 <ChevronDown
                   aria-hidden
-                  className={cn("size-3.5 text-gold-300/80 transition-transform duration-300 ease-out-expo", isOpen && "rotate-180")}
+                  className={cn("size-3.5 shrink-0 opacity-60 transition-transform duration-300 ease-out-expo", isOpen && "rotate-180")}
                 />
               </button>
 
@@ -274,8 +274,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                 id={`${baseId}-panel-${index}`}
                 onKeyDown={(event) => onPanelKeyDown(event, index)}
                 className={cn(
-                  // Panels stay cream (raised surface in dark mode) for readability, with the normal focus ring.
-                  "absolute inset-x-0 top-full z-40 border-b border-line bg-canvas text-fg shadow-xl [--ring:var(--ring-base)] dark:bg-surface-raised",
+                  "absolute inset-x-0 top-full z-40 border-b border-line bg-surface-raised shadow-xl",
                   "duration-300 ease-out-expo",
                   // Opening: visibility flips instantly, so the first link can take focus at once (ArrowDown).
                   // Closing: visibility is transitioned too, so the panel stays visible while it fades out.
@@ -320,7 +319,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                             href={link.href}
                             external={link.external}
                             onNavigate={() => setOpen(null)}
-                            className="group/link flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-surface dark:hover:bg-white/5"
+                            className="group/link flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-canvas-subtle"
                           >
                             <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg ring-1 ring-primary-text/10 transition-colors duration-200 ring-inset group-hover/link:bg-primary group-hover/link:text-primary-fg">
                               <Icon aria-hidden className="size-[1.125rem]" strokeWidth={1.75} />
@@ -383,7 +382,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                       </span>
                     </SmartLink>
                   ) : promo ? (
-                    <div className="relative isolate flex flex-col items-start gap-2.5 self-start overflow-hidden rounded-2xl bg-forest-800 p-6 text-cream [--ring:var(--color-gold-300)] dark:bg-forest-900">
+                    <div className="relative isolate flex flex-col items-start gap-2.5 self-start overflow-hidden rounded-2xl bg-forest-800 p-6 text-sand-50 [--ring:var(--color-gold-300)] dark:bg-forest-900">
                       <GandharaPattern className="-z-10 text-white opacity-[0.06]" />
                       <p className="text-overline text-gold-300 uppercase">{promo.eyebrow}</p>
                       <p className="text-heading-md">{promo.title}</p>

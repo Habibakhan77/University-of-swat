@@ -1,109 +1,73 @@
 "use client";
 
-import { Monitor, Moon, Sun, type LucideIcon } from "lucide-react";
-import { useRef } from "react";
+import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { useTheme, type ThemePreference } from "./use-theme";
-
-const options: { value: ThemePreference; icon: LucideIcon }[] = [
-  { value: "light", icon: Sun },
-  { value: "dark", icon: Moon },
-  { value: "system", icon: Monitor },
-];
+import { useTheme } from "./use-theme";
 
 export interface ThemeToggleLabels {
-  group: string;
-  light: string;
-  dark: string;
-  system: string;
+  /** Accessible name of the switch, e.g. "Dark mode". */
+  toggle: string;
 }
-
-const defaultLabels: ThemeToggleLabels = { group: "Colour theme", light: "Light", dark: "Dark", system: "System" };
 
 interface ThemeToggleProps {
   className?: string;
   labels?: ThemeToggleLabels;
-  /** "sm" fits the utility bar; "md" is a 44px touch target for the mobile menu. */
+  /** "sm" fits the utility bar; "md" is a 44px touch target. */
   size?: "sm" | "md";
-  /** Show text labels next to the icons (mobile menu). */
-  showLabels?: boolean;
+  /** Show the text label next to the icon (mobile menu). */
+  showLabel?: boolean;
   /** Visual style: on the dark green utility bar or on a normal surface. */
   tone?: "surface" | "inverted";
 }
 
-/** Three-way segmented control (light / dark / system), a radio group with arrow-key support. */
+/**
+ * One button that switches between light and dark (a `role="switch"`, on = dark). Until the visitor
+ * picks, the site follows the operating system. The icon is chosen with the `dark:` variant, so the
+ * server render already shows the right one and nothing flashes during hydration.
+ */
 export function ThemeToggle({
   className,
-  labels = defaultLabels,
+  labels = { toggle: "Dark mode" },
   size = "md",
-  showLabels = false,
+  showLabel = false,
   tone = "surface",
 }: ThemeToggleProps) {
-  const { preference, setPreference } = useTheme();
-  const groupRef = useRef<HTMLDivElement>(null);
-  const active = preference ?? "system";
-
-  const move = (from: ThemePreference, delta: number) => {
-    const index = options.findIndex((option) => option.value === from);
-    const next = options[(index + delta + options.length) % options.length].value;
-    setPreference(next);
-    groupRef.current?.querySelector<HTMLButtonElement>(`[data-value="${next}"]`)?.focus();
-  };
+  const { isDark, setPreference } = useTheme();
 
   return (
-    <div
-      ref={groupRef}
-      role="radiogroup"
-      aria-label={labels.group}
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isDark ?? undefined}
+      aria-label={showLabel ? undefined : labels.toggle}
+      title={showLabel ? undefined : labels.toggle}
+      onClick={() => {
+        const dark = document.documentElement.classList.contains("dark");
+        setPreference(dark ? "light" : "dark");
+      }}
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-full p-0.5",
-        tone === "surface" && "border border-line bg-surface shadow-xs",
-        tone === "inverted" && "bg-white/8 ring-1 ring-white/15 ring-inset",
-        showLabels && "w-full",
+        "group/theme inline-flex items-center justify-center gap-2.5 rounded-full font-medium transition-colors duration-200",
+        size === "sm" ? "size-8" : "size-11",
+        tone === "surface" && "text-fg-muted hover:bg-canvas-subtle hover:text-fg",
+        tone === "inverted" && "text-forest-50 hover:bg-white/10 hover:text-white",
+        showLabel &&
+          "h-12 w-full justify-between rounded-xl border border-line bg-surface px-4 text-body-sm text-fg shadow-xs hover:bg-surface",
         className,
       )}
     >
-      {options.map(({ value, icon: Icon }) => {
-        const checked = preference === value;
-        const label = labels[value];
-        return (
-          <button
-            key={value}
-            type="button"
-            role="radio"
-            aria-checked={checked}
-            aria-label={showLabels ? undefined : label}
-            title={showLabels ? undefined : label}
-            tabIndex={active === value ? 0 : -1}
-            data-value={value}
-            onClick={() => setPreference(value)}
-            onKeyDown={(event) => {
-              const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
-              const forward = rtl ? "ArrowLeft" : "ArrowRight";
-              const backward = rtl ? "ArrowRight" : "ArrowLeft";
-              if (event.key === forward || event.key === "ArrowDown") {
-                event.preventDefault();
-                move(value, 1);
-              } else if (event.key === backward || event.key === "ArrowUp") {
-                event.preventDefault();
-                move(value, -1);
-              }
-            }}
-            className={cn(
-              "inline-flex items-center justify-center gap-2 rounded-full font-medium transition-colors duration-200 focus-visible:rounded-full",
-              size === "sm" ? "size-7" : "h-10 min-w-10",
-              showLabels && "flex-1 px-3 text-body-sm",
-              tone === "surface" && "text-fg-muted hover:text-fg",
-              tone === "inverted" && "text-cream/75 hover:text-cream",
-              checked && tone === "surface" && "bg-primary text-primary-fg shadow-xs hover:text-primary-fg",
-              checked && tone === "inverted" && "bg-white/15 text-cream",
-            )}
+      {showLabel ? <span>{labels.toggle}</span> : null}
+      <span className={cn("relative inline-flex items-center justify-center", showLabel && "gap-2")}>
+        <Moon aria-hidden className={cn(size === "sm" ? "size-4" : "size-[1.125rem]", "dark:hidden")} strokeWidth={1.75} />
+        <Sun aria-hidden className={cn(size === "sm" ? "size-4" : "size-[1.125rem]", "hidden dark:block")} strokeWidth={1.75} />
+        {showLabel ? (
+          <span
+            aria-hidden
+            className="relative h-6 w-10 rounded-full bg-canvas-subtle ring-1 ring-line ring-inset transition-colors dark:bg-primary"
           >
-            <Icon aria-hidden className={size === "sm" ? "size-3.5" : "size-4"} strokeWidth={1.75} />
-            {showLabels ? <span>{label}</span> : null}
-          </button>
-        );
-      })}
-    </div>
+            <span className="absolute start-0.5 top-0.5 size-5 rounded-full bg-surface shadow-sm transition-transform duration-300 ease-out-expo dark:translate-x-4 rtl:dark:-translate-x-4" />
+          </span>
+        ) : null}
+      </span>
+    </button>
   );
 }

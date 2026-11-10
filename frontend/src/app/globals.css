@@ -15,8 +15,6 @@
   --color-*: initial;
   --color-white: #ffffff;
   --color-black: #000000;
-  /* Cream: text on the dark green header and footer surfaces. */
-  --color-cream: #f7f3e8;
 
   /* Forest green — primary. 700 is the crest green. */
   --color-forest-50: #eff7f2;
@@ -194,10 +192,6 @@
   --color-fg-inverse: var(--fg-inverse);
   --color-ring: var(--ring);
 
-  --color-header-utility: var(--header-utility);
-  --color-header-bar: var(--header-bar);
-  --color-header-bar-scrolled: var(--header-bar-scrolled);
-
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-fg: var(--primary-fg);
@@ -245,13 +239,7 @@
   --fg-muted: var(--color-sand-600);
   --fg-subtle: #6f685a;
   --fg-inverse: var(--color-sand-50);
-  --ring-base: var(--color-forest-600);
-  --ring: var(--ring-base);
-
-  /* Header: deep green utility bar over a rich forest navbar (darker + translucent once scrolled). */
-  --header-utility: #0b2a1c;
-  --header-bar: var(--color-forest-700);
-  --header-bar-scrolled: rgb(11 58 38 / 0.92);
+  --ring: var(--color-forest-600);
 
   --primary: var(--color-forest-700);
   --primary-hover: var(--color-forest-800);
@@ -300,12 +288,7 @@
   --fg-muted: var(--color-ink-200);
   --fg-subtle: #96a29c;
   --fg-inverse: var(--color-ink-950);
-  --ring-base: var(--color-forest-300);
-  --ring: var(--ring-base);
-
-  --header-utility: #070e0a;
-  --header-bar: #0c1611;
-  --header-bar-scrolled: rgb(9 17 13 / 0.9);
+  --ring: var(--color-forest-300);
 
   --primary: var(--color-forest-400);
   --primary-hover: var(--color-forest-300);

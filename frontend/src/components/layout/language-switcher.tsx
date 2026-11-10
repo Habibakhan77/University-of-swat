@@ -34,7 +34,7 @@ export function LanguageSwitcher({ variant = "link", tone = "surface", className
         aria-label={t("switchTo", { language: localeNames[other] })}
         className={cn(
           "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-semibold transition-colors",
-          tone === "inverted" ? "text-cream/85 hover:bg-white/10 hover:text-cream" : "text-fg-muted hover:bg-canvas-subtle hover:text-fg",
+          tone === "inverted" ? "text-forest-50 hover:bg-white/10" : "text-fg-muted hover:bg-canvas-subtle hover:text-fg",
           className,
         )}
       >

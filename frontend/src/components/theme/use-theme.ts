@@ -50,12 +50,19 @@ function subscribe(onChange: () => void): () => void {
   };
 }
 
-/** Theme preference shared by every toggle on the page. `null` on the server and during hydration. */
+const readIsDark = () => document.documentElement.classList.contains("dark");
+
+/**
+ * Theme preference shared by every toggle on the page, plus whether dark is in effect right now.
+ * Both are `null` on the server and during hydration.
+ */
 export function useTheme(): {
   preference: ThemePreference | null;
+  isDark: boolean | null;
   setPreference: (next: ThemePreference) => void;
 } {
   const preference = useSyncExternalStore<ThemePreference | null>(subscribe, readPreference, () => null);
+  const isDark = useSyncExternalStore<boolean | null>(subscribe, readIsDark, () => null);
 
   const setPreference = useCallback((next: ThemePreference) => {
     try {
@@ -67,5 +74,5 @@ export function useTheme(): {
     window.dispatchEvent(new Event(EVENT));
   }, []);
 
-  return { preference, setPreference };
+  return { preference, isDark, setPreference };
 }

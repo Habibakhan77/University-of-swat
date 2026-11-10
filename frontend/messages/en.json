@@ -29,10 +29,7 @@
     "switchTo": "Switch to {language}"
   },
   "theme": {
-    "label": "Colour theme",
-    "light": "Light",
-    "dark": "Dark",
-    "system": "System"
+    "toggle": "Dark mode"
   },
   "search": {
     "button": "Search",

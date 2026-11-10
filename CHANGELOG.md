@@ -149,19 +149,18 @@
   dark: no horizontal scroll and no console errors (except prefetches of pages that come in later phases).
   All external links are HTTPS, every keyboard path above works, and the skip link focuses `<main>`.
 
-## Phase 4.1 — Header redesign
+## Phase 4.1 — Header polish
 
-- Utility bar on very deep green (`#0B2A1C`) with cream text and gold icons; main bar on forest green with cream
-  nav text, a gold underline on hover, on the open item and on the active section (`aria-current`), gold Apply
-  button with a soft glow, and a translucent white glass search button
-- Sticky bar turns darker and translucent with a backdrop blur and soft shadow once the page scrolls
-  (`header-shell.tsx`, IntersectionObserver sentinel, no scroll listener)
-- Dark mode: both bars near-black green via `--header-*` tokens in `globals.css`; gold accents unchanged
-- Focus ring switches to gold on the green bars and back to forest inside panels and dialogs (`--ring-base`)
-- Mega menu panels stay cream: tighter two-column grid, an icon tile and a one-line description per link
-- Featured slot: the News & Events panel shows the latest news story from Strapi (`lib/strapi/posts.ts`,
-  cached, tag `posts`, English fallback); other panels keep the Admissions promo card
+- Main bar stays off-white; utility bar stays forest green. Once the bar sticks it gets a subtle backdrop
+  blur, a soft shadow and a thin gold line along the bottom (`header-shell.tsx`, IntersectionObserver sentinel,
+  no scroll listener)
+- Gold underline on the active section (`aria-current`), as well as on hover and on the open menu
+- Nav labels never wrap ("News & Events", "Campus Life" stay on one line), checked at 1280px and 1440px in
+  English and Urdu
+- Theme control is now one light/dark switch (`role="switch"`) in the utility bar and the mobile menu; no
+  System option. Until a visitor picks, the site follows the OS setting
+- Mega menu: tighter two-column grid, an icon tile and a one-line description per link. The News & Events
+  panel features the latest news story from Strapi (`lib/strapi/posts.ts`, cached, tag `posts`, English
+  fallback); other panels keep the Admissions promo card
 - Seed: navigation moved to `cms/scripts/seed/data/navigation.ts` with a description and icon for every link
   (EN + UR); external URLs shared in `external.ts`. More icons in `frontend/src/lib/icons.ts`
-- Contrast checked for every header text/background pair in light and dark (all WCAG AA, smallest margin is the
-  search placeholder at 80% cream)

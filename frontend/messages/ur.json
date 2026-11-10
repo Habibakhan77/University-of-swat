@@ -29,10 +29,7 @@
     "switchTo": "{language} میں دیکھیں"
   },
   "theme": {
-    "label": "رنگ کا انداز",
-    "light": "روشن",
-    "dark": "تاریک",
-    "system": "سسٹم"
+    "toggle": "ڈارک موڈ"
   },
   "search": {
     "button": "تلاش",

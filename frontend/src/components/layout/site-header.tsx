@@ -22,12 +22,11 @@ interface SiteHeaderProps {
 }
 
 /**
- * Two rows on dark green:
- * 1. Utility bar (#0B2A1C, scrolls away): daily portals from Strapi + language + theme. Hidden on
+ * Two rows:
+ * 1. Utility bar (forest green, scrolls away): daily portals from Strapi + language + theme. Hidden on
  *    phones, where the same links live in the menu sheet.
- * 2. Main bar (forest green, sticky): brand, mega menu, glass search, gold Apply, menu button. Once it
- *    sticks it turns darker and translucent with a backdrop blur and a soft shadow.
- * Dark mode swaps both bars to near-black green (tokens in globals.css); gold accents stay.
+ * 2. Main bar (off-white, sticky): brand, mega menu, search, Apply, menu button. Once it sticks it turns
+ *    translucent with a subtle backdrop blur, a soft shadow and a thin gold line along the bottom.
  */
 export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
   const [t, tTheme, tSearch, tCommon, latestNews] = await Promise.all([
@@ -41,7 +40,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
   const siteName = chrome?.siteName ?? tCommon("siteName");
   const homeLabel = t("homeLink", { siteName });
   const groups = chrome?.mainNavigation ?? [];
-  const themeLabels = { group: tTheme("label"), light: tTheme("light"), dark: tTheme("dark"), system: tTheme("system") };
+  const themeLabels = { toggle: tTheme("toggle") };
   const apply = chrome?.applyHref ? { href: chrome.applyHref, external: chrome.applyExternal } : null;
 
   // Featured slot in the News & Events panel: the newest story from Strapi.
@@ -51,10 +50,10 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
 
   return (
     <>
-      <div className="relative z-50 hidden border-b border-white/5 bg-header-utility text-cream lg:block">
+      <div className="relative z-50 hidden bg-forest-900 text-forest-50 lg:block dark:bg-forest-950">
         <Container size="wide" className="flex h-10 items-center justify-between gap-6">
           <nav aria-label={t("utilityNavigation")} className="min-w-0">
-            <ul className="-ms-2.5 flex items-center gap-0.5">
+            <ul className="flex items-center gap-1">
               {(chrome?.utilityLinks ?? []).map((link) => {
                 const Icon = iconFor(link.icon);
                 return (
@@ -63,7 +62,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                       href={link.href}
                       external={link.external}
                       title={link.description ?? undefined}
-                      className="group/u inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium text-cream/80 transition-colors hover:bg-white/8 hover:text-cream"
+                      className="group/u inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium text-forest-100 transition-colors hover:bg-white/10 hover:text-white"
                     >
                       <Icon aria-hidden className="size-3.5 text-gold-300" strokeWidth={1.75} />
                       {link.label}
@@ -79,7 +78,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
               })}
             </ul>
           </nav>
-          <div className="flex shrink-0 items-center gap-2 [--ring:var(--color-gold-300)]">
+          <div className="flex shrink-0 items-center gap-2">
             <LanguageSwitcher tone="inverted" />
             <span aria-hidden className="h-4 w-px bg-white/15" />
             <ThemeToggle size="sm" tone="inverted" labels={themeLabels} />
@@ -92,19 +91,19 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
         <div
           aria-hidden
           className={cn(
-            "absolute inset-0 -z-10 border-b border-white/8 bg-header-bar",
-            "transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-out",
-            "group-data-[scrolled=true]/header:bg-header-bar-scrolled group-data-[scrolled=true]/header:shadow-[0_8px_30px_-12px_rgb(0_0_0/0.45)]",
-            "group-data-[scrolled=true]/header:backdrop-blur-xl group-data-[scrolled=true]/header:backdrop-saturate-150",
+            "absolute inset-0 -z-10 border-b border-line bg-canvas",
+            "transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ease-out",
+            "group-data-[scrolled=true]/header:border-gold-400 group-data-[scrolled=true]/header:bg-canvas/80 dark:group-data-[scrolled=true]/header:border-gold-400/60",
+            "group-data-[scrolled=true]/header:shadow-[0_6px_24px_-14px_rgb(20_30_25/0.35)] dark:group-data-[scrolled=true]/header:shadow-[0_6px_24px_-12px_rgb(0_0_0/0.7)]",
+            "group-data-[scrolled=true]/header:backdrop-blur-md",
           )}
         />
-        <Container size="wide" className="flex h-16 items-center gap-4 text-cream xl:h-20 xl:gap-8">
+        <Container size="wide" className="flex h-16 items-center gap-4 xl:h-20 xl:gap-6">
           <Brand
             siteName={siteName}
             tagline={chrome?.tagline}
             logo={chrome?.logo ?? null}
             homeLabel={homeLabel}
-            tone="inverted"
             className="me-auto xl:me-0"
           />
 
@@ -153,7 +152,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                 external={apply.external}
                 className={cn(
                   buttonVariants({ variant: "accent", size: "md" }),
-                  "group/button hidden shadow-[0_6px_20px_-8px_rgb(212_167_44/0.7)] sm:inline-flex",
+                  "group/button hidden sm:inline-flex",
                 )}
               >
                 {t("apply")}
