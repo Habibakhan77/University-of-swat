@@ -1,10 +1,14 @@
 import type { Core } from '@strapi/strapi';
 import { ensureLocales } from './bootstrap/locales';
+import { registerDepartmentGuard } from './bootstrap/department-guard';
 import { ensurePublicPermissions } from './bootstrap/public-permissions';
 import { ensureAdminRoles, registerConditions } from './bootstrap/roles';
 
 export default {
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
+  /** Department Editors can only create or move entries into their own departments. */
+  register({ strapi }: { strapi: Core.Strapi }) {
+    registerDepartmentGuard(strapi);
+  },
 
   /**
    * Idempotent setup that runs on every boot:

@@ -163,15 +163,24 @@ export async function ensureAdminRoles(strapi: Core.Strapi): Promise<void> {
       code: ROLE_CODES.department,
       name: 'Department Editor',
       description:
-        'Edits only departments whose "editorEmails" list contains their login email: the department page, its programs, faculty members and downloads.',
+        'Edits only departments whose "editorEmails" list contains their login email: the department page, its programs, faculty members, downloads and research projects.',
       permissions: [
         ...permissionsFor(strapi, all, 'api::department.department', [A.read, A.update, A.publish], {
           ...ownDept,
-          excludeFields: ['slug', 'faculty', 'editorEmails', 'posts', 'jobs'],
+          // Inverse relation lists are excluded too, otherwise an editor could pull another
+          // department's programs or staff into their own department from this form.
+          excludeFields: [
+            'slug', 'faculty', 'editorEmails',
+            'programs', 'facultyMembers', 'downloads', 'researchProjects', 'posts', 'jobs',
+          ],
         }),
         ...permissionsFor(strapi, all, 'api::program.program', FULL, own),
         ...permissionsFor(strapi, all, 'api::faculty-member.faculty-member', FULL, own),
         ...permissionsFor(strapi, all, 'api::download.download', FULL, { ...own, excludeFields: ['office'] }),
+        ...permissionsFor(strapi, all, 'api::research-project.research-project', FULL, {
+          ...own,
+          excludeFields: ['office'],
+        }),
         // read-only lookups for relation pickers
         ...permissionsFor(strapi, all, 'api::faculty.faculty', [A.read]),
         ...permissionsFor(strapi, all, 'api::campus.campus', [A.read]),

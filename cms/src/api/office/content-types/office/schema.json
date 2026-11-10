@@ -159,6 +159,12 @@
           "localized": true
         }
       }
+    },
+    "researchProjects": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::research-project.research-project",
+      "mappedBy": "office"
     }
   }
 }

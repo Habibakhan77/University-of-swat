@@ -22,6 +22,7 @@ export const PUBLIC_READ_TYPES = [
   'api::vc-message.vc-message',
   'api::site-setting.site-setting',
   'api::admissions-page.admissions-page',
+  'api::research-project.research-project',
 ] as const satisfies readonly UID.ContentType[];
 
 export const SINGLE_TYPES: ReadonlySet<string> = new Set([
@@ -31,6 +32,14 @@ export const SINGLE_TYPES: ReadonlySet<string> = new Set([
   'api::site-setting.site-setting',
   'api::admissions-page.admissions-page',
 ]);
+
+/** Types a Department Editor manages through their `department` relation. */
+export const DEPARTMENT_SCOPED_TYPES = [
+  'api::program.program',
+  'api::faculty-member.faculty-member',
+  'api::download.download',
+  'api::research-project.research-project',
+] as const satisfies readonly UID.ContentType[];
 
 export const ROLE_CODES = {
   mediaCell: 'uswat-media-cell-editor',

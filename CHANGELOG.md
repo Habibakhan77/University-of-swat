@@ -42,3 +42,16 @@
     list views only show own entries.
   - Roles are created once; set `SYNC_ADMIN_ROLES=true` for one boot to reset them.
 - Tender/Job open-closed field is named `state` (`status` is reserved by Strapi's draft & publish).
+
+### Phase 1.1 — Hardening and research projects
+
+- **Research Project** collection type (state proposed/ongoing/completed, PI with placeholder flag, funding
+  agency/amount/currency, dates, documents), linked to Department and Office (ORIC). Public read access.
+  Department Editors can manage their own department's projects.
+- **Server-side department guard** (`src/bootstrap/department-guard.ts`, a document-service middleware): Department
+  Editors can only create, clone or re-link Programs, Faculty Members, Downloads and Research Projects into their
+  own departments. Creating with no department or removing it is rejected (403).
+- Department Editors can no longer edit a department's inverse relation lists (programs, faculty members,
+  downloads, research projects), which would have let them pull other departments' entries into their own.
+- Verified end to end through the content-manager HTTP API with a real Department Editor login (11/11 cases).
+- Strapi no longer opens a browser on `npm run dev` (`admin.autoOpen`, override with `ADMIN_AUTO_OPEN=true`).
