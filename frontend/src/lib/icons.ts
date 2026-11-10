@@ -1,4 +1,5 @@
 import {
+  Atom,
   Award,
   BadgeCheck,
   BedDouble,
@@ -16,6 +17,7 @@ import {
   FolderKanban,
   Gavel,
   GraduationCap,
+  HeartPulse,
   Inbox,
   Info,
   Landmark,
@@ -46,10 +48,12 @@ import {
  * Unknown or empty names fall back to a neutral link icon, so a typo never breaks the menu.
  */
 const registry: Record<string, LucideIcon> = {
+  atom: Atom,
   award: Award,
   "badge-check": BadgeCheck,
   bed: BedDouble,
   book: BookOpen,
+  "book-open": BookOpen,
   briefcase: Briefcase,
   building: Building2,
   bus: Bus,
@@ -63,6 +67,7 @@ const registry: Record<string, LucideIcon> = {
   "folder-kanban": FolderKanban,
   gavel: Gavel,
   "graduation-cap": GraduationCap,
+  "heart-pulse": HeartPulse,
   inbox: Inbox,
   info: Info,
   landmark: Landmark,

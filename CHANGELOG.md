@@ -177,3 +177,24 @@
   production keeps Next.js's private-address protection
 - Header tagline shown in full from 1440px and hidden below, instead of being cut off with "…". The full search
   box now appears from 1680px (icon button below) so the bar never overflows; checked 1280–1920px in EN and UR
+
+## Phase 5 — Homepage
+
+- Homepage built entirely from Strapi (`lib/strapi/home.ts`): hero slides, quick actions, live stats, latest news,
+  notices ticker, events, announcements, VC message, faculties, campuses, partners/MoUs, admissions banner and SEO.
+  Urdu falls back to English per item (marked `lang="en"`), so an untranslated story still appears
+- Sections, top to bottom: notices ticker (maroon, pauses on hover/focus, pause button, static scroll row with
+  reduced motion) · hero carousel (WAI-ARIA carousel, 7 s autoplay, pause/prev/next, no autoplay with reduced
+  motion, persistent h1) · quick actions raised over the hero (Apply highlighted) · animated stat counters
+  (real values from `/api/stats`, count up once in view, real number in the HTML) · news with a lead story and
+  real cover images · admissions band with CTA, optional deadline and next steps · upcoming events with date tiles
+  next to announcements · VC message teaser · faculties grid with department counts · campus photo cards ·
+  partners
+- ISR with on-demand revalidation: every section is a cached loader with a cache tag; the page is prerendered.
+  New `POST /api/revalidate` (secret header, timing-safe compare) maps Strapi content types to tags and expires
+  them immediately. Strapi registers its own webhook on boot (`cms/src/bootstrap/revalidate-webhook.ts`) from
+  `FRONTEND_REVALIDATE_URL` + `REVALIDATE_SECRET`, so staff never configure it by hand
+- SEO: homepage metadata and Open Graph from the Homepage SEO component; schema.org `CollegeOrUniversity` JSON-LD
+  from Site Settings (`NEXT_PUBLIC_SITE_URL` for absolute URLs)
+- RTL details: mixed English/Urdu runs isolated with `<bdi>`, stat numbers always left-to-right, Nastaliq-safe
+  spacing; checked at 390px and 1440px in English (light) and Urdu (dark)

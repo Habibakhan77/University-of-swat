@@ -175,6 +175,24 @@
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: none; }
   }
+  /* Notices ticker: the track holds two identical halves, so moving it by half loops seamlessly. */
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes marquee-rtl {
+    from { transform: translateX(0); }
+    to { transform: translateX(50%); }
+  }
+  /* Hero: a very slow settle on the active slide image. */
+  @keyframes hero-progress {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  @keyframes hero-settle {
+    from { transform: scale(1.06); }
+    to { transform: scale(1); }
+  }
 }
 
 /* Semantic tokens → Tailwind utilities (bg-canvas, text-fg-muted, border-line, bg-primary, …) */

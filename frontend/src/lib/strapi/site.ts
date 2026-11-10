@@ -66,7 +66,7 @@ export function isExternalHref(href: string): boolean {
   return ABSOLUTE.test(href) && !href.startsWith("mailto:") && !href.startsWith("tel:");
 }
 
-function toNavLink(link: StrapiLink): NavLink {
+export function toNavLink(link: StrapiLink): NavLink {
   const href = normalizeHref(link.url);
   return {
     label: link.label,
