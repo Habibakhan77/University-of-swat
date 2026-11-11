@@ -9,6 +9,7 @@
  */
 import { blocks, type Block } from '../lib/blocks';
 import { UPLOADS } from './organisation';
+import type { PhotoKey } from './photos';
 
 const SITE = 'https://uswat.edu.pk';
 const up = (path: string) => `${UPLOADS}${path}`;
@@ -183,7 +184,7 @@ export interface FacilitySeed {
   links?: { label: string; url: string; isExternal: boolean }[];
   source: string;
   /** Cover: a photo from uswat.edu.pk, or a key of data/photos.ts. */
-  image?: FacilityPhoto | { photo: 'hunerkada' };
+  image?: FacilityPhoto | { photo: PhotoKey };
   gallery?: FacilityPhoto[];
 }
 
@@ -215,6 +216,7 @@ export const FACILITIES: FacilitySeed[] = [
     contact: { email: 'librarian@uswat.edu.pk', officeHours: '08:30 AM – 04:30 PM, Monday – Friday' },
     links: [link('HEC National Digital Library', 'https://www.digitallibrary.edu.pk/uniofswat.html'), link('Seerat-ul-Nabi (PBUH) Corner (news)', SEERAT_CORNER)],
     source: `${SITE}/central-library-office/`,
+    image: { photo: 'libraryHall' },
   },
   {
     slug: 'sports',

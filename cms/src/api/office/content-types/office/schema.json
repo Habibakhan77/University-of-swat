@@ -60,6 +60,14 @@
         }
       }
     },
+    "overview": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "responsibilities": {
       "type": "blocks",
       "pluginOptions": {

@@ -63,7 +63,7 @@ export default async function OfficePage({ params }: Props) {
   const related = offices.filter((o) => o.type === office.type && o.slug !== office.slug).slice(0, 4);
 
   const sections = [
-    { id: "about", label: t("aboutOffice"), show: Boolean(office.summary || office.vision || office.mission || office.responsibilities) },
+    { id: "about", label: t("aboutOffice"), show: Boolean(office.overview || office.vision || office.mission || office.responsibilities) },
     { id: "staff", label: t("staff"), show: office.staff.length > 0 },
     { id: "documents", label: t("documents"), show: office.links.length > 0 },
     { id: "contact", label: t("contact"), show: Boolean(office.contact) },
@@ -112,6 +112,11 @@ export default async function OfficePage({ params }: Props) {
           {sections.some((s) => s.id === "about") ? (
             <section aria-labelledby="about" className="flex flex-col gap-6">
               <SectionTitle id="about">{t("aboutOffice")}</SectionTitle>
+              {office.overview ? (
+                <p className="max-w-prose text-body-lg text-fg-muted" lang={langAttr(office.overview, locale)}>
+                  {office.overview.value}
+                </p>
+              ) : null}
               {office.vision || office.mission ? (
                 <div className="grid gap-4 md:grid-cols-2">
                   {office.vision ? (

@@ -28,7 +28,7 @@ export default async function AdministrationPage() {
   const items: ExplorerOffice[] = offices.map((o) => ({
     slug: o.slug,
     type: o.type,
-    text: [o.name.value, o.slug.replace(/-/g, " "), o.headName?.value, o.headDesignation?.value, o.summary?.value, t(`types.${o.type}`)].join(" "),
+    text: [o.name.value, o.slug.replace(/-/g, " "), o.headName?.value, o.headDesignation?.value, o.summary?.value, o.overview?.value, t(`types.${o.type}`)].join(" "),
     card: <OfficeCard office={o} headingLevel="h3" showType={false} />,
   }));
 

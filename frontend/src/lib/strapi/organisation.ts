@@ -47,6 +47,7 @@ interface StrapiOffice extends Doc {
   slug: string;
   type: OfficeType;
   summary: string | null;
+  overview: string | null;
   responsibilities: Block[] | null;
   vision: string | null;
   mission: string | null;
@@ -176,6 +177,7 @@ function officeOf(pair: Pair<StrapiOffice>, locale: Locale): Office {
     type,
     name: pick(pair, "name", locale) ?? { value: o.name, lang: en },
     summary: pick(pair, "summary", locale),
+    overview: pick(pair, "overview", locale),
     responsibilities: pick(pair, "responsibilities", locale),
     vision: pick(pair, "vision", locale),
     mission: pick(pair, "mission", locale),
@@ -208,7 +210,7 @@ async function loadOffices(locale: Locale): Promise<Office[]> {
       "/offices",
       {
         ...selectFields("fields", [
-          "name", "slug", "type", "summary", "responsibilities", "vision", "mission", "headName", "headDesignation",
+          "name", "slug", "type", "summary", "overview", "responsibilities", "vision", "mission", "headName", "headDesignation",
           "headEmail", "websiteUrl", "sourceUrl", "isPrincipal", "order",
         ]),
         ...populateImage("headPhoto"),

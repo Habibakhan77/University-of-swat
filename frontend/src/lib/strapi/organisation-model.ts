@@ -27,7 +27,10 @@ export interface Office {
   href: string;
   type: OfficeType;
   name: Localized<string>;
+  /** One sentence: hero, cards and search. */
   summary: Localized<string> | null;
+  /** The fuller description, at the top of the office page body. */
+  overview: Localized<string> | null;
   responsibilities: Localized<Block[]> | null;
   vision: Localized<string> | null;
   mission: Localized<string> | null;

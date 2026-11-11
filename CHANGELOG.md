@@ -565,8 +565,13 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   these are the "PS to Registrar Office" (0946-920814) and "Admission Office" (0946-920809) lines from the
   official contact list, flagged with a new `featured` boolean on Phone Directory Entry (editors can change which
   lines appear). Phone numbers and email use the Latin font in Urdu.
-- **Central Library photo:** none found. The library page only has staff headshots; the "Seerat-ul-Nabi Corner"
-  news image is a text poster, and the only photo taken in the library (Chiragh Project seminar, 2023) is a
-  two-photo collage of a crowded event. The card keeps its pattern.
+- **Central Library photo:** the library page only has staff headshots and the "Seerat-ul-Nabi Corner" news image
+  is a text poster, so the card and page use the right half of the Chiragh Project seminar photo (2023, held in
+  the library hall), cropped at the collage seam to 714×496 and credited "Photo: University of Swat" with a link to
+  the post (`assets/photos/campus-library-hall.webp`).
+- **Office heroes show one sentence.** New localized Office field `overview` holds the full description, shown at
+  the top of "About the office"; `summary` is now one short sentence for the hero, cards and search (13 offices
+  rewritten in English and Urdu; Admissions and Sports were already short). Office SEO descriptions use the
+  overview.
 - Reseeded with `--reset`. Lint, typecheck and build are clean. Checked on the dev server at 1440px and 375px in
   English and Urdu (no truncation, no horizontal scroll, RTL).

@@ -104,6 +104,12 @@ export const PHOTOS = {
     'Staff and students holding a banner on campus on Kashmir Black Day',
     '/2026/10/kashmir-black-day-youm-e-siah/',
   ),
+  // Right half of a two-photo collage from the post (the left half is the speaker), cropped to the library hall.
+  libraryHall: photo(
+    'campus-library-hall.webp',
+    'Students and staff seated in the Central Library hall at the Main Campus, with bookshelves at the back',
+    '/2023/09/chiragh-project/',
+  ),
   hunerkada: photo(
     'post-hunerkada-expansion.jpg',
     'University officials on campus during the Hunerkada expansion visit',

@@ -21,6 +21,7 @@ Those posts, and HEC DLSEI 3.0 Cohort 4 (only a flow-chart graphic), get a text-
 | `faculty-mass-heritage-seminar.webp` | Management, Art and Social Sciences card and header | `/2024/04/world-heritage-day/` |
 | `hero-campus-mountains.jpg` | Hero (campus), Admissions page hero, Open Graph image | `/maincampus/` |
 | `vc-husnul-amin.jpg` | Vice Chancellor (homepage VC message, About leadership) | Homepage VC message |
+| `campus-library-hall.webp` | Central Library card and page (Campus Life). Right half of a two-photo collage, cropped to the library hall (714×496, below the usual 800px minimum: no larger library photo is published) | `/2023/09/chiragh-project/` |
 | `post-*.jpg`, `post-*.webp` | Cover of the matching news, announcement or event (event and meeting photos are never used in the hero) | That post |
 
 The main gate and Main Campus photos from the Facebook page replaced the older uswat.edu.pk copies

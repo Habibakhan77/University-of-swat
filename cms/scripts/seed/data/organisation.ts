@@ -101,8 +101,12 @@ export interface OfficeSeed {
   source: string;
   /** Listed on the About page as a principal officer. */
   isPrincipal?: boolean;
+  /** One sentence: the office page hero, cards and search. */
   summary?: string;
   urSummary?: string;
+  /** The fuller description, shown at the top of the office page body. */
+  overview?: string;
+  urOverview?: string;
   responsibilities?: string[];
   vision?: string;
   mission?: string;
@@ -151,9 +155,12 @@ export const OFFICES: OfficeSeed[] = [
     type: 'office',
     source: '/office-of-the-pro-vice-chancellor-pro-vc/',
     isPrincipal: true,
-    summary:
+    summary: 'Assists the Vice Chancellor in leading the university.',
+    overview:
       'Supports the strategic, academic and administrative leadership of the university. As a member of the executive team, the Pro Vice Chancellor assists the Vice Chancellor.',
-    urSummary: 'جامعہ کی حکمتِ عملی، تعلیمی اور انتظامی قیادت میں معاونت کرتا ہے۔ انتظامی ٹیم کے رکن کی حیثیت سے پرو وائس چانسلر، وائس چانسلر کی معاونت کرتے ہیں۔',
+    urSummary: 'جامعہ کی قیادت میں وائس چانسلر کی معاونت کرتا ہے۔',
+    urOverview:
+      'جامعہ کی حکمتِ عملی، تعلیمی اور انتظامی قیادت میں معاونت کرتا ہے۔ انتظامی ٹیم کے رکن کی حیثیت سے پرو وائس چانسلر، وائس چانسلر کی معاونت کرتے ہیں۔',
     vision:
       'To promote academic integrity, foster a culture of innovation and excellence, and position the University of Swat as a leading center of higher education and research in the region and beyond.',
     headName: 'Prof. Dr. Muhammad Qasim',
@@ -224,9 +231,12 @@ export const OFFICES: OfficeSeed[] = [
     type: 'office',
     source: '/controller-of-examination-office/',
     isPrincipal: true,
-    summary:
+    summary: 'Runs semester examinations and issues results, transcripts and degrees.',
+    overview:
       'The custodian of all examination records. Since 2010 it has run semester examinations for Associate Degree, BS, MS/MPhil and PhD programs, and it issues results, transcripts, degrees and certificates.',
-    urSummary: 'تمام امتحانی ریکارڈ کا نگہبان۔ ۲۰۱۰ سے یہ ایسوسی ایٹ ڈگری، بی ایس، ایم ایس/ایم فل اور پی ایچ ڈی کے سمسٹر امتحانات منعقد کرتا ہے اور نتائج، ٹرانسکرپٹ، ڈگریاں اور اسناد جاری کرتا ہے۔',
+    urSummary: 'سمسٹر امتحانات منعقد کرتا ہے اور نتائج، ٹرانسکرپٹ اور ڈگریاں جاری کرتا ہے۔',
+    urOverview:
+      'تمام امتحانی ریکارڈ کا نگہبان۔ ۲۰۱۰ سے یہ ایسوسی ایٹ ڈگری، بی ایس، ایم ایس/ایم فل اور پی ایچ ڈی کے سمسٹر امتحانات منعقد کرتا ہے اور نتائج، ٹرانسکرپٹ، ڈگریاں اور اسناد جاری کرتا ہے۔',
     responsibilities: [
       'Registering regular students and assigning roll numbers',
       'Organizing and conducting semester examinations for Associate Degree, BS, MS/MPhil, and PhD programs',
@@ -281,8 +291,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'دفتر پرووسٹ',
     type: 'office',
     source: '/provost-office/',
-    summary: 'Student affairs and discipline, hostels and their wardens, student and staff ID cards, co-curricular activities and the alumni record.',
-    urSummary: 'طلبہ کے امور اور نظم و ضبط، ہاسٹل اور وارڈن، طلبہ و عملے کے شناختی کارڈ، ہم نصابی سرگرمیاں اور سابق طلبہ کا ریکارڈ۔',
+    summary: 'Student affairs and discipline, hostels, ID cards and co-curricular activities.',
+    overview:
+      'Student affairs and discipline, hostels and their wardens, student and staff ID cards, co-curricular activities and the alumni record.',
+    urSummary: 'طلبہ کے امور و نظم و ضبط، ہاسٹل، شناختی کارڈ اور ہم نصابی سرگرمیاں۔',
+    urOverview:
+      'طلبہ کے امور اور نظم و ضبط، ہاسٹل اور وارڈن، طلبہ و عملے کے شناختی کارڈ، ہم نصابی سرگرمیاں اور سابق طلبہ کا ریکارڈ۔',
     responsibilities: [
       'The Chairperson of Students Affairs and shall maintain students’ discipline in the University with the help of Proctors.',
       'Propose plan for future need of Hostels etc. for students and staff members.',
@@ -328,9 +342,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'دفتر یونیورسٹی ایڈوانسمنٹ و مالی معاونت',
     type: 'office',
     source: '/university-advancement-financial-aid-office/',
-    summary:
+    summary: 'Merit and need-based scholarships for talented and less privileged students.',
+    overview:
       'Set up under HEC directives to help talented and less privileged students with merit and need-based scholarships. A Financial Aid Committee evaluates and approves applications.',
-    urSummary: 'ایچ ای سی کی ہدایات کے تحت قائم، تاکہ باصلاحیت اور کم وسائل والے طلبہ کو میرٹ اور ضرورت کی بنیاد پر وظائف مل سکیں۔ فنانشل ایڈ کمیٹی درخواستوں کا جائزہ لے کر منظوری دیتی ہے۔',
+    urSummary: 'باصلاحیت اور کم وسائل والے طلبہ کے لیے میرٹ اور ضرورت کی بنیاد پر وظائف۔',
+    urOverview:
+      'ایچ ای سی کی ہدایات کے تحت قائم، تاکہ باصلاحیت اور کم وسائل والے طلبہ کو میرٹ اور ضرورت کی بنیاد پر وظائف مل سکیں۔ فنانشل ایڈ کمیٹی درخواستوں کا جائزہ لے کر منظوری دیتی ہے۔',
     responsibilities: [
       'Establish essential manual and automated process to support awarding financial aid in a timely manner.',
       'Award financial assistance to qualified students, according to institutional and Govt requirements and with a focus on individual student needs.',
@@ -391,9 +408,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'ڈائریکٹوریٹ آف انفارمیشن ٹیکنالوجی',
     type: 'directorate',
     source: '/directorate-of-it/',
-    summary:
+    summary: 'Plans and manages the university’s digital infrastructure and ICT services.',
+    overview:
       'The central technology department: it plans, implements and manages the university’s digital infrastructure and ICT services for teaching, research, administration and students.',
-    urSummary: 'مرکزی ٹیکنالوجی شعبہ: جامعہ کے ڈیجیٹل ڈھانچے اور آئی سی ٹی خدمات کی منصوبہ بندی، تنصیب اور انتظام، تدریس، تحقیق، انتظامیہ اور طلبہ کے لیے۔',
+    urSummary: 'جامعہ کے ڈیجیٹل ڈھانچے اور آئی سی ٹی خدمات کی منصوبہ بندی اور انتظام۔',
+    urOverview:
+      'مرکزی ٹیکنالوجی شعبہ: جامعہ کے ڈیجیٹل ڈھانچے اور آئی سی ٹی خدمات کی منصوبہ بندی، تنصیب اور انتظام، تدریس، تحقیق، انتظامیہ اور طلبہ کے لیے۔',
     vision:
       'To establish a secure, innovative, and technology-driven digital environment that empowers education, research, administration, and community engagement at the University of Swat.',
     responsibilities: [
@@ -468,9 +488,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'ڈائریکٹوریٹ آف ورکس',
     type: 'directorate',
     source: '/directorate-of-works/',
-    summary:
+    summary: 'Construction projects and the upkeep of the university’s buildings and infrastructure.',
+    overview:
       'Engineering services for the university: new construction projects from feasibility to execution, and the maintenance and repair of buildings and infrastructure.',
-    urSummary: 'جامعہ کے لیے انجینئرنگ خدمات: تعمیراتی منصوبے فزیبلٹی سے تکمیل تک، اور عمارتوں و ڈھانچے کی دیکھ بھال اور مرمت۔',
+    urSummary: 'تعمیراتی منصوبے اور جامعہ کی عمارتوں و ڈھانچے کی دیکھ بھال۔',
+    urOverview:
+      'جامعہ کے لیے انجینئرنگ خدمات: تعمیراتی منصوبے فزیبلٹی سے تکمیل تک، اور عمارتوں و ڈھانچے کی دیکھ بھال اور مرمت۔',
     responsibilities: [
       'Feasibility studies and proposals for new projects',
       'Tendering, monitoring and execution of projects',
@@ -500,9 +523,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'ڈائریکٹوریٹ آف ایڈوانسڈ اسٹڈیز اینڈ ریسرچ بورڈ',
     type: 'directorate',
     source: '/advanced-studies-and-research-board/',
-    summary:
+    summary: 'Supports MS/MPhil and PhD scholars and research-based degree programs.',
+    overview:
       'Established in December 2014 to promote research-based degree programs. It supports MS/MPhil and PhD scholars and monitors research programs against HEC quality standards.',
-    urSummary: 'دسمبر ۲۰۱۴ میں تحقیق پر مبنی ڈگری پروگراموں کے فروغ کے لیے قائم ہوا۔ یہ ایم ایس/ایم فل اور پی ایچ ڈی اسکالرز کی معاونت کرتا ہے اور تحقیقی پروگراموں کی ایچ ای سی معیار کے مطابق نگرانی کرتا ہے۔',
+    urSummary: 'ایم ایس/ایم فل اور پی ایچ ڈی اسکالرز اور تحقیقی ڈگری پروگراموں کی معاونت کرتا ہے۔',
+    urOverview:
+      'دسمبر ۲۰۱۴ میں تحقیق پر مبنی ڈگری پروگراموں کے فروغ کے لیے قائم ہوا۔ یہ ایم ایس/ایم فل اور پی ایچ ڈی اسکالرز کی معاونت کرتا ہے اور تحقیقی پروگراموں کی ایچ ای سی معیار کے مطابق نگرانی کرتا ہے۔',
     headName: 'Prof. Dr. Fazal Akbar',
     headDesignation: 'Director',
     urHeadDesignation: 'ڈائریکٹر',
@@ -524,8 +550,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'ڈائریکٹوریٹ آف ریسرچ اینڈ ٹیکنالوجیکل ڈویلپمنٹ',
     type: 'directorate',
     source: '/directorate-of-research-and-technological-development/',
-    summary: 'Established to strengthen research at the academic level, so that research and teaching advance side by side in every teaching unit.',
-    urSummary: 'تعلیمی سطح پر تحقیق کو مضبوط بنانے کے لیے قائم کیا گیا، تاکہ ہر تدریسی شعبے میں تحقیق اور تدریس ساتھ ساتھ آگے بڑھیں۔',
+    summary: 'Strengthens research alongside teaching in every academic unit.',
+    overview:
+      'Established to strengthen research at the academic level, so that research and teaching advance side by side in every teaching unit.',
+    urSummary: 'ہر تدریسی شعبے میں تدریس کے ساتھ تحقیق کو مضبوط بناتا ہے۔',
+    urOverview:
+      'تعلیمی سطح پر تحقیق کو مضبوط بنانے کے لیے قائم کیا گیا، تاکہ ہر تدریسی شعبے میں تحقیق اور تدریس ساتھ ساتھ آگے بڑھیں۔',
     responsibilities: [
       'To strengthen research at the academic level so that research remains an integral component of academic activities at the University.',
       'To create awareness about quality research with updated technological development among teaching units.',
@@ -547,9 +577,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'دفتر برائے تحقیق، جدت و کمرشلائزیشن (اورک)',
     type: 'center',
     source: '/oric-2/',
-    summary:
+    summary: 'Leads research, innovation and commercialization; recognised by HEC in the highest category.',
+    overview:
       'Established on HEC directives to strengthen research, innovation and commercialization; recognised by HEC in 2022 in the highest category. It has two sections: Research Management, and Innovation and Commercialization.',
-    urSummary: 'ایچ ای سی کی ہدایات پر تحقیق، جدت اور کمرشلائزیشن کے فروغ کے لیے قائم؛ ۲۰۲۲ میں ایچ ای سی نے اسے اعلیٰ ترین درجے میں تسلیم کیا۔ اس کے دو حصے ہیں: ریسرچ مینجمنٹ، اور انوویشن و کمرشلائزیشن۔',
+    urSummary: 'تحقیق، جدت اور کمرشلائزیشن کا دفتر، ایچ ای سی کے اعلیٰ ترین درجے میں تسلیم شدہ۔',
+    urOverview:
+      'ایچ ای سی کی ہدایات پر تحقیق، جدت اور کمرشلائزیشن کے فروغ کے لیے قائم؛ ۲۰۲۲ میں ایچ ای سی نے اسے اعلیٰ ترین درجے میں تسلیم کیا۔ اس کے دو حصے ہیں: ریسرچ مینجمنٹ، اور انوویشن و کمرشلائزیشن۔',
     responsibilities: [
       'Research management: grants, research projects and travel grants',
       'Innovation and commercialization: inventions, products and patents',
@@ -593,9 +626,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'کوالٹی انہانسمنٹ سیل',
     type: 'center',
     source: '/quality-enhancement-cell/',
-    summary:
+    summary: 'Safeguards the quality and standards of the university’s degrees.',
+    overview:
       'Safeguards the quality and standards of the university’s degrees: reviews of teaching and learning, program self-assessment (SAR), student, alumni and employer surveys, and accreditation.',
-    urSummary: 'جامعہ کی ڈگریوں کے معیار کا تحفظ: تدریس و تعلم کا جائزہ، پروگراموں کی خود تشخیص (ایس اے آر)، طلبہ، سابق طلبہ اور آجروں کے سروے، اور ایکریڈیٹیشن۔',
+    urSummary: 'جامعہ کی ڈگریوں کے معیار کا تحفظ کرتا ہے۔',
+    urOverview:
+      'جامعہ کی ڈگریوں کے معیار کا تحفظ: تدریس و تعلم کا جائزہ، پروگراموں کی خود تشخیص (ایس اے آر)، طلبہ، سابق طلبہ اور آجروں کے سروے، اور ایکریڈیٹیشن۔',
     responsibilities: [
       'QEC is responsible for promoting public confidence that the quality and standards of the award of degrees are enhanced and safeguarded.',
       'QEC is responsible for the review of quality standards and the quality of teaching and learning in each subject area.',
@@ -649,9 +685,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'پاکستان کوالیفکیشن رجسٹر',
     type: 'center',
     source: '/pqr/',
-    summary:
+    summary: 'Registers the university’s programs on HEC’s Pakistan Qualification Register.',
+    overview:
       'The PQR is HEC’s register of quality-assured qualifications and the institutions recognised to award them; qualifications not listed on it are not recognised by HEC. The university’s focal person registers its programs.',
-    urSummary: 'پی کیو آر ایچ ای سی کا معیار شدہ اسناد اور انہیں جاری کرنے والے منظور شدہ اداروں کا رجسٹر ہے؛ جو اسناد اس میں درج نہ ہوں وہ ایچ ای سی سے تسلیم شدہ نہیں۔ جامعہ کا فوکل پرسن اس کے پروگرام رجسٹر کرتا ہے۔',
+    urSummary: 'جامعہ کے پروگرام ایچ ای سی کے پاکستان کوالیفکیشن رجسٹر میں درج کرواتا ہے۔',
+    urOverview:
+      'پی کیو آر ایچ ای سی کا معیار شدہ اسناد اور انہیں جاری کرنے والے منظور شدہ اداروں کا رجسٹر ہے؛ جو اسناد اس میں درج نہ ہوں وہ ایچ ای سی سے تسلیم شدہ نہیں۔ جامعہ کا فوکل پرسن اس کے پروگرام رجسٹر کرتا ہے۔',
     responsibilities: [
       'It helps to make available the Quality Assured and accredited/recognized qualifications/ programs to all the stakeholders',
       'It helps in international recognition of the qualifications',
@@ -680,8 +719,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'سابق طلبہ سے روابط',
     type: 'student_service',
     source: '/alumni/',
-    summary: 'Keeps graduates connected with the university: alumni registration, surveys of alumni, graduating students and employers, and departmental alumni relation managers.',
-    urSummary: 'فارغ التحصیل طلبہ کو جامعہ سے جوڑے رکھتا ہے: سابق طلبہ کی رجسٹریشن، سابق طلبہ، فارغ ہونے والے طلبہ اور آجروں کے سروے، اور شعبہ جاتی الومنائی منیجرز۔',
+    summary: 'Keeps graduates connected with the university.',
+    overview:
+      'Keeps graduates connected with the university: alumni registration, surveys of alumni, graduating students and employers, and departmental alumni relation managers.',
+    urSummary: 'فارغ التحصیل طلبہ کو جامعہ سے جوڑے رکھتا ہے۔',
+    urOverview:
+      'فارغ التحصیل طلبہ کو جامعہ سے جوڑے رکھتا ہے: سابق طلبہ کی رجسٹریشن، سابق طلبہ، فارغ ہونے والے طلبہ اور آجروں کے سروے، اور شعبہ جاتی الومنائی منیجرز۔',
     headName: 'Mr. Fida Hussain',
     headDesignation: 'Director Alumni Relations',
     urHeadDesignation: 'ڈائریکٹر الومنائی ریلیشنز',
@@ -718,9 +761,12 @@ export const OFFICES: OfficeSeed[] = [
     ur: 'یوتھ ڈویلپمنٹ سینٹر',
     type: 'student_service',
     source: '/kamyab-jawan-markaz/',
-    summary:
+    summary: 'The single office for student services: education, employment and engagement.',
+    overview:
       'A single office for student services in line with HEC’s undergraduate policy, with wings for education, employment and engagement: career counselling, scholarships, internships, clubs and societies.',
-    urSummary: 'ایچ ای سی کی انڈرگریجویٹ پالیسی کے مطابق طلبہ کی خدمات کا ایک ہی دفتر، تعلیم، روزگار اور سرگرمیوں کے شعبوں کے ساتھ: کیریئر رہنمائی، وظائف، انٹرن شپ، کلب اور سوسائٹیز۔',
+    urSummary: 'طلبہ کی خدمات کا واحد دفتر: تعلیم، روزگار اور سرگرمیاں۔',
+    urOverview:
+      'ایچ ای سی کی انڈرگریجویٹ پالیسی کے مطابق طلبہ کی خدمات کا ایک ہی دفتر، تعلیم، روزگار اور سرگرمیوں کے شعبوں کے ساتھ: کیریئر رہنمائی، وظائف، انٹرن شپ، کلب اور سوسائٹیز۔',
     vision: 'To ensure provision of quality education, gainful employment and meaningful engagement to youth through integrated, dynamic and sustainable youth-centered initiatives.',
     mission:
       'To invest in the development of youth with an aim to make them skilled, confident, resourceful & self-reliant ultimately enabling them to contribute positively in the progress & economic stability of Pakistan.',
