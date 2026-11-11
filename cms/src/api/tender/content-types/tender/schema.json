@@ -111,6 +111,14 @@
         }
       }
     },
+    "sourceUrl": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "office": {
       "type": "relation",
       "relation": "manyToOne",

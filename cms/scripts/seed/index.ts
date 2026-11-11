@@ -9,12 +9,12 @@
 import type { Core, UID } from '@strapi/strapi';
 import { blocks, h, ul, type Block } from './lib/blocks';
 import { Writer } from './lib/docs';
-import { MediaFactory, type Theme } from './lib/media';
+import { MediaFactory } from './lib/media';
 import { CAMPUS_PHOTOS, FACULTY_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
 import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type ProgramSeed } from './data/academics';
 import { CAMPUSES, MAIN_ADDRESS, OFFICES } from './data/organisation';
 import { POSTS } from './data/posts';
-import { DOWNLOADS, FAQS, JOBS, RESEARCH, TENDERS } from './data/notices';
+import { DOWNLOADS, FAQS, JOBS, RESEARCH, TENDERS, uploadMonth, uploadUrl, type SeedDocument } from './data/notices';
 import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE_SETTINGS, STATS, VC_MESSAGE } from './data/site';
 
 /** Real photo for each hero slide (see data/photos.ts). */
@@ -50,6 +50,11 @@ const CONTENT_TYPES: UID.ContentType[] = [
   'api::admissions-page.admissions-page',
   'api::site-setting.site-setting',
 ];
+
+/** The official website, where every tender, job, download and post was first published. */
+const SITE_URL = 'https://uswat.edu.pk';
+/** A path on uswat.edu.pk ("/2026/09/…/") or a full URL. */
+const officialUrl = (source: string): string => (source.startsWith('https://') ? source : `${SITE_URL}${source}`);
 
 export const slugify = (s: string): string =>
   s
@@ -228,15 +233,15 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     }
 
     // ---------- Posts ----------
-    log('News, announcements and events…');
+    log('News, announcements and events (posters copied from uswat.edu.pk)…');
     const unknownPhotoSlugs = Object.keys(POST_PHOTOS).filter((slug) => !POSTS.some((p) => p.slug === slug));
     if (unknownPhotoSlugs.length) throw new Error(`POST_PHOTOS lists unknown posts: ${unknownPhotoSlugs.join(', ')}`);
-    const postTheme: Record<string, Theme> = { news: 'green', announcement: 'gold', event: 'maroon' };
     for (const p of POSTS) {
+      // Only real event photos become covers; posts without one get no image (the website draws artwork).
       const postPhoto = POST_PHOTOS[p.slug];
-      const coverImage = postPhoto
-        ? await media.photo(postPhoto, 'cover')
-        : await media.image({ ratio: 'cover', key: `post-${p.slug}`, title: p.title, kicker: p.category, theme: postTheme[p.category] });
+      const coverImage = postPhoto ? await media.photo(postPhoto, 'cover') : undefined;
+      const sourceUrl = officialUrl(p.source);
+      const attachments = await media.remoteAll((p.attachments ?? []).map((a) => ({ url: uploadUrl(a.file), alt: a.title, source: sourceUrl })));
       const department = p.department ? departmentIds.get(p.department) : undefined;
       if (p.department && !department) throw new Error(`Unknown department "${p.department}" in post ${p.slug}`);
       await w.create(
@@ -248,6 +253,8 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           excerpt: p.excerpt,
           content: p.content,
           coverImage,
+          attachments,
+          sourceUrl,
           date: p.date,
           eventStart: p.eventStart,
           eventEnd: p.eventEnd,
@@ -262,45 +269,63 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     }
 
     // ---------- Tenders, jobs, downloads ----------
-    log('Tenders, jobs and downloads (placeholder PDFs)…');
+    // Real items from uswat.edu.pk; their documents are copied from the official site (see MediaFactory.remote).
+    log('Tenders, jobs and downloads (official files from uswat.edu.pk, cached in .seed-cache/)…');
+    const documentsOf = (docs: SeedDocument[], source: string) =>
+      media.remoteAll(docs.map((doc) => ({ url: uploadUrl(doc.file), alt: doc.title, source })));
     for (const t of TENDERS) {
+      const sourceUrl = officialUrl(t.source);
       await w.create('api::tender.tender', {
         title: t.title,
         slug: t.slug,
         referenceNumber: t.referenceNumber,
         state: 'closed',
         summary: t.summary,
-        description: blocks(t.summary, 'The official notice is attached as a PDF.'),
+        description: t.description ?? blocks(t.summary),
         publishDate: t.publishDate,
-        documents: [await media.pdf(`tender-${t.slug}`, t.title, [`Published: ${t.publishDate}`, t.referenceNumber ? `Tender No. ${t.referenceNumber}` : ''])],
-        office: officeIds.get(t.office),
+        closingDate: t.closingDate,
+        openingDate: t.openingDate,
+        documents: await documentsOf(t.documents, sourceUrl),
+        sourceUrl,
+        office: t.office ? officeIds.get(t.office) : undefined,
       });
     }
     for (const j of JOBS) {
+      const sourceUrl = officialUrl(j.source);
+      const department = j.department ? departmentIds.get(j.department) : undefined;
+      if (j.department && !department) throw new Error(`Unknown department "${j.department}" in job ${j.slug}`);
       await w.create('api::job.job', {
         title: j.title,
         slug: j.slug,
+        referenceNumber: j.referenceNumber,
         state: 'closed',
         jobType: j.jobType,
+        positions: j.positions,
         summary: j.summary,
-        description: blocks(j.summary, 'See the attached advertisement for posts, eligibility and how to apply.'),
+        description: j.description ?? blocks(j.summary),
         publishDate: j.publishDate,
-        documents: [await media.pdf(`job-${j.slug}`, j.title, [`Published: ${j.publishDate}`])],
+        lastDate: j.lastDate,
+        documents: await documentsOf(j.documents, sourceUrl),
+        sourceUrl,
         office: j.office ? officeIds.get(j.office) : undefined,
-        department: j.department ? departmentIds.get(j.department) : undefined,
+        department,
       });
     }
-    for (const d of DOWNLOADS) {
+    // Same title in two formats (PDF and Word): the slug gets the extension.
+    const titleCount = new Map<string, number>();
+    for (const dl of DOWNLOADS) titleCount.set(dl.title, (titleCount.get(dl.title) ?? 0) + 1);
+    // Created oldest first, so entries added later by editors (and the newest files) sort to the top.
+    for (const dl of [...DOWNLOADS].reverse()) {
+      const url = uploadUrl(dl.file);
+      const ext = dl.file.slice(dl.file.lastIndexOf('.') + 1).toLowerCase();
       await w.create('api::download.download', {
-        title: d.title,
-        slug: d.slug,
-        category: d.category,
-        description: d.description,
-        file: await media.pdf(`download-${d.slug}`, d.title, [d.description]),
-        publishDate: d.publishDate,
-        academicYear: d.academicYear,
-        office: d.office ? officeIds.get(d.office) : undefined,
-        program: d.program ? programIds.get(d.program) : undefined,
+        title: dl.title,
+        slug: slugify((titleCount.get(dl.title) ?? 0) > 1 ? `${dl.title} ${ext}` : dl.title),
+        category: dl.category,
+        description: dl.description,
+        file: await media.remote({ url, alt: dl.title, source: `${SITE_URL}/downloads/` }),
+        sourceUrl: url,
+        publishDate: uploadMonth(dl.file),
       });
     }
 
@@ -402,7 +427,11 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
 
   log('Done. Created:');
   for (const [uid, n] of w.counts) log(`  ${String(n).padStart(3)} × ${uid}`);
-  log(`  ${String(media.uploaded).padStart(3)} × media files (${media.photos} real photos)`);
+  log(`  ${String(media.uploaded).padStart(3)} × media files (${media.photos} real photos, ${media.files} official files from uswat.edu.pk)`);
+  if (media.missing.length) {
+    log(`Could not copy ${media.missing.length} official file(s); those entries keep their link to uswat.edu.pk:`);
+    for (const line of media.missing) log(`  ${line}`);
+  }
   log(`Finished in ${((Date.now() - started) / 1000).toFixed(1)}s`);
 }
 

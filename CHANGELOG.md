@@ -459,3 +459,34 @@
 - Icons `upload` and `receipt` added to the icon registry. Reseeded. Lint, typecheck and build are clean; verified
   on a production build at 1440px and 375px in English and Urdu (five steps, source link, RTL, no horizontal
   scroll, no fee amounts).
+
+## Phase 8 — News, tenders, jobs, downloads
+
+- **Only real content.** Seed data for posts, tenders, jobs and downloads now comes from uswat.edu.pk, with the
+  official files themselves: the seed fetches each PDF, Word form or notice image (cached in `cms/.seed-cache`,
+  git-ignored), stores it in the Media Library and links the original via a new `sourceUrl` field on Post, Tender,
+  Job and Download. The generated placeholder PDFs (sample fee structure, prospectus, forms) are gone.
+  - 26 posts (9 new, e.g. the Olivieri / IAMP meeting, Phase-II UG admissions, the Chemistry seminar), posters
+    attached; real photos where the original post has one, otherwise no cover (the site draws category artwork).
+    Corrected the KPEF scholarship post (apply at ef.kp.gov.pk by 31 Dec 2026, 2026-27 scheme).
+  - 10 tenders and 10 job advertisements with reference numbers, dates and all their documents.
+  - 67 downloads from uswat.edu.pk/downloads (four links on the old page are dead (404) and were left out).
+    New category "Reports & minutes"; `file` is no longer required (a download can just point to its source).
+  - Navigation: "Academic Calendar" (no such file is published) replaced by "Regulations & Forms" → /downloads.
+- **News & Events** (`/news`): one list for news, announcements and events, with category links
+  (`?category=event`) and numbered pages (`?page=2`) that work without JavaScript; cards with real photos or
+  category artwork. Detail pages: excerpt, cover with credit, body, posters in full, documents, source link,
+  event facts (when/where, Pakistan time), department link, share buttons (Facebook, X, LinkedIn, WhatsApp,
+  email, copy link, native share on phones), related posts and NewsArticle / Event JSON-LD.
+- **Tenders** and **Jobs** (`/tenders`, `/jobs`): All / Open / Closed filters, pagination, rows with status,
+  reference, dates and document count. Detail pages with reference, closing and bid-opening date or last date,
+  type, positions, office or department, a closed note, official documents, source link, share buttons and
+  JobPosting JSON-LD for jobs. An "Open" notice closes by itself once its deadline has passed: the status badge
+  is checked in the browser, so cached pages never stay "Open" too long.
+- **Downloads** (`/downloads`): searchable (title, description, category, file type) with a category filter,
+  kept in the URL (`?q=fee&category=forms`); each row shows category, month, format and size, with a link to the
+  original on uswat.edu.pk.
+- Home: latest news without a photo shows category artwork instead of an empty frame.
+- On-demand revalidation now covers tenders, jobs and downloads (and office changes on tender/job pages).
+- Lint, typecheck and build are clean. Verified on a production build at 1440px and 375px in English and Urdu
+  (filters, pagination, empty "open" lists, RTL, no horizontal scroll, structured data).

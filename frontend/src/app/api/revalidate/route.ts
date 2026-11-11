@@ -25,11 +25,13 @@ const TAGS_BY_UID: Record<string, string[]> = {
   "api::program.program": ["academics", "admissions", "stats"],
   "api::faculty-member.faculty-member": ["academics", "stats"],
   // Merit lists and other files attached to programs appear on program pages.
-  "api::download.download": ["academics"],
+  "api::download.download": ["academics", "downloads"],
+  "api::tender.tender": ["tenders"],
+  "api::job.job": ["jobs"],
   "api::admissions-page.admissions-page": ["admissions"],
   "api::faq.faq": ["admissions"],
   // Office heads and contacts appear in the hub's Contact section.
-  "api::office.office": ["admissions"],
+  "api::office.office": ["admissions", "tenders", "jobs"],
 };
 
 /** A replaced or re-described image can appear anywhere, so media events refresh every tag. */

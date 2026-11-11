@@ -21,7 +21,7 @@ Those posts, and HEC DLSEI 3.0 Cohort 4 (only a flow-chart graphic), get a text-
 | `faculty-mass-heritage-seminar.webp` | Management, Art and Social Sciences card and header | `/2024/04/world-heritage-day/` |
 | `hero-campus-mountains.jpg` | Hero (campus), Admissions page hero, Open Graph image | `/maincampus/` |
 | `vc-husnul-amin.jpg` | Vice Chancellor (homepage VC message, About leadership) | Homepage VC message |
-| `post-*.jpg` | Cover of the matching news, announcement or event (event and meeting photos are never used in the hero) | That post |
+| `post-*.jpg`, `post-*.webp` | Cover of the matching news, announcement or event (event and meeting photos are never used in the hero) | That post |
 
 The main gate and Main Campus photos from the Facebook page replaced the older uswat.edu.pk copies
 (1280×563 and 1145×685, soft and over-compressed); the new ones are 1600×900 and much sharper.
@@ -29,3 +29,7 @@ The main gate and Main Campus photos from the Facebook page replaced the older u
 Faculty photos: one real activity of each faculty's own departments (field work, a study visit, a training, a seminar), from its news posts on uswat.edu.pk; the department pages only carry staff portraits. Allied Health Sciences and Hunerkada have no usable photo yet (posters, another university's facilities, or meetings), so the website draws their pattern card. Add one to `FACULTY_PHOTOS` when published.
 
 The crest in `../brand/uswat-logo.png` is from the uswat.edu.pk header.
+
+Posters, notices and advertisements are not stored here: the seed copies them, with tender, job and download
+documents, from uswat.edu.pk at seed time (cached in `cms/.seed-cache/`, see `lib/media.ts` → `remote()`) and shows
+them in full on the post, tender or job page.

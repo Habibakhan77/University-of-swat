@@ -119,6 +119,36 @@ export const PHOTOS = {
     'Geology students in the lecture theatre at the mud logging seminar',
     '/2026/10/department-of-geology-conducted-a-seminar-titled-mud-logging-from-drilling-to-geological-interpretation/',
   ),
+  olivieriMeeting: photo(
+    'post-olivieri-meeting.webp',
+    'Prof. Dr. Luca Maria Olivieri in discussion with the Vice Chancellor and university officers in the Vice Chancellor’s Office',
+    '/2026/11/prof-dr-luca-maria-olivieri-sitara-i-imtiaz-director-of-the-italian-archaeological-mission-to-pakistan-held-a-meeting-with-vice-chancellor/',
+  ),
+  oricReport: photo(
+    'post-oric-performance-report.webp',
+    'University officers at the conference table during ORIC’s performance report meeting',
+    '/2026/10/oric-presents-performance-report-to-vice-chancellor/',
+  ),
+  chemistrySeminar: photo(
+    'post-chemistry-environment-seminar.webp',
+    'Students and faculty filling the auditorium for the Department of Chemistry seminar on environmental research and policy',
+    '/2026/10/one-day-seminar-on-environmental-research-policy-and-sustainable-ecosystems/',
+  ),
+  characterSeminar: photo(
+    'post-character-digital-age.webp',
+    'Students in the audience at the seminar on Character in the Digital Age',
+    '/2026/09/seminar-on-character-in-the-digital-age/',
+  ),
+  bookFair: photo(
+    'post-swat-book-fair.webp',
+    'Faculty and students browsing book stalls at the Swat Book Fair, with mountains behind the campus',
+    '/2026/09/book-fair/',
+  ),
+  climateHealthSymposium: photo(
+    'post-climate-health-symposium.webp',
+    'Guests presenting a shield on stage at the Digital Climate Health Symposium on Vector-Borne Diseases',
+    '/2026/09/digital-climate-health-symposium-on-vector-borne-diseases/',
+  ),
   // Faculty cards and faculty page headers: one real activity of the faculty's own departments each.
   facultyGeology: photo(
     'faculty-pncs-geology-field-work.webp',
@@ -144,7 +174,7 @@ export const PHOTOS = {
 
 export type PhotoKey = keyof typeof PHOTOS;
 
-/** Cover photo per seeded post (by slug). Posts not listed get a text-free branded gradient. */
+/** Cover photo per seeded post (by slug). Posts not listed have no cover; the website draws category artwork. */
 export const POST_PHOTOS: Record<string, PhotoKey> = {
   'uswat-niibs-mou-gandhara-civilization': 'postNiibs',
   'awareness-drive-cervical-cancer-prevention': 'cervicalCancer',
@@ -159,6 +189,12 @@ export const POST_PHOTOS: Record<string, PhotoKey> = {
   'role-of-human-psychology-manners-personality': 'psychologySeminar',
   'geology-seminar-mud-logging': 'geologySeminar',
   'first-university-solarization-project': 'postSolarization',
+  'olivieri-iamp-meeting-vice-chancellor': 'olivieriMeeting',
+  'oric-performance-report-vice-chancellor': 'oricReport',
+  'chemistry-seminar-environmental-research-policy': 'chemistrySeminar',
+  'seminar-character-in-the-digital-age': 'characterSeminar',
+  'swat-book-fair-2026': 'bookFair',
+  'digital-climate-health-symposium-vector-borne-diseases': 'climateHealthSymposium',
 };
 
 /**

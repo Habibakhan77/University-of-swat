@@ -137,6 +137,14 @@
         }
       }
     },
+    "sourceUrl": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "department": {
       "type": "relation",
       "relation": "manyToOne",

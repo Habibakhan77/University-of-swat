@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ArrowRight, CalendarDays } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import type { NewsItem } from "@/lib/strapi/home";
@@ -7,7 +6,7 @@ import { Card, CardBody, CardDescription, CardLink, CardMedia, CardMeta, CardTit
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
-import { ImageCredit } from "@/components/ui/image-credit";
+import { PostCover } from "@/components/notices/shared";
 
 interface NewsSectionProps {
   news: NewsItem[];
@@ -49,14 +48,7 @@ export function NewsSection({ news, locale, labels }: NewsSectionProps) {
           <Reveal className="lg:col-span-7">
             <Card interactive padding="lg" className="h-full">
               <CardMedia ratio="16/9">
-                {lead.image ? (
-                  <Image src={lead.image.src} alt={lead.image.alt} fill sizes="(min-width: 1024px) 58vw, 100vw" />
-                ) : null}
-                {lead.image?.credit ? (
-                  <div className="absolute end-2 bottom-2 z-10 flex max-w-[calc(100%-1rem)] justify-end">
-                    <ImageCredit credit={lead.image.credit} className="max-w-full" />
-                  </div>
-                ) : null}
+                <PostCover id={lead.id} category="news" image={lead.image} sizes="(min-width: 1024px) 58vw, 100vw" showCredit />
               </CardMedia>
               <CardBody>
                 <CardMeta>
@@ -76,7 +68,7 @@ export function NewsSection({ news, locale, labels }: NewsSectionProps) {
                 <Reveal delay={0.08 * (i + 1)} className="h-full">
                   <Card as="article" interactive padding="sm" className="h-full flex-row items-stretch">
                     <CardMedia ratio="4/3" className="w-32 shrink-0 sm:w-44 lg:w-40 xl:w-48">
-                      {item.image ? <Image src={item.image.src} alt={item.image.alt} fill sizes="192px" /> : null}
+                      <PostCover id={item.id} category="news" image={item.image} sizes="192px" />
                     </CardMedia>
                     <CardBody className="justify-center gap-2">
                       <CardMeta>

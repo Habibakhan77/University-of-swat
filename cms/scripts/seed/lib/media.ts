@@ -1,6 +1,7 @@
 /**
- * Media for the seed: real University of Swat photos and crest (scripts/seed/assets, see data/photos.ts) and generated
- * placeholders.
+ * Media for the seed: real University of Swat photos and crest (scripts/seed/assets, see data/photos.ts), the
+ * official documents and notice images published on uswat.edu.pk (downloaded at seed time, see `remote()`), and
+ * generated placeholders.
  *
  * Placeholders are generated locally in fixed ratios so the frontend can rely on consistent aspect
  * ratios. They contain NO text (a heading laid over an image must never compete with words baked into
@@ -8,7 +9,7 @@
  * varied per image. They are marked as placeholders by their file name (`placeholder-*`), alt text and
  * caption, so the Media Cell can find and replace them (filter the Media Library by "placeholder").
  */
-import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
@@ -18,6 +19,33 @@ import { LOGO, PHOTOS, photoCaption, type PhotoKey } from '../data/photos';
 export const PLACEHOLDER_PREFIX = 'placeholder-';
 /** Real photos uploaded by the seed; removed and re-uploaded by `--reset` like placeholders. */
 export const PHOTO_PREFIX = 'seed-photo-';
+/** Official documents and notice images copied from uswat.edu.pk; also replaced by `--reset`. */
+export const FILE_PREFIX = 'seed-file-';
+
+/**
+ * Downloads from uswat.edu.pk are kept here (git-ignored) so a `--reset` does not fetch ~70 MB again.
+ * Relative to the Strapi app root.
+ */
+const CACHE_DIR = path.join('.seed-cache');
+
+const MIME: Record<string, string> = {
+  '.pdf': 'application/pdf',
+  '.doc': 'application/msword',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+};
+
+export interface RemoteFile {
+  /** Official URL on uswat.edu.pk. */
+  url: string;
+  /** Alt text for images; for documents, the document's title. */
+  alt: string;
+  /** Page the file was published on, written to the caption as its source. */
+  source: string;
+}
 
 /** Relative to the Strapi app root: the seed runs compiled from dist/, where these files are not copied. */
 const PHOTO_DIR = path.join('scripts', 'seed', 'assets', 'photos');
@@ -133,35 +161,6 @@ export function placeholderSvg(ratio: Ratio, theme: Theme, key: string): string 
 </svg>`;
 }
 
-/** A small, valid one-page PDF that says it is a placeholder document. */
-export function placeholderPdf(title: string, lines: string[]): Buffer {
-  const esc = (s: string): string => s.replace(/[\\()]/g, (m) => `\\${m}`).replace(/[^\x20-\x7e]/g, '-');
-  const body = [
-    'BT /F1 11 Tf 72 760 Td (PLACEHOLDER DOCUMENT - University of Swat website seed data) Tj ET',
-    `BT /F1 18 Tf 72 720 Td (${esc(title.slice(0, 70))}) Tj ET`,
-    ...lines.map((l, i) => `BT /F1 11 Tf 72 ${690 - i * 18} Td (${esc(l.slice(0, 95))}) Tj ET`),
-    `BT /F1 10 Tf 72 ${660 - lines.length * 18} Td (Replace this file with the official document before going live.) Tj ET`,
-  ].join('\n');
-  const objects = [
-    '<< /Type /Catalog /Pages 2 0 R >>',
-    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
-    `<< /Length ${Buffer.byteLength(body)} >>\nstream\n${body}\nendstream`,
-    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
-  ];
-  let pdf = '%PDF-1.4\n';
-  const offsets: number[] = [];
-  objects.forEach((obj, i) => {
-    offsets.push(Buffer.byteLength(pdf));
-    pdf += `${i + 1} 0 obj\n${obj}\nendobj\n`;
-  });
-  const xref = Buffer.byteLength(pdf);
-  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
-  pdf += offsets.map((o) => `${String(o).padStart(10, '0')} 00000 n \n`).join('');
-  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
-  return Buffer.from(pdf, 'latin1');
-}
-
 export interface ImageRequest {
   ratio: Ratio;
   /** Stable key, becomes part of the file name (e.g. "news-allama-iqbal-day"). */
@@ -179,6 +178,9 @@ export class MediaFactory {
   private dir = '';
   uploaded = 0;
   photos = 0;
+  files = 0;
+  /** Official files that could not be fetched (reported at the end of the seed). */
+  readonly missing: string[] = [];
 
   constructor(private readonly strapi: Core.Strapi) {}
 
@@ -265,25 +267,90 @@ export class MediaFactory {
     return file.id;
   }
 
-  async pdf(key: string, title: string, lines: string[] = []): Promise<number> {
-    const cacheKey = `pdf:${key}`;
+  /**
+   * Copies an official file from uswat.edu.pk into the Media Library, so the website serves the real
+   * document or notice image itself (no placeholders). Images are re-encoded to WebP (max 1600px wide);
+   * documents are uploaded as published. Downloads are cached in `.seed-cache/`.
+   *
+   * Returns null (with a warning) when the file can't be fetched, so one dead link on the old site
+   * doesn't stop the seed; entries keep their `sourceUrl` to the original.
+   */
+  async remote(file: RemoteFile): Promise<number | null> {
+    const cacheKey = `remote:${file.url}`;
     const hit = this.cache.get(cacheKey);
     if (hit) return hit.id;
-    const file = await this.push(
-      `${PLACEHOLDER_PREFIX}${key}.pdf`,
-      placeholderPdf(title, lines),
-      'application/pdf',
-      `Placeholder document: ${title}`,
-      'PLACEHOLDER — replace with the official PDF',
-    );
-    this.cache.set(cacheKey, file);
-    return file.id;
+
+    const original = decodeURIComponent(new URL(file.url).pathname.split('/').pop() ?? 'file');
+    const ext = path.extname(original).toLowerCase();
+    const mimetype = MIME[ext];
+    if (!mimetype) throw new Error(`Unsupported file type for ${file.url}`);
+
+    const buffer = await this.fetchCached(file.url);
+    if (!buffer) return null;
+
+    const base = original
+      .slice(0, -ext.length)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80);
+    const isImage = mimetype.startsWith('image/');
+    const caption = `${isImage ? 'Image' : 'Source'}: University of Swat | ${file.source}`;
+    const uploaded = isImage
+      ? await this.push(
+          `${FILE_PREFIX}${base}.webp`,
+          await sharp(buffer).rotate().resize({ width: 1600, withoutEnlargement: true }).webp({ quality: 82 }).toBuffer(),
+          'image/webp',
+          file.alt,
+          caption,
+        )
+      : await this.push(`${FILE_PREFIX}${base}${ext}`, buffer, mimetype, file.alt, caption);
+    this.files += 1;
+    this.cache.set(cacheKey, uploaded);
+    return uploaded.id;
   }
 
-  /** Deletes every placeholder and seed photo uploaded by a previous seed run. */
+  /** Several remote files, skipping any that can't be fetched. */
+  async remoteAll(files: RemoteFile[]): Promise<number[]> {
+    const ids: number[] = [];
+    for (const file of files) {
+      const id = await this.remote(file);
+      if (id !== null) ids.push(id);
+    }
+    return ids;
+  }
+
+  private async fetchCached(url: string): Promise<Buffer | null> {
+    const dir = path.join(this.strapi.dirs.app.root, CACHE_DIR);
+    const cached = path.join(dir, encodeURIComponent(url).replace(/%/g, '_').slice(-180));
+    try {
+      return await readFile(cached);
+    } catch {
+      // not cached yet
+    }
+    try {
+      const response = await fetch(url, {
+        headers: { 'User-Agent': 'uswat-website-seed' },
+        signal: AbortSignal.timeout(180_000),
+      });
+      if (!response.ok) {
+        this.missing.push(`${response.status} ${url}`);
+        return null;
+      }
+      const buffer = Buffer.from(await response.arrayBuffer());
+      await mkdir(dir, { recursive: true });
+      await writeFile(cached, buffer);
+      return buffer;
+    } catch (error) {
+      this.missing.push(`${error instanceof Error ? error.message : String(error)} ${url}`);
+      return null;
+    }
+  }
+
+  /** Deletes every placeholder, seed photo and copied official file uploaded by a previous seed run. */
   static async removeAll(strapi: Core.Strapi): Promise<number> {
     const files = (await strapi.db.query('plugin::upload.file').findMany({
-      where: { $or: [{ name: { $startsWith: PLACEHOLDER_PREFIX } }, { name: { $startsWith: PHOTO_PREFIX } }] },
+      where: { $or: [{ name: { $startsWith: PLACEHOLDER_PREFIX } }, { name: { $startsWith: PHOTO_PREFIX } }, { name: { $startsWith: FILE_PREFIX } }] },
     })) as unknown[];
     const service = strapi.plugin('upload').service('upload') as unknown as UploadService;
     for (const file of files) await service.remove(file);

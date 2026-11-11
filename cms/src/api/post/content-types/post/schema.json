@@ -104,6 +104,14 @@
         }
       }
     },
+    "sourceUrl": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "date": {
       "type": "date",
       "required": true,
