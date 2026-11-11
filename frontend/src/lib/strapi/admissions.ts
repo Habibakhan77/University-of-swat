@@ -105,6 +105,8 @@ export interface AdmissionsPage {
   eligibilitySource: (NavLink & { lang: Locale }) | null;
   eligibilityRules: Localized<EligibilityRule[]>;
   steps: Localized<ApplicationStep[]>;
+  /** Where the steps were published, e.g. "Fall 2026 (as advertised)". */
+  stepsSource: (NavLink & { lang: Locale }) | null;
   meritLists: Localized<NavLink[]>;
   eligibility: Localized<Block[]> | null;
   feeNote: Localized<Block[]> | null;
@@ -154,6 +156,7 @@ interface StrapiAdmissionsPage extends Doc {
       }[]
     | null;
   eligibilitySource: StrapiLink | null;
+  howToApplySource: StrapiLink | null;
   eligibilityRules: { programs: string; requirement: string }[] | null;
   howToApply: { title: string; description: string | null; icon: string | null; linkLabel: string | null; linkUrl: string | null }[] | null;
   meritLists: StrapiLink[] | null;
@@ -237,6 +240,7 @@ const PAGE_QUERY = {
   ...linkPopulate("missingInfoNotice"),
   "populate[schedules][populate][dates]": true,
   ...linkPopulate("eligibilitySource"),
+  ...linkPopulate("howToApplySource"),
   ...linkPopulate("eligibilityRules"),
   ...linkPopulate("howToApply"),
   ...linkPopulate("meritLists"),
@@ -292,6 +296,7 @@ async function loadAdmissions(locale: Locale): Promise<AdmissionsPage | null> {
     const pair: Pair<StrapiAdmissionsPage> = { en: base, tr: translated ?? undefined };
     const advertisement = pickOne(pair, (d) => d.advertisement, locale);
     const eligibilitySource = pickOne(pair, (d) => d.eligibilitySource, locale);
+    const stepsSource = pickOne(pair, (d) => d.howToApplySource, locale);
     const banner = pickOne(pair, (d) => toCallout(d.banner), locale);
     const notice = pickOne(pair, (d) => toCallout(d.missingInfoNotice), locale);
     const trOffices = new Map((translated?.contactOffices ?? []).map((o) => [o.documentId, o]));
@@ -318,6 +323,7 @@ async function loadAdmissions(locale: Locale): Promise<AdmissionsPage | null> {
         locale,
       ),
       eligibilitySource: eligibilitySource?.value.url ? { ...toNavLink(eligibilitySource.value), lang: eligibilitySource.lang } : null,
+      stepsSource: stepsSource?.value.url ? { ...toNavLink(stepsSource.value), lang: stepsSource.lang } : null,
       eligibilityRules: pickList(
         pair,
         (d) =>

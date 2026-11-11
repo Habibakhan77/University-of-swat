@@ -19,6 +19,7 @@
     "missingInfoNotice": { "type": "component", "component": "shared.cta", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } },
     "schedules": { "type": "component", "component": "admissions.schedule", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
     "howToApply": { "type": "component", "component": "admissions.step", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "howToApplySource": { "type": "component", "component": "shared.link", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } },
     "meritLists": { "type": "component", "component": "shared.link", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
     "eligibilitySource": { "type": "component", "component": "shared.link", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } },
     "eligibilityRules": { "type": "component", "component": "admissions.eligibility-rule", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },

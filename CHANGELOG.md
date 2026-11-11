@@ -448,3 +448,12 @@
   added `data-scroll-behavior="smooth"` to `<html>` as Next.js asks.
 - Reseeded. Verified on a production build at 1440px and 375px in English and Urdu (one notice, 14 dates all
   closed, RTL, no horizontal scroll, redirects). Lint, typecheck and build are clean.
+
+## Phase 7.2 — Admissions: advertised "How to apply"
+
+- "How to apply" now follows the HOW TO APPLY panel of the Undergraduate Admissions Fall 2026 advertisement,
+  in English and Urdu: register an account (ID and password are emailed), sign in and choose the campus, upload
+  scanned documents (max 3 MB each), pay the admission processing fee by bank voucher or online (online banking
+  app, EasyPaisa, JazzCash, Upaisa), then upload the bank slip or payment screenshot. No fee amounts.
+- New `howToApplySource` link on the Admissions Page, shown as "Fall 2026 (as advertised)" above the steps.
+- Icons `upload` and `receipt` added to the icon registry. Reseeded; lint and typecheck are clean.

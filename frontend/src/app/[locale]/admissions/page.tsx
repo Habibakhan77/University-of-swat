@@ -226,7 +226,10 @@ export default async function AdmissionsHubPage() {
 
           {page?.steps.value.length ? (
             <HubSection id="how-to-apply" title={t("sections.howToApply")}>
-              <ApplySteps steps={page.steps.value} lang={langAttr(page.steps, locale)} />
+              <div className="flex flex-col gap-5">
+                {page.stepsSource ? <SourceTag link={page.stepsSource} locale={locale} /> : null}
+                <ApplySteps steps={page.steps.value} lang={langAttr(page.steps, locale)} />
+              </div>
             </HubSection>
           ) : null}
 

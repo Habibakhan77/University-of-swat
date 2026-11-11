@@ -493,6 +493,88 @@ const SCHEDULES = {
 };
 
 /**
+ * "HOW TO APPLY" panel of the Undergraduate Admissions Fall 2026 advertisement image
+ * (https://uswat.edu.pk/2026/06/admissions-fall-2026/), one step per bullet, lightly reworded for the web.
+ * Nothing is added that the panel does not say; the processing fee amount is deliberately left out.
+ */
+const HOW_TO_APPLY = {
+  en: [
+    {
+      title: 'Register an account',
+      description: 'Click Apply Online on uswat.edu.pk, then Register an account. Enter all your details with a user name and password. When you submit them, your ID and password are sent to you by email.',
+      icon: 'user-plus',
+      linkLabel: 'Register an account',
+      linkUrl: EXTERNAL.cmsSignup,
+    },
+    {
+      title: 'Sign in and choose your campus',
+      description: 'Go to Online Admissions, sign in with your user ID and password, and select the campus you want, then fill in the online application.',
+      icon: 'log-in',
+      linkLabel: 'Sign in',
+      linkUrl: EXTERNAL.cmsLogin,
+    },
+    {
+      title: 'Upload your documents',
+      description: 'Scan your documents and attach them to the online application form. Each document can be at most 3 MB.',
+      icon: 'upload',
+      linkLabel: null,
+      linkUrl: null,
+    },
+    {
+      title: 'Pay the admission processing fee',
+      description: 'Print the fee voucher from your online application and deposit it at any branch of the bank named on the fee slip, or pay online (online banking app, EasyPaisa, JazzCash, Upaisa, etc.) to the University of Swat account number given on the fee slip. If you pay online, upload a screenshot of the payment and enter the transaction ID in the online application form.',
+      icon: 'wallet',
+      linkLabel: null,
+      linkUrl: null,
+    },
+    {
+      title: 'Upload the bank slip or payment screenshot',
+      description: 'Attach a scanned copy of the bank slip, or the screenshot of your online payment, to the online application form. An application without the fee voucher or payment screenshot, uploaded within the stipulated time, is not considered further.',
+      icon: 'receipt',
+      linkLabel: null,
+      linkUrl: null,
+    },
+  ],
+  ur: [
+    {
+      title: 'اکاؤنٹ رجسٹر کریں',
+      description: 'uswat.edu.pk پر Apply Online پر کلک کریں، پھر Register an account پر۔ اپنی تمام تفصیلات یوزر نیم اور پاس ورڈ کے ساتھ درج کریں۔ جمع کرانے کے بعد آپ کا آئی ڈی اور پاس ورڈ آپ کو ای میل کر دیا جاتا ہے۔',
+      icon: 'user-plus',
+      linkLabel: 'اکاؤنٹ رجسٹر کریں',
+      linkUrl: EXTERNAL.cmsSignup,
+    },
+    {
+      title: 'سائن اِن کر کے کیمپس منتخب کریں',
+      description: 'Online Admissions میں جائیں، اپنے یوزر آئی ڈی اور پاس ورڈ سے سائن اِن کریں، مطلوبہ کیمپس منتخب کریں اور پھر آن لائن درخواست فارم پُر کریں۔',
+      icon: 'log-in',
+      linkLabel: 'سائن اِن',
+      linkUrl: EXTERNAL.cmsLogin,
+    },
+    {
+      title: 'دستاویزات اپ لوڈ کریں',
+      description: 'اپنی دستاویزات اسکین کر کے آن لائن درخواست فارم کے ساتھ منسلک کریں۔ ہر دستاویز کا سائز زیادہ سے زیادہ ۳ ایم بی ہو۔',
+      icon: 'upload',
+      linkLabel: null,
+      linkUrl: null,
+    },
+    {
+      title: 'داخلہ پراسیسنگ فیس جمع کریں',
+      description: 'آن لائن درخواست سے فیس واؤچر پرنٹ کریں اور فیس سلپ پر درج بینک کی کسی بھی برانچ میں جمع کرائیں، یا آن لائن ادائیگی کریں (آن لائن بینکنگ ایپ، ایزی پیسہ، جاز کیش، یوپیسہ وغیرہ) فیس سلپ پر دیے گئے جامعہ سوات کے اکاؤنٹ نمبر پر۔ آن لائن ادائیگی کی صورت میں ادائیگی کا اسکرین شاٹ اپ لوڈ کریں اور آن لائن درخواست فارم میں ٹرانزیکشن آئی ڈی درج کریں۔',
+      icon: 'wallet',
+      linkLabel: null,
+      linkUrl: null,
+    },
+    {
+      title: 'بینک سلپ یا ادائیگی کا اسکرین شاٹ اپ لوڈ کریں',
+      description: 'بینک سلپ کی اسکین شدہ کاپی، یا آن لائن ادائیگی کا اسکرین شاٹ، آن لائن درخواست فارم کے ساتھ منسلک کریں۔ مقررہ وقت کے اندر فیس واؤچر یا ادائیگی کا اسکرین شاٹ اپ لوڈ نہ کرنے پر درخواست پر مزید کارروائی نہیں ہوگی۔',
+      icon: 'receipt',
+      linkLabel: null,
+      linkUrl: null,
+    },
+  ],
+};
+
+/**
  * Admissions hub. Every fact here is taken from uswat.edu.pk or the CMS admission portal
  * (cms1.uswat.edu.pk), checked in November 2026:
  * - applications are made online on cms1 (Register, then Sign in); names must match the matric DMC
@@ -539,13 +621,15 @@ export const ADMISSIONS = {
       true,
     ),
     eligibilityRules: ELIGIBILITY_RULES.en,
-    howToApply: [
-      { title: 'Choose your program', description: 'Use the program finder on this page and read the details of each program you are interested in.', icon: 'search', linkLabel: 'Find a program', linkUrl: '#programs' },
-      { title: 'Read the admission advertisement', description: 'Eligibility, fees, deadlines and the documents you need are given in the official advertisement for each intake.', icon: 'megaphone', linkLabel: 'Latest advertisement', linkUrl: EXTERNAL.latestAdvertisement },
-      { title: 'Register an account', description: 'Sign up on the CMS admission portal to create the account you apply with.', icon: 'user-plus', linkLabel: 'Register on the portal', linkUrl: EXTERNAL.cmsSignup },
-      { title: 'Sign in and apply', description: 'Sign in and fill in the online admission form. Your name and your father’s name must match your matriculation (SSC) certificate or DMC exactly.', icon: 'log-in', linkLabel: 'Sign in', linkUrl: EXTERNAL.cmsLogin },
-      { title: 'Check the merit lists', description: 'Provisional and final merit lists are published on the CMS admission portal.', icon: 'list-checks', linkLabel: 'Merit lists', linkUrl: '#merit-lists' },
-    ],
+    // The "HOW TO APPLY" panel of the Fall 2026 advertisement, step by step. No fee amounts.
+    howToApply: HOW_TO_APPLY.en,
+    howToApplySource: link(
+      'Fall 2026 (as advertised)',
+      EXTERNAL.fall2026Admissions,
+      '“How to apply” in Undergraduate Admissions Fall 2026, uswat.edu.pk',
+      'file-check',
+      true,
+    ),
     meritLists: [
       link('Provisional merit lists', EXTERNAL.provisionalMeritList, 'Published on the CMS admission portal', 'list-checks', true),
       link('Final merit lists', EXTERNAL.meritList, 'Including the Final Merit List Fall 2026 (Self Finance)', 'badge-check', true),
@@ -609,13 +693,14 @@ export const ADMISSIONS = {
       true,
     ),
     eligibilityRules: ELIGIBILITY_RULES.ur,
-    howToApply: [
-      { title: 'پروگرام منتخب کریں', description: 'اس صفحے پر پروگرام فائنڈر استعمال کریں اور اپنی دلچسپی کے ہر پروگرام کی تفصیل پڑھیں۔', icon: 'search', linkLabel: 'پروگرام تلاش کریں', linkUrl: '#programs' },
-      { title: 'داخلہ اشتہار پڑھیں', description: 'ہر داخلے کی اہلیت، فیس، آخری تاریخیں اور مطلوبہ دستاویزات سرکاری اشتہار میں دی جاتی ہیں۔', icon: 'megaphone', linkLabel: 'تازہ ترین اشتہار', linkUrl: EXTERNAL.latestAdvertisement },
-      { title: 'اکاؤنٹ رجسٹر کریں', description: 'سی ایم ایس داخلہ پورٹل پر سائن اپ کر کے وہ اکاؤنٹ بنائیں جس سے آپ درخواست دیں گے۔', icon: 'user-plus', linkLabel: 'پورٹل پر رجسٹر کریں', linkUrl: EXTERNAL.cmsSignup },
-      { title: 'سائن اِن کر کے درخواست دیں', description: 'سائن اِن کریں اور آن لائن داخلہ فارم پُر کریں۔ آپ کا اور آپ کے والد کا نام میٹرک (ایس ایس سی) سند یا ڈی ایم سی کے بالکل مطابق ہونا چاہیے۔', icon: 'log-in', linkLabel: 'سائن اِن', linkUrl: EXTERNAL.cmsLogin },
-      { title: 'میرٹ لسٹیں دیکھیں', description: 'عارضی اور حتمی میرٹ لسٹیں سی ایم ایس داخلہ پورٹل پر شائع ہوتی ہیں۔', icon: 'list-checks', linkLabel: 'میرٹ لسٹیں', linkUrl: '#merit-lists' },
-    ],
+    howToApply: HOW_TO_APPLY.ur,
+    howToApplySource: link(
+      'خزاں ۲۰۲۶ (اشتہار کے مطابق)',
+      EXTERNAL.fall2026Admissions,
+      'uswat.edu.pk پر انڈرگریجویٹ داخلے خزاں ۲۰۲۶ میں "طریقۂ درخواست"',
+      'file-check',
+      true,
+    ),
     meritLists: [
       link('عارضی میرٹ لسٹیں', EXTERNAL.provisionalMeritList, 'سی ایم ایس داخلہ پورٹل پر شائع شدہ', 'list-checks', true),
       link('حتمی میرٹ لسٹیں', EXTERNAL.meritList, 'بشمول حتمی میرٹ لسٹ خزاں ۲۰۲۶ (سیلف فنانس)', 'badge-check', true),
