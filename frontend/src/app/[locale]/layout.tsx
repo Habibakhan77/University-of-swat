@@ -46,6 +46,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
       lang={locale}
       dir={localeDirection[locale]}
       suppressHydrationWarning
+      data-scroll-behavior="smooth"
       className={cn(inter.variable, nastaliq.variable)}
     >
       <head>

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowRight, ChevronDown, ExternalLink, Globe, Mail, MapPin, Megaphone, Phone, UserRound } from "lucide-react";
+import { ArrowRight, BadgeCheck, CalendarCheck, ChevronDown, ExternalLink, Globe, Mail, MapPin, Megaphone, Phone, UserRound } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
@@ -62,14 +62,11 @@ export function OfficialNotice({
   notice,
   advertisement,
   fallback,
-  compact = false,
   className,
 }: {
   notice: AdmissionsCallout | null;
   advertisement: (NavLink & { lang: string }) | null;
   fallback: { title: string; text: string; portal: string; portalHref: string };
-  /** Title and buttons only, for the second and later notices on a page. */
-  compact?: boolean;
   className?: string;
 }) {
   const locale = useLocale();
@@ -83,7 +80,7 @@ export function OfficialNotice({
       </span>
       <div className="flex min-w-0 flex-col gap-2">
         <p className="text-heading-sm text-fg">{title}</p>
-        {text && !compact ? <p className="max-w-prose text-body-sm text-fg-muted">{text}</p> : null}
+        {text ? <p className="max-w-prose text-body-sm text-fg-muted">{text}</p> : null}
         <div className="mt-2 flex flex-wrap gap-3">
           <ActionAnchor action={action} className={cn(buttonVariants({ variant: "primary", size: "md" }), "h-auto min-h-11 max-w-full shrink py-2 whitespace-normal text-start")}>
             {action.label}
@@ -103,6 +100,56 @@ export function OfficialNotice({
         </div>
       </div>
     </div>
+  );
+}
+
+/** "Fall 2026 (as advertised)": what a block of copied figures is, linked to where it was published. */
+export function SourceTag({ link, locale }: { link: NavLink & { lang: string }; locale: string }) {
+  return (
+    <SmartLink
+      href={link.href}
+      external={link.external}
+      lang={link.lang !== locale ? link.lang : undefined}
+      className="group inline-flex max-w-full flex-col gap-0.5 self-start rounded-xl border border-primary-text/20 bg-primary-soft px-4 py-2.5 transition-colors hover:border-primary-text/40"
+    >
+      <span className="inline-flex items-center gap-2 text-body-sm font-semibold text-primary-soft-fg">
+        <CalendarCheck aria-hidden className="size-4 shrink-0" />
+        {link.label}
+        <ExternalLink aria-hidden className="size-3.5 shrink-0 opacity-70" />
+      </span>
+      {link.description ? <span className="text-caption text-fg-muted group-hover:underline">{link.description}</span> : null}
+    </SmartLink>
+  );
+}
+
+/** Advertised program names are English; mark them so on the Urdu page (font and direction). */
+const latinLang = (text: string) => (/^[\x20-\x7E]+$/.test(text) ? "en" : undefined);
+
+/** The advertised eligibility table as cards: the requirement, then the programs it applies to. */
+export function EligibilityRules({ rules, lang }: { rules: { programs: string[]; requirement: string }[]; lang?: string }) {
+  const locale = useLocale();
+  return (
+    <ul lang={lang} className="grid gap-3 md:grid-cols-2">
+      {rules.map((rule, i) => (
+        <li key={i} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5">
+          <p className="flex items-start gap-2.5 text-body font-semibold text-fg">
+            <BadgeCheck aria-hidden className="mt-0.5 size-5 shrink-0 text-primary-text" />
+            <span>{rule.requirement}</span>
+          </p>
+          <ul className="flex flex-wrap gap-1.5">
+            {rule.programs.map((name) => (
+              <li
+                key={name}
+                lang={locale === "en" ? undefined : latinLang(name)}
+                className="rounded-full bg-canvas-subtle px-2.5 py-1 text-caption font-medium text-fg-muted ring-1 ring-line ring-inset"
+              >
+                {name}
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
   );
 }
 

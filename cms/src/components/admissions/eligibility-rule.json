@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_admissions_eligibility_rules",
+  "info": {
+    "displayName": "Eligibility rule",
+    "icon": "check",
+    "description": "One row of the advertised eligibility table: the programs (one per line) and the requirement they share."
+  },
+  "options": {},
+  "attributes": {
+    "programs": {
+      "type": "text",
+      "required": true
+    },
+    "requirement": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

@@ -35,6 +35,13 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  // The old WordPress site and printed material use the singular "/admission".
+  async redirects() {
+    return [
+      { source: "/admission", destination: "/admissions", permanent: true },
+      { source: "/ur/admission", destination: "/ur/admissions", permanent: true },
+    ];
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     // 75 for photos; 90 for the crest, whose fine embossed detail shows compression at small sizes.

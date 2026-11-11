@@ -43,6 +43,20 @@ export interface ImportantDate {
   note: string | null;
 }
 
+/** One advertised intake's dates, with where they were published. */
+export interface AdmissionSchedule {
+  title: string;
+  note: string | null;
+  source: ActionLink | null;
+  dates: ImportantDate[];
+}
+
+/** A row of the advertised eligibility table. */
+export interface EligibilityRule {
+  programs: string[];
+  requirement: string;
+}
+
 export interface ApplicationStep {
   title: string;
   description: string | null;
@@ -86,7 +100,10 @@ export interface AdmissionsPage {
   apply: AdmissionsCallout | null;
   advertisement: (NavLink & { lang: Locale }) | null;
   notice: AdmissionsCallout | null;
-  importantDates: Localized<ImportantDate[]>;
+  schedules: Localized<AdmissionSchedule[]>;
+  /** Label and source of the eligibility table, e.g. "Fall 2026 (as advertised)". */
+  eligibilitySource: (NavLink & { lang: Locale }) | null;
+  eligibilityRules: Localized<EligibilityRule[]>;
   steps: Localized<ApplicationStep[]>;
   meritLists: Localized<NavLink[]>;
   eligibility: Localized<Block[]> | null;
@@ -127,7 +144,17 @@ interface StrapiAdmissionsPage extends Doc {
   banner: StrapiCta | null;
   advertisement: StrapiLink | null;
   missingInfoNotice: StrapiCta | null;
-  importantDates: { label: string; startDate: string; endDate: string | null; note: string | null }[] | null;
+  schedules:
+    | {
+        title: string;
+        note: string | null;
+        sourceLabel: string | null;
+        sourceUrl: string | null;
+        dates: { label: string; startDate: string; endDate: string | null; note: string | null }[] | null;
+      }[]
+    | null;
+  eligibilitySource: StrapiLink | null;
+  eligibilityRules: { programs: string; requirement: string }[] | null;
   howToApply: { title: string; description: string | null; icon: string | null; linkLabel: string | null; linkUrl: string | null }[] | null;
   meritLists: StrapiLink[] | null;
   eligibility: Block[] | null;
@@ -208,7 +235,9 @@ const PAGE_QUERY = {
   ...linkPopulate("banner"),
   ...linkPopulate("advertisement"),
   ...linkPopulate("missingInfoNotice"),
-  ...linkPopulate("importantDates"),
+  "populate[schedules][populate][dates]": true,
+  ...linkPopulate("eligibilitySource"),
+  ...linkPopulate("eligibilityRules"),
   ...linkPopulate("howToApply"),
   ...linkPopulate("meritLists"),
   ...linkPopulate("feeLinks"),
@@ -262,6 +291,7 @@ async function loadAdmissions(locale: Locale): Promise<AdmissionsPage | null> {
 
     const pair: Pair<StrapiAdmissionsPage> = { en: base, tr: translated ?? undefined };
     const advertisement = pickOne(pair, (d) => d.advertisement, locale);
+    const eligibilitySource = pickOne(pair, (d) => d.eligibilitySource, locale);
     const banner = pickOne(pair, (d) => toCallout(d.banner), locale);
     const notice = pickOne(pair, (d) => toCallout(d.missingInfoNotice), locale);
     const trOffices = new Map((translated?.contactOffices ?? []).map((o) => [o.documentId, o]));
@@ -274,10 +304,32 @@ async function loadAdmissions(locale: Locale): Promise<AdmissionsPage | null> {
       apply: banner?.value ?? null,
       advertisement: advertisement?.value.url ? { ...toNavLink(advertisement.value), lang: advertisement.lang } : null,
       notice: notice?.value ?? null,
-      importantDates: pickList(
+      schedules: pickList(
         pair,
         (d) =>
-          d.importantDates?.map((x) => ({ label: x.label, start: x.startDate, end: x.endDate || null, note: x.note || null })),
+          d.schedules
+            ?.map((sc) => ({
+              title: sc.title,
+              note: sc.note || null,
+              source: toAction(sc.sourceLabel, sc.sourceUrl),
+              dates: (sc.dates ?? []).map((x) => ({ label: x.label, start: x.startDate, end: x.endDate || null, note: x.note || null })),
+            }))
+            .filter((sc) => sc.dates.length),
+        locale,
+      ),
+      eligibilitySource: eligibilitySource?.value.url ? { ...toNavLink(eligibilitySource.value), lang: eligibilitySource.lang } : null,
+      eligibilityRules: pickList(
+        pair,
+        (d) =>
+          d.eligibilityRules
+            ?.map((r) => ({
+              programs: r.programs
+                .split(/\r?\n/)
+                .map((x) => x.trim())
+                .filter(Boolean),
+              requirement: r.requirement.trim(),
+            }))
+            .filter((r) => r.programs.length && r.requirement),
         locale,
       ),
       steps: pickList(

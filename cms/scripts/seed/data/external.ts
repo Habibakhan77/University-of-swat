@@ -6,6 +6,7 @@ export const EXTERNAL_LINKS = {
   cmsSignup: 'https://cms1.uswat.edu.pk/web/signup',
   cmsLogin: 'https://cms1.uswat.edu.pk/web/login',
   provisionalMeritList: 'https://cms1.uswat.edu.pk/admission/program/list',
+  fall2026Admissions: 'https://uswat.edu.pk/2026/06/admissions-fall-2026/',
   latestAdvertisement: 'https://uswat.edu.pk/2026/10/undergraduate-admissions-fall-2026-self-finance/',
   admissionsDirectorate: 'https://uswat.edu.pk/directorate-of-admissions/',
   feeStructure2025: 'https://uswat.edu.pk/wp-content/uploads/2025/09/Fee-Structure-2025.pdf',

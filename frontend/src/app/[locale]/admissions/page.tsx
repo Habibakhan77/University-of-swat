@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ArrowRight, Building2, ExternalLink, GraduationCap, ListChecks, Megaphone } from "lucide-react";
+import { ArrowRight, Building2, ExternalLink, GraduationCap, ListChecks } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import type { Locale } from "@/i18n/routing";
@@ -20,8 +20,10 @@ import {
   HubNav,
   HubSection,
   LinkCards,
+  EligibilityRules,
   OfficeCard,
   OfficialNotice,
+  SourceTag,
   type HubNavItem,
 } from "@/components/admissions/sections";
 import { SmartLink } from "@/components/layout/smart-link";
@@ -59,11 +61,12 @@ export default async function AdmissionsHubPage() {
     getTranslations({ locale, namespace: "common" }),
   ]);
 
+  const hasEligibility = Boolean(page?.eligibilityRules.value.length || page?.eligibility);
   const nav: HubNavItem[] = [
     { id: "programs", label: t("sections.programs") },
-    { id: "eligibility", label: t("sections.eligibility") },
+    ...(hasEligibility ? [{ id: "eligibility", label: t("sections.eligibility") }] : []),
     { id: "fees", label: t("sections.fees") },
-    { id: "dates", label: t("sections.dates") },
+    ...(page?.schedules.value.length ? [{ id: "dates", label: t("sections.dates") }] : []),
     ...(page?.steps.value.length ? [{ id: "how-to-apply", label: t("sections.howToApply") }] : []),
     ...(page?.meritLists.value.length ? [{ id: "merit-lists", label: t("sections.meritLists") }] : []),
     ...(page?.scholarships ? [{ id: "scholarships", label: t("sections.scholarships") }] : []),
@@ -140,33 +143,36 @@ export default async function AdmissionsHubPage() {
         <div className="flex min-w-0 flex-col gap-section-sm">
           <HubNav items={nav} label={t("onThisPage")} variant="chips" />
 
-          {page?.advertisement ? <LatestNotice page={page} label={t("latestAdvertisement")} locale={locale} /> : null}
-
           <HubSection id="programs" title={t("sections.programs")} intro={t("programsIntro")}>
             <Suspense fallback={<ProgramFinder {...finderProps} />}>
               <ProgramFinderFromUrl {...finderProps} />
             </Suspense>
           </HubSection>
 
-          <HubSection id="eligibility" title={t("sections.eligibility")}>
-            {page?.eligibility ? (
-              <>
-                <EnglishOnlyNote content={page.eligibility} />
-                <div className="max-w-prose rounded-2xl border-s-4 border-primary bg-primary-soft/50 p-5 sm:p-6">
-                  <RichText blocks={page.eligibility.value} lang={langAttr(page.eligibility, locale)} className="text-fg" />
-                </div>
-              </>
-            ) : (
-              <OfficialNotice {...noticeProps} />
-            )}
-            {page?.programsWithEligibility.length ? (
-              <p className="mt-4 text-body-sm text-fg-muted">{t("eligibilityPrograms", { count: page.programsWithEligibility.length })}</p>
-            ) : null}
-          </HubSection>
+          {/* One notice for eligibility, fees and dates: the advertisement always takes precedence. */}
+          <OfficialNotice {...noticeProps} />
+
+          {hasEligibility ? (
+            <HubSection id="eligibility" title={t("sections.eligibility")}>
+              <div className="flex flex-col gap-5">
+                {page?.eligibilitySource ? <SourceTag link={page.eligibilitySource} locale={locale} /> : null}
+                {page?.eligibilityRules.value.length ? (
+                  <EligibilityRules rules={page.eligibilityRules.value} lang={langAttr(page.eligibilityRules, locale)} />
+                ) : null}
+                {page?.eligibility ? (
+                  <div>
+                    <EnglishOnlyNote content={page.eligibility} />
+                    <RichText blocks={page.eligibility.value} lang={langAttr(page.eligibility, locale)} className="max-w-prose text-body text-fg-muted" />
+                  </div>
+                ) : null}
+              </div>
+            </HubSection>
+          ) : null}
 
           <HubSection id="fees" title={t("sections.fees")}>
             <div className="flex flex-col gap-6">
-              {page?.programFees.length ? <FeeTable
+              {page?.programFees.length ? (
+                <FeeTable
                   page={page}
                   programs={index.programs}
                   locale={locale}
@@ -176,7 +182,8 @@ export default async function AdmissionsHubPage() {
                     perSemester: t("feesTable.perSemester"),
                     admissionFee: t("feesTable.admissionFee"),
                   }}
-                /> : <OfficialNotice {...noticeProps} compact />}
+                />
+              ) : null}
               {page?.feeNote ? (
                 <div>
                   <EnglishOnlyNote content={page.feeNote} />
@@ -192,13 +199,30 @@ export default async function AdmissionsHubPage() {
             </div>
           </HubSection>
 
-          <HubSection id="dates" title={t("sections.dates")}>
-            {page?.importantDates.value.length ? (
-              <DatesTimeline dates={page.importantDates.value} lang={langAttr(page.importantDates, locale)} />
-            ) : (
-              <OfficialNotice {...noticeProps} compact />
-            )}
-          </HubSection>
+          {page?.schedules.value.length ? (
+            <HubSection id="dates" title={t("sections.dates")}>
+              <div lang={langAttr(page.schedules, locale)} className="flex flex-col gap-10">
+                {page.schedules.value.map((schedule) => (
+                  <div key={schedule.title} className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1.5">
+                      <h3 className="text-heading-md text-fg">{schedule.title}</h3>
+                      {schedule.note ? <p className="max-w-prose text-body-sm text-fg-muted">{schedule.note}</p> : null}
+                      {schedule.source ? (
+                        <ActionAnchor
+                          action={schedule.source}
+                          className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary-text hover:underline"
+                        >
+                          {t("source", { label: schedule.source.label })}
+                          <ExternalLink aria-hidden className="size-3.5 shrink-0" />
+                        </ActionAnchor>
+                      ) : null}
+                    </div>
+                    <DatesTimeline dates={schedule.dates} />
+                  </div>
+                ))}
+              </div>
+            </HubSection>
+          ) : null}
 
           {page?.steps.value.length ? (
             <HubSection id="how-to-apply" title={t("sections.howToApply")}>
@@ -244,35 +268,6 @@ export default async function AdmissionsHubPage() {
         </aside>
       </Container>
     </>
-  );
-}
-
-/** The newest official admission notice, right above the programs. */
-function LatestNotice({ page, label, locale }: { page: AdmissionsPage; label: string; locale: Locale }) {
-  const ad = page.advertisement;
-  if (!ad) return null;
-  return (
-    <SmartLink
-      href={ad.href}
-      external={ad.external}
-      className="group flex items-center gap-4 rounded-2xl border border-secondary-text/20 bg-secondary-soft p-4 transition-colors hover:border-secondary-text/40 sm:p-5"
-    >
-      <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-secondary-fg">
-        <Megaphone className="size-5" />
-      </span>
-      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-overline text-secondary-text uppercase">{label}</span>
-        <span lang={ad.lang !== locale ? ad.lang : undefined} className="text-body font-semibold text-fg group-hover:underline">
-          {ad.label}
-        </span>
-        {ad.description ? (
-          <span lang={ad.lang !== locale ? ad.lang : undefined} className="text-body-sm text-fg-muted">
-            {ad.description}
-          </span>
-        ) : null}
-      </span>
-      <ExternalLink aria-hidden className="size-4 shrink-0 text-fg-subtle" />
-    </SmartLink>
   );
 }
 

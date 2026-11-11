@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_admissions_schedules",
+  "info": {
+    "displayName": "Admission schedule",
+    "icon": "calendar",
+    "description": "The dates of one advertised intake (e.g. Undergraduate programs, Fall 2026), copied from the official advertisement."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "note": {
+      "type": "text"
+    },
+    "sourceLabel": {
+      "type": "string"
+    },
+    "sourceUrl": {
+      "type": "string"
+    },
+    "dates": {
+      "type": "component",
+      "component": "admissions.important-date",
+      "repeatable": true
+    }
+  }
+}

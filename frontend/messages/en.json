@@ -162,6 +162,7 @@
     "feeItem": "Item",
     "amount": "Amount",
     "feesPending": "Fees, refunds and online payment",
+    "eligibilityAdvertised": "Advertised eligibility criteria",
     "feeStructure": "Fee structure",
     "downloads": "Merit lists & documents",
     "sampleFile": "Sample file",
@@ -282,7 +283,6 @@
       "clear": "Clear filters",
       "viewAll": "All programs in Academics"
     },
-    "eligibilityPrograms": "{count, plural, one {# program lists its} other {# programs list their}} own requirements on the program page.",
     "feesTable": {
       "caption": "Official fees entered for these programs",
       "program": "Program",
@@ -297,10 +297,9 @@
       "until": "to"
     },
     "step": "Step {n}",
-    "latestAdvertisement": "Latest admission notice",
     "notice": {
       "title": "Check the latest admission advertisement",
-      "text": "The official figures for this section are not on this website yet. The admission advertisement and the CMS admission portal always have the current details.",
+      "text": "Eligibility, fees and dates are set for each intake in the official admission advertisement, which always takes precedence over this page. Applications are made on the CMS admission portal.",
       "portal": "Open the CMS admission portal"
     },
     "faqCategories": {
@@ -318,6 +317,7 @@
       "title": "Ready to apply?",
       "text": "Applications are made online on the CMS admission portal."
     },
-    "englishOnly": "This section is available in English only for now."
+    "englishOnly": "This section is available in English only for now.",
+    "source": "Source: {label}"
   }
 }

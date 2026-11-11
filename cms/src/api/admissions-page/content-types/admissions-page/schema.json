@@ -5,7 +5,7 @@
     "singularName": "admissions-page",
     "pluralName": "admissions-pages",
     "displayName": "Admissions Page",
-    "description": "Admissions hub. Programs, FAQs (categories admissions, fees, scholarships) and offices come from their own types. Leave a section empty rather than guessing: the page then shows the “Check the latest admission advertisement” notice."
+    "description": "Admissions hub. Programs, FAQs (categories admissions, fees, scholarships) and offices come from their own types. Eligibility rules and schedules are copied from the official advertisement for an intake (label them, e.g. “Fall 2026 (as advertised)”, and link the source); leave out anything the advertisement does not state."
   },
   "options": { "draftAndPublish": true },
   "pluginOptions": { "i18n": { "localized": true } },
@@ -17,9 +17,11 @@
     "banner": { "type": "component", "component": "shared.cta", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } },
     "advertisement": { "type": "component", "component": "shared.link", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } },
     "missingInfoNotice": { "type": "component", "component": "shared.cta", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } },
-    "importantDates": { "type": "component", "component": "admissions.important-date", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "schedules": { "type": "component", "component": "admissions.schedule", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
     "howToApply": { "type": "component", "component": "admissions.step", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
     "meritLists": { "type": "component", "component": "shared.link", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "eligibilitySource": { "type": "component", "component": "shared.link", "repeatable": false, "pluginOptions": { "i18n": { "localized": true } } },
+    "eligibilityRules": { "type": "component", "component": "admissions.eligibility-rule", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },
     "eligibility": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
     "feeNote": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
     "feeLinks": { "type": "component", "component": "shared.link", "repeatable": true, "pluginOptions": { "i18n": { "localized": true } } },

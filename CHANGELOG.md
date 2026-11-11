@@ -428,3 +428,23 @@
 - Verified on a production build at 1440px and 375px in English and Urdu: no horizontal scroll (a long notice
   button overflowed at 375px and was fixed), filters, URL sync, FAQ accordion, RTL layout and the revalidation
   webhook. Lint, typecheck and build are clean.
+
+## Phase 7.1 — Admissions: advertised eligibility and dates, redirects, dev overlay
+
+- **Eligibility** now shows the published Fall 2026 eligibility table (12 program groups plus lateral entry into
+  the 5th semester), transcribed exactly from the advertisement on uswat.edu.pk and labelled
+  "Fall 2026 (as advertised)" with a link to the source. New Strapi component `admissions.eligibility-rule`
+  (programs, one per line, plus requirement) and fields `eligibilityRules` / `eligibilitySource`.
+- **Important dates** are grouped per advertised intake (new `admissions.schedule` component: title, note,
+  source link, dates), replacing the flat `importantDates` list: the revised undergraduate schedule and the
+  Self Finance schedule. Lines the advertisement doesn't give are left out. Past dates show "Closed",
+  worked out in the browser on today's date in Pakistan time.
+- The "check the advertisement" notice appears once, above Eligibility, Fees and Dates, instead of three times,
+  and no longer says the figures are "not on this website yet". Program pages keep a single notice and link to
+  the advertised eligibility on the hub.
+- Redirects: `/admission` → `/admissions` and `/ur/admission` → `/ur/admissions` (permanent).
+- Dev overlay "1 Issue" fixed: React warned about the theme script tag rendered on the client. `ThemeScript` is now
+  a client component that is a normal script in the server HTML and an inert data block on the client. Also
+  added `data-scroll-behavior="smooth"` to `<html>` as Next.js asks.
+- Reseeded. Verified on a production build at 1440px and 375px in English and Urdu (one notice, 14 dates all
+  closed, RTL, no horizontal scroll, redirects). Lint, typecheck and build are clean.

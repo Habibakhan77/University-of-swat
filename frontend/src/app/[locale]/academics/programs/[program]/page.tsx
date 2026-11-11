@@ -206,7 +206,13 @@ export default async function ProgramPage({ params }: Props) {
                 </div>
               </>
             ) : (
-              <OfficialNotice {...noticeProps} className="max-w-prose" />
+              <div className="flex max-w-prose flex-col gap-3">
+                <OfficialNotice {...noticeProps} />
+                <Link href="/admissions#eligibility" className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary-text hover:underline">
+                  {t("eligibilityAdvertised")}
+                  <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
+                </Link>
+              </div>
             )}
           </section>
 
@@ -242,7 +248,6 @@ export default async function ProgramPage({ params }: Props) {
               <FactList facts={feeFacts} columns={2} />
             ) : (
               <div className="flex max-w-prose flex-col gap-3">
-                <OfficialNotice {...noticeProps} compact />
                 <Link href="/admissions#fees" className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary-text hover:underline">
                   {t("feesPending")}
                   <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />

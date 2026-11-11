@@ -360,6 +360,138 @@ const SCHOLARSHIP_SCHEMES = [
   'Prime Minister’s Fee Reimbursement Scheme',
 ];
 
+/*
+ * Fall 2026 as advertised. Transcribed from the posters on uswat.edu.pk (checked November 2026):
+ * - eligibility: "Undergraduate Programs — Program / Eligibility" table and the "Lateral entry into 5th
+ *   semester — Eligibility" box, on Undergraduate Admissions Fall 2026 (EXTERNAL.fall2026Admissions);
+ * - undergraduate dates: "Admissions Revised Schedule" on the same page, plus its "Deadline Extended —
+ *   New Last Date: 14th October 2026 | 12:00 PM" notice;
+ * - self-finance dates: "Admission Schedule" on Undergraduate Admissions Fall 2026 (Self Finance)
+ *   (EXTERNAL.latestAdvertisement).
+ * Nothing is added that the posters do not state. Program names stay as advertised (in English on the
+ * Urdu page too).
+ */
+const ELIGIBILITY_GROUPS = {
+  lifeScience: ['BS Botany', 'BS Fisheries and Aquaculture', 'BS Zoology'],
+  computing: ['BS Artificial Intelligence', 'BS Computer Science', 'BS Data Science', 'BS Information Technology', 'BS Software Engineering'],
+  business: ['BBA (Hons)', 'BS Accounting and Finance', 'BS Business Analytics', 'BS Digital Marketing', 'BS Islamic Banking and Finance'],
+  artsSocial: [
+    'B.Ed (Hons)', 'BS Tourism and Hospitality', 'BS Culinary Art', 'BS Archaeology', 'BS Development Studies', 'BS Economics',
+    'BS English', 'BS Home Economics', 'BS Islamic Studies', 'BS Media and Communication Studies', 'BS Pakistan Studies',
+    'BS Pashto', 'BS Psychology', 'BS Sociology', 'BS Criminology', 'BS Peace and Conflict Studies', 'BS Urdu',
+    'LL.B Law and Shariah (5 Year)', 'Bachelor of Design', 'Bachelor of Fine Arts',
+  ],
+  chemistry: ['BS Chemistry'],
+  maths: ['BS Mathematics', 'BS Statistics'],
+  science: [
+    'BS Biotechnology', 'BS Forestry', 'BS Forensic Science', 'BS Genetics', 'BS Geology', 'BS Microbiology',
+    'BS Environmental Sciences', 'BS Disaster Preparedness and Climate Change',
+  ],
+  physics: ['BS Physics'],
+  alliedHealth: ['BS Medical Laboratory Technology', 'BS Dental Technology', 'BS Radiography and Imaging Technology'],
+  bed: ['B.Ed (1.5 Year)'],
+  dpt: ['Doctor of Physical Therapy (5 Year)'],
+};
+const lines = (names: string[]) => names.join('\n');
+
+const ELIGIBILITY_RULES = {
+  en: [
+    { programs: lines(ELIGIBILITY_GROUPS.lifeScience), requirement: 'F.Sc (Pre-Medical) or equivalent with at least 45% marks' },
+    { programs: lines(ELIGIBILITY_GROUPS.computing), requirement: 'F.Sc (Pre Med / Pre Eng) or ICS or FA with Maths or equivalent with at least 50% marks' },
+    { programs: lines(ELIGIBILITY_GROUPS.business), requirement: 'F.A/F.Sc or equivalent with at least 50% marks' },
+    { programs: lines(ELIGIBILITY_GROUPS.artsSocial), requirement: 'F.A/F.Sc or equivalent with at least 45% marks' },
+    { programs: lines(ELIGIBILITY_GROUPS.chemistry), requirement: 'F.Sc or equivalent with at least 45% marks in the subject of Chemistry' },
+    { programs: lines(ELIGIBILITY_GROUPS.maths), requirement: 'F.Sc (Pre Med / Pre Eng) or FA with Maths or equivalent with at least 45% marks' },
+    { programs: lines(ELIGIBILITY_GROUPS.science), requirement: 'F.Sc or equivalent with at least 45% marks' },
+    { programs: lines(ELIGIBILITY_GROUPS.physics), requirement: 'F.Sc or equivalent with at least 45% marks in the subject of Physics' },
+    { programs: lines(ELIGIBILITY_GROUPS.alliedHealth), requirement: 'F.Sc (Pre-Medical) or equivalent with at least 45% marks' },
+    { programs: lines(ELIGIBILITY_GROUPS.bed), requirement: '16 year education with 45% marks or 2.00 CGPA' },
+    { programs: lines(ELIGIBILITY_GROUPS.dpt), requirement: 'F.Sc (Pre-Medical) or equivalent with at least 60% marks' },
+    { programs: 'Lateral entry into 5th semester', requirement: 'Two years Associate Degree (AD) in the relevant subject (12 Credit Hours) with at least 2.00 CGPA' },
+  ],
+  ur: [
+    { programs: lines(ELIGIBILITY_GROUPS.lifeScience), requirement: 'ایف ایس سی (پری میڈیکل) یا مساوی، کم از کم ۴۵ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.computing), requirement: 'ایف ایس سی (پری میڈیکل / پری انجینئرنگ) یا آئی سی ایس یا ریاضی کے ساتھ ایف اے یا مساوی، کم از کم ۵۰ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.business), requirement: 'ایف اے / ایف ایس سی یا مساوی، کم از کم ۵۰ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.artsSocial), requirement: 'ایف اے / ایف ایس سی یا مساوی، کم از کم ۴۵ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.chemistry), requirement: 'ایف ایس سی یا مساوی، کیمسٹری کے مضمون میں کم از کم ۴۵ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.maths), requirement: 'ایف ایس سی (پری میڈیکل / پری انجینئرنگ) یا ریاضی کے ساتھ ایف اے یا مساوی، کم از کم ۴۵ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.science), requirement: 'ایف ایس سی یا مساوی، کم از کم ۴۵ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.physics), requirement: 'ایف ایس سی یا مساوی، فزکس کے مضمون میں کم از کم ۴۵ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.alliedHealth), requirement: 'ایف ایس سی (پری میڈیکل) یا مساوی، کم از کم ۴۵ فیصد نمبر' },
+    { programs: lines(ELIGIBILITY_GROUPS.bed), requirement: '۱۶ سالہ تعلیم، ۴۵ فیصد نمبر یا ۲.۰۰ سی جی پی اے' },
+    { programs: lines(ELIGIBILITY_GROUPS.dpt), requirement: 'ایف ایس سی (پری میڈیکل) یا مساوی، کم از کم ۶۰ فیصد نمبر' },
+    { programs: 'پانچویں سمسٹر میں لیٹرل انٹری', requirement: 'متعلقہ مضمون میں دو سالہ ایسوسی ایٹ ڈگری (اے ڈی) (۱۲ کریڈٹ آورز)، کم از کم ۲.۰۰ سی جی پی اے' },
+  ],
+};
+
+const SCHEDULES = {
+  en: [
+    {
+      title: 'Undergraduate programs, Self Finance — Fall 2026 (as advertised)',
+      note: 'Only fresh online applications are considered for self-finance admission.',
+      sourceLabel: 'Undergraduate Admissions Fall 2026 (Self Finance) on uswat.edu.pk',
+      sourceUrl: EXTERNAL.latestAdvertisement,
+      dates: [
+        { label: 'Online admission form available', startDate: '2026-10-21' },
+        { label: 'Last date of submission of online admission form', startDate: '2026-11-02' },
+        { label: 'Display of provisional merit list (queries / corrections)', startDate: '2026-11-03' },
+        { label: 'Interviews and fee submission from merit list', startDate: '2026-11-04' },
+        { label: 'Interviews and fee submission from waiting list', startDate: '2026-11-05' },
+        { label: 'Commencement of classes', startDate: '2026-11-07' },
+      ],
+    },
+    {
+      title: 'Undergraduate programs — Fall 2026 (as advertised)',
+      note: 'Revised schedule. The last date for the online form was later extended to 14 October 2026, 12:00 PM.',
+      sourceLabel: 'Undergraduate Admissions Fall 2026 on uswat.edu.pk',
+      sourceUrl: EXTERNAL.fall2026Admissions,
+      dates: [
+        { label: 'Online admission form available', startDate: '2026-09-22' },
+        { label: 'Last date of submission of online admission form', startDate: '2026-10-14', note: 'Extended from 12 October 2026; 12:00 PM.' },
+        { label: 'Display of provisional merit list (queries / corrections)', startDate: '2026-10-14', endDate: '2026-10-16' },
+        { label: 'Hafiz-e-Quran test / sports trials', startDate: '2026-10-19', endDate: '2026-10-21' },
+        { label: 'Interviews and fee submission from quota seats', startDate: '2026-10-22', endDate: '2026-10-23' },
+        { label: 'Interviews and fee submission from merit list', startDate: '2026-10-26', endDate: '2026-10-27' },
+        { label: 'Interviews and fee submission from waiting list', startDate: '2026-10-28', note: 'From 28 October onwards. Waiting lists are valid for one day only and updated daily.' },
+        { label: 'Commencement of classes', startDate: '2026-11-02' },
+      ],
+    },
+  ],
+  ur: [
+    {
+      title: 'انڈرگریجویٹ پروگرام، سیلف فنانس — خزاں ۲۰۲۶ (اشتہار کے مطابق)',
+      note: 'سیلف فنانس داخلے کے لیے صرف نئی آن لائن درخواستوں پر غور کیا جائے گا۔',
+      sourceLabel: 'uswat.edu.pk پر انڈرگریجویٹ داخلے خزاں ۲۰۲۶ (سیلف فنانس)',
+      sourceUrl: EXTERNAL.latestAdvertisement,
+      dates: [
+        { label: 'آن لائن داخلہ فارم دستیاب', startDate: '2026-10-21' },
+        { label: 'آن لائن داخلہ فارم جمع کرانے کی آخری تاریخ', startDate: '2026-11-02' },
+        { label: 'عارضی میرٹ لسٹ کی نمائش (اعتراضات / درستگی)', startDate: '2026-11-03' },
+        { label: 'میرٹ لسٹ سے انٹرویو اور فیس جمع', startDate: '2026-11-04' },
+        { label: 'ویٹنگ لسٹ سے انٹرویو اور فیس جمع', startDate: '2026-11-05' },
+        { label: 'کلاسوں کا آغاز', startDate: '2026-11-07' },
+      ],
+    },
+    {
+      title: 'انڈرگریجویٹ پروگرام — خزاں ۲۰۲۶ (اشتہار کے مطابق)',
+      note: 'نظرِ ثانی شدہ شیڈول۔ آن لائن فارم کی آخری تاریخ بعد میں ۱۴ اکتوبر ۲۰۲۶، دوپہر ۱۲ بجے تک بڑھا دی گئی۔',
+      sourceLabel: 'uswat.edu.pk پر انڈرگریجویٹ داخلے خزاں ۲۰۲۶',
+      sourceUrl: EXTERNAL.fall2026Admissions,
+      dates: [
+        { label: 'آن لائن داخلہ فارم دستیاب', startDate: '2026-09-22' },
+        { label: 'آن لائن داخلہ فارم جمع کرانے کی آخری تاریخ', startDate: '2026-10-14', note: '۱۲ اکتوبر ۲۰۲۶ سے بڑھائی گئی؛ دوپہر ۱۲ بجے۔' },
+        { label: 'عارضی میرٹ لسٹ کی نمائش (اعتراضات / درستگی)', startDate: '2026-10-14', endDate: '2026-10-16' },
+        { label: 'حافظِ قرآن ٹیسٹ / اسپورٹس ٹرائلز', startDate: '2026-10-19', endDate: '2026-10-21' },
+        { label: 'کوٹہ نشستوں پر انٹرویو اور فیس جمع', startDate: '2026-10-22', endDate: '2026-10-23' },
+        { label: 'میرٹ لسٹ سے انٹرویو اور فیس جمع', startDate: '2026-10-26', endDate: '2026-10-27' },
+        { label: 'ویٹنگ لسٹ سے انٹرویو اور فیس جمع', startDate: '2026-10-28', note: '۲۸ اکتوبر سے آگے۔ ہر ویٹنگ لسٹ صرف ایک دن کے لیے کارآمد ہے اور روزانہ تازہ کی جاتی ہے۔' },
+        { label: 'کلاسوں کا آغاز', startDate: '2026-11-02' },
+      ],
+    },
+  ],
+};
+
 /**
  * Admissions hub. Every fact here is taken from uswat.edu.pk or the CMS admission portal
  * (cms1.uswat.edu.pk), checked in November 2026:
@@ -368,9 +500,8 @@ const SCHOLARSHIP_SCHEMES = [
  * - online fee payment (Digital Transformation of Payment, July 2025), and the refund policy and annual
  *   increase from the official Fee Structure 2025 PDF;
  * - the scholarship schemes and the one-scholarship rule from the Financial Aid office page.
- * Eligibility, fee amounts and dates for an intake are only published inside the advertisement images,
- * so they are left empty and the page shows `missingInfoNotice` instead. The Directorate of Admissions
- * fills them in from the official advertisement.
+ * Eligibility and dates are transcribed from the Fall 2026 advertisement images (see ELIGIBILITY_RULES and
+ * SCHEDULES above); fee amounts are not, so the Fee structure section points to the advertisement.
  */
 export const ADMISSIONS = {
   en: {
@@ -394,12 +525,20 @@ export const ADMISSIONS = {
     missingInfoNotice: {
       isVisible: true,
       title: 'Check the latest admission advertisement',
-      text: 'The official figures for this section are not on this website yet. The admission advertisement and the CMS admission portal always have the current details.',
+      text: 'Eligibility, fees and dates are set for each intake in the official admission advertisement, which always takes precedence over this page.',
       buttonLabel: 'Open the CMS admission portal',
       buttonUrl: EXTERNAL.cms,
     },
-    // From the official advertisement only: the Directorate of Admissions adds them for each intake.
-    importantDates: [],
+    // Copied from the official advertisements; the Directorate replaces them for each intake.
+    schedules: SCHEDULES.en,
+    eligibilitySource: link(
+      'Fall 2026 (as advertised)',
+      EXTERNAL.fall2026Admissions,
+      'Undergraduate Programs eligibility table in Undergraduate Admissions Fall 2026, uswat.edu.pk',
+      'file-check',
+      true,
+    ),
+    eligibilityRules: ELIGIBILITY_RULES.en,
     howToApply: [
       { title: 'Choose your program', description: 'Use the program finder on this page and read the details of each program you are interested in.', icon: 'search', linkLabel: 'Find a program', linkUrl: '#programs' },
       { title: 'Read the admission advertisement', description: 'Eligibility, fees, deadlines and the documents you need are given in the official advertisement for each intake.', icon: 'megaphone', linkLabel: 'Latest advertisement', linkUrl: EXTERNAL.latestAdvertisement },
@@ -457,11 +596,19 @@ export const ADMISSIONS = {
     missingInfoNotice: {
       isVisible: true,
       title: 'تازہ ترین داخلہ اشتہار دیکھیں',
-      text: 'اس حصے کے سرکاری اعداد و شمار ابھی اس ویب سائٹ پر موجود نہیں۔ موجودہ تفصیلات ہمیشہ داخلہ اشتہار اور سی ایم ایس داخلہ پورٹل پر ملتی ہیں۔',
+      text: 'اہلیت، فیس اور تاریخیں ہر داخلے کے لیے سرکاری داخلہ اشتہار میں طے ہوتی ہیں، اور اسی کو اس صفحے پر فوقیت حاصل ہے۔',
       buttonLabel: 'سی ایم ایس داخلہ پورٹل کھولیں',
       buttonUrl: EXTERNAL.cms,
     },
-    importantDates: [],
+    schedules: SCHEDULES.ur,
+    eligibilitySource: link(
+      'خزاں ۲۰۲۶ (اشتہار کے مطابق)',
+      EXTERNAL.fall2026Admissions,
+      'uswat.edu.pk پر انڈرگریجویٹ داخلے خزاں ۲۰۲۶ میں اہلیت کا جدول',
+      'file-check',
+      true,
+    ),
+    eligibilityRules: ELIGIBILITY_RULES.ur,
     howToApply: [
       { title: 'پروگرام منتخب کریں', description: 'اس صفحے پر پروگرام فائنڈر استعمال کریں اور اپنی دلچسپی کے ہر پروگرام کی تفصیل پڑھیں۔', icon: 'search', linkLabel: 'پروگرام تلاش کریں', linkUrl: '#programs' },
       { title: 'داخلہ اشتہار پڑھیں', description: 'ہر داخلے کی اہلیت، فیس، آخری تاریخیں اور مطلوبہ دستاویزات سرکاری اشتہار میں دی جاتی ہیں۔', icon: 'megaphone', linkLabel: 'تازہ ترین اشتہار', linkUrl: EXTERNAL.latestAdvertisement },
