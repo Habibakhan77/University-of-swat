@@ -26,7 +26,11 @@ export interface DepartmentSeed {
   ur: string;
   shortName?: string;
   establishedYear?: number;
+  /** The fuller description: opening paragraph of the department overview. */
   summary: string;
+  /** One short sentence for the hero, cards and search. */
+  short: string;
+  urShort: string;
   focus: string;
   programs: ProgramSeed[];
 }
@@ -40,8 +44,12 @@ export interface FacultySeed {
   icon: string;
   /** Card colour on the website (Faculty → accent in Strapi). */
   accent: 'green' | 'maroon' | 'teal' | 'blue' | 'coral' | 'gold';
+  /** The fuller description, shown on the faculty page body. */
   summary: string;
   urSummary: string;
+  /** One short sentence for the hero, cards and search. */
+  short: string;
+  urShort: string;
   deanName?: string;
   deanIsPlaceholder: boolean;
   departments: DepartmentSeed[];
@@ -78,6 +86,8 @@ export const FACULTIES: FacultySeed[] = [
     summary:
       'Home to the study of language, literature, faith and law, from English and Arabic to Pashto and Urdu, alongside a law school grounded in both statute and Shariah.',
     urSummary: 'زبان، ادب، دین اور قانون کی تعلیم کا مرکز، جہاں انگریزی، عربی، پشتو اور اردو کے ساتھ قانون و شریعہ کی تعلیم دی جاتی ہے۔',
+    short: 'Language, literature, faith and law.',
+    urShort: 'زبان، ادب، دین اور قانون کی تعلیم۔',
     deanIsPlaceholder: true,
     departments: [
       {
@@ -86,6 +96,8 @@ export const FACULTIES: FacultySeed[] = [
         shortName: 'English',
         establishedYear: 2010,
         summary: 'Literature, linguistics and language teaching, with a growing focus on applied linguistics and foreign-language courses.',
+        short: 'Literature, linguistics and language teaching.',
+        urShort: 'ادب، لسانیات اور زبان کی تدریس۔',
         focus: 'English literature, applied linguistics, ELT and translation',
         programs: [bs('English'), bs5('English'), mphil('English'), phd('English')],
       },
@@ -95,6 +107,8 @@ export const FACULTIES: FacultySeed[] = [
         shortName: 'Islamic & Arabic',
         establishedYear: 2010,
         summary: 'Quranic studies, Hadith, Seerah and Islamic thought, together with classical and modern Arabic.',
+        short: 'Quranic studies, Hadith, Islamic thought and Arabic.',
+        urShort: 'علومِ قرآن، حدیث، اسلامی فکر اور عربی زبان۔',
         focus: 'Quran and Tafseer, Hadith, Islamic jurisprudence and Arabic language',
         programs: [bs('Islamic Studies'), mphil('Islamic Studies'), phd('Islamic Studies'), bs('Arabic')],
       },
@@ -103,6 +117,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ پشتو و مقامی زبانیں',
         shortName: 'Pashto',
         summary: 'Pashto language, literature and folklore, and the documentation of the many smaller languages spoken across Swat and Malakand.',
+        short: 'Pashto literature and folklore, and the languages of Swat.',
+        urShort: 'پشتو ادب و لوک ورثہ اور سوات کی مقامی زبانیں۔',
         focus: 'Pashto literature, folklore and the documentation of local languages',
         programs: [bs('Pashto'), mphil('Pashto'), phd('Pashto')],
       },
@@ -111,6 +127,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ قانون و شریعہ',
         shortName: 'Law',
         summary: 'A five-year law degree that combines Pakistani statute and constitutional law with Islamic jurisprudence.',
+        short: 'A five-year law degree joining statute law and Shariah.',
+        urShort: 'ملکی قانون اور شریعہ پر مشتمل پانچ سالہ قانون کی ڈگری۔',
         focus: 'Constitutional law, criminal and civil law, and Islamic jurisprudence',
         programs: [{ level: 'bs', name: 'LLB (5 Years)', durationYears: 5, semesters: 10, creditHours: 160 }],
       },
@@ -119,6 +137,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ اردو',
         shortName: 'Urdu',
         summary: 'Urdu language, classical and modern poetry and prose, criticism and research on the literary heritage of the region.',
+        short: 'Urdu language, poetry, prose and literary criticism.',
+        urShort: 'اردو زبان، شاعری، نثر اور ادبی تنقید۔',
         focus: 'Urdu poetry, fiction, criticism and research methods',
         programs: [bs('Urdu'), bs5('Urdu'), mphil('Urdu'), phd('Urdu')],
       },
@@ -135,6 +155,8 @@ export const FACULTIES: FacultySeed[] = [
     summary:
       'Physics, mathematics, statistics, geology and computing, taught through laboratory work, fieldwork in the Hindu Kush and Karakoram foothills, and industry projects.',
     urSummary: 'طبیعیات، ریاضی، شماریات، ارضیات اور کمپیوٹنگ کی تعلیم، تجربہ گاہوں، فیلڈ ورک اور صنعتی منصوبوں کے ذریعے۔',
+    short: 'Physics, mathematics, statistics, geology and computing.',
+    urShort: 'طبیعیات، ریاضی، شماریات، ارضیات اور کمپیوٹنگ۔',
     deanIsPlaceholder: true,
     departments: [
       {
@@ -143,6 +165,8 @@ export const FACULTIES: FacultySeed[] = [
         shortName: 'Physics',
         establishedYear: 2010,
         summary: 'Teaching and research in condensed matter, materials, electronics and computational physics.',
+        short: 'Condensed matter, materials, electronics and computational physics.',
+        urShort: 'کنڈینسڈ میٹر، مواد، الیکٹرانکس اور کمپیوٹیشنل فزکس۔',
         focus: 'Materials science, electronics, and computational and theoretical physics',
         programs: [bs('Physics'), bs5('Physics'), mphil('Physics'), phd('Physics')],
       },
@@ -152,6 +176,8 @@ export const FACULTIES: FacultySeed[] = [
         shortName: 'Computer Science',
         establishedYear: 2010,
         summary: 'Computer science, software engineering and IT degrees built around projects, programming labs and industry internships.',
+        short: 'Computer science, software engineering and IT degrees.',
+        urShort: 'کمپیوٹر سائنس، سافٹ ویئر انجینئرنگ اور آئی ٹی کی ڈگریاں۔',
         focus: 'Software engineering, artificial intelligence, networks and data science',
         programs: [
           bs('Computer Science', { shift: 'morning_and_evening' }),
@@ -165,6 +191,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ ریاضی و شماریات',
         shortName: 'Mathematics',
         summary: 'Pure and applied mathematics and statistics, preparing students for teaching, research and data-driven careers.',
+        short: 'Pure and applied mathematics and statistics.',
+        urShort: 'خالص و اطلاقی ریاضی اور شماریات۔',
         focus: 'Applied mathematics, numerical analysis and statistical modelling',
         programs: [bs('Mathematics'), bs5('Mathematics'), bs('Statistics'), mphil('Mathematics'), phd('Mathematics')],
       },
@@ -173,6 +201,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ ارضیات',
         shortName: 'Geology',
         summary: 'Earth science with the mountains of Swat as an outdoor laboratory: mapping, mineralogy, petroleum and engineering geology.',
+        short: 'Earth science, with the mountains of Swat as a field laboratory.',
+        urShort: 'ارضیات، سوات کے پہاڑ جس کی عملی تجربہ گاہ ہیں۔',
         focus: 'Field mapping, mineral resources, petroleum geology and geohazards',
         programs: [bs('Geology'), ms('Geology')],
       },
@@ -189,6 +219,8 @@ export const FACULTIES: FacultySeed[] = [
     summary:
       'The largest faculty, covering business, economics, media, psychology, education, tourism and the archaeology of the ancient Gandhara region.',
     urSummary: 'یونیورسٹی کی سب سے بڑی فیکلٹی، جس میں کاروبار، معاشیات، میڈیا، نفسیات، تعلیم، سیاحت اور گندھارا کے آثارِ قدیمہ شامل ہیں۔',
+    short: 'Business, economics, media, psychology, education and heritage.',
+    urShort: 'کاروبار، معاشیات، میڈیا، نفسیات، تعلیم اور ثقافتی ورثہ۔',
     deanIsPlaceholder: true,
     departments: [
       {
@@ -196,6 +228,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ معاشیات و ترقیاتی مطالعات',
         shortName: 'Economics',
         summary: 'Economic theory and policy with an emphasis on regional development, public finance and the economy of Khyber Pakhtunkhwa.',
+        short: 'Economic theory and policy, with a focus on regional development.',
+        urShort: 'معاشی نظریہ و پالیسی، علاقائی ترقی پر خصوصی توجہ کے ساتھ۔',
         focus: 'Development economics, public policy and econometrics',
         programs: [bs('Economics'), bs5('Economics'), mphil('Economics')],
       },
@@ -204,6 +238,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ آثارِ قدیمہ',
         shortName: 'Archaeology',
         summary: 'Swat sits at the heart of ancient Gandhara; the department studies, excavates and helps preserve its Buddhist and later heritage.',
+        short: 'Studying and preserving the Gandhara heritage of Swat.',
+        urShort: 'سوات کے گندھارا ورثے کا مطالعہ اور تحفظ۔',
         focus: 'Gandhara art and archaeology, excavation and heritage management',
         programs: [bs('Archaeology'), mphil('Archaeology'), phd('Archaeology')],
       },
@@ -212,6 +248,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ سیاحت و مہمان نوازی',
         shortName: 'Tourism',
         summary: 'Preparing professionals for one of the valley’s key industries: hotel operations, eco-tourism and destination management.',
+        short: 'Hotel operations, eco-tourism and destination management.',
+        urShort: 'ہوٹل مینجمنٹ، ماحول دوست سیاحت اور منزل کی منصوبہ بندی۔',
         focus: 'Hospitality management, eco-tourism and destination marketing',
         programs: [bs('Tourism and Hospitality Management')],
       },
@@ -220,6 +258,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ مینجمنٹ و کامرس',
         shortName: 'Management',
         summary: 'Business administration, accounting and commerce, with links to the Swat Chamber of Commerce and local enterprise.',
+        short: 'Business administration, accounting and commerce.',
+        urShort: 'بزنس ایڈمنسٹریشن، اکاؤنٹنگ اور کامرس۔',
         focus: 'Management, finance, accounting, marketing and entrepreneurship',
         programs: [
           { level: 'bs', name: 'BBA (Hons)', shift: 'morning_and_evening' },
@@ -233,6 +273,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ مطالعہ پاکستان',
         shortName: 'Pakistan Studies',
         summary: 'History, politics and society of Pakistan, including the regional history of Swat State and Malakand.',
+        short: 'History, politics and society of Pakistan and the Swat region.',
+        urShort: 'پاکستان اور خطۂ سوات کی تاریخ، سیاست اور معاشرہ۔',
         focus: 'History of the Pakistan Movement, politics and regional history',
         programs: [bs('Pakistan Studies'), mphil('Pakistan Studies')],
       },
@@ -241,6 +283,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ میڈیا و ابلاغیات',
         shortName: 'Media Studies',
         summary: 'Journalism, broadcast and digital media, with hands-on production through the university’s Campus TV.',
+        short: 'Journalism, broadcast and digital media.',
+        urShort: 'صحافت، نشریات اور ڈیجیٹل میڈیا۔',
         focus: 'Journalism, digital media production and strategic communication',
         programs: [bs('Media and Communication Studies'), mphil('Media and Communication Studies')],
       },
@@ -249,6 +293,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ سماجی و صنفی مطالعات',
         shortName: 'Social & Gender Studies',
         summary: 'Sociology and gender studies with research on family, community and social change in northern Pakistan.',
+        short: 'Sociology and gender studies in northern Pakistan.',
+        urShort: 'شمالی پاکستان کے تناظر میں عمرانیات اور صنفی مطالعات۔',
         focus: 'Sociology, gender and development, and social research methods',
         programs: [bs('Sociology'), bs('Gender Studies'), mphil('Sociology')],
       },
@@ -257,6 +303,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ نفسیات',
         shortName: 'Psychology',
         summary: 'Clinical, educational and social psychology, with community mental-health outreach and supervised practice.',
+        short: 'Clinical, educational and social psychology.',
+        urShort: 'طبی، تعلیمی اور سماجی نفسیات۔',
         focus: 'Clinical psychology, counselling and psychological assessment',
         programs: [bs('Psychology'), ms('Clinical Psychology')],
       },
@@ -265,6 +313,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ تعلیم و تربیتِ عملہ',
         shortName: 'Education',
         summary: 'Teacher education and professional development for schools, colleges and the university’s own staff.',
+        short: 'Teacher education and professional development.',
+        urShort: 'اساتذہ کی تعلیم اور پیشہ ورانہ تربیت۔',
         focus: 'Teacher education, educational leadership and assessment',
         programs: [bs('Education'), mphil('Education'), phd('Education')],
       },
@@ -281,6 +331,8 @@ export const FACULTIES: FacultySeed[] = [
     summary:
       'Life and chemical sciences that draw on the valley’s rich biodiversity: botany, zoology, chemistry, biotechnology, agriculture, forestry and the environment.',
     urSummary: 'وادی کے حیاتیاتی تنوع سے جڑے علوم: نباتیات، حیوانیات، کیمیا، بائیوٹیکنالوجی، زراعت، جنگلات اور ماحولیات۔',
+    short: 'Life and chemical sciences rooted in the valley’s biodiversity.',
+    urShort: 'وادی کے حیاتیاتی تنوع سے جڑے حیاتیاتی اور کیمیائی علوم۔',
     deanIsPlaceholder: true,
     departments: [
       {
@@ -288,6 +340,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ ماحولیاتی علوم',
         shortName: 'Environmental Sciences',
         summary: 'Climate change, water and air quality, and disaster resilience in a mountain region exposed to floods and glacial hazards.',
+        short: 'Climate, water, air quality and disaster resilience.',
+        urShort: 'موسمیاتی تبدیلی، پانی، ہوا کا معیار اور آفات سے نمٹنا۔',
         focus: 'Climate resilience, water resources and environmental monitoring',
         programs: [bs('Environmental Sciences'), mphil('Environmental Sciences')],
       },
@@ -297,6 +351,8 @@ export const FACULTIES: FacultySeed[] = [
         shortName: 'Chemistry',
         establishedYear: 2010,
         summary: 'Organic, inorganic, physical and analytical chemistry, with research on natural products from local medicinal plants.',
+        short: 'Organic, inorganic, physical and analytical chemistry.',
+        urShort: 'نامیاتی، غیر نامیاتی، طبیعی اور تجزیاتی کیمیا۔',
         focus: 'Natural products, analytical and materials chemistry',
         programs: [bs('Chemistry'), bs5('Chemistry'), mphil('Chemistry'), phd('Chemistry')],
       },
@@ -305,6 +361,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ حیوانیات',
         shortName: 'Zoology',
         summary: 'Animal biology, wildlife, fisheries and parasitology, with field studies across the valley’s ecosystems.',
+        short: 'Animal biology, wildlife, fisheries and parasitology.',
+        urShort: 'حیوانی حیاتیات، جنگلی حیات، ماہی پروری اور طفیلیات۔',
         focus: 'Wildlife and fisheries, entomology and parasitology',
         programs: [bs('Zoology'), bs5('Zoology'), mphil('Zoology'), phd('Zoology')],
       },
@@ -313,6 +371,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ زرعی علوم و جنگلات',
         shortName: 'Agriculture & Forestry',
         summary: 'Crop science, horticulture and forestry suited to the fruit orchards and forests that define Swat’s economy.',
+        short: 'Crop science, horticulture and forestry.',
+        urShort: 'فصلوں کا علم، باغبانی اور جنگلات۔',
         focus: 'Horticulture, agronomy, forest management and plant protection',
         programs: [{ level: 'bs', name: 'BS (Hons) Agriculture' }, bs('Forestry')],
       },
@@ -322,6 +382,8 @@ export const FACULTIES: FacultySeed[] = [
         shortName: 'Botany',
         establishedYear: 2010,
         summary: 'Plant science and taxonomy, ethnobotany and conservation of the region’s medicinal and endemic flora.',
+        short: 'Plant science, ethnobotany and conservation.',
+        urShort: 'نباتیات، نسلی نباتیات اور تحفظ۔',
         focus: 'Plant taxonomy, ethnobotany, ecology and plant physiology',
         programs: [bs('Botany'), bs5('Botany'), mphil('Botany'), phd('Botany')],
       },
@@ -330,6 +392,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'شعبہ بائیوٹیکنالوجی، جینیات، فرانزک و مائیکروبیالوجی',
         shortName: 'Biotechnology',
         summary: 'Molecular biology, genetics, microbiology and forensic science, taught in modern teaching and research laboratories.',
+        short: 'Molecular biology, genetics, microbiology and forensics.',
+        urShort: 'سالماتی حیاتیات، جینیات، مائیکروبیالوجی اور فرانزک۔',
         focus: 'Molecular genetics, microbiology, and forensic DNA analysis',
         programs: [bs('Biotechnology'), bs('Microbiology'), bs('Forensic Science'), mphil('Biotechnology'), mphil('Microbiology')],
       },
@@ -346,6 +410,8 @@ export const FACULTIES: FacultySeed[] = [
     summary:
       'The university’s newest faculty, approved by the Senate to train medical technologists, nurses, public-health and rehabilitation professionals for the region.',
     urSummary: 'یونیورسٹی کی نئی فیکلٹی، جو خطے کے لیے میڈیکل ٹیکنالوجسٹ، نرسز، صحتِ عامہ اور بحالی کے ماہرین تیار کرتی ہے۔',
+    short: 'Medical technology, nursing, public health and rehabilitation.',
+    urShort: 'طبی ٹیکنالوجی، نرسنگ، صحتِ عامہ اور بحالی۔',
     deanName: 'Dr. Ali Akbar (Focal Person / Director)',
     deanIsPlaceholder: false,
     departments: [
@@ -354,6 +420,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'مرکز برائے طبی ٹیکنالوجی',
         shortName: 'Medical Technologies',
         summary: 'Laboratory and imaging technologists for hospitals and diagnostic centres across Malakand Division.',
+        short: 'Laboratory and imaging technologists for the region’s hospitals.',
+        urShort: 'علاقے کے ہسپتالوں کے لیے لیبارٹری اور امیجنگ ٹیکنالوجسٹ۔',
         focus: 'Medical laboratory technology and radiology and imaging',
         programs: [bs('Medical Laboratory Technology'), bs('Radiology and Imaging Technology')],
       },
@@ -362,6 +430,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'اسکول آف نرسنگ و صحتِ عامہ',
         shortName: 'Nursing & Public Health',
         summary: 'Nursing education and public-health training focused on community health, prevention and health awareness.',
+        short: 'Nursing education and public-health training.',
+        urShort: 'نرسنگ کی تعلیم اور صحتِ عامہ کی تربیت۔',
         focus: 'Community health, epidemiology and nursing practice',
         programs: [{ level: 'bs', name: 'BS Nursing (Generic)' }, ms('Public Health')],
       },
@@ -370,6 +440,8 @@ export const FACULTIES: FacultySeed[] = [
         ur: 'مرکز برائے فارماسیوٹیکل و بحالی علوم',
         shortName: 'Rehabilitation Sciences',
         summary: 'Physical therapy and rehabilitation sciences, preparing clinicians for hospitals and community rehabilitation services.',
+        short: 'Physical therapy and rehabilitation sciences.',
+        urShort: 'فزیکل تھراپی اور بحالی کے علوم۔',
         focus: 'Physical therapy and rehabilitation',
         programs: [{ level: 'bs', name: 'Doctor of Physical Therapy (DPT)', durationYears: 5, semesters: 10, creditHours: 170 }],
       },
@@ -386,6 +458,8 @@ export const FACULTIES: FacultySeed[] = [
     summary:
       'A centre for the living arts and culture of Swat: music, calligraphy, painting, theatre and traditional crafts, now being expanded into a full institute.',
     urSummary: 'سوات کے زندہ فنون اور ثقافت کا مرکز: موسیقی، خطاطی، مصوری، تھیٹر اور روایتی دستکاری۔',
+    short: 'The centre for the arts and culture of Swat.',
+    urShort: 'سوات کے فنون اور ثقافت کا مرکز۔',
     deanIsPlaceholder: true,
     departments: [],
   },

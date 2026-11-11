@@ -19,7 +19,7 @@ export function PhoneDirectory({ entries, areaCode }: { entries: PhoneEntry[]; a
   const [group, setGroup] = useState<PhoneGroup | "">("");
   const q = useDeferredValue(query);
 
-  const byText = entries.filter((e) => matches(q, `${e.name.value} ${e.number} ${areaCode ?? ""}${e.number}`));
+  const byText = entries.filter((e) => matches(q, `${e.name.value} ${e.englishName} ${e.number} ${areaCode ?? ""}${e.number}`));
   const results = group ? byText.filter((e) => e.group === group) : byText;
   const groups = (["offices", "departments"] as const).filter((g) => entries.some((e) => e.group === g));
 

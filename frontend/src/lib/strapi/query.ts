@@ -122,8 +122,10 @@ const isEmpty = (value: unknown) =>
 /** A localized field: the translation when it has one, else English, tagged with its language. */
 export function pick<T, K extends keyof T>(pair: Pair<T>, key: K, locale: Locale): Localized<NonNullable<T[K]>> | null {
   const translated = pair.tr?.[key];
-  if (pair.tr && !isEmpty(translated)) return { value: translated as NonNullable<T[K]>, lang: locale };
   const english = pair.en[key];
+  // A translation identical to the English text (an official title kept as written) is English.
+  const copied = typeof translated === "string" && translated === english;
+  if (pair.tr && !isEmpty(translated) && !copied) return { value: translated as NonNullable<T[K]>, lang: locale };
   return isEmpty(english) ? null : { value: english as NonNullable<T[K]>, lang: routing.defaultLocale };
 }
 

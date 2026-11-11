@@ -9,6 +9,7 @@ import { langAttr } from "@/lib/strapi/academics-model";
 import { formatDateTime, formatDay, jobsHref, noticeStatus, tendersHref, type Notice, type NoticeKind } from "@/lib/strapi/notices-model";
 import { EmptyState } from "@/components/academics/program-explorer";
 import { Pagination } from "@/components/ui/pagination";
+import { OfficialLanguageNote } from "@/components/ui/language-note";
 import { FilterLinks } from "./shared";
 import { LiveStatus } from "./live-status";
 
@@ -186,6 +187,7 @@ export async function NoticeList({
   return (
     <div className="flex flex-col gap-8">
       <FilterLinks label={t("statusFilter")} options={options} />
+      <OfficialLanguageNote show={shown.some((n) => n.title.lang !== locale)} className="-mb-4" />
       {shown.length ? (
         <ul className="grid gap-4">
           {shown.map((n) => (

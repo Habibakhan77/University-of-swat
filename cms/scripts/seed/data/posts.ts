@@ -33,7 +33,8 @@ export interface PostSeed {
   eventStart?: string;
   eventEnd?: string;
   eventLocation?: string;
-  ur?: { title: string; excerpt: string };
+  /** Urdu title and excerpt (and venue). The body stays in English and is shown with an "in English" note. */
+  ur?: { title: string; excerpt: string; eventLocation?: string };
 }
 
 export const POSTS: PostSeed[] = [
@@ -58,6 +59,7 @@ export const POSTS: PostSeed[] = [
     isFeatured: true,
     ur: {
       title: 'بین الاقوامی کانفرنس: ون پلینٹ ون ہیلتھ؛ فطرت، موسم اور انسانیت',
+      eventLocation: 'جامعہ سوات، چارباغ',
       excerpt: 'شعبۂ حیوانیات کے زیرِ اہتمام حیاتیاتی تنوع، موسمیاتی لچک اور تمام جانداروں کی صحت پر بین الاقوامی کانفرنس، 3 تا 5 فروری 2027۔ خلاصے 31 دسمبر 2026 تک جمع کرائیں۔',
     },
   },
@@ -123,6 +125,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'hec-dlsei-3-cohort-4',
+    ur: { title: 'ایچ ای سی ڈیجیٹل لٹریسی پروگرام 3.0: چوتھے گروپ کا اعلان', excerpt: 'طلبہ اور اساتذہ ایچ ای سی کے ڈیجیٹل لٹریسی اینڈ اسکلز انہانسمنٹ انیشی ایٹو کے تحت چھ ماہ کے مفت کورسیرا لائسنس کے لیے درخواست دے سکتے ہیں۔' },
     source: '/2026/11/%f0%9d%90%87%f0%9d%90%84%f0%9d%90%82-%f0%9d%90%83%f0%9d%90%8b%f0%9d%90%92%f0%9d%90%84%f0%9d%90%88-%f0%9d%9f%91-%f0%9d%9f%8e-%f0%9d%90%82%f0%9d%90%8e%f0%9d%90%87%f0%9d%90%8e%f0%9d%90%91/',
     attachments: [
       { file: '2026/11/Announcement-Post-2.jpg', title: 'HEC DLSEI 3.0 Cohort 4 announcement poster' },
@@ -142,6 +145,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'awareness-drive-cervical-cancer-prevention',
+    ur: { title: 'سروائیکل کینسر سے بچاؤ کی آگاہی مہم', excerpt: 'طبی ماہرین نے طالبات کو بروقت اسکریننگ، ویکسینیشن اور سروائیکل کینسر سے بچاؤ کے بارے میں آگاہ کیا۔', eventLocation: 'ویمن کیمپس' },
     source: '/2026/11/awareness-drive-on-cervical-cancer-preventions/',
     title: 'Awareness Drive on Cervical Cancer Preventions',
     category: 'event',
@@ -156,6 +160,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'climate-resilience-conference-bara-gali',
+    ur: { title: 'باڑہ گلی میں موسمیاتی لچک پر کانفرنس میں جامعہ سوات کی شرکت', excerpt: 'اساتذہ نے پاکستان کے پہاڑی علاقوں میں موسمیاتی لچک پیدا کرنے پر کانفرنس میں جامعہ کی نمائندگی کی۔' },
     source: '/2026/11/university-of-swat-participates-in-conference-on-climate-resilience-at-bara-gali/',
     title: 'University of Swat Participates in Conference on Climate Resilience at Bara Gali',
     category: 'news',
@@ -183,6 +188,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'vice-chancellors-conference-on-academic',
+    ur: { title: 'تعلیمی امور پر وائس چانسلرز کانفرنس', excerpt: 'وائس چانسلر نے دیگر وائس چانسلرز کے ساتھ اعلیٰ تعلیم میں تعلیمی اصلاحات پر تبادلۂ خیال کیا۔' },
     source: '/2026/11/vice-chancellors-conference-on-academic/',
     title: 'Vice Chancellors Conference on Academic',
     category: 'news',
@@ -194,6 +200,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'oric-training-session-phd-faculty',
+    ur: { title: 'اورک کے زیرِ اہتمام پی ایچ ڈی اساتذہ کے لیے آگاہی و تربیتی نشست', excerpt: 'اورک نے پی ایچ ڈی اساتذہ کو مسابقتی تحقیقی تجاویز لکھنے اور گرانٹس کے انتظام کی تربیت دی۔' },
     source: '/2026/11/oric-organized-an-awareness-and-training-session-for-phd-faculty-members/',
     title: '(ORIC) organized an awareness and training session for PhD faculty members',
     category: 'news',
@@ -205,6 +212,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'uswat-scci-strategic-collaboration',
+    ur: { title: 'جامعہ سوات اور سوات چیمبر آف کامرس اینڈ انڈسٹری کے درمیان اسٹریٹجک تعاون پر غور', excerpt: 'جامعہ اور ایس سی سی آئی نے انٹرن شپ، مقامی صنعت کے لیے تحقیق اور کاروباری معاونت پر بات چیت کی۔' },
     source: '/2026/10/university-of-swat-and-swat-chamber-of-commerce-and-industry-scci-explore-strategic-collaboration/',
     title: 'University of Swat and Swat Chamber of Commerce and Industry (SCCI) explore Strategic Collaboration',
     category: 'news',
@@ -217,6 +225,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'inaugural-lecture-swat-lectures',
+    ur: { title: 'خطباتِ سوات کا افتتاحی خطبہ', excerpt: 'خطباتِ سوات کے نئے سلسلے کا آغاز پانینی، سنسکرت اور گندھارا کے فکری ورثے پر ایک خطبے سے ہوا۔', eventLocation: 'مرکزی کیمپس، چارباغ' },
     source: '/2026/10/inaugural-lecture-of-swat-lectures-%d8%ae%d8%b7%d8%a8%d8%a7%d8%aa%d9%90-%d8%b3%d9%88%d8%a7%d8%aa/',
     title: 'Inaugural lecture of Swat Lectures (خطباتِ سوات)',
     category: 'event',
@@ -233,6 +242,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'kashmir-black-day-2026',
+    ur: { title: 'یومِ سیاہ کشمیر', excerpt: 'جامعہ نے کشمیری عوام سے اظہارِ یکجہتی کے لیے یومِ سیاہ منایا۔', eventLocation: 'مرکزی کیمپس، چارباغ' },
     source: '/2026/10/kashmir-black-day-youm-e-siah/',
     title: 'Kashmir Black Day (Youm-e-Siah)',
     category: 'event',
@@ -244,6 +254,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'expansion-of-hunerkada-institute',
+    ur: { title: 'جامعہ سوات میں ہنرکدہ انسٹی ٹیوٹ کی توسیع', excerpt: 'جامعہ کے فن و ثقافت کے مرکز ہنرکدہ کو فنون کے مزید پروگرام پیش کرنے کے لیے وسعت دی جا رہی ہے۔' },
     source: '/2026/10/expansion-of-hunerkada-institute-at-university-of-swat/',
     title: 'Expansion of Hunerkada Institute at University of Swat',
     category: 'news',
@@ -255,6 +266,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'role-of-human-psychology-manners-personality',
+    ur: { title: 'اخلاق اور شخصیت کی تشکیل میں انسانی نفسیات کا کردار', excerpt: 'اس سیمینار میں بتایا گیا کہ نفسیات کردار، رویّے اور شخصی نشوونما پر کیسے اثر انداز ہوتی ہے۔', eventLocation: 'شعبہ نفسیات' },
     source: '/2026/10/the-role-of-human-psychology-in-shaping-manners-and-personality/',
     title: 'The Role of Human Psychology in Shaping Manners and Personality',
     category: 'event',
@@ -267,6 +279,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'geology-seminar-mud-logging',
+    ur: { title: 'شعبہ ارضیات کا سیمینار: مڈ لاگنگ، ڈرلنگ سے ارضیاتی تشریح تک', excerpt: 'صنعت سے وابستہ ایک ماہر نے بتایا کہ ڈرلنگ کے دوران مڈ لاگنگ کے اعداد و شمار سے ارضیاتی معلومات کیسے حاصل کی جاتی ہیں۔', eventLocation: 'شعبہ ارضیات' },
     source: '/2026/10/department-of-geology-conducted-a-seminar-titled-mud-logging-from-drilling-to-geological-interpretation/',
     title: 'Department of Geology Seminar: “Mud Logging: From Drilling to Geological Interpretation”',
     category: 'event',
@@ -363,6 +376,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'swat-development-forum',
+    ur: { title: 'سوات ڈویلپمنٹ فورم کا قیام', excerpt: 'سوات اور ملاکنڈ ڈویژن میں ترقی، امن اور موسمیاتی لچک پر تحقیق، پالیسی اور کمیونٹی روابط کا ایک نیا اقدام۔' },
     source: '/2026/10/swat-development-forum-sdf/',
     attachments: [
       { file: '2026/10/854895133_4692865664278605_4162335374978398594_n.jpg', title: 'Swat Development Forum, University of Swat: logo' },
@@ -378,6 +392,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'oric-performance-report-vice-chancellor',
+    ur: { title: 'اورک کی کارکردگی رپورٹ وائس چانسلر کو پیش', excerpt: 'اورک نے وائس چانسلر کو تحقیقی ایوارڈز، مفاہمتی یادداشتوں، انکیوبیشن، تربیت اور آمدنی کے نئے ذرائع پر بریفنگ دی۔' },
     source: '/2026/10/oric-presents-performance-report-to-vice-chancellor/',
     title: '(ORIC) Presents Performance Report to Vice Chancellor',
     category: 'news',
@@ -391,6 +406,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'chemistry-seminar-environmental-research-policy',
+    ur: { title: 'ماحولیاتی تحقیق، پالیسی اور پائیدار ماحولیاتی نظام پر ایک روزہ سیمینار', excerpt: 'شعبہ کیمیا نے ماحولیاتی تحقیق، تعلیم، پالیسی اور عمل کے درمیان فاصلہ کم کرنے پر سیمینار منعقد کیا۔' },
     source: '/2026/10/one-day-seminar-on-environmental-research-policy-and-sustainable-ecosystems/',
     title: 'One-Day Seminar on Environmental Research, Policy and Sustainable Ecosystems',
     category: 'event',
@@ -405,6 +421,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'seminar-character-in-the-digital-age',
+    ur: { title: 'ڈیجیٹل دور میں کردار پر سیمینار', excerpt: 'دونوں کیمپسوں کے طلبہ نے کردار پر سوشل میڈیا کے اثرات اور ڈیجیٹل پلیٹ فارمز کے ذمہ دارانہ استعمال پر گفتگو کی۔' },
     source: '/2026/09/seminar-on-character-in-the-digital-age/',
     title: 'Seminar on Character in the Digital Age',
     category: 'event',
@@ -417,6 +434,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'digital-climate-health-symposium-vector-borne-diseases',
+    ur: { title: 'ویکٹر سے پھیلنے والی بیماریوں پر ڈیجیٹل کلائمیٹ ہیلتھ سمپوزیم', excerpt: 'مصنوعی ذہانت، ڈیٹا اور ڈیجیٹل نگرانی کے ذریعے موسم سے جڑی، ویکٹر سے پھیلنے والی بیماریوں کی پیش گوئی اور روک تھام پر سمپوزیم۔' },
     source: '/2026/09/digital-climate-health-symposium-on-vector-borne-diseases/',
     title: 'Digital Climate Health Symposium on Vector-Borne Diseases',
     category: 'event',
@@ -430,6 +448,7 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'swat-book-fair-2026',
+    ur: { title: 'کتاب میلہ', excerpt: 'شعبہ انگریزی و غیر ملکی زبانیں اور اس کے شراکت داروں نے کیمپس میں سوات کتاب میلہ اور مشاعرہ منعقد کیا۔' },
     source: '/2026/09/book-fair/',
     title: 'Book Fair',
     category: 'event',

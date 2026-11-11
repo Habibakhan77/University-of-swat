@@ -10,6 +10,7 @@ import { DOWNLOAD_CATEGORIES, formatMonth, formatSize, type DownloadCategory, ty
 import { EmptyState } from "@/components/academics/program-explorer";
 import { ResultCount, SearchField, SelectField, matches, useUrlFilters } from "@/components/academics/filters";
 import { Button } from "@/components/ui/button";
+import { OfficialLanguageNote } from "@/components/ui/language-note";
 import { FileRow } from "./shared";
 
 type Filters = { q: string; category: string };
@@ -104,6 +105,7 @@ export function DownloadsExplorer({ items, initial }: { items: DownloadItem[]; i
 
       {results.length ? (
         <>
+          <OfficialLanguageNote show={results.some((item) => item.title.lang !== locale)} />
           <ul className="grid gap-3">
             {results.slice(0, limit).map((item) => (
               <DownloadRow key={item.id} item={item} locale={locale} />

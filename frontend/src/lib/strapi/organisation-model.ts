@@ -168,6 +168,8 @@ export type PhoneGroup = "offices" | "departments";
 export interface PhoneEntry {
   id: string;
   name: Localized<string>;
+  /** The English name, also searched on the Urdu page ("exam" finds کنٹرولر امتحانات). */
+  englishName: string;
   /** As published, without the area code, e.g. "920867-68". */
   number: string;
   group: PhoneGroup;

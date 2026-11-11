@@ -636,7 +636,7 @@ const HOW_TO_APPLY = {
 export const ADMISSIONS = {
   en: {
     title: 'Admissions',
-    intro: 'Find your program, apply online on the CMS admission portal, and follow merit lists, fees and scholarships in one place.',
+    intro: 'Programs, dates, fees, merit lists and how to apply, in one place.',
     applyUrl: EXTERNAL.cms,
     banner: {
       isVisible: true,
@@ -710,7 +710,7 @@ export const ADMISSIONS = {
   },
   ur: {
     title: 'داخلے',
-    intro: 'اپنا پروگرام تلاش کریں، سی ایم ایس داخلہ پورٹل پر آن لائن درخواست دیں، اور میرٹ لسٹیں، فیس اور وظائف ایک ہی جگہ دیکھیں۔',
+    intro: 'پروگرام، تاریخیں، فیس، میرٹ لسٹیں اور درخواست کا طریقہ، ایک ہی جگہ۔',
     banner: {
       isVisible: true,
       title: 'سی ایم ایس داخلہ پورٹل پر آن لائن درخواست دیں',

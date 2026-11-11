@@ -4,7 +4,8 @@ import { ArrowRight, ExternalLink, FileText, Mail, Phone, UserRound } from "luci
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { iconFor } from "@/lib/icons";
-import { langAttr } from "@/lib/strapi/academics-model";
+import { langAttr, scriptLang } from "@/lib/strapi/academics-model";
+import type { Locale } from "@/i18n/routing";
 import type { Office, StaffMember } from "@/lib/strapi/organisation-model";
 import type { NavLink } from "@/lib/strapi/site";
 import { SmartLink } from "@/components/layout/smart-link";
@@ -144,6 +145,7 @@ export function StaffList({ staff }: { staff: StaffMember[] }) {
 
 /** Documents, forms and related links, each opening the official file or page. */
 export function LinkList({ links, className }: { links: NavLink[]; className?: string }) {
+  const locale = useLocale() as Locale;
   if (!links.length) return null;
   return (
     <ul className={cn("grid gap-3 sm:grid-cols-2", className)}>
@@ -160,8 +162,14 @@ export function LinkList({ links, className }: { links: NavLink[]; className?: s
                 <Icon className="size-5" />
               </span>
               <span className="flex min-w-0 flex-col">
-                <span className="text-body-sm font-semibold text-fg group-hover/link:text-primary-text">{link.label}</span>
-                {link.description ? <span className="text-body-sm text-fg-muted">{link.description}</span> : null}
+                <span lang={scriptLang(link.label, locale)} className="text-body-sm font-semibold text-fg group-hover/link:text-primary-text">
+                  {link.label}
+                </span>
+                {link.description ? (
+                  <span lang={scriptLang(link.description, locale)} className="text-body-sm text-fg-muted">
+                    {link.description}
+                  </span>
+                ) : null}
               </span>
               {link.external ? <ExternalLink aria-hidden className="ms-auto size-4 shrink-0 text-fg-subtle" /> : null}
             </SmartLink>

@@ -1,6 +1,8 @@
 import { Link } from "@/i18n/navigation";
 import { ChevronLeft, ChevronRight, Home } from "lucide-react";
+import { useLocale } from "next-intl";
 import { cn } from "@/lib/cn";
+import { routing } from "@/i18n/routing";
 
 export interface BreadcrumbItem {
   label: string;
@@ -29,6 +31,7 @@ export function Breadcrumbs({
   backLabel = "Back to",
   className,
 }: BreadcrumbsProps) {
+  const locale = useLocale();
   if (items.length === 0) return null;
   const parent = [...items].reverse().find((item, index) => index > 0 && item.href);
 
@@ -40,7 +43,8 @@ export function Breadcrumbs({
           "@type": "ListItem",
           position: index + 1,
           name: item.label,
-          ...(item.href ? { item: new URL(item.href, siteUrl).toString() } : {}),
+          // The current page (no href) has no `item`, as Google allows for the last crumb.
+          ...(item.href ? { item: new URL(withLocale(item.href, locale), siteUrl).toString() } : {}),
         })),
       }
     : null;
@@ -92,4 +96,10 @@ export function Breadcrumbs({
       ) : null}
     </nav>
   );
+}
+
+/** An internal path in the page's language: English has no prefix, Urdu is under /ur. */
+function withLocale(href: string, locale: string): string {
+  if (locale === routing.defaultLocale || /^[a-z]+:/i.test(href)) return href;
+  return href === "/" ? `/${locale}` : `/${locale}${href}`;
 }

@@ -8,6 +8,7 @@ import type { ResearchProject } from "@/lib/strapi/organisation-model";
 import { intlLocale } from "@/lib/strapi/notices-model";
 import { EmptyState } from "@/components/academics/program-explorer";
 import { ResultCount, SearchField, SelectField, matches } from "@/components/academics/filters";
+import { OfficialLanguageNote } from "@/components/ui/language-note";
 import { Button } from "@/components/ui/button";
 
 const PAGE = 8;
@@ -68,6 +69,7 @@ export function ProjectsExplorer({ projects }: { projects: ResearchProject[] }) 
         {t("projectsCount", { count: results.length })}
       </ResultCount>
 
+      <OfficialLanguageNote show={results.some((p) => p.title.lang !== locale)} />
       {results.length ? (
         <ol className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
           {results.slice(0, limit).map((p) => (

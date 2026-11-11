@@ -575,3 +575,57 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   overview.
 - Reseeded with `--reset`. Lint, typecheck and build are clean. Checked on the dev server at 1440px and 375px in
   English and Urdu (no truncation, no horizontal scroll, RTL).
+
+## Phase 10 — Search, Urdu and SEO
+
+- **Short heroes.** Every hero summary is one short sentence (no more than 2–3 lines on a phone). New seed
+  fields `short` / `urShort` for departments and faculties; the fuller text moved into the page body
+  (department overview, faculty description, program overview). Shortened the Library, Sports, Hostels,
+  Societies and Hunerkada pages, the Contact and Admissions intros, the Directorate of Admissions (new
+  overview) and the News, Tenders, Jobs and Downloads intros.
+- **Global search.** One index per language (`lib/search`) built from the same cached Strapi loaders as the
+  pages: pages and menu links, news / announcements / events, tenders, jobs, downloads, faculties,
+  departments, programs, faculty members, offices, campus-life pages and research projects (~580 entries,
+  ~22 KB gzipped). Served by `GET /api/search/[locale]`, fetched the first time the dialog opens (or when the
+  pointer reaches the search box) and searched in the browser, so typing is instant on a phone.
+  - Ranking: every word must start a word of the entry ("fee" finds "fees" but not "coffee"; Urdu فیس not
+    پروفیسر); title matches, whole words and title starts score highest; newest first on ties. Urdu text is
+    normalised (Arabic ي/ك/ه → Urdu ی/ک/ہ, harakat, Urdu digits), and the Urdu index also matches English
+    names ("physics" finds شعبہ طبیعیات).
+  - **Ctrl/⌘+K dialog**: grouped results with icons, combobox + grouped listbox, ↑/↓/Enter/Esc, result count
+    announced, "See all N results", an "In English" tag on untranslated entries, navigation fallback while
+    loading or offline.
+  - **`/search` page**: plain GET form, type filters and pagination as links (works without JavaScript),
+    popular searches, `noindex, follow`.
+- **Urdu.**
+  - Programs now have Urdu summaries and overviews (80); placeholder faculty members have Urdu placeholder
+    profiles; all 26 posts have Urdu titles, excerpts and venues (the body is the English original with the
+    "available in English" note instead of a translation); the 38 phone-directory entries have Urdu names
+    (people's names kept as published; English names still searchable on the Urdu page); the three
+    remaining FAQs are translated; the SUJRIS journal card is now localized (Strapi schema change on the
+    Research Page: `journals` is localized).
+  - A translation identical to the English text is treated as English (`lang="en"`, Latin font).
+  - Lists of official documents (tenders, jobs, downloads, research projects) show one short Urdu line
+    saying they are in their original English; document links with Latin titles get `lang="en"`.
+  - The last-resort 404 is bilingual. Every UI message exists in Urdu.
+- **SEO.**
+  - `pageMetadata`: Open Graph site name, `og:locale:alternate`, Twitter `summary_large_image`, canonical and
+    hreflang (en, ur, x-default) on every page; news pages are `article` with a published time.
+  - **Generated social card** (`/api/og`): crest, Swat mountains, gold rule and the page title (English;
+    Urdu pages get the card without text because the renderer cannot shape Nastaliq). Used whenever a page
+    has no photo of its own.
+  - **`sitemap.xml`**: every section, faculty, department, program, office, campus-life page, post, tender
+    and job in both languages with hreflang alternates; entries marked "no index" are left out; refreshed by
+    the webhook, at most an hour old. **`robots.txt`**: everything except `/api/` (the social card stays
+    open) and the style guide.
+  - Structured data: home now has `CollegeOrUniversity` + `WebSite` with a `SearchAction`; `NewsArticle`
+    gained language, section, author and publisher logo; `Event` gained attendance mode and a postal address.
+    **BreadcrumbList fix**: on Urdu pages the crumb URLs pointed at the English pages; they now use `/ur`.
+- **Revalidation.** Checked every cache tag against the webhook map. News, tenders, jobs, downloads,
+  offices and programs each expire the pages that show them; department changes now also refresh news,
+  tenders and jobs (they show department names). The search index and sitemap are tagged with the same
+  names, so a publish refreshes them too.
+- Lint, typecheck (frontend and CMS) and build are clean. Checked the API, sitemap, robots and the social
+  card on the dev server; search ranking tested against the live index in English and Urdu.
+  **Not yet done**: reseeding (`npm run seed -- --reset`) and the visual check at 1440px / 375px, because
+  the dev servers were not running.

@@ -29,10 +29,9 @@ interface SiteHeaderProps {
  *    translucent with a subtle backdrop blur, a soft shadow and a thin gold line along the bottom.
  */
 export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
-  const [t, tTheme, tSearch, tCommon, latestNews] = await Promise.all([
+  const [t, tTheme, tCommon, latestNews] = await Promise.all([
     getTranslations({ locale, namespace: "header" }),
     getTranslations({ locale, namespace: "theme" }),
-    getTranslations({ locale, namespace: "search" }),
     getTranslations({ locale, namespace: "common" }),
     getLatestPost(locale, "news"),
   ]);
@@ -129,23 +128,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <SearchCommand
-              groups={groups}
-              labels={{
-                button: tSearch("button"),
-                buttonLong: tSearch("buttonLong"),
-                dialogTitle: tSearch("dialogTitle"),
-                placeholder: tSearch("placeholder"),
-                shortcut: tSearch("shortcut"),
-                comingSoon: tSearch("comingSoon"),
-                sections: tSearch("sections"),
-                noMatches: tSearch.raw("noMatches") as string,
-                hintNavigate: tSearch("hintNavigate"),
-                hintOpen: tSearch("hintOpen"),
-                hintClose: tSearch("hintClose"),
-                close: tCommon("close"),
-              }}
-            />
+            <SearchCommand groups={groups} />
             {apply ? (
               <SmartLink
                 href={apply.href}

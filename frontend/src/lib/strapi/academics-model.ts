@@ -15,6 +15,14 @@ export function langAttr(text: { lang: Locale } | null | undefined, locale: Loca
   return text && text.lang !== locale ? text.lang : undefined;
 }
 
+/**
+ * `lang="en"` for text with no Arabic-script letters on a non-English page: official titles and
+ * document names that are shared between languages and kept as published.
+ */
+export function scriptLang(text: string, locale: Locale): "en" | undefined {
+  return locale !== "en" && !/[؀-ۿ]/.test(text) ? "en" : undefined;
+}
+
 /* ---------- Enumerations (mirror the Strapi schema) ---------- */
 
 /** Colour per faculty (Strapi: Faculty → accent). */

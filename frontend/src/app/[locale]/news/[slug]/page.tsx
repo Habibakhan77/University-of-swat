@@ -48,6 +48,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: post.seo.description ?? post.excerpt?.value ?? blocksToText(post.content?.value),
     image: post.seo.image ?? post.image ?? post.attachments.find((a) => a.image)?.image,
     noIndex: post.seo.noIndex,
+    type: "article",
+    publishedTime: post.date,
   });
 }
 
@@ -71,10 +73,18 @@ export default async function PostPage({ params }: Props) {
           startDate: post.eventStart,
           endDate: post.eventEnd ?? undefined,
           eventStatus: "https://schema.org/EventScheduled",
+          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+          inLanguage: post.title.lang === "ur" ? "ur-PK" : "en-PK",
           location: {
             "@type": "Place",
             name: post.eventLocation?.value ?? tCommon("siteName"),
-            address: "Charbagh, Swat, Khyber Pakhtunkhwa, Pakistan",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Charbagh",
+              addressLocality: "Swat",
+              addressRegion: "Khyber Pakhtunkhwa",
+              addressCountry: "PK",
+            },
           },
           image: image ? [image.src] : undefined,
           organizer: {
@@ -90,12 +100,16 @@ export default async function PostPage({ params }: Props) {
           headline: post.title.value,
           description: post.excerpt?.value,
           datePublished: post.date,
-          image: image ? [image.src] : undefined,
+          inLanguage: post.title.lang === "ur" ? "ur-PK" : "en-PK",
+          image: image ? [image.src] : [new URL("/api/og", SITE_URL).toString()],
           mainEntityOfPage: url,
+          articleSection: t(`categories.${post.category}`),
+          author: { "@type": "CollegeOrUniversity", name: tCommon("siteName"), url: SITE_URL },
           publisher: {
             "@type": "CollegeOrUniversity",
             name: tCommon("siteName"),
             url: SITE_URL,
+            logo: { "@type": "ImageObject", url: new URL("/brand/uswat-logo.png", SITE_URL).toString() },
           },
         };
 

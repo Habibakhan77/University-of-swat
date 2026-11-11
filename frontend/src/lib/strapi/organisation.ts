@@ -483,6 +483,7 @@ async function loadPhoneDirectory(locale: Locale): Promise<PhoneEntry[]> {
       .map((p) => ({
         id: p.en.documentId,
         name: pick(p, "name", locale) ?? { value: p.en.name, lang: en },
+        englishName: p.en.name,
         number: p.en.number,
         group: p.en.group === "departments" ? "departments" : "offices",
         featured: p.en.featured === true,

@@ -12,7 +12,7 @@ import { Writer } from './lib/docs';
 import { MediaFactory } from './lib/media';
 import { CAMPUS_PHOTOS, FACULTY_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
 import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type ProgramSeed } from './data/academics';
-import { CAMPUSES, MAIN_ADDRESS, OFFICES, PHONE_DIRECTORY, UPLOADS } from './data/organisation';
+import { CAMPUSES, MAIN_ADDRESS, OFFICES, PHONE_DIRECTORY, PHONE_DIRECTORY_UR, UPLOADS } from './data/organisation';
 import { CONTACT_PAGE, FACILITIES, RESEARCH_PAGE, RESEARCH_PROJECTS } from './data/pages';
 import { POSTS } from './data/posts';
 import { DOWNLOADS, FAQS, JOBS, TENDERS, uploadMonth, uploadUrl, type SeedDocument } from './data/notices';
@@ -222,7 +222,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           slug: f.slug,
           shortName: f.shortName,
           type: f.type,
-          summary: f.summary,
+          summary: f.short,
           // The website lists departments and programs from their own entries, so the text does not repeat them.
           description: blocks(f.summary),
           deanName: f.deanName,
@@ -234,7 +234,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           contact: { address: MAIN_ADDRESS },
           seo: seo(f.name, f.summary),
         },
-        { name: f.ur, summary: f.urSummary },
+        { name: f.ur, summary: f.urShort, description: blocks(f.urSummary) },
       );
 
       for (const d of f.departments) {
@@ -249,20 +249,32 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
 
         const slugBase = slugify(d.shortName ?? d.name);
         for (let m = 0; m < 2; m += 1) {
-          await w.create('api::faculty-member.faculty-member', {
-            name: `Placeholder Faculty Member ${m + 1}`,
-            slug: `placeholder-${slugBase}-${m + 1}`,
-            isPlaceholder: true,
-            designation: DESIGNATIONS[(deptOrder + m) % DESIGNATIONS.length],
-            additionalRole: m === 0 ? 'Chairperson' : undefined,
-            isHead: m === 0,
-            qualification: 'PhD (placeholder)',
-            specialization: d.focus.split(',')[0],
-            bio: blocks('PLACEHOLDER PROFILE — not a real person. The department editor should replace this entry with real faculty details.'),
-            photo: memberPhoto,
-            order: m + 1,
-            department: departmentId,
-          });
+          await w.create(
+            'api::faculty-member.faculty-member',
+            {
+              name: `Placeholder Faculty Member ${m + 1}`,
+              slug: `placeholder-${slugBase}-${m + 1}`,
+              isPlaceholder: true,
+              designation: DESIGNATIONS[(deptOrder + m) % DESIGNATIONS.length],
+              additionalRole: m === 0 ? 'Chairperson' : undefined,
+              isHead: m === 0,
+              qualification: 'PhD (placeholder)',
+              specialization: d.focus.split(',')[0],
+              bio: blocks('PLACEHOLDER PROFILE — not a real person. The department editor should replace this entry with real faculty details.'),
+              photo: memberPhoto,
+              order: m + 1,
+              department: departmentId,
+            },
+            // Urdu: clearly marked placeholder too, in Urdu.
+            {
+              name: `عارضی رکنِ فیکلٹی ${urduDigits(m + 1)}`,
+              additionalRole: m === 0 ? 'چیئرپرسن' : undefined,
+              qualification: 'پی ایچ ڈی (عارضی)',
+              specialization: d.urShort.replace(/۔$/, ''),
+              bio: blocks('عارضی پروفائل — یہ کوئی حقیقی شخص نہیں۔ شعبے کے ایڈیٹر اس اندراج کو حقیقی اساتذہ کی معلومات سے تبدیل کریں۔'),
+              department: departmentId,
+            },
+          );
         }
       }
     }
@@ -299,7 +311,8 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           department,
           seo: seo(p.title, p.excerpt),
         },
-        p.ur ? { title: p.ur.title, excerpt: p.ur.excerpt, content: blocks(p.ur.excerpt), department } : undefined,
+        // No Urdu body: the page shows the English original with an "in English" note rather than a translation.
+        p.ur ? { title: p.ur.title, excerpt: p.ur.excerpt, eventLocation: p.ur.eventLocation, department } : undefined,
       );
     }
 
@@ -430,7 +443,13 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     // ---------- Contact ----------
     log('Contact page and phone directory…');
     for (const [i, p] of PHONE_DIRECTORY.entries()) {
-      await w.create('api::phone-entry.phone-entry', { name: p.name, number: p.number, group: p.group, featured: p.featured ?? false, order: i + 1 });
+      const urName = PHONE_DIRECTORY_UR[p.name];
+      if (!urName) throw new Error(`Phone directory: no Urdu name for "${p.name}"`);
+      await w.create(
+        'api::phone-entry.phone-entry',
+        { name: p.name, number: p.number, group: p.group, featured: p.featured ?? false, order: i + 1 },
+        { name: urName },
+      );
     }
     const keyOffices = CONTACT_PAGE.keyOffices.map((slug) => {
       const id = officeIds.get(slug);
@@ -535,7 +554,7 @@ async function createDepartment(
       name: d.name,
       slug,
       shortName: d.shortName,
-      summary: d.summary,
+      summary: d.short,
       overview,
       image: await media.image({ ratio: 'cover', key: `department-${slug}`, title: d.shortName ?? d.name, kicker: 'Department' }),
       establishedYear: d.establishedYear,
@@ -545,7 +564,7 @@ async function createDepartment(
       order,
       seo: seo(d.name, d.summary),
     },
-    { name: d.ur, faculty: facultyId, campus: campusId },
+    { name: d.ur, summary: d.urShort, faculty: facultyId, campus: campusId },
   );
 }
 
@@ -559,14 +578,20 @@ async function createProgram(
   const defaults = LEVEL_DEFAULTS[p.level];
   const name = programName(p);
   const durationYears = p.durationYears ?? defaults.durationYears;
-  const summary = `${name} offered by the ${d.name}: a ${durationYears}-year program focused on ${d.focus.toLowerCase()}.`;
+  // One short sentence for the hero, cards and search; the fuller description opens the overview.
+  const length = durationYears < 1 ? 'six-month' : `${durationYears}-year`;
+  const summary = `A ${length} program of the ${d.name}.`;
+  const description = `${name} offered by the ${d.name}: a ${length} program focused on ${d.focus.toLowerCase()}.`;
+  const urLength = durationYears < 1 ? 'چھ ماہ کا' : `${urduDigits(durationYears)} سالہ`;
+  const urSummary = `${d.ur} کا ${urLength} پروگرام۔`;
+  const department = { department: departmentId, campus: campusId };
   return w.create('api::program.program', {
     name,
     slug: programSlug(p),
     level: p.level,
     summary,
     overview: blocks(
-      summary,
+      description,
       p.level === 'bs_5th_semester' ? 'Students join directly in the 5th semester after a two-year degree.' : 'The curriculum follows HEC guidelines and combines core courses, electives and a final-year project or thesis.',
     ),
     durationYears,
@@ -576,6 +601,24 @@ async function createProgram(
     isAdmissionOpen: false,
     department: departmentId,
     campus: campusId,
-    seo: seo(name, summary),
+    seo: seo(name, description),
+  },
+  // Urdu: the degree title stays as officially written (the website shows it in the Latin font).
+  {
+    name,
+    summary: urSummary,
+    overview: blocks(
+      urSummary,
+      p.level === 'bs_5th_semester'
+        ? 'طلبہ دو سالہ ڈگری کے بعد براہِ راست پانچویں سمسٹر میں داخل ہوتے ہیں۔'
+        : 'نصاب ایچ ای سی کی ہدایات کے مطابق ہے، جس میں لازمی اور اختیاری مضامین اور آخری سال کا پروجیکٹ یا تھیسس شامل ہیں۔',
+    ),
+    ...department,
+    seo: { metaTitle: fit(`${name} — جامعہ سوات`, 70), metaDescription: urSummary },
   });
+}
+
+/** Western digits as Urdu (Extended Arabic-Indic) digits: 4 → ۴. */
+function urduDigits(value: number): string {
+  return String(value).replace(/[0-9]/g, (digit) => String.fromCharCode(0x06f0 + Number(digit)));
 }

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { routing, type Locale } from "@/i18n/routing";
+import { searchHref } from "@/lib/search/model";
+import { localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { getHomepageData, getHomepageSeo } from "@/lib/strapi/home";
 import { getSiteChrome, type SiteChrome } from "@/lib/strapi/site";
 import { AdmissionsBand } from "@/components/home/admissions-band";
@@ -23,7 +25,6 @@ import { VcMessage } from "@/components/home/vc-message";
  */
 
 const intlLocale: Record<Locale, string> = { en: "en-GB", ur: "ur-PK" };
-const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const homePath = (locale: Locale) => (locale === routing.defaultLocale ? "/" : `/${locale}`);
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,40 +34,49 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = seo?.title ?? siteName;
   const description = seo?.description ?? chrome?.tagline ?? undefined;
 
-  return {
-    metadataBase: new URL(SITE_URL),
-    title: { absolute: title },
-    description,
-    alternates: { canonical: homePath(locale), languages: { en: "/", ur: "/ur", "x-default": "/" } },
-    openGraph: {
-      type: "website",
-      siteName,
-      title,
-      description,
-      locale: locale === "ur" ? "ur_PK" : "en_PK",
-      url: homePath(locale),
-      images: seo?.image ? [{ url: seo.image.src, width: seo.image.width, height: seo.image.height }] : undefined,
-    },
-  };
+  return pageMetadata({ locale, path: "/", title, description, image: seo?.image, absoluteTitle: true });
 }
 
-/** schema.org CollegeOrUniversity, built from Site Settings in Strapi. */
+/**
+ * schema.org CollegeOrUniversity (built from Site Settings in Strapi) and the WebSite with its search,
+ * which lets search engines offer a search box for the site.
+ */
 function structuredData(chrome: SiteChrome | null, locale: Locale) {
   if (!chrome) return null;
+  const home = `${SITE_URL}${homePath(locale)}`;
   return {
     "@context": "https://schema.org",
-    "@type": "CollegeOrUniversity",
-    name: chrome.siteName,
-    alternateName: chrome.shortName ?? undefined,
-    url: `${SITE_URL}${homePath(locale)}`,
-    description: chrome.tagline ?? undefined,
-    logo: chrome.logo?.src,
-    email: chrome.contact.email ?? undefined,
-    telephone: chrome.contact.phone ?? undefined,
-    address: chrome.contact.address
-      ? { "@type": "PostalAddress", streetAddress: chrome.contact.address, addressRegion: "Khyber Pakhtunkhwa", addressCountry: "PK" }
-      : undefined,
-    sameAs: chrome.socialLinks.map((s) => s.url),
+    "@graph": [
+      {
+        "@type": "CollegeOrUniversity",
+        "@id": `${SITE_URL}/#university`,
+        name: chrome.siteName,
+        alternateName: chrome.shortName ?? undefined,
+        url: home,
+        description: chrome.tagline ?? undefined,
+        logo: chrome.logo?.src,
+        image: chrome.logo?.src,
+        email: chrome.contact.email ?? undefined,
+        telephone: chrome.contact.phone ?? undefined,
+        address: chrome.contact.address
+          ? { "@type": "PostalAddress", streetAddress: chrome.contact.address, addressLocality: "Swat", addressRegion: "Khyber Pakhtunkhwa", addressCountry: "PK" }
+          : undefined,
+        sameAs: chrome.socialLinks.map((s) => s.url),
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${home}#website`,
+        url: home,
+        name: chrome.siteName,
+        inLanguage: locale === "ur" ? "ur-PK" : "en-PK",
+        publisher: { "@id": `${SITE_URL}/#university` },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: { "@type": "EntryPoint", urlTemplate: `${SITE_URL}${localePath(searchHref, locale)}?q={search_term_string}` },
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ],
   };
 }
 

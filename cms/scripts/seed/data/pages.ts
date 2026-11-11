@@ -96,18 +96,6 @@ export const RESEARCH_PAGE = {
   /** Shown in this order on the Research page. */
   offices: ['oric', 'qec', 'advanced-studies-and-research', 'research-and-technological-development', 'pqr'],
   shared: {
-    journals: [
-      {
-        name: 'Swat University Journal of Religious & Islamic Studies',
-        shortName: 'SUJRIS',
-        description:
-          'Initiated by the Department of Islamic and Arabic Studies: a platform for objective, analytical and critical research in religious and Islamic studies, including contemporary social, political, economic and moral questions.',
-        issn: '2959-5509',
-        recognition: 'Approved by HEC in "Y" Category',
-        url: 'https://sujris.uswat.edu.pk/',
-        sourceUrl: SUJRIS_NEWS,
-      },
-    ],
     projectsSourceUrl: PROJECTS_SOURCE,
     // ORIC's list "Recent conferences organized in 2024 (updated 24.10.2024)".
     conferences: [
@@ -144,6 +132,19 @@ export const RESEARCH_PAGE = {
   },
   en: {
     title: 'Research',
+    // Localized: the description and recognition are written in each language.
+    journals: [
+      {
+        name: 'Swat University Journal of Religious & Islamic Studies',
+        shortName: 'SUJRIS',
+        description:
+          'Initiated by the Department of Islamic and Arabic Studies: a platform for objective, analytical and critical research in religious and Islamic studies, including contemporary social, political, economic and moral questions.',
+        issn: '2959-5509',
+        recognition: 'Approved by HEC in "Y" Category',
+        url: 'https://sujris.uswat.edu.pk/',
+        sourceUrl: SUJRIS_NEWS,
+      },
+    ],
     intro: 'ORIC, the Quality Enhancement Cell, the SUJRIS journal, funded projects and conferences.',
     overview:
       'Research at the University of Swat is led by ORIC, recognised by HEC in the highest category in 2022, together with the Quality Enhancement Cell and the directorates for advanced studies and for research.',
@@ -155,6 +156,18 @@ export const RESEARCH_PAGE = {
   },
   ur: {
     title: 'تحقیق',
+    journals: [
+      {
+        name: 'Swat University Journal of Religious & Islamic Studies',
+        shortName: 'SUJRIS',
+        description:
+          'شعبہ اسلامیات و عربی کا شروع کردہ جریدہ: مذہبی اور اسلامی علوم میں معروضی، تجزیاتی اور تنقیدی تحقیق کا پلیٹ فارم، جس میں عصری سماجی، سیاسی، معاشی اور اخلاقی مسائل بھی شامل ہیں۔',
+        issn: '2959-5509',
+        recognition: 'ایچ ای سی کی "Y" کیٹیگری میں منظور شدہ',
+        url: 'https://sujris.uswat.edu.pk/',
+        sourceUrl: SUJRIS_NEWS,
+      },
+    ],
     intro: 'اورک، کوالٹی انہانسمنٹ سیل، سُجرس جریدہ، تحقیقی منصوبے اور کانفرنسیں۔',
     overview: 'جامعہ سوات میں تحقیق کی قیادت اورک کرتا ہے، جسے ایچ ای سی نے ۲۰۲۲ میں اعلیٰ ترین درجے میں تسلیم کیا، کوالٹی انہانسمنٹ سیل اور اعلیٰ تعلیم و تحقیق کے ڈائریکٹوریٹس کے ساتھ۔',
     projectsNote: 'ایچ ای سی اور دیگر اداروں کے منظور شدہ منصوبے، اورک کی فہرست کے مطابق (آخری تازہ کاری ۲۴.۱۰.۲۰۲۴)۔',
@@ -200,14 +213,14 @@ export const FACILITIES: FacilitySeed[] = [
     icon: 'library',
     office: 'central-library',
     title: 'Central Library',
-    summary: 'The university library at the Main Campus, open 08:30 AM – 04:30 PM, Monday – Friday, with access to the HEC National Digital Library.',
+    summary: 'Books, study space and the HEC National Digital Library at the Main Campus.',
     body: blocks(
       'The Central Library serves the students, faculty and staff of the university. Through the HEC National Digital Library, members of the university can also reach online journals and books.',
       'In March 2025 the library opened a Seerat-ul-Nabi (PBUH) Corner, set up with the support of the Higher Education Commission and equipped with 15 laptops, where students, faculty and staff can learn about the life and teachings of the Holy Prophet Muhammad (PBUH).',
     ),
     ur: {
       title: 'مرکزی لائبریری',
-      summary: 'مرکزی کیمپس میں جامعہ کی لائبریری، پیر تا جمعہ صبح ۸:۳۰ سے شام ۴:۳۰ تک کھلی، ایچ ای سی نیشنل ڈیجیٹل لائبریری تک رسائی کے ساتھ۔',
+      summary: 'مرکزی کیمپس میں کتب، مطالعے کی جگہ اور ایچ ای سی نیشنل ڈیجیٹل لائبریری۔',
       body: blocks(
         'مرکزی لائبریری جامعہ کے طلبہ، اساتذہ اور عملے کی خدمت کرتی ہے۔ ایچ ای سی نیشنل ڈیجیٹل لائبریری کے ذریعے آن لائن جرائد اور کتب تک بھی رسائی ممکن ہے۔',
         'مارچ ۲۰۲۵ میں لائبریری میں ایچ ای سی کے تعاون سے سیرت النبی ﷺ کارنر قائم کیا گیا، جس میں ۱۵ لیپ ٹاپ ہیں، جہاں طلبہ، اساتذہ اور عملہ حضور اکرم ﷺ کی حیاتِ طیبہ اور تعلیمات کے بارے میں جان سکتے ہیں۔',
@@ -223,14 +236,14 @@ export const FACILITIES: FacilitySeed[] = [
     icon: 'trophy',
     office: 'directorate-of-sports',
     title: 'Sports',
-    summary: 'University teams in badminton, cricket and football, and the inter-department Sports Festival, run by the Directorate of Sports.',
+    summary: 'University teams and the yearly inter-department Sports Festival.',
     body: blocks(
       'The Directorate of Sports runs the university’s badminton, cricket and football teams and organises sports events on campus.',
       'The Sports Festival 2024, held from 25 to 29 November, brought together 34 departments competing in cricket, volleyball, tug-of-war, futsal, badminton and athletics.',
     ),
     ur: {
       title: 'کھیل',
-      summary: 'بیڈمنٹن، کرکٹ اور فٹ بال کی جامعہ ٹیمیں اور بین الشعبہ جاتی اسپورٹس فیسٹیول، ڈائریکٹوریٹ آف اسپورٹس کے زیرِ انتظام۔',
+      summary: 'جامعہ کی ٹیمیں اور سالانہ بین الشعبہ جاتی اسپورٹس فیسٹیول۔',
       body: blocks(
         'ڈائریکٹوریٹ آف اسپورٹس جامعہ کی بیڈمنٹن، کرکٹ اور فٹ بال ٹیموں کا انتظام کرتا ہے اور کیمپس میں کھیلوں کی تقریبات منعقد کرتا ہے۔',
         '۲۵ سے ۲۹ نومبر ۲۰۲۴ تک منعقدہ اسپورٹس فیسٹیول میں ۳۴ شعبوں نے کرکٹ، والی بال، رسہ کشی، فٹسال، بیڈمنٹن اور ایتھلیٹکس میں حصہ لیا۔',
@@ -250,7 +263,7 @@ export const FACILITIES: FacilitySeed[] = [
     icon: 'bed',
     office: 'provost',
     title: 'Hostels',
-    summary: 'Girls’ and boys’ hostels at the Main Campus, managed by the Office of the Provost with resident wardens.',
+    summary: 'Girls’ and boys’ hostels at the Main Campus, run by the Provost.',
     body: blocks(
       'Girls’ and boys’ hostels were built in Phase I of the Main Campus. The Office of the Provost manages the hostels with the help of wardens, and plans for future hostel needs of students and staff.',
       'Hostel forms for students and staff are issued by the Provost Office (below). The Girls Hostel can be reached on 920818-19 (see the phone directory on the Contact page).',
@@ -258,7 +271,7 @@ export const FACILITIES: FacilitySeed[] = [
     ),
     ur: {
       title: 'ہاسٹل',
-      summary: 'مرکزی کیمپس میں طالبات اور طلبہ کے ہاسٹل، دفتر پرووسٹ اور وارڈنز کے زیرِ انتظام۔',
+      summary: 'مرکزی کیمپس میں طالبات اور طلبہ کے ہاسٹل، دفتر پرووسٹ کے زیرِ انتظام۔',
       body: blocks(
         'طالبات اور طلبہ کے ہاسٹل مرکزی کیمپس کے پہلے مرحلے میں تعمیر ہوئے۔ دفتر پرووسٹ وارڈنز کی مدد سے ہاسٹلوں کا انتظام کرتا ہے اور طلبہ و عملے کی آئندہ رہائشی ضروریات کی منصوبہ بندی کرتا ہے۔',
         'طلبہ اور عملے کے ہاسٹل فارم دفتر پرووسٹ جاری کرتا ہے (نیچے دیکھیں)۔ گرلز ہاسٹل کا فون نمبر 920818-19 ہے (رابطہ صفحے پر فون ڈائریکٹری دیکھیں)۔',
@@ -279,14 +292,14 @@ export const FACILITIES: FacilitySeed[] = [
     icon: 'users',
     office: 'ydc',
     title: 'Societies & Youth Development Centre',
-    summary: 'Student clubs and societies, career counselling, internships and scholarships, brought together at the Youth Development Centre (YDC).',
+    summary: 'Student clubs, societies and career services at the Youth Development Centre.',
     body: blocks(
       'The Youth Development Centre, near the Main Gate, is the single office for student services, with wings for education, employment and engagement. It supports student clubs, associations and societies, and plans their events.',
       'Among the clubs is the Green Youth Movement (GYM) Club, whose members took their oath in May 2025. The club runs tree planting, clean-up drives and eco-awareness campaigns.',
     ),
     ur: {
       title: 'سوسائٹیز اور یوتھ ڈویلپمنٹ سینٹر',
-      summary: 'طلبہ کے کلب اور سوسائٹیز، کیریئر رہنمائی، انٹرن شپ اور وظائف، یوتھ ڈویلپمنٹ سینٹر میں یکجا۔',
+      summary: 'یوتھ ڈویلپمنٹ سینٹر میں طلبہ کے کلب، سوسائٹیز اور کیریئر خدمات۔',
       body: blocks(
         'مین گیٹ کے قریب یوتھ ڈویلپمنٹ سینٹر طلبہ کی خدمات کا واحد دفتر ہے، جس کے تعلیم، روزگار اور سرگرمیوں کے شعبے ہیں۔ یہ طلبہ کے کلبوں، انجمنوں اور سوسائٹیز کی معاونت اور ان کی تقریبات کی منصوبہ بندی کرتا ہے۔',
         'ان کلبوں میں گرین یوتھ موومنٹ (جی وائی ایم) کلب بھی ہے، جس کے اراکین نے مئی ۲۰۲۵ میں حلف اٹھایا۔ یہ کلب شجرکاری، صفائی مہمات اور ماحولیاتی آگاہی کی سرگرمیاں کرتا ہے۔',
@@ -319,14 +332,14 @@ export const FACILITIES: FacilitySeed[] = [
     slug: 'hunerkada',
     icon: 'palette',
     title: 'Hunerkada',
-    summary: 'The Center of Excellence for Art & Culture, offering four-year Bachelor of Fine Arts and Bachelor of Design programmes.',
+    summary: 'The Center of Excellence for Art & Culture: fine arts and design.',
     body: blocks(
       'Hunerkada Center of Excellence offers two four-year programmes. The Bachelor of Fine Arts (BFA) has specialisations in Paintings, Printmaking, Miniature Painting and Sculpture / 3-D Art.',
       'The Bachelor of Design (BDes) has specialisations in Textile & Fashion Design, Ceramics Design, Visual Communication Design (Graphic Design), Product Design and Interior Design.',
     ),
     ur: {
       title: 'ہنرکدہ',
-      summary: 'فن و ثقافت کا مرکزِ فضیلت، چار سالہ بیچلر آف فائن آرٹس اور بیچلر آف ڈیزائن پروگراموں کے ساتھ۔',
+      summary: 'فن و ثقافت کا مرکزِ فضیلت: فائن آرٹس اور ڈیزائن۔',
       body: blocks(
         'ہنرکدہ سینٹر آف ایکسیلنس دو چار سالہ پروگرام پیش کرتا ہے۔ بیچلر آف فائن آرٹس (بی ایف اے) میں پینٹنگ، پرنٹ میکنگ، منی ایچر پینٹنگ اور مجسمہ سازی / تھری ڈی آرٹ کی تخصیص ہے۔',
         'بیچلر آف ڈیزائن (بی ڈیز) میں ٹیکسٹائل و فیشن ڈیزائن، سیرامکس ڈیزائن، ویژول کمیونیکیشن ڈیزائن (گرافک ڈیزائن)، پروڈکٹ ڈیزائن اور انٹیریئر ڈیزائن کی تخصیص ہے۔',
@@ -350,13 +363,13 @@ export const CONTACT_PAGE = {
   },
   en: {
     title: 'Contact us',
-    intro: 'Call an office, write to the right department, or send us a message. The Main Campus is at Charbagh, Swat.',
+    intro: 'Call an office, email a department or send us a message.',
     formIntro: 'Your message is stored securely for university staff, who reply by email. Please don’t include passwords, bank details or CNIC numbers.',
     seo: { metaTitle: 'Contact — University of Swat', metaDescription: 'Phone directory, office emails, map and contact form of the University of Swat, Charbagh, Swat.' },
   },
   ur: {
     title: 'رابطہ',
-    intro: 'کسی دفتر کو فون کریں، متعلقہ شعبے کو لکھیں یا ہمیں پیغام بھیجیں۔ مرکزی کیمپس چارباغ، سوات میں ہے۔',
+    intro: 'کسی دفتر کو فون کریں، شعبے کو ای میل کریں یا ہمیں پیغام بھیجیں۔',
     formIntro: 'آپ کا پیغام جامعہ کے عملے کے لیے محفوظ کیا جاتا ہے، جو ای میل سے جواب دیتے ہیں۔ براہِ کرم پاس ورڈ، بینک کی تفصیلات یا شناختی کارڈ نمبر نہ لکھیں۔',
     seo: { metaTitle: 'رابطہ — جامعہ سوات', metaDescription: 'جامعہ سوات کی فون ڈائریکٹری، دفاتر کی ای میل، نقشہ اور رابطہ فارم۔' },
   },

@@ -10,7 +10,11 @@ import { revalidateTag } from "next/cache";
  * Body: Strapi webhook payload ({ event, uid, model, entry }).
  */
 
-/** Cache tags to expire per Strapi content type. Counts shown in "stats" depend on several types. */
+/**
+ * Cache tags to expire per Strapi content type. Counts shown in "stats" depend on several types.
+ * Every page, the sitemap and the search index read Strapi through loaders tagged with these names,
+ * so expiring a tag refreshes all three; the search index is also tagged "search" to clear it alone.
+ */
 const TAGS_BY_UID: Record<string, string[]> = {
   "api::site-setting.site-setting": ["site-settings"],
   "api::homepage.homepage": ["homepage"],
@@ -18,8 +22,9 @@ const TAGS_BY_UID: Record<string, string[]> = {
   "api::stat.stat": ["stats"],
   "api::post.post": ["posts"],
   "api::vc-message.vc-message": ["vc-message"],
+  // Department names also label news, tenders and jobs (explicit, so it never depends on nested-cache tags).
   "api::faculty.faculty": ["faculties", "academics", "stats"],
-  "api::department.department": ["faculties", "academics", "stats"],
+  "api::department.department": ["faculties", "academics", "stats", "posts", "tenders", "jobs"],
   "api::campus.campus": ["campuses", "academics", "stats", "about"],
   // Programs also feed the admissions hub (fees and eligibility flags).
   "api::program.program": ["academics", "admissions", "stats"],

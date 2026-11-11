@@ -504,6 +504,12 @@
     opacity: 1;
     scale: 1;
   }
+  /* Phones: near the top, so the results stay above the on-screen keyboard. */
+  @media (width < 40rem) {
+    dialog.command {
+      margin-top: 0.75rem;
+    }
+  }
   @starting-style {
     dialog.command[open] {
       opacity: 0;
