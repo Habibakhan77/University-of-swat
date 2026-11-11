@@ -58,3 +58,18 @@ export function buildTimeFallback<T>(error: unknown, what: string, fallback: T, 
 export function strapiMediaUrl(url: string): string {
   return /^https?:\/\//.test(url) ? url : `${STRAPI_PUBLIC_URL}${url}`;
 }
+
+/**
+ * POST JSON to a Strapi REST endpoint (only the contact form writes to Strapi). Returns the status
+ * so the caller can tell validation errors (400) from an outage. Never cached.
+ */
+export async function strapiPost(path: string, body: unknown, headers: Record<string, string> = {}): Promise<number> {
+  const response = await fetch(`${STRAPI_URL}/api${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json", ...headers },
+    body: JSON.stringify(body),
+    cache: "no-store",
+    signal: AbortSignal.timeout(10_000),
+  });
+  return response.status;
+}

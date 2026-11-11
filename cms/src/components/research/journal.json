@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_research_journals",
+  "info": {
+    "displayName": "Journal",
+    "icon": "book",
+    "description": "A research journal published by the university."
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "shortName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "issn": {
+      "type": "string"
+    },
+    "recognition": {
+      "type": "string",
+      "description": "E.g. HEC category, as published"
+    },
+    "url": {
+      "type": "string"
+    },
+    "sourceUrl": {
+      "type": "string"
+    }
+  }
+}

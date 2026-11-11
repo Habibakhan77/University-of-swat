@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_research_conferences",
+  "info": {
+    "displayName": "Conference",
+    "icon": "calendar",
+    "description": "A conference, symposium or summer school organised or hosted by the university."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 250
+    },
+    "dates": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "As published, e.g. \"08 & 09 October, 2024\""
+    },
+    "organiser": {
+      "type": "string",
+      "maxLength": 250
+    },
+    "year": {
+      "type": "integer"
+    },
+    "url": {
+      "type": "string"
+    }
+  }
+}

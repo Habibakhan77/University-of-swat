@@ -20,14 +20,18 @@ server, so it can run while `npm run dev` is running.
 | Departments | 27 | Real names from uswat.edu.pk — en + ur |
 | Programs | 80 | BS / BS 5th semester / MPhil / MS / PhD, HEC-standard durations and credit hours; no fees or eligibility (only published in the admission advertisement) |
 | Faculty members | 54 | 2 per department, **all placeholders** (`isPlaceholder: true`) |
-| Offices & directorates | 22 | VC Secretariat … YDC — en + ur |
+| Offices & directorates | 23 | Offices, directorates, centres and statutory bodies with heads, emails, phones, staff and documents copied from each office page on uswat.edu.pk (source link on every entry); real head photos where published — en + ur |
 | Posts | 26 | Real news, announcements and events (Sep–Nov 2026), rewritten text, a link to each original; real event photos as covers, posters and notices attached in full |
 | Tenders / Jobs | 10 / 10 | The latest items on uswat.edu.pk with their official PDFs and advertisements; all `closed` (deadlines from the documents) |
 | Downloads | 67 | Every working file on uswat.edu.pk/downloads (policies, regulations, fee notifications, forms, reports) |
-| Research projects | 2 | NIIBS Gandhara collaboration, HEC-NRPU project |
-| FAQs | 14 | Admissions, fees and scholarships (en + ur, verified answers only); exams, hostel, transport, general |
+| Research projects | 21 | ORIC's list of approved projects (PDF, updated 24.10.2024): title, PI, funder, amount, duration |
+| Research page | 1 | ORIC, QEC, DASR, R&TD, PQR; SUJRIS (ISSN 2959-5509, HEC "Y" category); ORIC's 2024 conferences; ORIC policies and formats |
+| Campus Life pages | 6 | Library, Sports, Hostels, Societies (YDC), Psychology Clinic, Hunerkada, each linked to the office in charge |
+| Phone directory | 38 | Every number on uswat.edu.pk/contact-list (offices and departments), area code 0946 |
+| Contact page | 1 | Intro, map query, six key offices, form text |
+| FAQs | 13 | Admissions, fees and scholarships (en + ur, verified answers only); exams, hostel, general |
 | Hero slides / Stats | 3 / 4 | Stats are live counters (campuses, faculties, departments, programs) |
-| Single types | 5 | Homepage, About, VC Message, Admissions Page, Site Settings (2-level nav) — en + ur |
+| Single types | 7 | Homepage, About (official vision, mission, values, motto, rewritten history, accreditations), VC Message, Admissions Page, Research Page, Contact Page, Site Settings (2-level nav) — en + ur |
 
 Stat counters use `source` = `campuses` / `faculties` / `departments` / `programs`, so `GET /api/stats`
 counts them from the database (2 / 5 / 27 / 80 after seeding) and they update as editors add content.
@@ -53,10 +57,14 @@ from uswat.edu.pk (about 75 MB the first time, cached in `cms/.seed-cache/`, git
 
 ## Still needs real data (checklist for staff)
 
-- [ ] **Phone numbers and office emails**: left empty on purpose because they could not be verified.
-      Only `webmaster@uswat.edu.pk` is set.
-- [ ] **Names of office heads and deans**: placeholders, except the Vice Chancellor (Prof. Dr. Husnul Amin)
-      and the Allied Health Sciences focal person (Dr. Ali Akbar), both taken from uswat.edu.pk.
+- [ ] **Office emails that conflict**: where an office page shows one address but links another (Controller of
+      Examinations, Khurshid Alam, Shujaat Ali at QEC), the email was left out. The office should confirm it.
+- [ ] **Office objectives**: the long objective lists on the old office pages were not copied; summaries and
+      responsibilities are rewritten from them. Offices can add their own text in Strapi.
+- [ ] **Transport**: nothing is published about student transport, so there is no Transport page. Add a Campus
+      Life page when routes and fees are published.
+- [ ] **Media Cell**: has no page on uswat.edu.pk, so it is not seeded as an office.
+- [ ] **Deans**: placeholders, except the Allied Health Sciences focal person (Dr. Ali Akbar).
 - [ ] **Faculty members**: replace the placeholder entries for each department.
 - [ ] **Program list**: representative of each department. The Admissions Directorate should confirm it,
       and also which programs run at the Women Campus (programs are linked to the Main Campus for now).

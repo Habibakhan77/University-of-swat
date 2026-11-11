@@ -68,6 +68,22 @@
         }
       }
     },
+    "vision": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "mission": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "headName": {
       "type": "string",
       "pluginOptions": {
@@ -81,6 +97,14 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    },
+    "headEmail": {
+      "type": "email",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
         }
       }
     },
@@ -98,7 +122,17 @@
     },
     "headIsPlaceholder": {
       "type": "boolean",
-      "default": true,
+      "default": false,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "staff": {
+      "type": "component",
+      "component": "shared.staff-member",
+      "repeatable": true,
       "pluginOptions": {
         "i18n": {
           "localized": false
@@ -117,6 +151,34 @@
     },
     "websiteUrl": {
       "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "links": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "sourceUrl": {
+      "type": "string",
+      "regex": "^https://",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "isPrincipal": {
+      "type": "boolean",
+      "default": false,
       "pluginOptions": {
         "i18n": {
           "localized": false
@@ -164,6 +226,12 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::research-project.research-project",
+      "mappedBy": "office"
+    },
+    "facilities": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::facility.facility",
       "mappedBy": "office"
     }
   }

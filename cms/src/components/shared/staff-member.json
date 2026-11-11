@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_shared_staff_members",
+  "info": {
+    "displayName": "Staff member",
+    "icon": "user",
+    "description": "A person listed on an office page. Copy name, designation and email exactly as the office publishes them."
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 120
+    },
+    "designation": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "email": {
+      "type": "email"
+    }
+  }
+}

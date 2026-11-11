@@ -12,9 +12,10 @@ import { Writer } from './lib/docs';
 import { MediaFactory } from './lib/media';
 import { CAMPUS_PHOTOS, FACULTY_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
 import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type ProgramSeed } from './data/academics';
-import { CAMPUSES, MAIN_ADDRESS, OFFICES } from './data/organisation';
+import { CAMPUSES, MAIN_ADDRESS, OFFICES, PHONE_DIRECTORY, UPLOADS } from './data/organisation';
+import { CONTACT_PAGE, FACILITIES, RESEARCH_PAGE, RESEARCH_PROJECTS } from './data/pages';
 import { POSTS } from './data/posts';
-import { DOWNLOADS, FAQS, JOBS, RESEARCH, TENDERS, uploadMonth, uploadUrl, type SeedDocument } from './data/notices';
+import { DOWNLOADS, FAQS, JOBS, TENDERS, uploadMonth, uploadUrl, type SeedDocument } from './data/notices';
 import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE_SETTINGS, STATS, VC_MESSAGE } from './data/site';
 
 /** Real photo for each hero slide (see data/photos.ts). */
@@ -30,6 +31,10 @@ export interface SeedOptions {
 
 /** Deleted on --reset, children before parents. */
 const CONTENT_TYPES: UID.ContentType[] = [
+  'api::phone-entry.phone-entry',
+  'api::contact-page.contact-page',
+  'api::research-page.research-page',
+  'api::facility.facility',
   'api::faq.faq',
   'api::stat.stat',
   'api::hero-slide.hero-slide',
@@ -119,6 +124,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
       const image = campusPhoto
         ? await media.photo(campusPhoto, 'original')
         : await media.image({ ratio: 'cover', key: `campus-${c.slug}`, title: c.name, kicker: 'Campus', theme: 'maroon' });
+      const contact = { address: c.address, ...(c.email ? { email: c.email } : {}) };
       const id = await w.create(
         'api::campus.campus',
         {
@@ -130,10 +136,10 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           gallery: [image],
           establishedYear: c.establishedYear,
           mapUrl: c.mapUrl,
-          contact: { address: c.address },
+          contact,
           order: c.order,
         },
-        { name: c.ur, summary: c.urSummary, contact: { address: c.address } },
+        { name: c.ur, summary: c.urSummary, description: c.urDescription, contact },
       );
       campusIds.set(c.slug, id);
     }
@@ -142,10 +148,22 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     // ---------- Offices ----------
     log('Offices and directorates…');
     const officeIds = new Map<string, string>();
-    const headPhoto = await media.image({ ratio: 'portrait', key: 'office-head', title: 'Office head', kicker: 'Photo', theme: 'slate' });
     const vcPhoto = await media.photo('vcPortrait', 'portrait');
     for (const [i, o] of OFFICES.entries()) {
       const isVc = o.slug === 'vc-secretariat';
+      const sourceUrl = officialUrl(o.source);
+      // Head photos are the ones on the office's own page (small originals; shown as a portrait).
+      const headPhoto = isVc
+        ? vcPhoto
+        : o.headPhoto
+          ? await media.remote({ url: `${UPLOADS}${o.headPhoto}`, alt: `${o.headName ?? o.name}, ${o.headDesignation ?? ''}`.replace(/, $/, ''), source: sourceUrl }, 'portrait')
+          : undefined;
+      const contact = {
+        ...(o.email ? { email: o.email } : {}),
+        ...(o.phone ? { phone: o.phone } : {}),
+        ...(o.address ? { address: o.address } : {}),
+        ...(o.hours ? { officeHours: o.hours } : {}),
+      };
       const id = await w.create(
         'api::office.office',
         {
@@ -153,17 +171,32 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           slug: o.slug,
           type: o.type,
           summary: o.summary,
-          responsibilities: [ul(o.responsibilities)],
+          responsibilities: o.responsibilities?.length ? [ul(o.responsibilities)] : undefined,
+          vision: o.vision,
+          mission: o.mission,
           headName: o.headName,
           headDesignation: o.headDesignation,
-          headPhoto: isVc ? vcPhoto : headPhoto,
-          headIsPlaceholder: !o.headName,
-          contact: { address: o.location ?? MAIN_ADDRESS, ...(o.email ? { email: o.email } : {}) },
+          headEmail: o.headEmail,
+          headPhoto: headPhoto ?? undefined,
+          headIsPlaceholder: false,
+          staff: o.staff ?? [],
+          contact: Object.keys(contact).length ? contact : undefined,
           websiteUrl: o.websiteUrl,
+          links: (o.links ?? []).map((link) => {
+            const url = link.url.startsWith('https://') ? link.url : `${UPLOADS}${link.url}`;
+            return { label: link.label, url, isExternal: true };
+          }),
+          sourceUrl,
+          isPrincipal: o.isPrincipal ?? false,
           order: i + 1,
-          seo: seo(o.name, o.summary),
+          seo: seo(o.name, o.summary ?? `${o.name}, University of Swat: head, staff and contact details.`),
         },
-        { name: o.ur, headName: isVc ? VC_MESSAGE.ur.name : undefined },
+        {
+          name: o.ur,
+          summary: o.urSummary,
+          headName: isVc ? VC_MESSAGE.ur.name : undefined,
+          headDesignation: o.urHeadDesignation,
+        },
       );
       officeIds.set(o.slug, id);
     }
@@ -330,25 +363,83 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     }
 
     // ---------- Research ----------
-    log('Research projects and FAQs…');
-    for (const r of RESEARCH) {
+    log('Research projects (ORIC list), research page and FAQs…');
+    const projectSlugs = new Set<string>();
+    for (const r of RESEARCH_PROJECTS) {
+      let slug = slugify(r.title).slice(0, 90).replace(/-+$/, '');
+      while (projectSlugs.has(slug)) slug = `${slug}-2`;
+      projectSlugs.add(slug);
       await w.create('api::research-project.research-project', {
         title: r.title,
-        slug: r.slug,
-        state: r.state,
-        summary: r.summary,
-        description: r.description,
-        principalInvestigator: 'Principal investigator (to be confirmed)',
-        piIsPlaceholder: true,
-        fundingAgency: r.fundingAgency,
-        researchArea: r.researchArea,
-        startDate: r.startDate,
-        coverImage: await media.image({ ratio: 'cover', key: `research-${r.slug}`, title: r.title, kicker: 'Research', theme: 'slate' }),
-        isFeatured: r.isFeatured ?? false,
-        department: r.department ? departmentIds.get(r.department) : undefined,
+        slug,
+        principalInvestigator: r.pi,
+        piIsPlaceholder: false,
+        fundingAgency: r.agency,
+        fundingAmount: Math.round(r.million * 1_000_000),
+        currency: 'PKR',
+        durationMonths: r.months,
+        sourceUrl: RESEARCH_PAGE.shared.projectsSourceUrl,
         office: officeIds.get('oric'),
       });
     }
+    const researchOffices = RESEARCH_PAGE.offices.map((slug) => {
+      const id = officeIds.get(slug);
+      if (!id) throw new Error(`Research page: unknown office ${slug}`);
+      return id;
+    });
+    await w.single(
+      'api::research-page.research-page',
+      { ...RESEARCH_PAGE.shared, ...RESEARCH_PAGE.en, offices: researchOffices },
+      { ...RESEARCH_PAGE.ur, offices: researchOffices },
+    );
+
+    // ---------- Campus life ----------
+    log('Campus Life pages…');
+    for (const [i, f] of FACILITIES.entries()) {
+      const officeId = f.office ? officeIds.get(f.office) : undefined;
+      if (f.office && !officeId) throw new Error(`Campus life ${f.slug}: unknown office ${f.office}`);
+      const image = !f.image
+        ? undefined
+        : 'photo' in f.image
+          ? await media.photo(f.image.photo, 'cover')
+          : await media.remote({ url: `${UPLOADS}${f.image.file}`, alt: f.image.alt, source: f.image.source });
+      const gallery = await media.remoteAll((f.gallery ?? []).map((g) => ({ url: `${UPLOADS}${g.file}`, alt: g.alt, source: g.source })));
+      await w.create(
+        'api::facility.facility',
+        {
+          title: f.title,
+          slug: f.slug,
+          summary: f.summary,
+          body: f.body,
+          icon: f.icon,
+          image: image ?? undefined,
+          gallery,
+          office: officeId,
+          contact: f.contact,
+          links: f.links ?? [],
+          sourceUrl: f.source,
+          order: i + 1,
+          seo: seo(f.title, f.summary),
+        },
+        { title: f.ur.title, summary: f.ur.summary, body: f.ur.body, office: officeId, contact: f.contact },
+      );
+    }
+
+    // ---------- Contact ----------
+    log('Contact page and phone directory…');
+    for (const [i, p] of PHONE_DIRECTORY.entries()) {
+      await w.create('api::phone-entry.phone-entry', { name: p.name, number: p.number, group: p.group, order: i + 1 });
+    }
+    const keyOffices = CONTACT_PAGE.keyOffices.map((slug) => {
+      const id = officeIds.get(slug);
+      if (!id) throw new Error(`Contact page: unknown office ${slug}`);
+      return id;
+    });
+    await w.single(
+      'api::contact-page.contact-page',
+      { ...CONTACT_PAGE.shared, ...CONTACT_PAGE.en, keyOffices },
+      { ...CONTACT_PAGE.ur, keyOffices },
+    );
     for (const [i, f] of FAQS.entries()) {
       await w.create(
         'api::faq.faq',
@@ -393,22 +484,9 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
 
     await w.single('api::vc-message.vc-message', { ...VC_MESSAGE.en, photo: vcPhoto }, VC_MESSAGE.ur);
 
-    const leadership = [
-      { name: VC_MESSAGE.en.name, designation: 'Vice Chancellor', photo: vcPhoto, isPlaceholder: false },
-      ...['Pro Vice Chancellor', 'Registrar', 'Treasurer', 'Controller of Examinations'].map((designation) => ({
-        name: 'Name to be confirmed',
-        designation,
-        photo: headPhoto,
-        isPlaceholder: true,
-      })),
-    ];
-    // Women Campus panorama (1600×555) at its own size: a 16:9 hero crop would enlarge it about 2×.
-    const aboutHero = await media.photo('womenCampus', 'original');
-    await w.single(
-      'api::about.about',
-      { ...ABOUT.en, heroImage: aboutHero, leadership },
-      { ...ABOUT.ur, leadership: leadership.map((p, i) => (i === 0 ? { ...p, name: VC_MESSAGE.ur.name, designation: 'وائس چانسلر' } : p)) },
-    );
+    // Principal officers on the About page come from the offices marked isPrincipal.
+    const aboutHero = await media.photo('mainCampus', 'cover');
+    await w.single('api::about.about', { ...ABOUT.shared, ...ABOUT.en, heroImage: aboutHero }, ABOUT.ur);
 
     const admissionsHero = await media.photo('campusMountains');
     const contactOffices = ['directorate-of-admissions', 'university-advancement-financial-aid'].map((slug) => {

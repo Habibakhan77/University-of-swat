@@ -242,15 +242,15 @@ export function Documents({ files, headingId, lang }: { files: FileItem[]; headi
 }
 
 /** "Originally published on uswat.edu.pk" with a link to the post or file it came from. */
-export function SourceNote({ url }: { url: string | null }) {
+export function SourceNote({ url, kind = "post" }: { url: string | null; kind?: "post" | "page" }) {
   const t = useTranslations("notices");
   const tCommon = useTranslations("common");
   if (!url) return null;
   return (
     <p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl bg-canvas-subtle px-4 py-3 text-body-sm text-fg-muted">
-      <span>{t("sourceText")}</span>
+      <span>{kind === "page" ? t("sourcePageText") : t("sourceText")}</span>
       <a href={url} target="_blank" rel="noopener" className="inline-flex items-center gap-1 font-semibold text-primary-text hover:underline">
-        {t("viewOriginal")}
+        {kind === "page" ? t("viewOfficialPage") : t("viewOriginal")}
         <ExternalLink aria-hidden className="size-3.5" />
         <span className="sr-only">{tCommon("opensInNewTab")}</span>
       </a>

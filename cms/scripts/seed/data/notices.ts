@@ -1,5 +1,5 @@
 /**
- * Tenders, jobs, downloads, research projects and FAQs.
+ * Tenders, jobs, downloads and FAQs. (Research projects are in data/pages.ts.)
  *
  * Tenders, jobs and downloads are the real items published on uswat.edu.pk (category/tender, category/jobs and
  * /downloads, checked November 2026): titles, publish dates, reference numbers and the attached files. The seed
@@ -447,45 +447,6 @@ export const DOWNLOADS: DownloadSeed[] = [
 /** Calendar date from the upload path ("2024/09/…" → "2024-09-01"); the website shows only month and year. */
 export const uploadMonth = (file: string): string => `${file.slice(0, 7).replace('/', '-')}-01`;
 
-export interface ResearchSeed {
-  slug: string;
-  title: string;
-  state: 'proposed' | 'ongoing' | 'completed';
-  summary: string;
-  description: Block[];
-  fundingAgency?: string;
-  researchArea: string;
-  department?: string;
-  startDate?: string;
-  isFeatured?: boolean;
-}
-
-export const RESEARCH: ResearchSeed[] = [
-  {
-    slug: 'gandhara-civilization-research-niibs',
-    title: 'Gandhara Civilization Research Collaboration with NIIBS, Sri Lanka',
-    state: 'ongoing',
-    summary: 'Joint research, exchanges and publications on the Buddhist heritage of Gandhara under the 2026 MoU with NIIBS.',
-    description: blocks(
-      'Under a memorandum of understanding signed in November 2026, the University of Swat and the Nagananda International Institute for Buddhist Studies (Sri Lanka) are developing joint research on Gandhara civilization.',
-      ul(['Joint field and archival research', 'Faculty and student exchange', 'Shared conferences and publications']),
-    ),
-    researchArea: 'Archaeology and heritage',
-    department: 'Department of Archaeology',
-    startDate: '2026-11-06',
-    isFeatured: true,
-  },
-  {
-    slug: 'hec-nrpu-funded-research-project',
-    title: 'HEC-NRPU Funded Research Project',
-    state: 'ongoing',
-    summary: 'A research project funded by HEC’s National Research Program for Universities (title and investigator to be confirmed by ORIC).',
-    description: blocks('PLACEHOLDER DETAILS — ORIC should add the project title, investigators, funding amount and outcomes. A research assistant position on this project was advertised in September 2026.'),
-    fundingAgency: 'Higher Education Commission (HEC) — NRPU',
-    researchArea: 'To be confirmed',
-  },
-];
-
 export interface FaqSeed {
   category: 'admissions' | 'fees' | 'scholarships' | 'examinations' | 'hostel' | 'transport' | 'general';
   question: string;
@@ -599,7 +560,6 @@ export const FAQS: FaqSeed[] = [
     },
   },
   { category: 'examinations', question: 'How do I get my result or transcript?', answer: blocks('Results are posted on the Exam portal. Transcripts and degrees are issued by the Controller of Examinations on application. Result revision requests use the CMS Result Revision Proforma on the Downloads page.') },
-  { category: 'hostel', question: 'Does the university provide hostels?', answer: blocks('Yes, limited hostel seats are available. Contact the Provost office after you are admitted.') },
-  { category: 'transport', question: 'Is university transport available?', answer: blocks('University buses run on fixed routes from Mingora and nearby areas during the semester. Route details are available from the Directorate of Administration.') },
-  { category: 'general', question: 'How can I verify a University of Swat degree?', answer: blocks('Send a verification request to the Controller of Examinations with a copy of the degree. HEC attestation is done through the HEC portal.') },
+  { category: 'hostel', question: 'Does the university provide hostels?', answer: blocks('Girls’ and boys’ hostels at the Main Campus are managed by the Office of the Provost, with wardens. Hostel forms for students are available from the Provost Office (see Campus Life → Hostels).') },
+  { category: 'general', question: 'How can I verify a University of Swat degree?', answer: blocks('The Office of the Controller of Examinations verifies transcripts, DMCs, degrees and other academic documents for official use. For HEC degree attestation, see the step-by-step guide published by the university’s PQR focal person (Administration → Pakistan Qualification Register).') },
 ];

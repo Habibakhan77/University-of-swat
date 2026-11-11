@@ -9,7 +9,6 @@ import {
   facultyHref,
   programHref,
   type AcademicIndex,
-  type ContactInfo,
   type DepartmentDetail,
   type DepartmentSummary,
   type Designation,
@@ -22,10 +21,10 @@ import {
   type ProgramDownload,
   type ProgramLevel,
   type ProgramSummary,
-  type SeoInfo,
   type Shift,
 } from "./academics-model";
-import { fetchPairs, guarded, isPlaceholderMedia, pick, populateImage, selectFields, toRealImage, type Doc, type Localized, type Pair } from "./query";
+import { contactOf, seoOf, seoPopulate, type StrapiSeo } from "./shared";
+import { fetchPairs, guarded, isPlaceholderMedia, pick, populateImage, selectFields, toRealImage, type Doc, type Pair } from "./query";
 
 export * from "./academics-model";
 import { normalizeHref, isExternalHref } from "./site";
@@ -47,12 +46,6 @@ interface SlugRef {
   slug: string;
 }
 
-interface StrapiSeo {
-  metaTitle: string | null;
-  metaDescription: string | null;
-  noIndex: boolean | null;
-  ogImage: StrapiMedia | null;
-}
 
 interface StrapiFaculty extends Doc {
   name: string;
@@ -154,37 +147,6 @@ interface StrapiMember extends Doc {
 
 const en = routing.defaultLocale;
 
-function contactOf(pair: Pair<{ contact: StrapiContact | null }>, locale: Locale): ContactInfo | null {
-  const base = pair.en.contact;
-  const tr = pair.tr?.contact;
-  if (!base && !tr) return null;
-  const plain = (key: "email" | "phone" | "extension" | "fax") => tr?.[key] || base?.[key] || null;
-  const text = (key: "address" | "officeHours"): Localized<string> | null => {
-    if (tr?.[key]) return { value: tr[key], lang: locale };
-    return base?.[key] ? { value: base[key], lang: en } : null;
-  };
-  const info: ContactInfo = {
-    email: plain("email"),
-    phone: plain("phone"),
-    extension: plain("extension"),
-    fax: plain("fax"),
-    address: text("address"),
-    officeHours: text("officeHours"),
-  };
-  return Object.values(info).some(Boolean) ? info : null;
-}
-
-function seoOf(pair: Pair<{ seo: StrapiSeo | null }>): SeoInfo {
-  const seo = pair.tr?.seo ?? pair.en.seo;
-  const english = pair.en.seo;
-  return {
-    title: seo?.metaTitle || english?.metaTitle || null,
-    description: seo?.metaDescription || english?.metaDescription || null,
-    image: toRealImage(english?.ogImage),
-    noIndex: Boolean(english?.noIndex),
-  };
-}
-
 function campusOf(pair: Pair<{ campus: StrapiCampusRef | null }>, locale: Locale) {
   const base = pair.en.campus;
   if (!base) return null;
@@ -207,12 +169,6 @@ async function bySlug<T extends Doc>(path: string, slug: string, query: Record<s
   return pairs[0] ?? null;
 }
 
-const seoPopulate = {
-  "populate[seo][populate][ogImage][fields][0]": "url",
-  "populate[seo][populate][ogImage][fields][1]": "name",
-  "populate[seo][populate][ogImage][fields][2]": "width",
-  "populate[seo][populate][ogImage][fields][3]": "height",
-};
 
 /* ---------- Loaders (cached, tag "academics") ---------- */
 

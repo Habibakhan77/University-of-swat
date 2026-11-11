@@ -23,6 +23,10 @@ export const PUBLIC_READ_TYPES = [
   'api::site-setting.site-setting',
   'api::admissions-page.admissions-page',
   'api::research-project.research-project',
+  'api::research-page.research-page',
+  'api::facility.facility',
+  'api::contact-page.contact-page',
+  'api::phone-entry.phone-entry',
 ] as const satisfies readonly UID.ContentType[];
 
 export const SINGLE_TYPES: ReadonlySet<string> = new Set([
@@ -31,6 +35,8 @@ export const SINGLE_TYPES: ReadonlySet<string> = new Set([
   'api::vc-message.vc-message',
   'api::site-setting.site-setting',
   'api::admissions-page.admissions-page',
+  'api::research-page.research-page',
+  'api::contact-page.contact-page',
 ]);
 
 /** Types a Department Editor manages through their `department` relation. */

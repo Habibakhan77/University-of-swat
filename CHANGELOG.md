@@ -508,3 +508,45 @@
   calls `connection()` before reading the clock, so the time is read per request.
 - Reseeded with `--reset`. Lint, typecheck and build are clean; verified on a production build at 1440px and
   375px in English and Urdu (no horizontal scroll, intros not cut off, RTL) and in the dev server (no issues).
+
+## Phase 9 — About, Administration, Research, Campus Life, Contact
+
+All content comes from Strapi and was checked against uswat.edu.pk (November 2026). Names, designations, emails
+and phone numbers are copied exactly from the official pages. What isn't published is left out rather than guessed.
+
+- **Content model**: new Campus Life Page (`facility`), Research Page and Contact Page single types, Phone Entry
+  collection, and `shared.staff-member`, `research.conference` and `research.journal` components. Offices gained
+  vision, mission, head email, staff, documents, source URL and a "principal officer" flag. Research projects
+  gained duration and source URL. About gained motto and source URL; its invented leadership list was removed
+  (principal officers now come from the offices themselves).
+- **Corrected seed content**: the old invented vision, mission, values, campus text, transport FAQ and research
+  projects were replaced with the official vision, mission, core values and motto, a rewritten history, and
+  ORIC's 21 approved projects. SUJRIS is the *Swat University Journal of Religious & Islamic Studies* (ISSN
+  2959-5509, HEC "Y" category). "ASRB" was really the Directorate of Advanced Studies and Research Board (DASR).
+  There is no Transport page, because nothing about transport is published.
+- **About** (`/about`): history, milestones timeline, vision, mission, core values and motto, principal officers
+  with a link to the VC's message, campuses, accreditation and recognition (each linked to its certificate),
+  source link, CollegeOrUniversity JSON-LD.
+- **Administration** (`/administration`): 23 offices, directorates, centres and statutory bodies grouped by kind,
+  with a search (name, head, summary) and kind filter kept in the URL. **Office pages**
+  (`/administration/[slug]`): vision and mission, responsibilities, head card with photo, email and phone, staff,
+  documents, contact, "Details as published" source link, related offices, Organization JSON-LD. Prerendered in
+  both languages.
+- **Research** (`/research`): ORIC, QEC, DASR, R&TD and PQR; the SUJRIS journal; funded projects with search and
+  a funding-agency filter; ORIC's 2024 conferences plus recent research events from News; ORIC policies and formats.
+- **Campus Life** (`/campus-life`, `/campus-life/[slug]`): Library, Sports, Hostels, Societies, Psychology Clinic
+  and Hunerkada, each with its office head and staff (for example the hostel wardens), contacts, documents and source.
+- **Contact** (`/contact`): general contacts; a Google Map that loads only on request (no third-party requests
+  until then); the six offices people contact most; the searchable phone directory (38 numbers, tap-to-call with
+  the 0946 area code); and the **contact form**, a Server Action that saves to Strapi. The form validates in the
+  browser and on the server with the same rules, and works without JavaScript. Errors are announced and focused.
+  Spam protection: a honeypot, an HMAC-signed form token (minimum fill time 3 s, expiry 2 h), a per-IP rate limit
+  (5 per 15 min), and a shared secret (`CONTACT_FORM_SECRET`, falling back to `REVALIDATE_SECRET`) that Strapi
+  requires, so its endpoint can't be posted to directly (403). Strapi re-validates every field.
+- **Error pages**: a localized `[locale]/error.tsx` (retry, home, contact, error reference), a bilingual
+  `global-error.tsx`, and a richer 404 with the most-visited sections.
+- On-demand revalidation covers the new types (`offices`, `about`, `research`, `campus-life`, `contact`).
+- Lint, typecheck and build are clean. Reseeded with `--reset`. Verified on a production build at 1440px and 375px
+  in English and Urdu, light and dark (RTL, no horizontal scroll, dark-mode contrast of the journal card fixed).
+  Verified Strapi's contact endpoint: 403 without the secret, 400 for invalid fields, 201 for a valid signed
+  message (the test message was deleted).

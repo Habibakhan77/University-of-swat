@@ -88,10 +88,8 @@
         }
       }
     },
-    "leadership": {
-      "type": "component",
-      "component": "shared.person",
-      "repeatable": true,
+    "motto": {
+      "type": "string",
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -105,6 +103,15 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    },
+    "sourceUrl": {
+      "type": "string",
+      "regex": "^https://",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
         }
       }
     },

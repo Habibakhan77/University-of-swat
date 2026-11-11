@@ -1,0 +1,63 @@
+{
+  "kind": "collectionType",
+  "collectionName": "phone_entries",
+  "info": {
+    "singularName": "phone-entry",
+    "pluralName": "phone-entries",
+    "displayName": "Phone Directory Entry",
+    "description": "One line of the phone directory on the Contact page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "number": {
+      "type": "string",
+      "required": true,
+      "maxLength": 40,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "group": {
+      "type": "enumeration",
+      "enum": [
+        "offices",
+        "departments"
+      ],
+      "required": true,
+      "default": "offices",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    }
+  }
+}

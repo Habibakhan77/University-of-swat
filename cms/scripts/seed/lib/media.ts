@@ -274,9 +274,11 @@ export class MediaFactory {
    *
    * Returns null (with a warning) when the file can't be fetched, so one dead link on the old site
    * doesn't stop the seed; entries keep their `sourceUrl` to the original.
+   *
+   * `crop: 'portrait'` cuts an image to 4:5 around the face (office heads), never enlarging it.
    */
-  async remote(file: RemoteFile): Promise<number | null> {
-    const cacheKey = `remote:${file.url}`;
+  async remote(file: RemoteFile, crop?: 'portrait'): Promise<number | null> {
+    const cacheKey = `remote:${crop ?? ''}:${file.url}`;
     const hit = this.cache.get(cacheKey);
     if (hit) return hit.id;
 
@@ -298,8 +300,8 @@ export class MediaFactory {
     const caption = `${isImage ? 'Image' : 'Source'}: University of Swat | ${file.source}`;
     const uploaded = isImage
       ? await this.push(
-          `${FILE_PREFIX}${base}.webp`,
-          await sharp(buffer).rotate().resize({ width: 1600, withoutEnlargement: true }).webp({ quality: 82 }).toBuffer(),
+          `${FILE_PREFIX}${crop ? `${crop}-` : ''}${base}.webp`,
+          await (crop ? await this.portrait(buffer) : sharp(buffer).rotate().resize({ width: 1600, withoutEnlargement: true })).webp({ quality: 82 }).toBuffer(),
           'image/webp',
           file.alt,
           caption,
@@ -308,6 +310,14 @@ export class MediaFactory {
     this.files += 1;
     this.cache.set(cacheKey, uploaded);
     return uploaded.id;
+  }
+
+  /** A 4:5 crop (max 800×1000) of a photo, using sharp's attention strategy to keep the face. */
+  private async portrait(buffer: Buffer): Promise<ReturnType<typeof sharp>> {
+    const rotated = await sharp(buffer).rotate().toBuffer();
+    const { width = 0, height = 0 } = await sharp(rotated).metadata();
+    const w = Math.round(Math.min(RATIOS.portrait.width, width, (height * 4) / 5));
+    return sharp(rotated).resize(w, Math.round((w * 5) / 4), { fit: 'cover', position: 'attention' });
   }
 
   /** Several remote files, skipping any that can't be fetched. */

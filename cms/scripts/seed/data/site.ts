@@ -40,13 +40,13 @@ export const SITE_SETTINGS = {
       link('CMS Portal', EXTERNAL.cms, 'Student and admission portal', 'monitor', true),
       link('Exam Portal', EXTERNAL.exam, 'Results and date sheets', 'file-check', true),
       link('e-Office', EXTERNAL.eOffice, 'Staff file tracking', 'inbox', true),
-      link('SUJRIS', EXTERNAL.sujris, 'University research journal', 'book', true),
+      link('SUJRIS', EXTERNAL.sujris, 'Journal of Religious & Islamic Studies', 'book', true),
       link('Campus TV', EXTERNAL.campusTv, 'University YouTube channel', 'tv', true),
     ],
     externalSystems: [
       link('CMS Portal', EXTERNAL.cms, 'Student and admission portal', 'monitor', true),
       link('Exam Portal', EXTERNAL.exam, 'Results and date sheets', 'file-check', true),
-      link('SUJRIS', EXTERNAL.sujris, 'Swat University Journal of Research and Innovative Studies', 'book', true),
+      link('SUJRIS', EXTERNAL.sujris, 'Swat University Journal of Religious & Islamic Studies', 'book', true),
       link('e-Office', EXTERNAL.eOffice, 'Staff file tracking', 'inbox', true),
       link('Office 365', EXTERNAL.office365, 'University email and Microsoft 365', 'mail', true),
       link('Digital Library', EXTERNAL.digitalLibrary, 'HEC National Digital Library', 'library', true),
@@ -96,13 +96,13 @@ export const SITE_SETTINGS = {
       link('سی ایم ایس پورٹل', EXTERNAL.cms, 'طلبہ و داخلہ پورٹل', 'monitor', true),
       link('امتحانی پورٹل', EXTERNAL.exam, 'نتائج اور ڈیٹ شیٹس', 'file-check', true),
       link('ای آفس', EXTERNAL.eOffice, 'عملے کے لیے فائل ٹریکنگ', 'inbox', true),
-      link('سُجرس', EXTERNAL.sujris, 'جامعہ کا تحقیقی جریدہ', 'book', true),
+      link('سُجرس', EXTERNAL.sujris, 'دینی و اسلامی علوم کا تحقیقی جریدہ', 'book', true),
       link('کیمپس ٹی وی', EXTERNAL.campusTv, 'یونیورسٹی کا یوٹیوب چینل', 'tv', true),
     ],
     externalSystems: [
       link('سی ایم ایس پورٹل', EXTERNAL.cms, 'طلبہ و داخلہ پورٹل', 'monitor', true),
       link('امتحانی پورٹل', EXTERNAL.exam, 'نتائج اور ڈیٹ شیٹس', 'file-check', true),
-      link('سُجرس', EXTERNAL.sujris, 'جامعہ سوات کا تحقیقی جریدہ', 'book', true),
+      link('سُجرس', EXTERNAL.sujris, 'سوات یونیورسٹی جرنل آف ریلیجیس اینڈ اسلامک اسٹڈیز', 'book', true),
       link('ای آفس', EXTERNAL.eOffice, 'عملے کے لیے فائل ٹریکنگ', 'inbox', true),
       link('آفس ۳۶۵', EXTERNAL.office365, 'یونیورسٹی ای میل', 'mail', true),
       link('ڈیجیٹل لائبریری', EXTERNAL.digitalLibrary, 'ایچ ای سی قومی ڈیجیٹل لائبریری', 'library', true),
@@ -288,57 +288,104 @@ export const VC_MESSAGE = {
   },
 };
 
+/**
+ * About page. Vision, mission, core values and motto are the published wording of
+ * https://uswat.edu.pk/about-university/ (checked November 2026); the history is a rewrite of the same
+ * page, and every milestone and recognition links to (or comes from) an official page or document.
+ * The page's "Objectives" list is left out: several items are cut off mid-sentence on the official site.
+ */
+const ABOUT_SOURCE = 'https://uswat.edu.pk/about-university/';
+const QEC_UPLOADS = 'https://uswat.edu.pk/wp-content/uploads/';
+
+const RECOGNITION = [
+  { body: 'National Computing Education Accreditation Council (NCEAC)', category: 'Accreditation', rank: 'BS Computer Science, BS Information Technology and BS Software Engineering accredited', year: 2025, url: `${QEC_UPLOADS}2025/05/CSaccreditation3.pdf` },
+  { body: 'National Agricultural Education Accreditation Council (NAEAC)', category: 'Accreditation', rank: 'BS Forestry accredited, 2026–28', year: 2026, url: `${QEC_UPLOADS}2026/07/Forestry2026XCategoryCertificate.pdf` },
+  { body: 'National Accreditation Council for Teacher Education (NACTE)', category: 'Accreditation', rank: 'B.Ed (Hons) accredited, 2024–2026', year: 2024, url: `${QEC_UPLOADS}2024/08/456-1.pdf` },
+  { body: 'Pakistan Bar Council', category: 'Accreditation', rank: 'LLB program accredited', year: 2017, url: `${QEC_UPLOADS}2024/08/Accreditation-of-LLBProgram-by-Pakistan-Bar-Council-28-2017.pdf` },
+  { body: 'Higher Education Commission (HEC)', category: 'Research', rank: 'ORIC recognised in the highest category', year: 2022, url: `${QEC_UPLOADS}2024/10/ORIC-UoS-Recognition-Letter.pdf` },
+  { body: 'Higher Education Commission (HEC)', category: 'Journal', rank: 'SUJRIS approved in "Y" category', year: 2025, url: 'https://uswat.edu.pk/2025/03/higher-education-commission-approves-sujris/' },
+];
+
+const RECOGNITION_UR = [
+  { rank: 'بی ایس کمپیوٹر سائنس، بی ایس انفارمیشن ٹیکنالوجی اور بی ایس سافٹ ویئر انجینئرنگ کی ایکریڈیٹیشن', category: 'ایکریڈیٹیشن' },
+  { rank: 'بی ایس فاریسٹری کی ایکریڈیٹیشن، ۲۰۲۶–۲۸', category: 'ایکریڈیٹیشن' },
+  { rank: 'بی ایڈ (آنرز) کی ایکریڈیٹیشن، ۲۰۲۴–۲۰۲۶', category: 'ایکریڈیٹیشن' },
+  { rank: 'ایل ایل بی پروگرام کی ایکریڈیٹیشن', category: 'ایکریڈیٹیشن' },
+  { rank: 'اورک اعلیٰ ترین درجے میں تسلیم شدہ', category: 'تحقیق' },
+  { rank: 'سُجرس "Y" کیٹیگری میں منظور', category: 'جریدہ' },
+];
+
 export const ABOUT = {
+  shared: { sourceUrl: ABOUT_SOURCE },
   en: {
     title: 'About the University of Swat',
     intro:
-      'The University of Swat is a public sector university in Charbagh, Swat, chartered by the Government of Khyber Pakhtunkhwa in 2010 to bring higher education to the people of the Swat valley and Malakand Division.',
+      'The University of Swat is a public-sector university in Khyber Pakhtunkhwa, Pakistan. Its main academic campus and all its administrative offices are at Charbagh, Swat.',
     history: blocks(
-      'The university began teaching in the 2010-11 session with seven departments, at a time when the valley was rebuilding after years of conflict. Higher education close to home was seen as one of the surest ways to restore hope and opportunity.',
-      'It has since grown into a multi-faculty institution with a main campus at Charbagh and a Women Campus, offering undergraduate, MPhil/MS and PhD programs. Its location in the heart of ancient Gandhara gives it a particular strength in archaeology and heritage, while its mountain setting shapes research in geology, environmental science, botany and tourism.',
+      'The establishment of the University of Swat was announced on 29 May 2010 by the then Prime Minister of Pakistan during a visit to the Swat valley. The university came into formal existence in July 2010 by order of the Governor of Khyber Pakhtunkhwa, with the prior approval of the President of Pakistan. Its first Vice Chancellor, Dr. Muhammad Farooq Khan (Shaheed), was appointed in August 2010.',
+      'The Higher Education Department handed over two buildings at Saidu Sharif, and in its first academic session, 2010-11, the university launched 7 departments. The number of departments later grew from 7 to 27, and a Women Campus was established.',
+      'The university now resides at its own Main Campus in Charbagh. Phase I of the campus is complete: three academic blocks, girls’ and boys’ hostels, a mosque, the library, the examination section, the administration block, staff residences, the boundary wall and the roads. Phase II is to follow.',
+      'The valley that gives the university its name lies where South Asia, Central Asia and China meet. It is known for the clear waters of the Swat river, its forests and meadows, and for crafts such as embroidery, shawls, wood carving and honey.',
     ),
     milestones: [
-      { year: 2010, title: 'University established', description: 'Chartered by the Government of Khyber Pakhtunkhwa; first session opens with seven departments.' },
-      { year: 2017, title: 'Growth to 22 departments', description: 'The university reported 22 teaching departments and 49 academic programs.' },
-      { year: 2026, title: 'Roadmap for institutional excellence', description: 'A new plan focused on good governance, transparency and research.' },
-      { year: 2026, title: 'Solarization project', description: 'First university in the province to launch a solar project of this scale.' },
-      { year: 2026, title: 'MoU with NIIBS, Sri Lanka', description: 'International partnership for research on Gandhara civilization.' },
+      { year: 2010, title: 'Establishment announced', description: 'On 29 May 2010 the Prime Minister of Pakistan announced the university during a visit to Swat; it came into formal existence in July 2010.' },
+      { year: 2010, title: 'First Vice Chancellor and first session', description: 'Dr. Muhammad Farooq Khan (Shaheed) was appointed in August 2010; the 2010-11 session opened with 7 departments.' },
+      { year: 2013, title: 'College of Home Sciences', description: 'Founded as a constituent college; it later became the Department of Home Economics at the Women Campus.' },
+      { year: 2014, title: 'Advanced Studies and Research Board', description: 'The Directorate of Advanced Studies and Research Board was established in December 2014.' },
+      { year: 2017, title: 'Women Campus', description: 'The Women sub-campus was inaugurated on 25 July 2017.' },
+      { year: 2022, title: 'ORIC recognised by HEC', description: 'The Office of Research, Innovation and Commercialization was recognised in the highest category.' },
+      { year: 2025, title: 'SUJRIS approved by HEC', description: 'The Swat University Journal of Religious & Islamic Studies was approved in the "Y" category.' },
+      { year: 2026, title: 'New Vice Chancellor', description: 'Prof. Dr. Husnul Amin assumed charge as Vice Chancellor in October 2026.' },
+      { year: 2026, title: 'Solarization project', description: 'The university became the first in the province to launch a major solarization project.' },
     ],
-    vision: 'To be a leading university of the region, known for quality education, relevant research and service to society, rooted in the heritage of Swat.',
+    vision: 'The University of Swat aspires to be a premier seat of learning, distinctively recognized for transformative education and multi-disciplinary research to serve humanity.',
     mission:
-      'To provide accessible, merit-based higher education; to produce research that addresses local and national challenges; and to prepare graduates with knowledge, skills and values to serve their communities.',
+      'University of Swat is committed to provide academic and rewarding environment for intellectual growth to promote quality research and education, focused on creative and critical thinking with multi-cultural affinity of glorious human values.',
     coreValues: [
-      { title: 'Merit and transparency', description: 'Fair, open processes in admissions, hiring and governance.', icon: 'scale' },
-      { title: 'Academic excellence', description: 'High standards in teaching, learning and research.', icon: 'award' },
-      { title: 'Service to the community', description: 'Knowledge that benefits Swat and the wider region.', icon: 'hand-heart' },
-      { title: 'Heritage and inclusion', description: 'Respect for local culture and equal opportunity for all, including women.', icon: 'mountain' },
+      { title: 'Commitment', icon: 'hand-heart' },
+      { title: 'Creativity', icon: 'lightbulb' },
+      { title: 'Excellence', icon: 'award' },
+      { title: 'Responsibility', icon: 'scale' },
+      { title: 'Leadership', icon: 'compass' },
+      { title: 'Service', icon: 'users' },
     ],
-    rankings: [{ body: 'Higher Education Commission (HEC), Pakistan', category: 'Recognition', rank: 'Chartered public university, HEC recognized', year: 2010, url: 'https://www.hec.gov.pk/' }],
-    seo: { metaTitle: 'About — University of Swat', metaDescription: 'History, vision, mission, leadership and campuses of the University of Swat.' },
+    motto: 'Aspiring for Quality Education with Relevance',
+    rankings: RECOGNITION,
+    seo: { metaTitle: 'About — University of Swat', metaDescription: 'History, vision, mission, principal officers, campuses and accreditations of the University of Swat.' },
   },
   ur: {
     title: 'جامعہ سوات کا تعارف',
-    intro: 'جامعہ سوات چارباغ، سوات میں واقع ایک سرکاری جامعہ ہے، جسے حکومتِ خیبر پختونخوا نے ۲۰۱۰ میں وادیٔ سوات اور ملاکنڈ ڈویژن کے عوام تک اعلیٰ تعلیم پہنچانے کے لیے قائم کیا۔',
+    intro: 'جامعہ سوات خیبر پختونخوا، پاکستان کی ایک سرکاری جامعہ ہے۔ اس کا مرکزی تعلیمی کیمپس اور تمام انتظامی دفاتر چارباغ، سوات میں ہیں۔',
     history: blocks(
-      'جامعہ نے ۲۰۱۰-۱۱ کے سیشن میں سات شعبوں کے ساتھ تدریس کا آغاز کیا۔ آج یہ کئی فیکلٹیز پر مشتمل ادارہ ہے جس کا مرکزی کیمپس چارباغ میں اور ایک ویمن کیمپس ہے، جہاں بی ایس، ایم فل/ایم ایس اور پی ایچ ڈی پروگرام پیش کیے جاتے ہیں۔',
+      'جامعہ سوات کے قیام کا اعلان ۲۹ مئی ۲۰۱۰ کو اس وقت کے وزیرِ اعظم پاکستان نے وادیٔ سوات کے دورے کے دوران کیا۔ جولائی ۲۰۱۰ میں گورنر خیبر پختونخوا کے حکم سے، صدرِ پاکستان کی پیشگی منظوری کے ساتھ، جامعہ باقاعدہ وجود میں آئی۔ اس کے پہلے وائس چانسلر ڈاکٹر محمد فاروق خان (شہید) اگست ۲۰۱۰ میں مقرر ہوئے۔',
+      'محکمہ اعلیٰ تعلیم نے سیدو شریف میں دو عمارتیں جامعہ کے حوالے کیں، اور ۲۰۱۰-۱۱ کے پہلے تعلیمی سیشن میں ۷ شعبے شروع ہوئے۔ بعد میں شعبوں کی تعداد ۷ سے بڑھ کر ۲۷ ہو گئی اور ویمن کیمپس قائم ہوا۔',
+      'آج جامعہ چارباغ میں اپنے مرکزی کیمپس میں ہے۔ کیمپس کا پہلا مرحلہ مکمل ہو چکا ہے: تین اکیڈمک بلاک، طلبہ و طالبات کے ہاسٹل، مسجد، لائبریری، امتحانی سیکشن، انتظامی بلاک، عملے کی رہائش گاہیں، چار دیواری اور سڑکیں۔ دوسرا مرحلہ آئندہ ہوگا۔',
+      'جس وادی کے نام پر جامعہ ہے، وہ وہاں واقع ہے جہاں جنوبی ایشیا، وسطی ایشیا اور چین ملتے ہیں۔ یہ دریائے سوات کے شفاف پانی، جنگلات اور سبزہ زاروں، اور کشیدہ کاری، شالوں، لکڑی کی نقاشی اور شہد جیسی دستکاریوں کے لیے مشہور ہے۔',
     ),
     milestones: [
-      { year: 2010, title: 'جامعہ کا قیام', description: 'حکومتِ خیبر پختونخوا کی جانب سے چارٹر؛ سات شعبوں کے ساتھ پہلا سیشن۔' },
-      { year: 2017, title: '۲۲ شعبہ جات', description: 'جامعہ میں ۲۲ تدریسی شعبے اور ۴۹ تعلیمی پروگرام۔' },
-      { year: 2026, title: 'ادارہ جاتی فضیلت کا روڈ میپ', description: 'گڈ گورننس، شفافیت اور تحقیق پر مبنی نیا منصوبہ۔' },
-      { year: 2026, title: 'سولرائزیشن منصوبہ', description: 'صوبے میں اس پیمانے کا پہلا منصوبہ۔' },
-      { year: 2026, title: 'این آئی آئی بی ایس کے ساتھ مفاہمتی یادداشت', description: 'گندھارا تہذیب پر تحقیق کے لیے بین الاقوامی شراکت۔' },
+      { year: 2010, title: 'قیام کا اعلان', description: '۲۹ مئی ۲۰۱۰ کو وزیرِ اعظم پاکستان نے دورۂ سوات میں جامعہ کا اعلان کیا؛ جولائی ۲۰۱۰ میں یہ باقاعدہ وجود میں آئی۔' },
+      { year: 2010, title: 'پہلے وائس چانسلر اور پہلا سیشن', description: 'ڈاکٹر محمد فاروق خان (شہید) اگست ۲۰۱۰ میں مقرر ہوئے؛ ۲۰۱۰-۱۱ کا سیشن ۷ شعبوں کے ساتھ شروع ہوا۔' },
+      { year: 2013, title: 'کالج آف ہوم سائنسز', description: 'ایک الحاق شدہ کالج کے طور پر قائم ہوا؛ بعد میں ویمن کیمپس کا شعبہ ہوم اکنامکس بنا۔' },
+      { year: 2014, title: 'ایڈوانسڈ اسٹڈیز اینڈ ریسرچ بورڈ', description: 'ڈائریکٹوریٹ آف ایڈوانسڈ اسٹڈیز اینڈ ریسرچ بورڈ دسمبر ۲۰۱۴ میں قائم ہوا۔' },
+      { year: 2017, title: 'ویمن کیمپس', description: 'ویمن سب کیمپس کا افتتاح ۲۵ جولائی ۲۰۱۷ کو ہوا۔' },
+      { year: 2022, title: 'ایچ ای سی کی جانب سے اورک کی منظوری', description: 'دفتر برائے تحقیق، جدت و کمرشلائزیشن اعلیٰ ترین درجے میں تسلیم کیا گیا۔' },
+      { year: 2025, title: 'سُجرس کی ایچ ای سی سے منظوری', description: 'سوات یونیورسٹی جرنل آف ریلیجیس اینڈ اسلامک اسٹڈیز "Y" کیٹیگری میں منظور ہوا۔' },
+      { year: 2026, title: 'نئے وائس چانسلر', description: 'پروفیسر ڈاکٹر حسن الامین نے اکتوبر ۲۰۲۶ میں وائس چانسلر کا عہدہ سنبھالا۔' },
+      { year: 2026, title: 'سولرائزیشن منصوبہ', description: 'جامعہ صوبے میں سولرائزیشن کا بڑا منصوبہ شروع کرنے والی پہلی جامعہ بنی۔' },
     ],
-    vision: 'معیاری تعلیم، بامقصد تحقیق اور خدمتِ خلق کے لیے خطے کی ایک ممتاز جامعہ بننا، جس کی جڑیں سوات کے ورثے میں ہوں۔',
-    mission: 'قابلِ رسائی اور میرٹ پر مبنی اعلیٰ تعلیم فراہم کرنا، مقامی و قومی مسائل پر تحقیق کرنا، اور ایسے فارغ التحصیل تیار کرنا جو علم، مہارت اور اقدار کے ساتھ معاشرے کی خدمت کریں۔',
+    vision: 'جامعہ سوات تبدیلی لانے والی تعلیم اور بین الشعبہ جاتی تحقیق کے ذریعے انسانیت کی خدمت کے لیے ایک ممتاز درسگاہ بننے کی خواہاں ہے۔',
+    mission: 'جامعہ سوات فکری نشوونما کے لیے ایسا تعلیمی ماحول فراہم کرنے کے لیے پرعزم ہے جو معیاری تحقیق اور تعلیم کو فروغ دے، تخلیقی اور تنقیدی سوچ پر مبنی ہو اور اعلیٰ انسانی اقدار سے کثیر الثقافتی وابستگی رکھے۔',
     coreValues: [
-      { title: 'میرٹ اور شفافیت', description: 'داخلوں، بھرتیوں اور انتظام میں منصفانہ اور کھلا طریقہ کار۔', icon: 'scale' },
-      { title: 'تعلیمی فضیلت', description: 'تدریس، تعلم اور تحقیق میں اعلیٰ معیار۔', icon: 'award' },
-      { title: 'خدمتِ خلق', description: 'ایسا علم جو سوات اور پورے خطے کو فائدہ دے۔', icon: 'hand-heart' },
-      { title: 'ورثہ اور شمولیت', description: 'مقامی ثقافت کا احترام اور خواتین سمیت سب کے لیے برابر مواقع۔', icon: 'mountain' },
+      { title: 'عزم', icon: 'hand-heart' },
+      { title: 'تخلیقی صلاحیت', icon: 'lightbulb' },
+      { title: 'فضیلت', icon: 'award' },
+      { title: 'ذمہ داری', icon: 'scale' },
+      { title: 'قیادت', icon: 'compass' },
+      { title: 'خدمت', icon: 'users' },
     ],
-    rankings: [{ body: 'ہائر ایجوکیشن کمیشن، پاکستان', category: 'منظوری', rank: 'چارٹرڈ سرکاری جامعہ، ایچ ای سی سے منظور شدہ', year: 2010, url: 'https://www.hec.gov.pk/' }],
-    seo: { metaTitle: 'تعارف — جامعہ سوات', metaDescription: 'جامعہ سوات کی تاریخ، وژن، مشن، قیادت اور کیمپس۔' },
+    motto: 'معیاری اور بامقصد تعلیم کی جستجو',
+    rankings: RECOGNITION.map((r, i) => ({ ...r, ...RECOGNITION_UR[i] })),
+    seo: { metaTitle: 'تعارف — جامعہ سوات', metaDescription: 'جامعہ سوات کی تاریخ، وژن، مشن، اعلیٰ عہدیدار، کیمپس اور ایکریڈیٹیشن۔' },
   },
 };
 

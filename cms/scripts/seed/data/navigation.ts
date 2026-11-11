@@ -37,9 +37,10 @@ export const NAV_EN: NavItem[] = [
     children: [
       l('About the University', '/about', 'History, vision and mission', 'info'),
       l('Vice Chancellor’s Message', '/about/vice-chancellor', 'A welcome from the VC', 'message'),
-      l('Leadership', '/about#leadership', 'Syndicate, Senate and principal officers', 'users'),
+      l('Principal Officers', '/about#leadership', 'Vice Chancellor, Registrar, Treasurer and more', 'users'),
       l('Campuses', '/about#campuses', 'Main Campus Charbagh and Women Campus', 'map-pin'),
       l('Administration & Offices', '/administration', 'Offices, directorates and contacts', 'building'),
+      l('Contact & Phone Directory', '/contact', 'Phone numbers, emails, map and message form', 'phone'),
     ],
   },
   {
@@ -72,11 +73,11 @@ export const NAV_EN: NavItem[] = [
     url: '/research',
     description: 'ORIC, QEC, journal and projects',
     children: [
-      l('Research at UoS', '/research', 'Priorities, centres and output', 'flask'),
+      l('Research at UoS', '/research', 'Offices, projects and conferences', 'flask'),
       l('ORIC', '/administration/oric', 'Research grants and innovation', 'lightbulb'),
       l('Quality Enhancement Cell', '/administration/qec', 'Program reviews and quality assurance', 'badge-check'),
-      l('SUJRIS Journal', EXTERNAL_LINKS.sujris, 'The university’s research journal', 'book', true),
-      l('Research Projects', '/research#projects', 'Funded and ongoing projects', 'folder-kanban'),
+      l('SUJRIS Journal', EXTERNAL_LINKS.sujris, 'Journal of Religious & Islamic Studies', 'book', true),
+      l('Research Projects', '/research#projects', 'Projects approved by HEC and others', 'folder-kanban'),
     ],
   },
   {
@@ -96,10 +97,9 @@ export const NAV_EN: NavItem[] = [
     url: '/campus-life',
     description: 'Library, sports, hostels and societies',
     children: [
-      l('Library', '/campus-life/library', 'Opening hours and services', 'library'),
-      l('Sports', '/campus-life/sports', 'Grounds, teams and the sports gala', 'trophy'),
-      l('Hostels', '/campus-life/hostels', 'Boys’ and girls’ accommodation', 'bed'),
-      l('Transport', '/campus-life/transport', 'Bus routes and timings', 'bus'),
+      l('Library', '/campus-life/library', 'Opening hours and the digital library', 'library'),
+      l('Sports', '/campus-life/sports', 'Teams and the Sports Festival', 'trophy'),
+      l('Hostels', '/campus-life/hostels', 'Girls’ and boys’ hostels and forms', 'bed'),
       l('Societies & YDC', '/campus-life/societies', 'Clubs and youth development', 'users'),
       l('Hunerkada', '/academics/hunerkada', 'Centre of Excellence for Art & Culture', 'palette'),
     ],
@@ -115,9 +115,10 @@ export const NAV_UR: NavItem[] = [
     children: [
       l('جامعہ کا تعارف', '/about', 'تاریخ، وژن اور مشن', 'info'),
       l('وائس چانسلر کا پیغام', '/about/vice-chancellor', 'وائس چانسلر کی جانب سے خوش آمدید', 'message'),
-      l('قیادت', '/about#leadership', 'سنڈیکیٹ، سینیٹ اور اعلیٰ عہدیدار', 'users'),
+      l('اعلیٰ عہدیدار', '/about#leadership', 'وائس چانسلر، رجسٹرار، خزانچی اور دیگر', 'users'),
       l('کیمپس', '/about#campuses', 'مرکزی کیمپس چارباغ اور خواتین کیمپس', 'map-pin'),
       l('انتظامیہ و دفاتر', '/administration', 'دفاتر، ڈائریکٹوریٹس اور رابطے', 'building'),
+      l('رابطہ و فون ڈائریکٹری', '/contact', 'فون نمبر، ای میل، نقشہ اور پیغام فارم', 'phone'),
     ],
   },
   {
@@ -150,11 +151,11 @@ export const NAV_UR: NavItem[] = [
     url: '/research',
     description: 'اورک، کیو ای سی، جریدہ اور منصوبے',
     children: [
-      l('جامعہ میں تحقیق', '/research', 'ترجیحات، مراکز اور تحقیقی کام', 'flask'),
+      l('جامعہ میں تحقیق', '/research', 'دفاتر، منصوبے اور کانفرنسیں', 'flask'),
       l('اورک', '/administration/oric', 'تحقیقی گرانٹس اور اختراع', 'lightbulb'),
       l('کوالٹی انہانسمنٹ سیل', '/administration/qec', 'پروگراموں کا جائزہ اور معیار', 'badge-check'),
-      l('سُجرس جریدہ', EXTERNAL_LINKS.sujris, 'جامعہ کا تحقیقی جریدہ', 'book', true),
-      l('تحقیقی منصوبے', '/research#projects', 'جاری اور مالی معاونت یافتہ منصوبے', 'folder-kanban'),
+      l('سُجرس جریدہ', EXTERNAL_LINKS.sujris, 'دینی و اسلامی علوم کا تحقیقی جریدہ', 'book', true),
+      l('تحقیقی منصوبے', '/research#projects', 'ایچ ای سی اور دیگر اداروں کے منظور شدہ منصوبے', 'folder-kanban'),
     ],
   },
   {
@@ -175,9 +176,8 @@ export const NAV_UR: NavItem[] = [
     description: 'لائبریری، کھیل، ہاسٹل اور سوسائٹیز',
     children: [
       l('لائبریری', '/campus-life/library', 'اوقات کار اور خدمات', 'library'),
-      l('کھیل', '/campus-life/sports', 'میدان، ٹیمیں اور اسپورٹس گالا', 'trophy'),
-      l('ہاسٹل', '/campus-life/hostels', 'طلبہ و طالبات کی رہائش', 'bed'),
-      l('ٹرانسپورٹ', '/campus-life/transport', 'بس روٹس اور اوقات', 'bus'),
+      l('کھیل', '/campus-life/sports', 'ٹیمیں اور اسپورٹس فیسٹیول', 'trophy'),
+      l('ہاسٹل', '/campus-life/hostels', 'طالبات و طلبہ کے ہاسٹل اور فارم', 'bed'),
       l('سوسائٹیز', '/campus-life/societies', 'کلب اور یوتھ ڈویلپمنٹ', 'users'),
       l('ہنرکدہ', '/academics/hunerkada', 'فن و ثقافت کا مرکزِ فضیلت', 'palette'),
     ],

@@ -42,8 +42,6 @@
         "ongoing",
         "completed"
       ],
-      "required": true,
-      "default": "ongoing",
       "pluginOptions": {
         "i18n": {
           "localized": false
@@ -148,6 +146,15 @@
         }
       }
     },
+    "durationMonths": {
+      "type": "integer",
+      "min": 1,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "researchArea": {
       "type": "string",
       "pluginOptions": {
@@ -183,6 +190,15 @@
     },
     "externalUrl": {
       "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "sourceUrl": {
+      "type": "string",
+      "regex": "^https://",
       "pluginOptions": {
         "i18n": {
           "localized": false

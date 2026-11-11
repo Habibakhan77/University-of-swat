@@ -20,7 +20,7 @@ const TAGS_BY_UID: Record<string, string[]> = {
   "api::vc-message.vc-message": ["vc-message"],
   "api::faculty.faculty": ["faculties", "academics", "stats"],
   "api::department.department": ["faculties", "academics", "stats"],
-  "api::campus.campus": ["campuses", "academics", "stats"],
+  "api::campus.campus": ["campuses", "academics", "stats", "about"],
   // Programs also feed the admissions hub (fees and eligibility flags).
   "api::program.program": ["academics", "admissions", "stats"],
   "api::faculty-member.faculty-member": ["academics", "stats"],
@@ -31,7 +31,14 @@ const TAGS_BY_UID: Record<string, string[]> = {
   "api::admissions-page.admissions-page": ["admissions"],
   "api::faq.faq": ["admissions"],
   // Office heads and contacts appear in the hub's Contact section.
-  "api::office.office": ["admissions", "tenders", "jobs"],
+  // Offices also feed About (principal officers), Research, Campus Life and Contact.
+  "api::office.office": ["admissions", "tenders", "jobs", "offices"],
+  "api::about.about": ["about"],
+  "api::research-page.research-page": ["research"],
+  "api::research-project.research-project": ["research"],
+  "api::facility.facility": ["campus-life"],
+  "api::contact-page.contact-page": ["contact"],
+  "api::phone-entry.phone-entry": ["contact"],
 };
 
 /** A replaced or re-described image can appear anywhere, so media events refresh every tag. */
