@@ -161,7 +161,7 @@
     "admissionFee": "Admission fee",
     "feeItem": "Item",
     "amount": "Amount",
-    "feesPending": "Fees for this program are listed in the official fee structure.",
+    "feesPending": "Fees, refunds and online payment",
     "feeStructure": "Fee structure",
     "downloads": "Merit lists & documents",
     "sampleFile": "Sample file",
@@ -239,5 +239,85 @@
     "originalLanguage": "",
     "readFull": "Read the full message on uswat.edu.pk",
     "unavailable": "The Vice Chancellor’s message is not available right now."
+  },
+  "admissions": {
+    "breadcrumb": "Admissions",
+    "eyebrow": "Study at the University of Swat",
+    "programsCount": "{count, plural, one {# program} other {# programs}}",
+    "facultiesCount": "{count, plural, one {# faculty} other {# faculties & centres}}",
+    "meritListsButton": "Merit lists",
+    "onThisPage": "On this page",
+    "jumpTo": "Jump to a section",
+    "sections": {
+      "programs": "Find your program",
+      "eligibility": "Eligibility",
+      "fees": "Fee structure",
+      "dates": "Important dates",
+      "howToApply": "How to apply",
+      "meritLists": "Merit lists",
+      "scholarships": "Scholarships & financial aid",
+      "faqs": "Frequently asked questions",
+      "contact": "Contact"
+    },
+    "programsIntro": "Filter by level and faculty, then open a program to see its details.",
+    "finder": {
+      "label": "Program filters",
+      "search": "Search programs",
+      "searchPlaceholder": "e.g. Computer Science, Law, Chemistry",
+      "level": "Level",
+      "allLevels": "All levels",
+      "levels": {
+        "bs": "BS",
+        "bs5": "BS 5th semester",
+        "ms": "MS / MPhil",
+        "phd": "PhD",
+        "other": "Other"
+      },
+      "faculty": "Faculty",
+      "allFaculties": "All faculties",
+      "results": "{count, plural, =0 {No programs match} one {# program} other {# programs}}",
+      "showMore": "Show {count} more",
+      "noResults": "No programs match these filters",
+      "noResultsHint": "Try another level or faculty, or clear the filters.",
+      "clear": "Clear filters",
+      "viewAll": "All programs in Academics"
+    },
+    "eligibilityPrograms": "{count, plural, one {# program lists its} other {# programs list their}} own requirements on the program page.",
+    "feesTable": {
+      "caption": "Official fees entered for these programs",
+      "program": "Program",
+      "perSemester": "Per semester",
+      "admissionFee": "Admission fee"
+    },
+    "feeLinks": "Fee documents and payment",
+    "dates": {
+      "upcoming": "Upcoming",
+      "open": "Open now",
+      "closed": "Closed",
+      "until": "to"
+    },
+    "step": "Step {n}",
+    "latestAdvertisement": "Latest admission notice",
+    "notice": {
+      "title": "Check the latest admission advertisement",
+      "text": "The official figures for this section are not on this website yet. The admission advertisement and the CMS admission portal always have the current details.",
+      "portal": "Open the CMS admission portal"
+    },
+    "faqCategories": {
+      "admissions": "Admissions",
+      "fees": "Fees",
+      "scholarships": "Scholarships"
+    },
+    "office": {
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "website": "Office page"
+    },
+    "applyCard": {
+      "title": "Ready to apply?",
+      "text": "Applications are made online on the CMS admission portal."
+    },
+    "englishOnly": "This section is available in English only for now."
   }
 }

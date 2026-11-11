@@ -44,7 +44,7 @@ export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", cl
       <span className="flex min-w-0 flex-col">
         <span
           className={cn(
-            "truncate text-body font-bold tracking-[-0.01em] xl:text-[1.0625rem]",
+            "text-body leading-tight font-bold tracking-[-0.01em] text-balance sm:truncate sm:leading-normal xl:text-[1.0625rem]",
             tone === "surface" ? "text-fg" : "text-white",
           )}
         >

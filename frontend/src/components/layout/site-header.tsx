@@ -152,7 +152,8 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                 external={apply.external}
                 className={cn(
                   buttonVariants({ variant: "accent", size: "md" }),
-                  "group/button hidden sm:inline-flex",
+                  // Visible at every width, compact on phones: the admissions path is never hidden in a menu.
+                  "group/button h-9 gap-1.5 px-3 max-sm:rounded-md sm:h-11 sm:gap-2 sm:px-5",
                 )}
               >
                 {t("apply")}

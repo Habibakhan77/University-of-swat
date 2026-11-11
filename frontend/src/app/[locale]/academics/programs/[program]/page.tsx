@@ -29,9 +29,11 @@ import {
   levelGroupOf,
   programsHref,
 } from "@/lib/strapi/academics";
+import { CMS_PORTAL_FALLBACK, getAdmissionsPage } from "@/lib/strapi/admissions";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
 import { accentStyle } from "@/components/academics/faculty-art";
 import { EnglishOnlyNote, FactList, SectionTitle, SidePanel, type Fact } from "@/components/academics/panels";
+import { OfficialNotice } from "@/components/admissions/sections";
 import { SmartLink } from "@/components/layout/smart-link";
 import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
@@ -57,14 +59,14 @@ export async function generateStaticParams() {
 async function load(params: Props["params"]) {
   const { program: slug } = await params;
   const locale = await resolveLocale();
-  const [index, detail] = await Promise.all([getAcademicIndex(locale), getProgramDetail(slug, locale)]);
+  const [index, detail, admissions] = await Promise.all([getAcademicIndex(locale), getProgramDetail(slug, locale), getAdmissionsPage(locale)]);
   const program = index.programs.find((p) => p.slug === slug);
   if (!program || !detail) notFound();
   const department = index.departments.find((d) => d.slug === program.departmentSlug);
   const faculty = index.faculties.find((f) => f.slug === program.facultySlug);
   if (!department || !faculty) notFound();
   const siblings = index.programs.filter((p) => p.departmentSlug === department.slug && p.slug !== slug);
-  return { locale, program, detail, department, faculty, siblings };
+  return { locale, program, detail, department, faculty, siblings, admissions };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -80,11 +82,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProgramPage({ params }: Props) {
-  const { locale, program, detail, department, faculty, siblings } = await load(params);
-  const [t, tCommon] = await Promise.all([
+  const { locale, program, detail, department, faculty, siblings, admissions } = await load(params);
+  const [t, tCommon, tAdm] = await Promise.all([
     getTranslations({ locale, namespace: "academics" }),
     getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "admissions" }),
   ]);
+  // No official figures in Strapi: point to the advertisement and the portal, never a guess.
+  const noticeProps = {
+    notice: admissions?.notice ?? null,
+    advertisement: admissions?.advertisement ?? null,
+    fallback: {
+      title: tAdm("notice.title"),
+      text: tAdm("notice.text"),
+      portal: tAdm("notice.portal"),
+      portalHref: admissions?.apply?.action?.href ?? CMS_PORTAL_FALLBACK,
+    },
+  };
   const money = new Intl.NumberFormat(intlLocale[locale], { style: "currency", currency: "PKR", maximumFractionDigits: 0 });
   const levelLabel = t(`levels.${program.level}`);
 
@@ -182,15 +196,19 @@ export default async function ProgramPage({ params }: Props) {
             </section>
           ) : null}
 
-          {detail.eligibility ? (
-            <section aria-labelledby="eligibility">
-              <SectionTitle id="eligibility">{t("eligibility")}</SectionTitle>
-              <EnglishOnlyNote content={detail.eligibility} />
-              <div className="max-w-prose rounded-2xl border-s-4 border-fac bg-fac-soft p-5 sm:p-6">
-                <RichText blocks={detail.eligibility.value} lang={langAttr(detail.eligibility, locale)} className="text-fg" />
-              </div>
-            </section>
-          ) : null}
+          <section aria-labelledby="eligibility">
+            <SectionTitle id="eligibility">{t("eligibility")}</SectionTitle>
+            {detail.eligibility ? (
+              <>
+                <EnglishOnlyNote content={detail.eligibility} />
+                <div className="max-w-prose rounded-2xl border-s-4 border-fac bg-fac-soft p-5 sm:p-6">
+                  <RichText blocks={detail.eligibility.value} lang={langAttr(detail.eligibility, locale)} className="text-fg" />
+                </div>
+              </>
+            ) : (
+              <OfficialNotice {...noticeProps} className="max-w-prose" />
+            )}
+          </section>
 
           <section aria-labelledby="fees">
             <SectionTitle id="fees">{t("fees")}</SectionTitle>
@@ -223,12 +241,13 @@ export default async function ProgramPage({ params }: Props) {
             ) : feeFacts.length ? (
               <FactList facts={feeFacts} columns={2} />
             ) : (
-              <p className="max-w-prose text-body text-fg-muted">
-                {t("feesPending")}{" "}
-                <Link href="/admissions" className="font-semibold text-primary-text underline underline-offset-3">
-                  {t("feeStructure")}
+              <div className="flex max-w-prose flex-col gap-3">
+                <OfficialNotice {...noticeProps} compact />
+                <Link href="/admissions#fees" className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary-text hover:underline">
+                  {t("feesPending")}
+                  <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
                 </Link>
-              </p>
+              </div>
             )}
           </section>
 

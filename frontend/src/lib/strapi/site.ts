@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
 import { StrapiError, buildTimeFallback, strapiGet, strapiMediaUrl } from "./client";
-import type { StrapiLink, StrapiMedia, StrapiSingleResponse, StrapiSiteSettings, StrapiSocialPlatform } from "./types";
+import type { StrapiCta, StrapiLink, StrapiMedia, StrapiSingleResponse, StrapiSiteSettings, StrapiSocialPlatform } from "./types";
 
 /* ---------- View models used by the header and footer ---------- */
 
@@ -62,6 +62,8 @@ export interface SiteChrome {
   logo: SiteImage | null;
   applyHref: string | null;
   applyExternal: boolean;
+  /** Admissions call to action at the top of the footer, on every page. */
+  applyCta: { title: string; text: string | null; label: string; href: string; external: boolean } | null;
   mainNavigation: NavGroup[];
   /** Top utility bar: the portals people use daily (CMS, Exam, e-Office, SUJRIS, Campus TV). */
   utilityLinks: NavLink[];
@@ -116,6 +118,12 @@ function toLogo(media: StrapiMedia | null, siteName: string): SiteImage | null {
   };
 }
 
+function toApplyCta(cta: StrapiCta | null | undefined): SiteChrome["applyCta"] {
+  if (!cta || cta.isVisible === false || !cta.title?.trim() || !cta.buttonLabel?.trim() || !cta.buttonUrl?.trim()) return null;
+  const href = normalizeHref(cta.buttonUrl);
+  return { title: cta.title, text: cta.text || null, label: cta.buttonLabel, href, external: isExternalHref(href) };
+}
+
 function toChrome(locale: Locale, data: StrapiSiteSettings): SiteChrome {
   const applyHref = data.applyUrl ? normalizeHref(data.applyUrl) : null;
   return {
@@ -126,6 +134,7 @@ function toChrome(locale: Locale, data: StrapiSiteSettings): SiteChrome {
     logo: toLogo(data.logo, data.siteName),
     applyHref,
     applyExternal: applyHref ? isExternalHref(applyHref) : false,
+    applyCta: toApplyCta(data.applyCta),
     mainNavigation: (data.mainNavigation ?? []).map((item) => ({
       label: item.label,
       href: item.url ? normalizeHref(item.url) : null,
@@ -154,6 +163,7 @@ function toChrome(locale: Locale, data: StrapiSiteSettings): SiteChrome {
 const SITE_SETTINGS_QUERY = {
   "populate[logo]": true,
   "populate[contact]": true,
+  "populate[applyCta]": true,
   "populate[mainNavigation][populate][children]": true,
   "populate[utilityLinks]": true,
   "populate[externalSystems]": true,

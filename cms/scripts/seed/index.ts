@@ -11,7 +11,7 @@ import { blocks, h, ul, type Block } from './lib/blocks';
 import { Writer } from './lib/docs';
 import { MediaFactory, type Theme } from './lib/media';
 import { CAMPUS_PHOTOS, FACULTY_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
-import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type Level, type ProgramSeed } from './data/academics';
+import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type ProgramSeed } from './data/academics';
 import { CAMPUSES, MAIN_ADDRESS, OFFICES } from './data/organisation';
 import { POSTS } from './data/posts';
 import { DOWNLOADS, FAQS, JOBS, RESEARCH, TENDERS } from './data/notices';
@@ -83,17 +83,8 @@ function programSlug(p: ProgramSeed): string {
   return slugify(p.level === 'bs_5th_semester' ? `${programName(p)} 5th semester` : programName(p));
 }
 
-const ELIGIBILITY: Record<Level, string> = {
-  adp: 'Intermediate (HSSC) or equivalent with at least 45% marks.',
-  bs: 'Intermediate (HSSC) or equivalent with at least 45% marks in the relevant subject group, as set out in the admission advertisement.',
-  bs_5th_semester: 'A two-year bachelor’s degree (BA / BSc) or an Associate Degree in the relevant subject, with at least 45% marks or 2.0 CGPA.',
-  ms: 'Sixteen years of education in a relevant discipline with a minimum CGPA of 2.5 (or 2nd division), and the entry test required by HEC.',
-  mphil: 'Sixteen years of education in a relevant discipline with a minimum CGPA of 2.5 (or 2nd division), and the entry test required by HEC.',
-  phd: 'MPhil / MS in a relevant discipline with a minimum CGPA of 3.0, and a GAT-Subject or university test as required by HEC.',
-  pgd: 'Sixteen years of education in any discipline.',
-  diploma: 'Intermediate (HSSC) or equivalent.',
-  certificate: 'Open to all; specific requirements are announced with each course.',
-};
+// No program eligibility is seeded: the figures are only published in each admission advertisement,
+// so program pages show the "Check the latest admission advertisement" notice until a department adds them.
 
 export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promise<void> {
   const started = Date.now();
@@ -162,7 +153,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           headDesignation: o.headDesignation,
           headPhoto: isVc ? vcPhoto : headPhoto,
           headIsPlaceholder: !o.headName,
-          contact: { address: MAIN_ADDRESS },
+          contact: { address: o.location ?? MAIN_ADDRESS, ...(o.email ? { email: o.email } : {}) },
           websiteUrl: o.websiteUrl,
           order: i + 1,
           seo: seo(o.name, o.summary),
@@ -334,7 +325,11 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
       });
     }
     for (const [i, f] of FAQS.entries()) {
-      await w.create('api::faq.faq', { question: f.question, answer: f.answer, category: f.category, order: i + 1 });
+      await w.create(
+        'api::faq.faq',
+        { question: f.question, answer: f.answer, category: f.category, order: i + 1 },
+        f.ur ? { question: f.ur.question, answer: f.ur.answer } : undefined,
+      );
     }
 
     // ---------- Homepage pieces ----------
@@ -391,7 +386,16 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     );
 
     const admissionsHero = await media.photo('campusMountains');
-    await w.single('api::admissions-page.admissions-page', { ...ADMISSIONS.en, heroImage: admissionsHero }, ADMISSIONS.ur);
+    const contactOffices = ['directorate-of-admissions', 'university-advancement-financial-aid'].map((slug) => {
+      const id = officeIds.get(slug);
+      if (!id) throw new Error(`Admissions page: unknown office ${slug}`);
+      return id;
+    });
+    await w.single(
+      'api::admissions-page.admissions-page',
+      { ...ADMISSIONS.en, heroImage: admissionsHero, contactOffices },
+      { ...ADMISSIONS.ur, contactOffices },
+    );
   } finally {
     await media.dispose();
   }
@@ -456,7 +460,6 @@ async function createProgram(
       summary,
       p.level === 'bs_5th_semester' ? 'Students join directly in the 5th semester after a two-year degree.' : 'The curriculum follows HEC guidelines and combines core courses, electives and a final-year project or thesis.',
     ),
-    eligibility: blocks(ELIGIBILITY[p.level]),
     durationYears,
     semesters: p.semesters ?? defaults.semesters,
     creditHours: p.creditHours ?? defaults.creditHours,

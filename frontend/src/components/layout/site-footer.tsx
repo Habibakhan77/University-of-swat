@@ -1,10 +1,12 @@
-import { ArrowUp, ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight, ArrowUp, ArrowUpRight, GraduationCap, Mail, MapPin, Phone } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import type { SiteChrome } from "@/lib/strapi/site";
 import { GandharaPattern, MountainRidge } from "@/components/brand/motifs";
 import { SocialIcon, socialTitle } from "@/components/brand/social-icons";
+import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { cn } from "@/lib/cn";
 import { Brand } from "./brand";
 import { SmartLink } from "./smart-link";
 
@@ -28,6 +30,36 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
       <MountainRidge className="h-16 text-forest-900 sm:h-24 dark:text-forest-950" />
       <div className="relative bg-forest-900 dark:bg-forest-950">
         <GandharaPattern className="-z-10 text-white opacity-[0.035]" />
+
+        {/* The admissions path on every page (Site Settings → applyCta). */}
+        {chrome?.applyCta ? (
+          <Container size="wide" className="pt-2 lg:pt-4">
+            <section
+              aria-labelledby="footer-apply"
+              className="flex flex-col gap-5 rounded-2xl bg-white/[0.06] p-6 ring-1 ring-gold-300/30 ring-inset [--ring:var(--color-gold-300)] sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-8"
+            >
+              <div className="flex items-start gap-4">
+                <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-gold-400 text-ink-950">
+                  <GraduationCap className="size-6" />
+                </span>
+                <div className="flex flex-col gap-1">
+                  <h2 id="footer-apply" className="text-heading-lg text-white">
+                    {chrome.applyCta.title}
+                  </h2>
+                  {chrome.applyCta.text ? <p className="max-w-xl text-body-sm text-forest-100">{chrome.applyCta.text}</p> : null}
+                </div>
+              </div>
+              <SmartLink
+                href={chrome.applyCta.href}
+                external={chrome.applyCta.external}
+                className={cn(buttonVariants({ variant: "accent", size: "lg" }), "self-start whitespace-normal sm:self-center")}
+              >
+                {chrome.applyCta.label}
+                <ArrowRight aria-hidden className="rtl:-scale-x-100" />
+              </SmartLink>
+            </section>
+          </Container>
+        ) : null}
 
         <Container size="wide" className="grid gap-12 pt-6 pb-14 lg:grid-cols-12 lg:gap-8 lg:pt-10">
           {/* Identity + contact */}

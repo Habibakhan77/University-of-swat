@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_admissions_steps",
+  "info": {
+    "displayName": "Application step",
+    "icon": "bulletList",
+    "description": "One step of “How to apply”, with an optional button (e.g. Register on the CMS portal)."
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "icon": {
+      "type": "string"
+    },
+    "linkLabel": {
+      "type": "string"
+    },
+    "linkUrl": {
+      "type": "string"
+    }
+  }
+}

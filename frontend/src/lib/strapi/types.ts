@@ -53,6 +53,15 @@ export interface StrapiContact {
   officeHours: string | null;
 }
 
+/** shared.cta */
+export interface StrapiCta {
+  isVisible: boolean | null;
+  title: string;
+  text: string | null;
+  buttonLabel: string | null;
+  buttonUrl: string | null;
+}
+
 export interface StrapiSiteSettings {
   id: number;
   documentId: string;
@@ -65,6 +74,7 @@ export interface StrapiSiteSettings {
   contact: StrapiContact | null;
   mapUrl: string | null;
   applyUrl: string | null;
+  applyCta: StrapiCta | null;
   mainNavigation: StrapiMenuItem[];
   utilityLinks: StrapiLink[];
   externalSystems: StrapiLink[];

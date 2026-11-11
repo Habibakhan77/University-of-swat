@@ -393,3 +393,38 @@
   language and direction now sit on an inner `<bdi>`.
 - Reseeded with `--reset`. Checked on a production build at 1440px and 375px in English and Urdu: photos, tints,
   credits and badges in place, readable text, no horizontal scroll, no page errors.
+
+## Phase 7 — Admissions hub
+
+- **`/admissions`** (English and Urdu, prerendered, tag `admissions`): hero with "Apply on the CMS portal" and
+  "Merit lists", the latest official admission notice, then Find your program · Eligibility · Fee structure ·
+  Important dates · How to apply · Merit lists · Scholarships & financial aid · FAQs · Contact. "On this page" is a
+  scrolling chip row on phones and a sticky sidebar (with the Apply card) on desktop.
+- **Program finder**: level chips (BS, BS 5th semester, MS / MPhil, PhD) and one chip per faculty in that faculty's
+  accent colour (dot when idle, filled when chosen, matching stripe on each program card), plus search. Live counts
+  per chip, filters in the URL (`?level=phd&faculty=…`), full list in the HTML without JavaScript.
+- **No invented figures**: eligibility, fees and dates render only when Strapi holds official values (fee table from
+  Program → feePerSemester / admissionFee, dates as a timeline whose open / upcoming / closed status is worked out
+  in the browser on Pakistan's date, so a prerendered page is never stale). Otherwise each section shows the
+  **"Check the latest admission advertisement"** notice with buttons to the CMS admission portal
+  (cms1.uswat.edu.pk) and the latest advertisement. Program pages use the same notice for eligibility and fees.
+- **Verified content only** (uswat.edu.pk and cms1.uswat.edu.pk, November 2026): apply online (Register →
+  Sign in on cms1), names must match the matric certificate/DMC, provisional and final merit lists on cms1,
+  online fee payment (cards, Easypaisa, internet banking), the fee refund policy and up-to-10% annual increase from
+  the official Fee Structure 2025 PDF (linked by its real year), the ten schemes listed by the Financial Aid
+  office and its one-scholarship rule, and the Directorate of Admissions' head, email and office location.
+- **Removed unverified seed text**: the hub's eligibility percentages / CGPAs, the per-program eligibility on all
+  80 program pages, the "challan at a designated bank / CNIC / upload domicile" steps, and FAQ answers that could
+  not be sourced. FAQs for admissions, fees and scholarships rewritten and translated to Urdu (10).
+- **Strapi**: Admissions Page gains `advertisement`, `missingInfoNotice`, `meritLists`, `feeLinks`,
+  `contactOffices` (→ Office) and `howToApply` as the new `admissions.step` component (title, description, icon,
+  button label + URL; `#section` links stay on the page). Site Settings gains `applyCta`. Office seed accepts a
+  confirmed email and location. Webhook expires `admissions` for the Admissions Page, FAQs, Offices and Programs.
+- **Apply from every page**: the header Apply button now shows at every width (compact on phones; the site name
+  wraps to two lines instead of being cut off) and leads to the hub (Site Settings → applyUrl = `/admissions`);
+  a "Ready to apply?" band from Site Settings → applyCta opens the footer on every page; navigation "Merit Lists"
+  goes to `/admissions#merit-lists` instead of sample PDFs.
+- SEO: page metadata from the Admissions Page SEO component and `FAQPage` JSON-LD.
+- Verified on a production build at 1440px and 375px in English and Urdu: no horizontal scroll (a long notice
+  button overflowed at 375px and was fixed), filters, URL sync, FAQ accordion, RTL layout and the revalidation
+  webhook. Lint, typecheck and build are clean.

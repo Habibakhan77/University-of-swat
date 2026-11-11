@@ -214,16 +214,114 @@ export interface FaqSeed {
   category: 'admissions' | 'fees' | 'scholarships' | 'examinations' | 'hostel' | 'transport' | 'general';
   question: string;
   answer: Block[];
+  ur?: { question: string; answer: Block[] };
 }
 
+/**
+ * The admissions, fees and scholarships answers (shown on the Admissions hub) only state what
+ * uswat.edu.pk and the CMS admission portal publish: see the sources in data/site.ts → ADMISSIONS.
+ */
 export const FAQS: FaqSeed[] = [
-  { category: 'admissions', question: 'How do I apply for admission?', answer: blocks('Create an account on the CMS admission portal, choose your programs, upload your documents and submit the form. Keep checking the portal for merit lists.') },
-  { category: 'admissions', question: 'When are admissions announced?', answer: blocks('Admissions usually open for the Fall semester in the summer, and for selected programs in the Spring semester. Dates are published on the Admissions page and in newspaper advertisements.') },
-  { category: 'admissions', question: 'Can I apply for more than one program?', answer: blocks('Yes. You can list several programs in order of preference in a single application, subject to the rules in the admission advertisement.') },
-  { category: 'admissions', question: 'Where can I see the merit lists?', answer: blocks('Merit lists are published on the CMS portal and on the Downloads page under “Merit lists”.') },
-  { category: 'fees', question: 'How do I pay my fee?', answer: blocks('Download your fee challan from the CMS portal and pay it at any designated bank branch before the due date. Keep the paid copy for your record.') },
-  { category: 'fees', question: 'Is the fee refundable if I withdraw?', answer: blocks('Refunds follow the HEC fee refund policy: the amount depends on how early in the semester you withdraw. Contact the Treasurer’s office for details.') },
-  { category: 'scholarships', question: 'What scholarships are available?', answer: blocks('Students can apply for HEC need-based scholarships, KPEF scholarships and other schemes managed by the Office of University Advancement & Financial Aid. Open schemes are announced in News & Announcements.') },
+  {
+    category: 'admissions',
+    question: 'How do I apply for admission?',
+    answer: blocks('Online, on the CMS admission portal (cms1.uswat.edu.pk). Register an account, sign in and fill in the admission form. There is no separate paper form on this website.'),
+    ur: {
+      question: 'داخلے کے لیے درخواست کیسے دوں؟',
+      answer: blocks('آن لائن، سی ایم ایس داخلہ پورٹل (cms1.uswat.edu.pk) پر۔ اکاؤنٹ رجسٹر کریں، سائن اِن کریں اور داخلہ فارم پُر کریں۔ اس ویب سائٹ پر الگ کاغذی فارم نہیں ہے۔'),
+    },
+  },
+  {
+    category: 'admissions',
+    question: 'When are admissions announced?',
+    answer: blocks('The Directorate of Admissions announces each intake on uswat.edu.pk, usually for the Fall semester and for selected programs in Spring. The latest notice is linked at the top of this page, and its dates and deadlines are the ones that apply.'),
+    ur: {
+      question: 'داخلوں کا اعلان کب ہوتا ہے؟',
+      answer: blocks('ڈائریکٹوریٹ آف ایڈمیشنز ہر داخلے کا اعلان uswat.edu.pk پر کرتا ہے، عموماً خزاں کے سمسٹر کے لیے اور بہار میں منتخب پروگراموں کے لیے۔ تازہ ترین نوٹس اس صفحے کے اوپر دیا گیا ہے، اور اسی کی تاریخیں لاگو ہوتی ہیں۔'),
+    },
+  },
+  {
+    category: 'admissions',
+    question: 'Where can I see the merit lists?',
+    answer: blocks('Provisional and final merit lists are published on the CMS admission portal. The links are in the Merit lists section of this page.'),
+    ur: {
+      question: 'میرٹ لسٹیں کہاں دیکھوں؟',
+      answer: blocks('عارضی اور حتمی میرٹ لسٹیں سی ایم ایس داخلہ پورٹل پر شائع ہوتی ہیں۔ ان کے لنک اس صفحے کے میرٹ لسٹوں والے حصے میں ہیں۔'),
+    },
+  },
+  {
+    category: 'admissions',
+    question: 'How should I write my name on the form?',
+    answer: blocks('Exactly as on your matriculation (SSC) certificate or DMC. The admission notice requires the candidate’s name and father’s name to match it strictly.'),
+    ur: {
+      question: 'فارم پر اپنا نام کیسے لکھوں؟',
+      answer: blocks('بالکل ویسے ہی جیسے آپ کی میٹرک (ایس ایس سی) سند یا ڈی ایم سی پر لکھا ہے۔ داخلہ نوٹس کے مطابق امیدوار اور والد کا نام اس سے لازماً مطابقت رکھنا چاہیے۔'),
+    },
+  },
+  {
+    category: 'admissions',
+    question: 'Who can I contact about my application?',
+    answer: blocks('The Directorate of Admissions, Administration Block, Ground Floor, Main Campus, Charbagh. Email admissions@uswat.edu.pk.'),
+    ur: {
+      question: 'اپنی درخواست کے بارے میں کس سے رابطہ کروں؟',
+      answer: blocks('ڈائریکٹوریٹ آف ایڈمیشنز، ایڈمنسٹریشن بلاک، گراؤنڈ فلور، مرکزی کیمپس، چارباغ۔ ای میل admissions@uswat.edu.pk۔'),
+    },
+  },
+  {
+    category: 'fees',
+    question: 'What is the fee for my program?',
+    answer: blocks('Fees differ by program and are published with each admission advertisement. The Fee Structure 2025 PDF on uswat.edu.pk shows the most recent published schedule; fees may rise by up to 10% a year.'),
+    ur: {
+      question: 'میرے پروگرام کی فیس کتنی ہے؟',
+      answer: blocks('فیس ہر پروگرام کے لیے مختلف ہے اور ہر داخلہ اشتہار کے ساتھ شائع ہوتی ہے۔ uswat.edu.pk پر فیس اسٹرکچر ۲۰۲۵ کی پی ڈی ایف تازہ ترین شائع شدہ شیڈول ہے؛ فیس میں سالانہ ۱۰ فیصد تک اضافہ ہو سکتا ہے۔'),
+    },
+  },
+  {
+    category: 'fees',
+    question: 'How do I pay my fee?',
+    answer: blocks('Online, through the university’s student payment form: generate a payment invoice and pay by debit or credit card, Easypaisa or internet banking. Confirmation is instant. The fee for each semester is paid separately.'),
+    ur: {
+      question: 'فیس کیسے جمع کروں؟',
+      answer: blocks('آن لائن، یونیورسٹی کے اسٹوڈنٹ پیمنٹ فارم کے ذریعے: انوائس بنائیں اور ڈیبٹ یا کریڈٹ کارڈ، ایزی پیسہ یا انٹرنیٹ بینکنگ سے ادائیگی کریں۔ تصدیق فوراً ہو جاتی ہے۔ ہر سمسٹر کی فیس الگ جمع ہوتی ہے۔'),
+    },
+  },
+  {
+    category: 'fees',
+    question: 'Is the fee refunded if I cancel my admission?',
+    answer: blocks(
+      'Under the university’s fee refund policy:',
+      ul([
+        '100% of the total fee within 7 days of the start of classes',
+        '50% within 8 to 15 days of the start of classes',
+        'No refund from the 16th day',
+      ]),
+    ),
+    ur: {
+      question: 'داخلہ منسوخ کرنے پر کیا فیس واپس ملتی ہے؟',
+      answer: blocks(
+        'یونیورسٹی کی فیس واپسی کی پالیسی کے مطابق:',
+        ul(['کلاسیں شروع ہونے کے ۷ دن کے اندر کل فیس کا ۱۰۰ فیصد', 'کلاسیں شروع ہونے کے ۸ سے ۱۵ دن کے اندر ۵۰ فیصد', '۱۶ویں دن سے کوئی واپسی نہیں']),
+      ),
+    },
+  },
+  {
+    category: 'scholarships',
+    question: 'What scholarships are available?',
+    answer: blocks('The Office of University Advancement & Financial Aid lists merit and need-based schemes, including the University Merit Scholarship, HEC need-based scholarships, PEF, Pakistan Bait-ul-Maal, KP Zakat, SAFE, the NBP Students Loan Scheme and the Prime Minister’s Fee Reimbursement Scheme. Open schemes are announced on the university website.'),
+    ur: {
+      question: 'کون سے وظائف دستیاب ہیں؟',
+      answer: blocks('دفتر یونیورسٹی ایڈوانسمنٹ و مالی معاونت میرٹ اور ضرورت کی بنیاد پر اسکیموں کی فہرست دیتا ہے، جن میں یونیورسٹی میرٹ اسکالرشپ، ایچ ای سی نیڈ بیسڈ اسکالرشپ، پی ای ایف، پاکستان بیت المال، کے پی زکوٰۃ، سیف، این بی پی اسٹوڈنٹس لون اسکیم اور وزیرِاعظم فیس ری ایمبرسمنٹ اسکیم شامل ہیں۔ جاری اسکیموں کا اعلان یونیورسٹی کی ویب سائٹ پر ہوتا ہے۔'),
+    },
+  },
+  {
+    category: 'scholarships',
+    question: 'Can I hold more than one scholarship?',
+    answer: blocks('No. Students who already receive other financial assistance, or who are admitted on a bench fee, cannot apply for another scholarship.'),
+    ur: {
+      question: 'کیا ایک سے زیادہ وظیفے لیے جا سکتے ہیں؟',
+      answer: blocks('نہیں۔ جو طلبہ پہلے سے کوئی اور مالی امداد لے رہے ہیں یا بینچ فیس پر داخل ہیں، وہ کسی دوسرے وظیفے کے لیے درخواست نہیں دے سکتے۔'),
+    },
+  },
   { category: 'examinations', question: 'How do I get my result or transcript?', answer: blocks('Results are posted on the Exam portal. Transcripts and degrees are issued by the Controller of Examinations on application; the forms are on the Downloads page.') },
   { category: 'hostel', question: 'Does the university provide hostels?', answer: blocks('Yes, limited hostel seats are available. Apply through the Provost office using the Hostel Application Form after you are admitted.') },
   { category: 'transport', question: 'Is university transport available?', answer: blocks('University buses run on fixed routes from Mingora and nearby areas during the semester. Route details are available from the Directorate of Administration.') },

@@ -71,6 +71,9 @@ export interface OfficeSeed {
   headDesignation: string;
   /** Only set for heads confirmed on the public website; everyone else is a placeholder. */
   headName?: string;
+  /** Public office email and location, as published on the office's uswat.edu.pk page. */
+  email?: string;
+  location?: string;
   websiteUrl?: string;
 }
 
@@ -161,11 +164,15 @@ export const OFFICES: OfficeSeed[] = [
     type: 'office',
     summary: 'Scholarships, need-based aid and fundraising for deserving students.',
     responsibilities: [
-      'HEC, KPEF and other scholarship schemes',
-      'Need-based financial aid and interest-free loan schemes',
-      'Donor and alumni fundraising',
+      'Merit and need-based scholarship schemes (HEC, KPEF, PEF, Bait-ul-Maal, Zakat and others)',
+      'Student loan and fee reimbursement schemes',
+      'Notices of scholarship deadlines and procedures',
     ],
     headDesignation: 'Director',
+    // https://uswat.edu.pk/university-advancement-financial-aid-office/ (November 2026)
+    headName: 'Dr. Umar Hayat',
+    email: 'umarhayat@uswat.edu.pk',
+    websiteUrl: 'https://uswat.edu.pk/university-advancement-financial-aid-office/',
   },
   {
     slug: 'directorate-of-administration',
@@ -188,7 +195,11 @@ export const OFFICES: OfficeSeed[] = [
       'Guidance for prospective students',
     ],
     headDesignation: 'Director Admissions',
-    websiteUrl: 'https://cms1.uswat.edu.pk/',
+    // https://uswat.edu.pk/directorate-of-admissions/ (November 2026)
+    headName: 'Mr. Fida Hussain',
+    email: 'admissions@uswat.edu.pk',
+    location: 'Administration Block, Ground Floor, Main Campus, Charbagh, Swat',
+    websiteUrl: 'https://uswat.edu.pk/directorate-of-admissions/',
   },
   {
     slug: 'directorate-of-it',

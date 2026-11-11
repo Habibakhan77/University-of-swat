@@ -24,7 +24,16 @@ export const SITE_SETTINGS = {
     tagline: 'Knowledge, heritage and service in the heart of Swat',
     contact: { email: WEBMASTER_EMAIL, address: MAIN_ADDRESS },
     mapUrl: 'https://www.google.com/maps/search/?api=1&query=University+of+Swat+Charbagh',
-    applyUrl: EXTERNAL.cms,
+    // Header and menu Apply buttons lead to the admissions hub, which links on to the CMS portal.
+    applyUrl: '/admissions',
+    // Shown at the top of the footer on every page.
+    applyCta: {
+      isVisible: true,
+      title: 'Ready to apply?',
+      text: 'Find your program, read how to apply online and check merit lists, fees and scholarships.',
+      buttonLabel: 'Admissions & how to apply',
+      buttonUrl: '/admissions',
+    },
     mainNavigation: NAV_EN,
     // Top utility bar: the portals students and staff open every day. All HTTPS.
     utilityLinks: [
@@ -75,6 +84,13 @@ export const SITE_SETTINGS = {
     shortName: 'جامعہ سوات',
     tagline: 'سوات کے دل میں علم، ورثہ اور خدمت',
     contact: { email: WEBMASTER_EMAIL, address: 'جامعہ سوات، مرکزی کیمپس، چارباغ، ضلع سوات، خیبر پختونخوا، پاکستان' },
+    applyCta: {
+      isVisible: true,
+      title: 'داخلے کے لیے تیار ہیں؟',
+      text: 'اپنا پروگرام تلاش کریں، آن لائن درخواست کا طریقہ پڑھیں اور میرٹ لسٹیں، فیس اور وظائف دیکھیں۔',
+      buttonLabel: 'داخلے اور درخواست کا طریقہ',
+      buttonUrl: '/admissions',
+    },
     mainNavigation: NAV_UR,
     utilityLinks: [
       link('سی ایم ایس پورٹل', EXTERNAL.cms, 'طلبہ و داخلہ پورٹل', 'monitor', true),
@@ -108,14 +124,14 @@ export const QUICK_ACTIONS = {
     link('Merit Lists', EXTERNAL.meritList, 'Fall 2026 final lists', 'list-checks', true),
     link('Exam Portal', EXTERNAL.exam, 'Results and date sheets', 'file-check', true),
     link('CMS Portal', EXTERNAL.cms, 'Students and applicants', 'monitor', true),
-    link('Fee Structure', '/admissions#fees', 'Semester fees and challans', 'wallet'),
+    link('Fee Structure', '/admissions#fees', 'Fees, refunds and online payment', 'wallet'),
   ],
   ur: [
     link('ابھی اپلائی کریں', '/admissions', 'اپنی درخواست شروع کریں', 'pen-line'),
     link('میرٹ لسٹیں', EXTERNAL.meritList, 'خزاں ۲۰۲۶ کی حتمی فہرستیں', 'list-checks', true),
     link('امتحانی پورٹل', EXTERNAL.exam, 'نتائج اور ڈیٹ شیٹس', 'file-check', true),
     link('سی ایم ایس پورٹل', EXTERNAL.cms, 'طلبہ اور امیدوار', 'monitor', true),
-    link('فیس اسٹرکچر', '/admissions#fees', 'سمسٹر فیس اور چالان', 'wallet'),
+    link('فیس اسٹرکچر', '/admissions#fees', 'فیس، واپسی اور آن لائن ادائیگی', 'wallet'),
   ],
 };
 
@@ -132,7 +148,7 @@ export const HOMEPAGE = {
     admissionsLinks: [
       link('Final Merit List Fall 2026 (Self Finance)', EXTERNAL.meritList, 'On the university CMS admissions portal', 'list-checks', true),
       link('Programs & eligibility', '/academics/programs', 'Undergraduate and postgraduate programs', 'graduation-cap'),
-      link('Fee Structure', '/admissions#fees', 'Semester fees and challans', 'wallet'),
+      link('Fee Structure', '/admissions#fees', 'Fees, refunds and online payment', 'wallet'),
     ],
     statsHeading: 'The University at a glance',
     newsHeading: 'Latest news',
@@ -154,7 +170,7 @@ export const HOMEPAGE = {
     admissionsLinks: [
       link('حتمی میرٹ لسٹ خزاں ۲۰۲۶ (سیلف فنانس)', EXTERNAL.meritList, 'یونیورسٹی کے سی ایم ایس داخلہ پورٹل پر', 'list-checks', true),
       link('پروگرام اور اہلیت', '/academics/programs', 'انڈرگریجویٹ اور پوسٹ گریجویٹ پروگرام', 'graduation-cap'),
-      link('فیس اسٹرکچر', '/admissions#fees', 'سمسٹر فیس اور چالان', 'wallet'),
+      link('فیس اسٹرکچر', '/admissions#fees', 'فیس، واپسی اور آن لائن ادائیگی', 'wallet'),
     ],
     statsHeading: 'جامعہ ایک نظر میں',
     newsHeading: 'تازہ خبریں',
@@ -326,70 +342,161 @@ export const ABOUT = {
   },
 };
 
+
+/**
+ * Financial aid schemes listed by the Office of University Advancement & Financial Aid
+ * (https://uswat.edu.pk/university-advancement-financial-aid-office/, November 2026).
+ */
+const SCHOLARSHIP_SCHEMES = [
+  'University Merit Scholarship',
+  'HEC French-German-Japanese Need Based Scholarship',
+  'HEC French Need Based Scholarship',
+  'DIYA Pakistan Scholarship',
+  'Professional Education Foundation (PEF)',
+  'Pakistan Bait-ul-Maal',
+  'KP Zakat Department (MORA)',
+  'SAFE (Student Advancement Fund Endowment)',
+  'NBP Students Loan Scheme',
+  'Prime Minister’s Fee Reimbursement Scheme',
+];
+
+/**
+ * Admissions hub. Every fact here is taken from uswat.edu.pk or the CMS admission portal
+ * (cms1.uswat.edu.pk), checked in November 2026:
+ * - applications are made online on cms1 (Register, then Sign in); names must match the matric DMC
+ *   (Undergraduate Admissions Fall 2026 notice); provisional and final merit lists are on cms1;
+ * - online fee payment (Digital Transformation of Payment, July 2025), and the refund policy and annual
+ *   increase from the official Fee Structure 2025 PDF;
+ * - the scholarship schemes and the one-scholarship rule from the Financial Aid office page.
+ * Eligibility, fee amounts and dates for an intake are only published inside the advertisement images,
+ * so they are left empty and the page shows `missingInfoNotice` instead. The Directorate of Admissions
+ * fills them in from the official advertisement.
+ */
 export const ADMISSIONS = {
   en: {
     title: 'Admissions',
-    intro: 'Everything you need to apply to the University of Swat: programs, eligibility, fees, important dates and merit lists.',
+    intro: 'Find your program, apply online on the CMS admission portal, and follow merit lists, fees and scholarships in one place.',
     applyUrl: EXTERNAL.cms,
     banner: {
       isVisible: true,
-      title: 'Apply through the CMS admission portal',
-      text: 'Applications, merit lists and admission notices for every program are published on the university CMS portal.',
-      buttonLabel: 'Open the CMS portal',
+      title: 'Apply online on the CMS admission portal',
+      text: 'Every application is made online at cms1.uswat.edu.pk. Register an account, then sign in to fill in the admission form.',
+      buttonLabel: 'Apply on the CMS portal',
       buttonUrl: EXTERNAL.cms,
     },
-    // Only dates from an official admission advertisement: Admissions Directorate to add them.
+    advertisement: link(
+      'Undergraduate Admissions Fall 2026 (Self Finance)',
+      EXTERNAL.latestAdvertisement,
+      'Latest admission notice on uswat.edu.pk, 20 October 2026',
+      'megaphone',
+      true,
+    ),
+    missingInfoNotice: {
+      isVisible: true,
+      title: 'Check the latest admission advertisement',
+      text: 'The official figures for this section are not on this website yet. The admission advertisement and the CMS admission portal always have the current details.',
+      buttonLabel: 'Open the CMS admission portal',
+      buttonUrl: EXTERNAL.cms,
+    },
+    // From the official advertisement only: the Directorate of Admissions adds them for each intake.
     importantDates: [],
     howToApply: [
-      { title: 'Choose your program', description: 'Browse programs by faculty and check the eligibility criteria.', icon: 'search' },
-      { title: 'Create an account', description: 'Sign up on the CMS admission portal with a valid email and CNIC / B-Form number.', icon: 'user-plus' },
-      { title: 'Fill in and upload', description: 'Enter your academic record and upload your photo, certificates and domicile.', icon: 'upload' },
-      { title: 'Pay the processing fee', description: 'Download the challan, pay at the designated bank and upload the paid copy.', icon: 'wallet' },
-      { title: 'Check merit lists', description: 'Merit lists are published on the portal and on the Downloads page.', icon: 'list-checks' },
+      { title: 'Choose your program', description: 'Use the program finder on this page and read the details of each program you are interested in.', icon: 'search', linkLabel: 'Find a program', linkUrl: '#programs' },
+      { title: 'Read the admission advertisement', description: 'Eligibility, fees, deadlines and the documents you need are given in the official advertisement for each intake.', icon: 'megaphone', linkLabel: 'Latest advertisement', linkUrl: EXTERNAL.latestAdvertisement },
+      { title: 'Register an account', description: 'Sign up on the CMS admission portal to create the account you apply with.', icon: 'user-plus', linkLabel: 'Register on the portal', linkUrl: EXTERNAL.cmsSignup },
+      { title: 'Sign in and apply', description: 'Sign in and fill in the online admission form. Your name and your father’s name must match your matriculation (SSC) certificate or DMC exactly.', icon: 'log-in', linkLabel: 'Sign in', linkUrl: EXTERNAL.cmsLogin },
+      { title: 'Check the merit lists', description: 'Provisional and final merit lists are published on the CMS admission portal.', icon: 'list-checks', linkLabel: 'Merit lists', linkUrl: '#merit-lists' },
     ],
-    eligibility: blocks(
-      h('Undergraduate (BS) programs', 3),
-      'Intermediate (HSSC) or equivalent with at least 45% marks, in the subject group required by the program. Some programs require a minimum of 50% or 60% and specific subjects.',
-      h('BS 5th semester', 3),
-      'A two-year bachelor’s degree (BA / BSc) or an Associate Degree in the relevant subject.',
-      h('MPhil / MS', 3),
-      'Sixteen years of education (BS 4-year or MA/MSc) in a relevant discipline with a minimum CGPA of 2.5 or 2nd division, plus a GAT-General or university test as required by HEC.',
-      h('PhD', 3),
-      'MPhil / MS (18 years) in a relevant discipline with a minimum CGPA of 3.0, and a GAT-Subject or university test as required by HEC.',
-      'The eligibility conditions in the official admission advertisement always take precedence.',
-    ),
+    meritLists: [
+      link('Provisional merit lists', EXTERNAL.provisionalMeritList, 'Published on the CMS admission portal', 'list-checks', true),
+      link('Final merit lists', EXTERNAL.meritList, 'Including the Final Merit List Fall 2026 (Self Finance)', 'badge-check', true),
+    ],
     feeNote: blocks(
-      'Semester fees differ by program and are set each year by the university’s statutory bodies. Download the official fee structure from the Downloads page; your exact fee challan is generated on the CMS portal.',
+      'Fees differ by program and are published with each admission advertisement. Under the university’s fee instructions, the fee for each semester is paid separately and may rise by up to 10% a year.',
+      'Fees can be paid online: generate an invoice on the student payment form and pay by debit or credit card, Easypaisa or internet banking, with instant confirmation.',
+      h('Fee refund policy', 3),
+      ul([
+        '100% of the total fee when admission is cancelled within 7 days of the start of classes',
+        '50% of the total fee when admission is cancelled within 8 to 15 days of the start of classes',
+        'No refund from the 16th day after the start of classes',
+      ]),
     ),
+    feeLinks: [
+      link('Fee Structure 2025 (PDF)', EXTERNAL.feeStructure2025, 'Published on uswat.edu.pk in September 2025', 'file-text', true),
+      link('Pay fees online', EXTERNAL.feePayment, 'Student payment form (cards, Easypaisa, internet banking)', 'credit-card', true),
+    ],
     scholarships: blocks(
-      'Deserving students can apply for financial support through the Office of University Advancement & Financial Aid:',
-      ul(['HEC Need-Based Scholarships', 'KPEF Merit-cum-Inaffordability Scholarships', 'Interest-free student loan schemes', 'Fee concessions as per university policy']),
-      pLink('Current scholarship notices are posted in ', 'News & Announcements', '/news?category=announcement'),
+      'The Office of University Advancement & Financial Aid supports talented and less privileged students on merit and need. The schemes it lists are:',
+      ul(SCHOLARSHIP_SCHEMES),
+      'Students who already receive other financial assistance, or who are admitted on a bench fee, cannot apply for another scholarship. Deadlines and procedures are announced through departments and on the university website.',
+      pLink('Open now: ', 'KPEF Merit-cum-Inaffordability Scholarship Scheme 2025-26', EXTERNAL.kpefScholarship),
+      pLink('Also see: ', 'Students Loan Schemes', EXTERNAL.studentLoans),
     ),
-    seo: { metaTitle: 'Admissions — University of Swat', metaDescription: 'How to apply, eligibility, fee structure, important dates and merit lists.' },
+    seo: {
+      metaTitle: 'Admissions — University of Swat',
+      metaDescription: 'Find a program, apply online on the CMS portal, and check merit lists, fees, scholarships and FAQs.',
+    },
   },
   ur: {
     title: 'داخلے',
-    intro: 'جامعہ سوات میں داخلے کے لیے سب کچھ: پروگرام، اہلیت، فیس، اہم تاریخیں اور میرٹ لسٹیں۔',
+    intro: 'اپنا پروگرام تلاش کریں، سی ایم ایس داخلہ پورٹل پر آن لائن درخواست دیں، اور میرٹ لسٹیں، فیس اور وظائف ایک ہی جگہ دیکھیں۔',
     banner: {
       isVisible: true,
-      title: 'سی ایم ایس داخلہ پورٹل کے ذریعے درخواست دیں',
-      text: 'تمام پروگراموں کی درخواستیں، میرٹ لسٹیں اور داخلہ نوٹس یونیورسٹی کے سی ایم ایس پورٹل پر شائع ہوتے ہیں۔',
-      buttonLabel: 'سی ایم ایس پورٹل کھولیں',
+      title: 'سی ایم ایس داخلہ پورٹل پر آن لائن درخواست دیں',
+      text: 'ہر درخواست cms1.uswat.edu.pk پر آن لائن دی جاتی ہے۔ پہلے اکاؤنٹ رجسٹر کریں، پھر سائن اِن کر کے داخلہ فارم پُر کریں۔',
+      buttonLabel: 'سی ایم ایس پورٹل پر درخواست دیں',
+      buttonUrl: EXTERNAL.cms,
+    },
+    advertisement: link(
+      'انڈرگریجویٹ داخلے خزاں ۲۰۲۶ (سیلف فنانس)',
+      EXTERNAL.latestAdvertisement,
+      'uswat.edu.pk پر تازہ ترین داخلہ نوٹس، ۲۰ اکتوبر ۲۰۲۶',
+      'megaphone',
+      true,
+    ),
+    missingInfoNotice: {
+      isVisible: true,
+      title: 'تازہ ترین داخلہ اشتہار دیکھیں',
+      text: 'اس حصے کے سرکاری اعداد و شمار ابھی اس ویب سائٹ پر موجود نہیں۔ موجودہ تفصیلات ہمیشہ داخلہ اشتہار اور سی ایم ایس داخلہ پورٹل پر ملتی ہیں۔',
+      buttonLabel: 'سی ایم ایس داخلہ پورٹل کھولیں',
       buttonUrl: EXTERNAL.cms,
     },
     importantDates: [],
     howToApply: [
-      { title: 'پروگرام منتخب کریں', description: 'فیکلٹی کے لحاظ سے پروگرام دیکھیں اور اہلیت چیک کریں۔', icon: 'search' },
-      { title: 'اکاؤنٹ بنائیں', description: 'سی ایم ایس پورٹل پر درست ای میل اور شناختی کارڈ / ب فارم نمبر کے ساتھ اندراج کریں۔', icon: 'user-plus' },
-      { title: 'فارم پُر کریں', description: 'تعلیمی ریکارڈ درج کریں اور تصویر، اسناد اور ڈومیسائل اپ لوڈ کریں۔', icon: 'upload' },
-      { title: 'پراسیسنگ فیس جمع کریں', description: 'چالان ڈاؤن لوڈ کر کے بینک میں جمع کرائیں اور رسید اپ لوڈ کریں۔', icon: 'wallet' },
-      { title: 'میرٹ لسٹ دیکھیں', description: 'میرٹ لسٹیں پورٹل اور ڈاؤن لوڈز کے صفحے پر شائع ہوتی ہیں۔', icon: 'list-checks' },
+      { title: 'پروگرام منتخب کریں', description: 'اس صفحے پر پروگرام فائنڈر استعمال کریں اور اپنی دلچسپی کے ہر پروگرام کی تفصیل پڑھیں۔', icon: 'search', linkLabel: 'پروگرام تلاش کریں', linkUrl: '#programs' },
+      { title: 'داخلہ اشتہار پڑھیں', description: 'ہر داخلے کی اہلیت، فیس، آخری تاریخیں اور مطلوبہ دستاویزات سرکاری اشتہار میں دی جاتی ہیں۔', icon: 'megaphone', linkLabel: 'تازہ ترین اشتہار', linkUrl: EXTERNAL.latestAdvertisement },
+      { title: 'اکاؤنٹ رجسٹر کریں', description: 'سی ایم ایس داخلہ پورٹل پر سائن اپ کر کے وہ اکاؤنٹ بنائیں جس سے آپ درخواست دیں گے۔', icon: 'user-plus', linkLabel: 'پورٹل پر رجسٹر کریں', linkUrl: EXTERNAL.cmsSignup },
+      { title: 'سائن اِن کر کے درخواست دیں', description: 'سائن اِن کریں اور آن لائن داخلہ فارم پُر کریں۔ آپ کا اور آپ کے والد کا نام میٹرک (ایس ایس سی) سند یا ڈی ایم سی کے بالکل مطابق ہونا چاہیے۔', icon: 'log-in', linkLabel: 'سائن اِن', linkUrl: EXTERNAL.cmsLogin },
+      { title: 'میرٹ لسٹیں دیکھیں', description: 'عارضی اور حتمی میرٹ لسٹیں سی ایم ایس داخلہ پورٹل پر شائع ہوتی ہیں۔', icon: 'list-checks', linkLabel: 'میرٹ لسٹیں', linkUrl: '#merit-lists' },
     ],
-    eligibility: blocks('انٹرمیڈیٹ (ایچ ایس ایس سی) یا مساوی، کم از کم ۴۵ فیصد نمبروں کے ساتھ۔ ایم فل/ایم ایس اور پی ایچ ڈی کے لیے ایچ ای سی کے معیار لاگو ہوں گے۔ سرکاری اشتہار کی شرائط کو ہمیشہ فوقیت حاصل ہے۔'),
-    feeNote: blocks('سمسٹر فیس ہر پروگرام کے لیے مختلف ہے۔ سرکاری فیس اسٹرکچر ڈاؤن لوڈز کے صفحے سے حاصل کریں؛ آپ کا چالان سی ایم ایس پورٹل پر بنتا ہے۔'),
-    scholarships: blocks('مستحق طلبہ ایچ ای سی نیڈ بیسڈ، کے پی ای ایف اور دیگر وظائف کے لیے دفتر یونیورسٹی ایڈوانسمنٹ و مالی معاونت کے ذریعے درخواست دے سکتے ہیں۔'),
-    seo: { metaTitle: 'داخلے — جامعہ سوات', metaDescription: 'درخواست کا طریقہ، اہلیت، فیس اور میرٹ لسٹیں۔' },
+    meritLists: [
+      link('عارضی میرٹ لسٹیں', EXTERNAL.provisionalMeritList, 'سی ایم ایس داخلہ پورٹل پر شائع شدہ', 'list-checks', true),
+      link('حتمی میرٹ لسٹیں', EXTERNAL.meritList, 'بشمول حتمی میرٹ لسٹ خزاں ۲۰۲۶ (سیلف فنانس)', 'badge-check', true),
+    ],
+    feeNote: blocks(
+      'فیس ہر پروگرام کے لیے مختلف ہے اور ہر داخلہ اشتہار کے ساتھ شائع ہوتی ہے۔ یونیورسٹی کی فیس ہدایات کے مطابق ہر سمسٹر کی فیس الگ جمع ہوتی ہے اور اس میں سالانہ ۱۰ فیصد تک اضافہ ہو سکتا ہے۔',
+      'فیس آن لائن جمع کی جا سکتی ہے: اسٹوڈنٹ پیمنٹ فارم پر انوائس بنائیں اور ڈیبٹ یا کریڈٹ کارڈ، ایزی پیسہ یا انٹرنیٹ بینکنگ سے ادائیگی کریں، جس کی تصدیق فوراً ہو جاتی ہے۔',
+      h('فیس کی واپسی کی پالیسی', 3),
+      ul([
+        'کلاسیں شروع ہونے کے ۷ دن کے اندر داخلہ منسوخ کرنے پر کل فیس کا ۱۰۰ فیصد',
+        'کلاسیں شروع ہونے کے ۸ سے ۱۵ دن کے اندر داخلہ منسوخ کرنے پر کل فیس کا ۵۰ فیصد',
+        'کلاسیں شروع ہونے کے ۱۶ویں دن سے کوئی واپسی نہیں',
+      ]),
+    ),
+    feeLinks: [
+      link('فیس اسٹرکچر ۲۰۲۵ (پی ڈی ایف)', EXTERNAL.feeStructure2025, 'ستمبر ۲۰۲۵ میں uswat.edu.pk پر شائع ہوا', 'file-text', true),
+      link('فیس آن لائن جمع کریں', EXTERNAL.feePayment, 'اسٹوڈنٹ پیمنٹ فارم (کارڈ، ایزی پیسہ، انٹرنیٹ بینکنگ)', 'credit-card', true),
+    ],
+    scholarships: blocks(
+      'دفتر یونیورسٹی ایڈوانسمنٹ و مالی معاونت باصلاحیت اور کم وسائل والے طلبہ کی میرٹ اور ضرورت کی بنیاد پر مدد کرتا ہے۔ دفتر کی فہرست میں یہ اسکیمیں شامل ہیں:',
+      ul(SCHOLARSHIP_SCHEMES),
+      'جو طلبہ پہلے سے کوئی اور مالی امداد لے رہے ہیں یا بینچ فیس پر داخل ہیں، وہ کسی دوسرے وظیفے کے لیے درخواست نہیں دے سکتے۔ آخری تاریخیں اور طریقۂ کار شعبوں کے ذریعے اور یونیورسٹی کی ویب سائٹ پر بتائے جاتے ہیں۔',
+      pLink('ابھی جاری: ', 'KPEF Merit-cum-Inaffordability Scholarship Scheme 2025-26', EXTERNAL.kpefScholarship),
+      pLink('یہ بھی دیکھیں: ', 'Students Loan Schemes', EXTERNAL.studentLoans),
+    ),
+    seo: {
+      metaTitle: 'داخلے — جامعہ سوات',
+      metaDescription: 'پروگرام تلاش کریں، سی ایم ایس پورٹل پر آن لائن درخواست دیں، اور میرٹ لسٹیں، فیس، وظائف اور عمومی سوالات دیکھیں۔',
+    },
   },
 };
-

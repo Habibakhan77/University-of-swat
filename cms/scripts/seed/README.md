@@ -18,14 +18,14 @@ server, so it can run while `npm run dev` is running.
 | Campuses | 2 | Main Campus (Charbagh), Women Campus — en + ur |
 | Faculties | 6 | 5 faculties + Hunerkada (type `center`) — en + ur |
 | Departments | 27 | Real names from uswat.edu.pk — en + ur |
-| Programs | 80 | BS / BS 5th semester / MPhil / MS / PhD, HEC-standard durations and credit hours |
+| Programs | 80 | BS / BS 5th semester / MPhil / MS / PhD, HEC-standard durations and credit hours; no fees or eligibility (only published in the admission advertisement) |
 | Faculty members | 54 | 2 per department, **all placeholders** (`isPlaceholder: true`) |
 | Offices & directorates | 22 | VC Secretariat … YDC — en + ur |
 | Posts | 19 | Real news / announcement / event titles and dates (Oct–Nov 2026), rewritten text |
 | Tenders / Jobs | 7 / 5 | Real titles and reference numbers, all `closed` (past deadlines) |
 | Downloads | 18 | Calendar, prospectus, fee structure, rules, forms, merit lists, date sheet |
 | Research projects | 2 | NIIBS Gandhara collaboration, HEC-NRPU project |
-| FAQs | 11 | Admissions, fees, scholarships, exams, hostel, transport |
+| FAQs | 14 | Admissions, fees and scholarships (en + ur, verified answers only); exams, hostel, transport, general |
 | Hero slides / Stats | 3 / 4 | Stats are live counters (campuses, faculties, departments, programs) |
 | Single types | 5 | Homepage, About, VC Message, Admissions Page, Site Settings (2-level nav) — en + ur |
 

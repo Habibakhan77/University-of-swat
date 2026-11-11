@@ -61,8 +61,8 @@ export const NAV_EN: NavItem[] = [
     children: [
       l('Admissions Hub', '/admissions', 'Everything for new students', 'compass'),
       l('How to Apply', '/admissions#how-to-apply', 'Step-by-step online application', 'clipboard-list'),
-      l('Fee Structure', '/admissions#fees', 'Semester fees by program', 'wallet'),
-      l('Merit Lists', '/downloads?category=merit_list', 'Selection lists for every program', 'list-checks'),
+      l('Fee Structure', '/admissions#fees', 'Fees, refunds and online payment', 'wallet'),
+      l('Merit Lists', '/admissions#merit-lists', 'Provisional and final lists on the CMS portal', 'list-checks'),
       l('Scholarships & Financial Aid', '/admissions#scholarships', 'Need-based and merit awards', 'award'),
       l('FAQs', '/admissions#faqs', 'Answers to common questions', 'circle-help'),
     ],
@@ -139,8 +139,8 @@ export const NAV_UR: NavItem[] = [
     children: [
       l('داخلہ مرکز', '/admissions', 'نئے طلبہ کے لیے سب کچھ', 'compass'),
       l('درخواست کا طریقہ', '/admissions#how-to-apply', 'آن لائن درخواست مرحلہ وار', 'clipboard-list'),
-      l('فیس اسٹرکچر', '/admissions#fees', 'پروگرام کے لحاظ سے سمسٹر فیس', 'wallet'),
-      l('میرٹ لسٹیں', '/downloads?category=merit_list', 'ہر پروگرام کی انتخابی فہرستیں', 'list-checks'),
+      l('فیس اسٹرکچر', '/admissions#fees', 'فیس، واپسی اور آن لائن ادائیگی', 'wallet'),
+      l('میرٹ لسٹیں', '/admissions#merit-lists', 'سی ایم ایس پورٹل پر عارضی اور حتمی فہرستیں', 'list-checks'),
       l('وظائف و مالی معاونت', '/admissions#scholarships', 'ضرورت اور میرٹ کی بنیاد پر وظائف', 'award'),
       l('عمومی سوالات', '/admissions#faqs', 'عام سوالات کے جوابات', 'circle-help'),
     ],
