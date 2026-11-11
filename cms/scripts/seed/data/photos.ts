@@ -119,6 +119,27 @@ export const PHOTOS = {
     'Geology students in the lecture theatre at the mud logging seminar',
     '/2026/10/department-of-geology-conducted-a-seminar-titled-mud-logging-from-drilling-to-geological-interpretation/',
   ),
+  // Faculty cards and faculty page headers: one real activity of the faculty's own departments each.
+  facultyGeology: photo(
+    'faculty-pncs-geology-field-work.webp',
+    'Geology students with field notebooks on a rocky mountain slope during a field excursion in northern Pakistan',
+    '/2022/09/5-days-geological-field-excursion-in-north-pakistan/',
+  ),
+  facultyEnvironment: photo(
+    'faculty-bcs-remote-sensing-training.webp',
+    'Participants working on laptops at the Department of Environmental Sciences training on remote sensing for climate-resilient agriculture',
+    '/2026/07/seven-day-training-program-on-climate-resilient-agriculture/',
+  ),
+  facultyLaw: photo(
+    'faculty-rlhls-law-supreme-court.webp',
+    'Law and Shariah students on the steps of the Supreme Court of Pakistan during a study visit',
+    '/2025/05/8th-semester-department-of-law-and-sharia-during-their-visit-to-the-supreme-court-of-pakistan-and-federal-shariat-court/',
+  ),
+  facultyHeritage: photo(
+    'faculty-mass-heritage-seminar.webp',
+    'Students at a World Heritage Day seminar, with photographs of heritage sites projected on the wall',
+    '/2024/04/world-heritage-day/',
+  ),
 } satisfies Record<string, SeedPhoto>;
 
 export type PhotoKey = keyof typeof PHOTOS;
@@ -138,6 +159,18 @@ export const POST_PHOTOS: Record<string, PhotoKey> = {
   'role-of-human-psychology-manners-personality': 'psychologySeminar',
   'geology-seminar-mud-logging': 'geologySeminar',
   'first-university-solarization-project': 'postSolarization',
+};
+
+/**
+ * Faculty photo per faculty slug (card image and faculty page header). Allied Health Sciences and Hunerkada
+ * have no usable published photo yet (only posters, other institutions' facilities or meetings), so the
+ * website draws the faculty's pattern for them. Add a photo here when one is published.
+ */
+export const FACULTY_PHOTOS: Record<string, PhotoKey> = {
+  'religious-languages-humanities-legal-studies': 'facultyLaw',
+  'physical-numerical-computational-sciences': 'facultyGeology',
+  'management-art-social-sciences': 'facultyHeritage',
+  'biological-chemical-sciences': 'facultyEnvironment',
 };
 
 /** Campus photo per campus slug. */

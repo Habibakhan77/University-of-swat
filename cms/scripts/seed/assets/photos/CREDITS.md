@@ -15,11 +15,17 @@ Those posts, and HEC DLSEI 3.0 Cohort 4 (only a flow-chart graphic), get a text-
 | `main-campus.webp` | Hero (research), Main Campus card | Facebook page |
 | `main-gate.webp` | Hero (admissions) | Facebook page |
 | `women-campus.webp` | Women Campus card, About page hero (panorama, uploaded at its own size) | Facebook page |
+| `faculty-pncs-geology-field-work.webp` | Physical, Numerical and Computational Sciences card and header | `/2022/09/5-days-geological-field-excursion-in-north-pakistan/` |
+| `faculty-bcs-remote-sensing-training.webp` | Biological and Chemical Sciences card and header | `/2026/07/seven-day-training-program-on-climate-resilient-agriculture/` |
+| `faculty-rlhls-law-supreme-court.webp` | Religious, Languages, Humanities and Legal Studies card and header | `/2025/05/8th-semester-department-of-law-and-sharia-…/` |
+| `faculty-mass-heritage-seminar.webp` | Management, Art and Social Sciences card and header | `/2024/04/world-heritage-day/` |
 | `hero-campus-mountains.jpg` | Hero (campus), Admissions page hero, Open Graph image | `/maincampus/` |
 | `vc-husnul-amin.jpg` | Vice Chancellor (homepage VC message, About leadership) | Homepage VC message |
 | `post-*.jpg` | Cover of the matching news, announcement or event (event and meeting photos are never used in the hero) | That post |
 
 The main gate and Main Campus photos from the Facebook page replaced the older uswat.edu.pk copies
 (1280×563 and 1145×685, soft and over-compressed); the new ones are 1600×900 and much sharper.
+
+Faculty photos: one real activity of each faculty's own departments (field work, a study visit, a training, a seminar), from its news posts on uswat.edu.pk; the department pages only carry staff portraits. Allied Health Sciences and Hunerkada have no usable photo yet (posters, another university's facilities, or meetings), so the website draws their pattern card. Add one to `FACULTY_PHOTOS` when published.
 
 The crest in `../brand/uswat-logo.png` is from the uswat.edu.pk header.

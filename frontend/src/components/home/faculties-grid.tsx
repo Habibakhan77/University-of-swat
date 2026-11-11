@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { iconFor } from "@/lib/icons";
@@ -9,7 +8,8 @@ import { Card, CardBody, CardDescription, CardFooter, CardLink, CardMedia, CardT
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
-import { FACULTY_ACCENTS, FacultyArt } from "@/components/academics/faculty-art";
+import { ImageCredit } from "@/components/ui/image-credit";
+import { FACULTY_ACCENTS, FacultyArt, FacultyPhoto } from "@/components/academics/faculty-art";
 
 interface FacultiesGridProps {
   faculties: FacultyCard[];
@@ -52,7 +52,7 @@ export function FacultiesGrid({ faculties, locale, labels }: FacultiesGridProps)
                   <Card interactive className="h-full">
                     <CardMedia ratio="16/9">
                       {faculty.image ? (
-                        <Image src={faculty.image.src} alt={faculty.image.alt} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" />
+                        <FacultyPhoto image={faculty.image} accent={faculty.accent} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" />
                       ) : (
                         <FacultyArt id={faculty.id} accent={faculty.accent} icon={Icon} />
                       )}
@@ -63,6 +63,9 @@ export function FacultiesGrid({ faculties, locale, labels }: FacultiesGridProps)
                       >
                         <Icon aria-hidden className="size-5" strokeWidth={1.75} />
                       </span>
+                      {faculty.image?.credit ? (
+                        <ImageCredit credit={faculty.image.credit} className="absolute end-3 bottom-3 max-w-[calc(100%-5.5rem)]" />
+                      ) : null}
                       {faculty.isCenter ? (
                         <Badge tone="solid-accent" size="sm" uppercase className="absolute end-4 top-4">
                           {labels.centre}

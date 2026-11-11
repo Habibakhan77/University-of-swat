@@ -374,3 +374,22 @@
   these are selected unedited paragraphs, the excerpts in the English original, and a link to the full message.
 - Reseeded with `--reset`. Checked on a production build at 1440px and 375px in English and Urdu: correct text,
   `lang`/`dir`/`cite`, working links, no horizontal scroll, no page errors.
+
+### Phase 6.5 — Faculty photos
+
+- Four faculties now have a real photo of one of their own departments' activities, taken from uswat.edu.pk news
+  posts (department pages only hold staff portraits). Each photo is sharp, at least 1280px wide and not a poster:
+  - Religious, Languages, Humanities & Legal Studies: Law & Shariah students at the Supreme Court of Pakistan (2025)
+  - Physical, Numerical & Computational Sciences: Geology field excursion in northern Pakistan (2022)
+  - Management, Art & Social Sciences: World Heritage Day seminar (2024)
+  - Biological & Chemical Sciences: Environmental Sciences remote-sensing training (2026)
+- Allied Health Sciences and Hunerkada have no usable published photo yet (only posters, meetings or other
+  institutions' facilities), so they keep the faculty pattern. `FACULTY_PHOTOS` in the seed says where to add one.
+- Homepage faculty cards and the Academics index panels show the photo under a translucent wash in the faculty's
+  accent colour, with the white icon badge and a "Photo: University of Swat" credit linked to the source post.
+  Faculty page headers use the same photo with an accent wash and a dark gradient behind the title.
+- Fix: image credits on Urdu pages sat on the wrong side (over the icon badge on faculty cards). The chip carried
+  `lang="en"`, and the global rule that makes English fragments left to right also flipped its `end-*` position. The
+  language and direction now sit on an inner `<bdi>`.
+- Reseeded with `--reset`. Checked on a production build at 1440px and 375px in English and Urdu: photos, tints,
+  credits and badges in place, readable text, no horizontal scroll, no page errors.

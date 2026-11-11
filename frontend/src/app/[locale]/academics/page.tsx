@@ -7,7 +7,8 @@ import { iconFor } from "@/lib/icons";
 import { pageMetadata } from "@/lib/seo";
 import { academicsHref, directoryHref, getAcademicIndex, langAttr, programsHref } from "@/lib/strapi/academics";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
-import { FACULTY_ACCENTS, FacultyArt, accentStyle } from "@/components/academics/faculty-art";
+import { FACULTY_ACCENTS, FacultyArt, FacultyPhoto, accentStyle } from "@/components/academics/faculty-art";
+import { ImageCredit } from "@/components/ui/image-credit";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
@@ -84,8 +85,13 @@ export default async function AcademicsPage() {
               >
                 <div className="relative isolate flex flex-col items-start gap-4 p-6 text-white sm:p-8">
                   <div className="absolute inset-0 -z-10">
-                    <FacultyArt id={`index-${faculty.slug}`} accent={faculty.accent} icon={Icon} />
+                    {faculty.image ? (
+                      <FacultyPhoto image={faculty.image} accent={faculty.accent} tint="text" sizes="(min-width: 1024px) 416px, 100vw" />
+                    ) : (
+                      <FacultyArt id={`index-${faculty.slug}`} accent={faculty.accent} icon={Icon} />
+                    )}
                   </div>
+                  {faculty.image?.credit ? <ImageCredit credit={faculty.image.credit} className="absolute end-3 top-3" /> : null}
                   <span
                     className="flex size-12 items-center justify-center rounded-xl bg-white shadow-md"
                     style={{ color: FACULTY_ACCENTS[faculty.accent].base }}

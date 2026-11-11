@@ -1,6 +1,8 @@
+import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import type { CSSProperties } from "react";
 import type { FacultyAccent } from "@/lib/strapi/academics-model";
+import type { SiteImage } from "@/lib/strapi/site";
 
 /**
  * Accent colours for faculty cards. `base` carries white text and icons, so every base is at least
@@ -61,6 +63,35 @@ export function FacultyArt({ id, accent, icon: Icon }: FacultyArtProps) {
         strokeWidth={1}
         opacity={0.18}
       />
+    </div>
+  );
+}
+
+interface FacultyPhotoProps {
+  image: SiteImage;
+  accent: FacultyAccent;
+  sizes: string;
+  /**
+   * "card": a light tint, so the photo stays readable behind just the icon badge.
+   * "text": a strong wash, for white text set directly on the photo (at least 4.5:1).
+   */
+  tint?: "card" | "text";
+}
+
+/**
+ * A faculty's real photo under a semi-transparent wash of its accent colour, so the cards keep their
+ * colour coding with a photo. Decorative here (alt=""): the card's heading names the faculty.
+ */
+export function FacultyPhoto({ image, accent, sizes, tint = "card" }: FacultyPhotoProps) {
+  const c = FACULTY_ACCENTS[accent];
+  return (
+    <div aria-hidden className="absolute inset-0">
+      <Image src={image.src} alt="" fill sizes={sizes} className="object-cover" />
+      {tint === "card" ? (
+        <div className="absolute inset-0" style={{ background: `linear-gradient(160deg, ${c.base}59 0%, ${c.deep}a6 100%)` }} />
+      ) : (
+        <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${c.base}eb 0%, ${c.deep}f2 100%)` }} />
+      )}
     </div>
   );
 }

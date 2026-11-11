@@ -10,7 +10,7 @@ import type { Core, UID } from '@strapi/strapi';
 import { blocks, h, ul, type Block } from './lib/blocks';
 import { Writer } from './lib/docs';
 import { MediaFactory, type Theme } from './lib/media';
-import { CAMPUS_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
+import { CAMPUS_PHOTOS, FACULTY_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
 import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type Level, type ProgramSeed } from './data/academics';
 import { CAMPUSES, MAIN_ADDRESS, OFFICES } from './data/organisation';
 import { POSTS } from './data/posts';
@@ -180,7 +180,10 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     let deptOrder = 0;
 
     for (const [fi, f] of FACULTIES.entries()) {
-      const fImage = await media.image({ ratio: 'cover', key: `faculty-${f.slug}`, title: f.shortName, kicker: f.type === 'center' ? 'Centre' : 'Faculty', theme: f.accent });
+      const facultyPhoto = FACULTY_PHOTOS[f.slug];
+      const fImage = facultyPhoto
+        ? await media.photo(facultyPhoto, 'cover')
+        : await media.image({ ratio: 'cover', key: `faculty-${f.slug}`, title: f.shortName, kicker: f.type === 'center' ? 'Centre' : 'Faculty', theme: f.accent });
       const facultyId = await w.create(
         'api::faculty.faculty',
         {

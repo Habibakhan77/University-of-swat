@@ -10,7 +10,9 @@ interface ImageCreditProps {
 /**
  * Photographer and licence in small text on a photo, linked to the source page with the full licence
  * (what CC BY / CC BY-SA ask for). Sits on a dark translucent chip so it reads on any image. The
- * credit is the photo's own metadata, so it is always Latin script, left to right.
+ * credit is the photo's own metadata, so it is always Latin script, left to right: the
+ * language and direction sit on the inner text only (globals.css makes any RTL-page [lang="en"] ltr),
+ * so the chip's own logical position (end-3…) follows the page.
  */
 export function ImageCredit({ credit, className }: ImageCreditProps) {
   if (!credit) return null;
@@ -22,16 +24,14 @@ export function ImageCredit({ credit, className }: ImageCreditProps) {
     <SmartLink
       href={credit.href}
       external
-      dir="ltr"
-      lang="en"
       title={credit.text}
       className={cn(chip, "underline-offset-2 transition-colors hover:bg-black/70 hover:text-white hover:underline")}
     >
-      {credit.text}
+      <bdi lang="en" dir="ltr">{credit.text}</bdi>
     </SmartLink>
   ) : (
-    <span dir="ltr" lang="en" className={chip}>
-      {credit.text}
+    <span className={chip}>
+      <bdi lang="en" dir="ltr">{credit.text}</bdi>
     </span>
   );
 }
