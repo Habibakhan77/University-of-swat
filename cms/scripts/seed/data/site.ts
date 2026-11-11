@@ -238,28 +238,37 @@ export const STATS = [
   { label: 'Degree programs', ur: 'ڈگری پروگرام', source: 'programs', icon: 'graduation-cap', order: 4, suffix: '+' },
 ] as const;
 
+/**
+ * The Vice Chancellor's message. `teaser` and `message` are HIS OWN WORDS, copied verbatim from the
+ * published message (`sourceUrl`): never rewrite, shorten inside a sentence or translate them, and never
+ * attribute words we wrote to him. Leaving text out is fine, marked with "…". Both fields are not
+ * localized in Strapi, so the Urdu site shows the same English original (with lang="en" dir="ltr").
+ * `title` is our own section heading, not a quotation.
+ */
+const VC_SOURCE = 'https://uswat.edu.pk/vice-chancellors-message-2/';
+
 export const VC_MESSAGE = {
   en: {
     name: 'Prof. Dr. Husnul Amin',
     designation: 'Vice Chancellor',
     title: 'A university for the valley and beyond',
     teaser:
-      'Our aim is simple: an institution run with transparency and merit, where every student from Swat and the wider region can find excellent teaching, real research and a fair chance.',
+      '…to establish the University of Swat as a nationally recognized and internationally connected center of academic excellence, research innovation, and societal engagement.',
+    // Five of the eleven paragraphs, unedited; the page links to the full message.
     message: blocks(
-      'Welcome to the University of Swat. Since 2010 the university has grown from a handful of departments into a comprehensive public university serving Swat, Malakand Division and students from across Pakistan.',
-      'We have set out a roadmap built on good governance, transparency and merit. It commits us to quality teaching, research that answers the questions of our region — from climate resilience to the heritage of Gandhara — and digital services that make life easier for students and staff.',
-      'I invite prospective students, parents, researchers and partners to explore what we offer and to join us in building a university that the valley can be proud of.',
+      'It is with immense pride, humility, and a profound sense of responsibility that I assume the office of Vice Chancellor of the University of Swat. I am honored to serve this distinguished institution at a pivotal moment in its journey and look forward to working collectively with our students, faculty, staff, alumni, partners, and stakeholders to shape a future defined by excellence, innovation, and impact.',
+      'As we embark on a new chapter, our collective ambition must be clear: to establish the University of Swat as a nationally recognized and internationally connected center of academic excellence, research innovation, and societal engagement. We must aspire not only to educate students but also to create leaders, innovators, entrepreneurs, researchers, and responsible citizens who will shape the future of Pakistan and contribute meaningfully to the global community.',
+      'My vision is to cultivate a vibrant academic ecosystem where excellence in teaching is matched by excellence in research, where innovation flourishes alongside tradition, and where diversity of thought is celebrated as a source of strength. We will continue to strengthen academic quality, modernize curricula, expand research opportunities, encourage interdisciplinary collaboration, and promote a culture of continuous learning and discovery.',
+      'The success of any university is ultimately measured not by its buildings or statistics but by the lives it transforms and the contributions it makes to society. Our students are at the center of everything we do. Their aspirations, achievements, and success will remain our highest priority. We will continue to strengthen student support services, enhance learning opportunities, and provide an educational experience that equips graduates with the knowledge, skills, character, and confidence necessary for meaningful lives and careers.',
+      'The journey ahead is filled with promise. Let us embrace it with confidence, determination, and an unwavering commitment to excellence. I warmly welcome you to the University of Swat and invite you to be part of this exciting journey of growth, discovery, and transformation.',
     ),
+    sourceUrl: VC_SOURCE,
   },
+  // Only our own labels are translated; teaser, message and sourceUrl are shared with English.
   ur: {
     name: 'پروفیسر ڈاکٹر حسن الامین',
     designation: 'وائس چانسلر',
     title: 'وادی اور اس سے آگے کے لیے ایک جامعہ',
-    teaser: 'ہمارا مقصد سادہ ہے: شفافیت اور میرٹ پر چلنے والا ادارہ، جہاں سوات اور پورے خطے کے ہر طالب علم کو بہترین تدریس، حقیقی تحقیق اور برابر کا موقع ملے۔',
-    message: blocks(
-      'جامعہ سوات میں خوش آمدید۔ ۲۰۱۰ سے یہ جامعہ چند شعبوں سے بڑھ کر ایک جامع سرکاری یونیورسٹی بن چکی ہے جو سوات، ملاکنڈ ڈویژن اور پورے پاکستان کے طلبہ کی خدمت کر رہی ہے۔',
-      'ہم نے گڈ گورننس، شفافیت اور میرٹ پر مبنی روڈ میپ ترتیب دیا ہے، جس میں معیاری تدریس، خطے کے مسائل پر تحقیق اور طلبہ و عملے کے لیے ڈیجیٹل سہولیات شامل ہیں۔',
-    ),
   },
 };
 

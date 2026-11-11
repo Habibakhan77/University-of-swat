@@ -87,6 +87,8 @@
     "allAnnouncements": "All announcements",
     "vcEyebrow": "Message from the Vice Chancellor",
     "readMessage": "Read the full message",
+    "vcSource": "From his published message",
+    "vcOriginalLanguage": "",
     "facultiesEyebrow": "Study with us",
     "allFaculties": "All faculties & departments",
     "departments": "{count, plural, =0 {Departments coming soon} one {# department} other {# departments}}",
@@ -228,5 +230,14 @@
     "scholar": "Google Scholar",
     "orcid": "ORCID",
     "institute": "Institute"
+  },
+  "vcMessage": {
+    "breadcrumb": "Vice Chancellor’s message",
+    "title": "Message from the Vice Chancellor",
+    "description": "Excerpts from the message of Prof. Dr. Husnul Amin, Vice Chancellor of the University of Swat, in his own words.",
+    "excerptsNote": "Selected paragraphs from the Vice Chancellor’s published message, unedited and in his own words.",
+    "originalLanguage": "",
+    "readFull": "Read the full message on uswat.edu.pk",
+    "unavailable": "The Vice Chancellor’s message is not available right now."
   }
 }

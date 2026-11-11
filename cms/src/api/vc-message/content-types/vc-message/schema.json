@@ -58,7 +58,7 @@
       "maxLength": 400,
       "pluginOptions": {
         "i18n": {
-          "localized": true
+          "localized": false
         }
       }
     },
@@ -66,7 +66,17 @@
       "type": "blocks",
       "pluginOptions": {
         "i18n": {
-          "localized": true
+          "localized": false
+        }
+      }
+    },
+    "sourceUrl": {
+      "type": "string",
+      "required": true,
+      "regex": "^https://",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
         }
       }
     },

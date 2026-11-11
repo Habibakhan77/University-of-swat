@@ -5,6 +5,7 @@ import type { FacultyAccent } from "./academics";
 import { guarded, localizedList, localizedSingle, populateImage, safely, toImage, type Doc } from "./query";
 import { normalizeHref, isExternalHref, toNavLink, type NavLink, type SiteImage } from "./site";
 import type { StrapiLink, StrapiMedia } from "./types";
+import { getVcMessage } from "./vc-message";
 
 export type { FacultyAccent } from "./academics";
 
@@ -71,15 +72,6 @@ export interface EventItem {
   time: string | null;
   location: string | null;
   upcoming: boolean;
-  lang: Locale;
-}
-
-export interface VcTeaser {
-  name: string;
-  designation: string | null;
-  title: string | null;
-  teaser: string | null;
-  photo: SiteImage | null;
   lang: Locale;
 }
 
@@ -197,14 +189,6 @@ interface StrapiPost extends Doc {
   eventStart: string | null;
   eventLocation: string | null;
   coverImage: StrapiMedia | null;
-}
-
-interface StrapiVc extends Doc {
-  name: string;
-  designation: string | null;
-  title: string | null;
-  teaser: string | null;
-  photo: StrapiMedia | null;
 }
 
 interface StrapiFaculty extends Doc {
@@ -476,23 +460,6 @@ async function loadEventsAndNotices(locale: Locale): Promise<EventsAndNotices> {
   });
 }
 
-async function loadVc(locale: Locale): Promise<VcTeaser | null> {
-  "use cache";
-  cacheTag("vc-message", `vc-message:${locale}`);
-  cacheLife("max");
-
-  return guarded(`VC message (${locale})`, null, async () => {
-    const vc = await localizedSingle<StrapiVc>(
-      "/vc-message",
-      { "fields[0]": "name", "fields[1]": "designation", "fields[2]": "title", "fields[3]": "teaser", ...populateImage("photo") },
-      locale,
-    );
-    return vc
-      ? { name: vc.name, designation: vc.designation, title: vc.title, teaser: vc.teaser, photo: toImage(vc.photo, vc.name), lang: vc.lang }
-      : null;
-  });
-}
-
 async function loadFaculties(locale: Locale): Promise<FacultyCard[]> {
   "use cache";
   cacheTag("faculties", `faculties:${locale}`);
@@ -573,7 +540,7 @@ export async function getHomepageData(locale: Locale) {
     safely("news", [], () => loadNews(locale)),
     safely("notices ticker", [], () => loadTicker(locale)),
     safely("events", { events: [], announcements: [] }, () => loadEventsAndNotices(locale)),
-    safely("VC message", null, () => loadVc(locale)),
+    safely("VC message", null, () => getVcMessage(locale)),
     safely("faculties", [], () => loadFaculties(locale)),
     safely("campuses", [], () => loadCampuses(locale)),
   ]);

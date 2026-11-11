@@ -155,7 +155,13 @@ export default async function HomePage() {
         />
       </div>
 
-      {vc ? <VcMessage vc={vc} locale={locale} labels={{ eyebrow: t("vcEyebrow"), read: t("readMessage") }} /> : null}
+      {vc ? (
+        <VcMessage
+          vc={vc}
+          locale={locale}
+          labels={{ eyebrow: t("vcEyebrow"), read: t("readMessage"), source: t("vcSource"), originalLanguage: t("vcOriginalLanguage") }}
+        />
+      ) : null}
 
       <FacultiesGrid
         faculties={faculties}

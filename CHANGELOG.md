@@ -357,3 +357,20 @@
   photo `source` accepts a full URL as well as a uswat.edu.pk path. CREDITS.md updated.
 - Reseeded with `--reset`. Checked on a production build at 1440px and 375px in English and Urdu: hero slides and
   both campus cards show the new photos with credits, no horizontal scroll, no page errors.
+
+### Phase 6.4 — The Vice Chancellor's own words
+
+- The homepage quote and the VC message body were text we had written, shown as Prof. Dr. Husnul Amin's words.
+  They are now verbatim from his published message (https://uswat.edu.pk/vice-chancellors-message-2/): the quote
+  is "…to establish the University of Swat as a nationally recognized and internationally connected center of
+  academic excellence, research innovation, and societal engagement." and the message is five of its eleven
+  paragraphs, unedited (checked character for character against the source page).
+- Strapi: VC Message `teaser` and `message` are no longer localized, so no translation can be published in his
+  name; a required `sourceUrl` (https) records where the words come from. The section title stays our own heading.
+- Homepage: the heading is ours (no quote marks); the excerpt is a `<figure>` with `<blockquote cite>` in
+  `lang="en" dir="ltr"` on both languages, with his name, designation and a link to the published message. The Urdu
+  site adds a note that these are his original English words.
+- New page `/about/vice-chancellor` (the "Read the full message" link used to 404): photo, our heading, a note that
+  these are selected unedited paragraphs, the excerpts in the English original, and a link to the full message.
+- Reseeded with `--reset`. Checked on a production build at 1440px and 375px in English and Urdu: correct text,
+  `lang`/`dir`/`cite`, working links, no horizontal scroll, no page errors.
