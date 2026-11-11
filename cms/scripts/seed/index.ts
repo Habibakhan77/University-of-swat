@@ -428,7 +428,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     // ---------- Contact ----------
     log('Contact page and phone directory…');
     for (const [i, p] of PHONE_DIRECTORY.entries()) {
-      await w.create('api::phone-entry.phone-entry', { name: p.name, number: p.number, group: p.group, order: i + 1 });
+      await w.create('api::phone-entry.phone-entry', { name: p.name, number: p.number, group: p.group, featured: p.featured ?? false, order: i + 1 });
     }
     const keyOffices = CONTACT_PAGE.keyOffices.map((slug) => {
       const id = officeIds.get(slug);

@@ -458,18 +458,18 @@
       "office": "دفتر",
       "directorate": "ڈائریکٹوریٹ",
       "center": "مرکز",
-      "body": "آئینی ادارہ"
+      "student_service": "طلبہ کی خدمات"
     },
     "typesPlural": {
       "office": "دفاتر",
       "directorate": "ڈائریکٹوریٹس",
       "center": "مراکز اور سیل",
-      "body": "آئینی ادارے"
+      "student_service": "طلبہ اور سابق طلبہ کی خدمات"
     },
     "headNotPublished": "سرکاری صفحے پر سربراہ کا نام درج نہیں",
     "viewOffice": "دفتر دیکھیں",
     "administrationTitle": "انتظامیہ",
-    "administrationIntro": "دفاتر، ڈائریکٹوریٹس، مراکز اور آئینی ادارے، ان کے سربراہان اور رابطوں سمیت، جیسا کہ جامعہ شائع کرتی ہے۔",
+    "administrationIntro": "دفاتر، ڈائریکٹوریٹس، مراکز اور طلبہ کی خدمات، ان کے سربراہان اور رابطوں سمیت۔",
     "officesCount": "{count, plural, one {# دفتر} other {# دفاتر}}",
     "searchOffices": "دفاتر تلاش کریں",
     "searchOfficesPlaceholder": "دفتر، سربراہ یا ذمہ داری…",

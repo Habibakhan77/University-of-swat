@@ -20,14 +20,14 @@ server, so it can run while `npm run dev` is running.
 | Departments | 27 | Real names from uswat.edu.pk — en + ur |
 | Programs | 80 | BS / BS 5th semester / MPhil / MS / PhD, HEC-standard durations and credit hours; no fees or eligibility (only published in the admission advertisement) |
 | Faculty members | 54 | 2 per department, **all placeholders** (`isPlaceholder: true`) |
-| Offices & directorates | 23 | Offices, directorates, centres and statutory bodies with heads, emails, phones, staff and documents copied from each office page on uswat.edu.pk (source link on every entry); real head photos where published — en + ur |
+| Offices & directorates | 23 | Offices, directorates, centres and student services with heads, emails, phones, staff and documents copied from each office page on uswat.edu.pk (source link on every entry); real head photos where published — en + ur |
 | Posts | 26 | Real news, announcements and events (Sep–Nov 2026), rewritten text, a link to each original; real event photos as covers, posters and notices attached in full |
 | Tenders / Jobs | 10 / 10 | The latest items on uswat.edu.pk with their official PDFs and advertisements; all `closed` (deadlines from the documents) |
 | Downloads | 67 | Every working file on uswat.edu.pk/downloads (policies, regulations, fee notifications, forms, reports) |
 | Research projects | 21 | ORIC's list of approved projects (PDF, updated 24.10.2024): title, PI, funder, amount, duration |
 | Research page | 1 | ORIC, QEC, DASR, R&TD, PQR; SUJRIS (ISSN 2959-5509, HEC "Y" category); ORIC's 2024 conferences; ORIC policies and formats |
 | Campus Life pages | 6 | Library, Sports, Hostels, Societies (YDC), Psychology Clinic, Hunerkada, each linked to the office in charge |
-| Phone directory | 38 | Every number on uswat.edu.pk/contact-list (offices and departments), area code 0946 |
+| Phone directory | 38 | Every number on uswat.edu.pk/contact-list (offices and departments), area code 0946; the Registrar and Admission Office lines are `featured` and also shown under "Reach us" (the site publishes no general number) |
 | Contact page | 1 | Intro, map query, six key offices, form text |
 | FAQs | 13 | Admissions, fees and scholarships (en + ur, verified answers only); exams, hostel, general |
 | Hero slides / Stats | 3 / 4 | Stats are live counters (campuses, faculties, departments, programs) |

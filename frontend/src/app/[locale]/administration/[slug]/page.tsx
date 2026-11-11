@@ -88,7 +88,7 @@ export default async function OfficePage({ params }: Props) {
       <AcademicHero
         compact
         id={`office-${office.slug}`}
-        accent={office.type === "directorate" ? "green" : office.type === "center" ? "teal" : office.type === "body" ? "maroon" : "green"}
+        accent={office.type === "directorate" ? "green" : office.type === "center" ? "teal" : office.type === "student_service" ? "maroon" : "green"}
         breadcrumbs={[
           { label: tCommon("home"), href: "/" },
           { label: t("administrationTitle"), href: administrationHref },

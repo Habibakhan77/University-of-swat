@@ -550,3 +550,23 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   in English and Urdu, light and dark (RTL, no horizontal scroll, dark-mode contrast of the journal card fixed).
   Verified Strapi's contact endpoint: 403 without the secret, 400 for invalid fields, 201 for a valid signed
   message (the test message was deleted).
+
+## Phase 9.1 — Review fixes
+
+- **Hero intros are never truncated.** Removed the one-line clamp from compact heroes. About and Research get a
+  one-sentence intro; the longer text moved into the page body (the opening paragraph of About › History, and a
+  new localized `overview` field on the Research Page shown above the research offices). The Administration intro
+  was shortened too. On phones, heroes with a photo credit reserve space so the credit never covers the intro.
+- **"Statutory bodies" renamed.** The Office `type` value `body` is now `student_service`, labelled "Student and
+  alumni services" (Alumni Relations, Proctorial Board, YDC). uswat.edu.pk has no pages for the Senate, Syndicate,
+  Academic Council or Finance & Planning Committee (only press releases about individual meetings and 2020
+  election notices), so no statutory bodies group is shown.
+- **Contact › Reach us** now lists phone numbers above the email. uswat.edu.pk publishes no general number, so
+  these are the "PS to Registrar Office" (0946-920814) and "Admission Office" (0946-920809) lines from the
+  official contact list, flagged with a new `featured` boolean on Phone Directory Entry (editors can change which
+  lines appear). Phone numbers and email use the Latin font in Urdu.
+- **Central Library photo:** none found. The library page only has staff headshots; the "Seerat-ul-Nabi Corner"
+  news image is a text poster, and the only photo taken in the library (Chiragh Project seminar, 2023) is a
+  two-photo collage of a crowded event. The card keeps its pattern.
+- Reseeded with `--reset`. Lint, typecheck and build are clean. Checked on the dev server at 1440px and 375px in
+  English and Urdu (no truncation, no horizontal scroll, RTL).

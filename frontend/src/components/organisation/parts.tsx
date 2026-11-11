@@ -15,7 +15,7 @@ const tel = (n: string) => `tel:${n.replace(/[^\d+]/g, "")}`;
 
 export function OfficeTypeBadge({ type, className }: { type: Office["type"]; className?: string }) {
   const t = useTranslations("organisation");
-  const tone = type === "directorate" ? "primary" : type === "center" ? "accent" : type === "body" ? "secondary" : "neutral";
+  const tone = type === "directorate" ? "primary" : type === "center" ? "accent" : type === "student_service" ? "secondary" : "neutral";
   return (
     <Badge tone={tone} size="sm" uppercase className={className}>
       {t(`types.${type}`)}

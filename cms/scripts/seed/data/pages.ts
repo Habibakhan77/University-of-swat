@@ -143,7 +143,8 @@ export const RESEARCH_PAGE = {
   },
   en: {
     title: 'Research',
-    intro:
+    intro: 'ORIC, the Quality Enhancement Cell, the SUJRIS journal, funded projects and conferences.',
+    overview:
       'Research at the University of Swat is led by ORIC, recognised by HEC in the highest category in 2022, together with the Quality Enhancement Cell and the directorates for advanced studies and for research.',
     projectsNote: 'Projects approved by HEC and other funders, as listed by ORIC (last updated 24.10.2024).',
     seo: {
@@ -153,7 +154,8 @@ export const RESEARCH_PAGE = {
   },
   ur: {
     title: 'تحقیق',
-    intro: 'جامعہ سوات میں تحقیق کی قیادت اورک کرتا ہے، جسے ایچ ای سی نے ۲۰۲۲ میں اعلیٰ ترین درجے میں تسلیم کیا، کوالٹی انہانسمنٹ سیل اور اعلیٰ تعلیم و تحقیق کے ڈائریکٹوریٹس کے ساتھ۔',
+    intro: 'اورک، کوالٹی انہانسمنٹ سیل، سُجرس جریدہ، تحقیقی منصوبے اور کانفرنسیں۔',
+    overview: 'جامعہ سوات میں تحقیق کی قیادت اورک کرتا ہے، جسے ایچ ای سی نے ۲۰۲۲ میں اعلیٰ ترین درجے میں تسلیم کیا، کوالٹی انہانسمنٹ سیل اور اعلیٰ تعلیم و تحقیق کے ڈائریکٹوریٹس کے ساتھ۔',
     projectsNote: 'ایچ ای سی اور دیگر اداروں کے منظور شدہ منصوبے، اورک کی فہرست کے مطابق (آخری تازہ کاری ۲۴.۱۰.۲۰۲۴)۔',
     seo: { metaTitle: 'تحقیق — جامعہ سوات', metaDescription: 'اورک، کیو ای سی، سُجرس جریدہ، تحقیقی منصوبے اور کانفرنسیں۔' },
   },

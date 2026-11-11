@@ -319,9 +319,9 @@ export const ABOUT = {
   shared: { sourceUrl: ABOUT_SOURCE },
   en: {
     title: 'About the University of Swat',
-    intro:
-      'The University of Swat is a public-sector university in Khyber Pakhtunkhwa, Pakistan. Its main academic campus and all its administrative offices are at Charbagh, Swat.',
+    intro: 'A public-sector university in Khyber Pakhtunkhwa, with its main campus at Charbagh, Swat.',
     history: blocks(
+      'The University of Swat is a public-sector university in Khyber Pakhtunkhwa, Pakistan. Its main academic campus and all its administrative offices are at Charbagh, Swat.',
       'The establishment of the University of Swat was announced on 29 May 2010 by the then Prime Minister of Pakistan during a visit to the Swat valley. The university came into formal existence in July 2010 by order of the Governor of Khyber Pakhtunkhwa, with the prior approval of the President of Pakistan. Its first Vice Chancellor, Dr. Muhammad Farooq Khan (Shaheed), was appointed in August 2010.',
       'The Higher Education Department handed over two buildings at Saidu Sharif, and in its first academic session, 2010-11, the university launched 7 departments. The number of departments later grew from 7 to 27, and a Women Campus was established.',
       'The university now resides at its own Main Campus in Charbagh. Phase I of the campus is complete: three academic blocks, girls’ and boys’ hostels, a mosque, the library, the examination section, the administration block, staff residences, the boundary wall and the roads. Phase II is to follow.',
@@ -355,8 +355,9 @@ export const ABOUT = {
   },
   ur: {
     title: 'جامعہ سوات کا تعارف',
-    intro: 'جامعہ سوات خیبر پختونخوا، پاکستان کی ایک سرکاری جامعہ ہے۔ اس کا مرکزی تعلیمی کیمپس اور تمام انتظامی دفاتر چارباغ، سوات میں ہیں۔',
+    intro: 'خیبر پختونخوا کی ایک سرکاری جامعہ، جس کا مرکزی کیمپس چارباغ، سوات میں ہے۔',
     history: blocks(
+      'جامعہ سوات خیبر پختونخوا، پاکستان کی ایک سرکاری جامعہ ہے۔ اس کا مرکزی تعلیمی کیمپس اور تمام انتظامی دفاتر چارباغ، سوات میں ہیں۔',
       'جامعہ سوات کے قیام کا اعلان ۲۹ مئی ۲۰۱۰ کو اس وقت کے وزیرِ اعظم پاکستان نے وادیٔ سوات کے دورے کے دوران کیا۔ جولائی ۲۰۱۰ میں گورنر خیبر پختونخوا کے حکم سے، صدرِ پاکستان کی پیشگی منظوری کے ساتھ، جامعہ باقاعدہ وجود میں آئی۔ اس کے پہلے وائس چانسلر ڈاکٹر محمد فاروق خان (شہید) اگست ۲۰۱۰ میں مقرر ہوئے۔',
       'محکمہ اعلیٰ تعلیم نے سیدو شریف میں دو عمارتیں جامعہ کے حوالے کیں، اور ۲۰۱۰-۱۱ کے پہلے تعلیمی سیشن میں ۷ شعبے شروع ہوئے۔ بعد میں شعبوں کی تعداد ۷ سے بڑھ کر ۲۷ ہو گئی اور ویمن کیمپس قائم ہوا۔',
       'آج جامعہ چارباغ میں اپنے مرکزی کیمپس میں ہے۔ کیمپس کا پہلا مرحلہ مکمل ہو چکا ہے: تین اکیڈمک بلاک، طلبہ و طالبات کے ہاسٹل، مسجد، لائبریری، امتحانی سیکشن، انتظامی بلاک، عملے کی رہائش گاہیں، چار دیواری اور سڑکیں۔ دوسرا مرحلہ آئندہ ہوگا۔',

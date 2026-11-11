@@ -5,7 +5,7 @@
     "singularName": "office",
     "pluralName": "offices",
     "displayName": "Office",
-    "description": "Offices, directorates, centres (ORIC, QEC, Library ...)"
+    "description": "Offices, directorates, centres (ORIC, QEC, Library ...) and student services (Alumni, Proctorial Board, YDC)"
   },
   "options": {
     "draftAndPublish": true
@@ -41,7 +41,7 @@
         "office",
         "directorate",
         "center",
-        "body"
+        "student_service"
       ],
       "required": true,
       "default": "office",

@@ -5,7 +5,7 @@ import type { NavLink, SiteImage } from "./site";
 
 /* View models for About, Administration, Research, Campus Life and Contact (safe to import in Client Components). */
 
-export const OFFICE_TYPES = ["office", "directorate", "center", "body"] as const;
+export const OFFICE_TYPES = ["office", "directorate", "center", "student_service"] as const;
 export type OfficeType = (typeof OFFICE_TYPES)[number];
 
 export const aboutHref = "/about";
@@ -125,7 +125,10 @@ export interface ResearchProject {
 export interface ResearchPage {
   lang: Locale;
   title: string;
+  /** One sentence for the hero. */
   intro: string | null;
+  /** The longer introduction, shown at the top of the page body. */
+  overview: string | null;
   heroImage: SiteImage | null;
   offices: Office[];
   journals: Journal[];
@@ -165,6 +168,8 @@ export interface PhoneEntry {
   /** As published, without the area code, e.g. "920867-68". */
   number: string;
   group: PhoneGroup;
+  /** Also shown under "Reach us" on the Contact page. */
+  featured: boolean;
 }
 
 export interface ContactPage {

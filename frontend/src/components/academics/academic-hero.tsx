@@ -88,6 +88,8 @@ export function AcademicHero({
             className={cn(
               "flex flex-col items-start",
               compact ? "gap-2 px-5 py-6 sm:px-8 sm:py-7 lg:px-12" : "max-w-3xl gap-4 px-5 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-16",
+              // Narrow screens: keep the photo credit (bottom corner) clear of the wrapped intro.
+              image?.credit && (compact ? "pb-12 sm:pb-7" : "pb-14 sm:pb-12"),
             )}
           >
             <p className="inline-flex items-center gap-3 text-overline text-gold-200 uppercase">
@@ -103,7 +105,7 @@ export function AcademicHero({
             {summary ? (
               <p
                 lang={summaryLang}
-                className={cn("text-pretty text-white/90", compact ? "max-w-5xl text-body sm:line-clamp-1" : "max-w-2xl text-body-lg")}
+                className={cn("text-pretty text-white/90", compact ? "max-w-5xl text-body" : "max-w-2xl text-body-lg")}
               >
                 {summary}
               </p>

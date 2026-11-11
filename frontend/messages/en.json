@@ -458,18 +458,18 @@
       "office": "Office",
       "directorate": "Directorate",
       "center": "Centre",
-      "body": "Statutory body"
+      "student_service": "Student services"
     },
     "typesPlural": {
       "office": "Offices",
       "directorate": "Directorates",
       "center": "Centres and cells",
-      "body": "Statutory bodies"
+      "student_service": "Student and alumni services"
     },
     "headNotPublished": "Head not listed on the official page",
     "viewOffice": "View office",
     "administrationTitle": "Administration",
-    "administrationIntro": "Offices, directorates, centres and statutory bodies, with their heads and contacts as the university publishes them.",
+    "administrationIntro": "Offices, directorates, centres and student services, with their heads and contacts.",
     "officesCount": "{count, plural, one {# office} other {# offices}}",
     "searchOffices": "Search offices",
     "searchOfficesPlaceholder": "Office, head or responsibility…",

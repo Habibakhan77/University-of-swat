@@ -99,6 +99,7 @@ interface SlugRef {
 interface StrapiResearchPage extends Doc {
   title: string;
   intro: string | null;
+  overview: string | null;
   heroImage: StrapiMedia | null;
   offices: SlugRef[] | null;
   journals: { name: string; shortName: string | null; description: string | null; issn: string | null; recognition: string | null; url: string | null; sourceUrl: string | null }[] | null;
@@ -153,6 +154,7 @@ interface StrapiPhoneEntry extends Doc {
   name: string;
   number: string;
   group: PhoneGroup;
+  featured: boolean | null;
   order: number | null;
 }
 
@@ -307,7 +309,7 @@ async function loadResearchPage(locale: Locale): Promise<ResearchPage | null> {
       localizedSingle<StrapiResearchPage>(
         "/research-page",
         {
-          ...selectFields("fields", ["title", "intro", "projectsNote", "projectsSourceUrl", "conferencesSourceUrl"]),
+          ...selectFields("fields", ["title", "intro", "overview", "projectsNote", "projectsSourceUrl", "conferencesSourceUrl"]),
           ...populateImage("heroImage"),
           "populate[offices][fields][0]": "slug",
           "populate[journals]": true,
@@ -325,6 +327,7 @@ async function loadResearchPage(locale: Locale): Promise<ResearchPage | null> {
       lang: page.lang,
       title: page.title,
       intro: page.intro,
+      overview: page.overview || null,
       heroImage: toRealImage(page.heroImage),
       offices: officesBySlug(page.offices, offices),
       journals: (page.journals ?? []).map((j) => ({
@@ -470,7 +473,7 @@ async function loadPhoneDirectory(locale: Locale): Promise<PhoneEntry[]> {
   return guarded(`phone directory (${locale})`, [], async () => {
     const pairs = await fetchPairs<StrapiPhoneEntry>(
       "/phone-entries",
-      { ...selectFields("fields", ["name", "number", "group", "order"]), "sort[0]": "order:asc" },
+      { ...selectFields("fields", ["name", "number", "group", "featured", "order"]), "sort[0]": "order:asc" },
       locale,
     );
     return pairs
@@ -480,6 +483,7 @@ async function loadPhoneDirectory(locale: Locale): Promise<PhoneEntry[]> {
         name: pick(p, "name", locale) ?? { value: p.en.name, lang: en },
         number: p.en.number,
         group: p.en.group === "departments" ? "departments" : "offices",
+        featured: p.en.featured === true,
       }));
   });
 }

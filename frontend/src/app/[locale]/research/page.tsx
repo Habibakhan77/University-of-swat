@@ -73,6 +73,12 @@ export default async function ResearchPage() {
       </Container>
 
       <Container size="wide" className="flex flex-col gap-section-sm pt-8 pb-section [&>section]:scroll-mt-32">
+        {page?.overview ? (
+          <p className="max-w-prose text-body-lg text-fg-muted" lang={lang}>
+            {page.overview}
+          </p>
+        ) : null}
+
         {page?.offices.length ? (
           <section aria-labelledby="offices">
             <SectionTitle id="offices">{t("researchOffices")}</SectionTitle>

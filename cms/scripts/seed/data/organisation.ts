@@ -78,7 +78,7 @@ export const CAMPUSES: CampusSeed[] = [
   },
 ];
 
-export type OfficeType = 'office' | 'directorate' | 'center' | 'body';
+export type OfficeType = 'office' | 'directorate' | 'center' | 'student_service';
 
 export interface StaffSeed {
   name: string;
@@ -673,12 +673,12 @@ export const OFFICES: OfficeSeed[] = [
     ],
   },
 
-  // ---------- Other bodies ----------
+  // ---------- Student and alumni services ----------
   {
     slug: 'alumni-association',
     name: 'Alumni Relations',
     ur: 'سابق طلبہ سے روابط',
-    type: 'body',
+    type: 'student_service',
     source: '/alumni/',
     summary: 'Keeps graduates connected with the university: alumni registration, surveys of alumni, graduating students and employers, and departmental alumni relation managers.',
     urSummary: 'فارغ التحصیل طلبہ کو جامعہ سے جوڑے رکھتا ہے: سابق طلبہ کی رجسٹریشن، سابق طلبہ، فارغ ہونے والے طلبہ اور آجروں کے سروے، اور شعبہ جاتی الومنائی منیجرز۔',
@@ -699,7 +699,7 @@ export const OFFICES: OfficeSeed[] = [
     slug: 'proctorial-board',
     name: 'Proctorial Board',
     ur: 'پراکٹوریل بورڈ',
-    type: 'body',
+    type: 'student_service',
     source: '/proctorial-board/',
     headName: 'Dr. Kefayat Ullah',
     headDesignation: 'Chief Proctor (Associate Professor of Physics)',
@@ -716,7 +716,7 @@ export const OFFICES: OfficeSeed[] = [
     slug: 'ydc',
     name: 'Youth Development Centre (YDC)',
     ur: 'یوتھ ڈویلپمنٹ سینٹر',
-    type: 'body',
+    type: 'student_service',
     source: '/kamyab-jawan-markaz/',
     summary:
       'A single office for student services in line with HEC’s undergraduate policy, with wings for education, employment and engagement: career counselling, scholarships, internships, clubs and societies.',
@@ -749,10 +749,16 @@ export const OFFICES: OfficeSeed[] = [
 ];
 
 /**
+ * uswat.edu.pk publishes no general switchboard number, so the Contact page's "Reach us" block shows the
+ * Registrar's and the Admission Office's lines from the official contact list instead.
+ */
+const REACH_US_NUMBERS: ReadonlySet<string> = new Set(['PS to Registrar Office', 'Admission Office']);
+
+/**
  * The phone directory, transcribed from https://uswat.edu.pk/contact-list/ (two tables, "Offices" and
  * "Departments", numbers without the 0946 area code). Names and numbers exactly as published.
  */
-export const PHONE_DIRECTORY: { group: 'offices' | 'departments'; name: string; number: string }[] = [
+export const PHONE_DIRECTORY: { group: 'offices' | 'departments'; name: string; number: string; featured?: boolean }[] = [
   ...(
     [
       ['VC Office', '730510'],
@@ -771,7 +777,7 @@ export const PHONE_DIRECTORY: { group: 'offices' | 'departments'; name: string; 
       ['Women Campus', '920867-68'],
       ['Center for Education and Staff Training', '730533'],
     ] as const
-  ).map(([name, number]) => ({ group: 'offices' as const, name, number })),
+  ).map(([name, number]) => ({ group: 'offices' as const, name, number, ...(REACH_US_NUMBERS.has(name) ? { featured: true } : {}) })),
   ...(
     [
       ['Girls Hostel', '920818-19'],

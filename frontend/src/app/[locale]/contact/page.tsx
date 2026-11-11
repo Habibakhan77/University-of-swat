@@ -4,7 +4,8 @@ import { Mail, MapPin, MessageSquare, Phone } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { jsonLd, pageMetadata, SITE_URL } from "@/lib/seo";
-import { contactHref, getContactPage, getPhoneDirectory } from "@/lib/strapi/organisation";
+import { langAttr } from "@/lib/strapi/academics-model";
+import { contactHref, getContactPage, getPhoneDirectory, phoneNumber } from "@/lib/strapi/organisation";
 import { getSiteChrome } from "@/lib/strapi/site";
 import { AcademicHero } from "@/components/academics/academic-hero";
 import { SectionTitle } from "@/components/academics/panels";
@@ -40,6 +41,8 @@ export default async function ContactPage() {
   ]);
   const lang = page && page.lang !== locale ? page.lang : undefined;
   const { email, phone, address } = chrome?.contact ?? { email: null, phone: null, address: null };
+  // uswat.edu.pk publishes no switchboard number; editors flag the directory lines to show here instead.
+  const mainLines = entries.filter((e) => e.featured);
 
   const sections = [
     { id: "reach", label: t("reachUs"), show: true },
@@ -90,14 +93,24 @@ export default async function ContactPage() {
               ) : null}
               {phone ? (
                 <ContactRow icon={<Phone className="size-5" />} label={t("phone")}>
-                  <a href={tel(phone)} dir="ltr" className="text-primary-text hover:underline">
+                  <a href={tel(phone)} dir="ltr" className="font-sans tabular text-primary-text hover:underline">
                     {phone}
                   </a>
                 </ContactRow>
               ) : null}
+              {mainLines.map((line) => {
+                const n = phoneNumber(line.number, page?.areaCode ?? null);
+                return (
+                  <ContactRow key={line.id} icon={<Phone className="size-5" />} label={<span lang={langAttr(line.name, locale)}>{line.name.value}</span>}>
+                    <a href={n.tel} dir="ltr" className="font-sans tabular text-primary-text hover:underline">
+                      {n.display}
+                    </a>
+                  </ContactRow>
+                );
+              })}
               {email ? (
                 <ContactRow icon={<Mail className="size-5" />} label={t("email")}>
-                  <a href={`mailto:${email}`} dir="ltr" className="break-all text-primary-text hover:underline">
+                  <a href={`mailto:${email}`} dir="ltr" className="font-sans break-all text-primary-text hover:underline">
                     {email}
                   </a>
                 </ContactRow>
@@ -145,7 +158,7 @@ export default async function ContactPage() {
   );
 }
 
-function ContactRow({ icon, label, children }: { icon: ReactNode; label: string; children: ReactNode }) {
+function ContactRow({ icon, label, children }: { icon: ReactNode; label: ReactNode; children: ReactNode }) {
   return (
     <li className="flex items-start gap-3 rounded-xl border border-line bg-surface p-4">
       <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-text">
