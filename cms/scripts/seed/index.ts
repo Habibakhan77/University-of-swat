@@ -21,7 +21,7 @@ import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE
 const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], PhotoKey> = {
   campus: 'campusMountains', // main building with snow-capped mountains
   admissions: 'mainGate', // main gate arches
-  research: 'campusAerial', // aerial view of the campus
+  research: 'mainCampus', // Main Campus from above, lawns and misty hills
 };
 
 export interface SeedOptions {
@@ -379,7 +379,8 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
         isPlaceholder: true,
       })),
     ];
-    const aboutHero = await media.photo('campusAerial');
+    // Women Campus panorama (1600×555) at its own size: a 16:9 hero crop would enlarge it about 2×.
+    const aboutHero = await media.photo('womenCampus', 'original');
     await w.single(
       'api::about.about',
       { ...ABOUT.en, heroImage: aboutHero, leadership },

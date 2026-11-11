@@ -343,3 +343,17 @@
 - Tested in a real browser on a production build: the utility-bar and mobile-menu switchers in both
   directions on the home, academics, programs, directory and department pages (same path, same tab, survives
   reload); the Urdu and English hero at 1440px, 1280px and 375px, all slides, with no text outside the container.
+
+### Phase 6.3 — Sharper campus photos and a real Women Campus photo
+
+- Three photos from the University's official Facebook page, stored as WebP seed assets (1600px, quality 90,
+  no metadata) so they survive reseeds, credited "Photo: University of Swat" and linked to the Facebook page:
+  - `main-gate.webp` (1600×900) replaces the soft, over-processed 1280×563 gate photo on the admissions hero slide.
+  - `main-campus.webp` (1600×900) replaces the hazy 1145×685 aerial on the research hero slide and the Main
+    Campus card (photo key renamed `campusAerial` → `mainCampus`, since it is no longer an aerial shot).
+  - `women-campus.webp` (1600×555 panorama) gives the Women Campus card its first real photo (it was a maroon
+    placeholder) and is the About page hero, uploaded at its own size because a 16:9 crop would enlarge it about 2×.
+- The "mountains" photo on the first hero slide, the Admissions page hero and the Open Graph image is unchanged. The
+  photo `source` accepts a full URL as well as a uswat.edu.pk path. CREDITS.md updated.
+- Reseeded with `--reset`. Checked on a production build at 1440px and 375px in English and Urdu: hero slides and
+  both campus cards show the new photos with credits, no horizontal scroll, no page errors.

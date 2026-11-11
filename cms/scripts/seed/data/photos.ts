@@ -1,7 +1,7 @@
 /**
- * Real photographs used by the seed, stored in scripts/seed/assets/photos/. All come from the
- * University of Swat's own website (uswat.edu.pk): campus pages, the homepage slider and the news posts
- * they belong to. Only sharp, well-lit photos at least 800px wide; posters, notices and text-heavy
+ * Real photographs used by the seed, stored in scripts/seed/assets/photos/. All are the University of
+ * Swat's own: from uswat.edu.pk (campus pages, the homepage slider and the news posts they belong to) or
+ * its official Facebook page (the main gate, Main Campus and Women Campus photos). Only sharp, well-lit photos at least 800px wide; posters, notices and text-heavy
  * images are skipped (those posts get a text-free branded gradient instead).
  *
  * The credit is written to the Media Library "caption" as `<credit> | <source page URL>`; the website
@@ -13,13 +13,20 @@ export interface SeedPhoto {
   file: string;
   alt: string;
   credit: string;
-  /** Page on uswat.edu.pk the photo was published on. */
+  /** Where the photo was published: a uswat.edu.pk page or the official Facebook page. */
   source: string;
 }
 
 const CREDIT = 'Photo: University of Swat';
 const SITE = 'https://uswat.edu.pk';
-const photo = (file: string, alt: string, source: string): SeedPhoto => ({ file, alt, credit: CREDIT, source: `${SITE}${source}` });
+const FACEBOOK = 'https://www.facebook.com/universityofswat/';
+/** `source` is a path on uswat.edu.pk or a full URL. */
+const photo = (file: string, alt: string, source: string): SeedPhoto => ({
+  file,
+  alt,
+  credit: CREDIT,
+  source: source.startsWith('https://') ? source : `${SITE}${source}`,
+});
 
 export const PHOTOS = {
   campusMountains: photo(
@@ -27,15 +34,20 @@ export const PHOTOS = {
     'Academic blocks of the University of Swat below snow-capped mountains',
     '/maincampus/',
   ),
-  campusAerial: photo(
-    'campus-main-aerial.jpg',
-    'Aerial view of the University of Swat Main Campus at Charbagh, with lawns, academic blocks and the valley beyond',
-    '/maincampus/',
+  mainCampus: photo(
+    'main-campus.webp',
+    'The University of Swat Main Campus at Charbagh from above after rain: lawns, academic blocks and misty green hills',
+    FACEBOOK,
   ),
   mainGate: photo(
-    'hero-main-gate.jpg',
-    'The arched main gate of the University of Swat with mountains behind it',
-    '/maincampus/',
+    'main-gate.webp',
+    'The white castellated main gate of the University of Swat, with the campus road winding into green hills behind it',
+    FACEBOOK,
+  ),
+  womenCampus: photo(
+    'women-campus.webp',
+    'The University of Swat Women Campus: white and pink buildings behind a stone wall, below pine-covered hills',
+    FACEBOOK,
   ),
   vcPortrait: photo(
     'vc-husnul-amin.jpg',
@@ -128,9 +140,10 @@ export const POST_PHOTOS: Record<string, PhotoKey> = {
   'first-university-solarization-project': 'postSolarization',
 };
 
-/** Campus photo per campus slug. The Women Campus has no published photo of 800px or wider yet. */
+/** Campus photo per campus slug. */
 export const CAMPUS_PHOTOS: Record<string, PhotoKey> = {
-  'main-campus-charbagh': 'campusAerial',
+  'main-campus-charbagh': 'mainCampus',
+  'women-campus': 'womenCampus',
 };
 
 /** The crest from the uswat.edu.pk header (transparent PNG), in scripts/seed/assets/brand/. */
