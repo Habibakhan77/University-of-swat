@@ -456,4 +456,6 @@
   scanned documents (max 3 MB each), pay the admission processing fee by bank voucher or online (online banking
   app, EasyPaisa, JazzCash, Upaisa), then upload the bank slip or payment screenshot. No fee amounts.
 - New `howToApplySource` link on the Admissions Page, shown as "Fall 2026 (as advertised)" above the steps.
-- Icons `upload` and `receipt` added to the icon registry. Reseeded; lint and typecheck are clean.
+- Icons `upload` and `receipt` added to the icon registry. Reseeded. Lint, typecheck and build are clean; verified
+  on a production build at 1440px and 375px in English and Urdu (five steps, source link, RTL, no horizontal
+  scroll, no fee amounts).
