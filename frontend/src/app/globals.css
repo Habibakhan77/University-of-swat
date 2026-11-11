@@ -405,6 +405,14 @@
   :lang(ur) :lang(en) {
     font-family: var(--font-sans);
   }
+  /*
+   * ...and run left to right as an isolated unit, so an English fallback sentence keeps its full stop
+   * at the end (".and industry internships" otherwise) and lists indent on the left.
+   */
+  [dir="rtl"] [lang="en"] {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -511,4 +519,33 @@
 
 @utility tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Faculty accent (set per page or card with accentStyle(): --fac, --fac-deep, --fac-tint).
+ * Text uses the base colour on light surfaces (>= 5.8:1 on white) and the tint in dark mode.
+ */
+@utility text-fac {
+  color: var(--fac, var(--primary-text));
+  :where(.dark) & {
+    color: var(--fac-tint, var(--primary-text));
+  }
+}
+@utility bg-fac {
+  background-color: var(--fac, var(--primary));
+}
+@utility bg-fac-soft {
+  background-color: color-mix(in oklab, var(--fac, var(--primary)) 9%, var(--surface));
+  :where(.dark) & {
+    background-color: color-mix(in oklab, var(--fac-tint, var(--primary)) 12%, var(--surface));
+  }
+}
+@utility border-fac {
+  border-color: var(--fac, var(--primary));
+  :where(.dark) & {
+    border-color: var(--fac-tint, var(--primary));
+  }
+}
+@utility bg-fac-gradient {
+  background: linear-gradient(135deg, var(--fac, var(--color-forest-700)) 0%, var(--fac-deep, var(--color-forest-950)) 100%);
 }

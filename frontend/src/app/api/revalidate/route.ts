@@ -18,11 +18,13 @@ const TAGS_BY_UID: Record<string, string[]> = {
   "api::stat.stat": ["stats"],
   "api::post.post": ["posts"],
   "api::vc-message.vc-message": ["vc-message"],
-  "api::faculty.faculty": ["faculties", "stats"],
-  "api::department.department": ["faculties", "stats"],
-  "api::campus.campus": ["campuses", "stats"],
-  "api::program.program": ["stats"],
-  "api::faculty-member.faculty-member": ["stats"],
+  "api::faculty.faculty": ["faculties", "academics", "stats"],
+  "api::department.department": ["faculties", "academics", "stats"],
+  "api::campus.campus": ["campuses", "academics", "stats"],
+  "api::program.program": ["academics", "stats"],
+  "api::faculty-member.faculty-member": ["academics", "stats"],
+  // Merit lists and other files attached to programs appear on program pages.
+  "api::download.download": ["academics"],
 };
 
 /** A replaced or re-described image can appear anywhere, so media events refresh every tag. */

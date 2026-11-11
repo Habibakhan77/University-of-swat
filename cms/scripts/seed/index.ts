@@ -189,7 +189,8 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           shortName: f.shortName,
           type: f.type,
           summary: f.summary,
-          description: blocks(f.summary, ...(f.departments.length ? [h('Departments', 3), ul(f.departments.map((d) => d.name))] : [])),
+          // The website lists departments and programs from their own entries, so the text does not repeat them.
+          description: blocks(f.summary),
           deanName: f.deanName,
           deanIsPlaceholder: f.deanIsPlaceholder,
           image: fImage,
@@ -410,8 +411,6 @@ async function createDepartment(
     d.summary,
     h('Areas of focus', 3),
     `${d.focus}.`,
-    h('Programs offered', 3),
-    ul(d.programs.map(programName)),
   );
   return w.create(
     'api::department.department',

@@ -1,9 +1,12 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
-import { routing, type Locale } from "@/i18n/routing";
-import { StrapiError, buildTimeFallback, strapiGet, strapiMediaUrl, type QueryValue } from "./client";
-import { normalizeHref, isExternalHref, parseImageCredit, toNavLink, type NavLink, type SiteImage } from "./site";
+import type { Locale } from "@/i18n/routing";
+import type { FacultyAccent } from "./academics";
+import { guarded, localizedList, localizedSingle, populateImage, safely, toImage, type Doc } from "./query";
+import { normalizeHref, isExternalHref, toNavLink, type NavLink, type SiteImage } from "./site";
 import type { StrapiLink, StrapiMedia } from "./types";
+
+export type { FacultyAccent } from "./academics";
 
 /*
  * Everything on the homepage comes from Strapi. Each section has its own cached loader with a cache
@@ -80,9 +83,6 @@ export interface VcTeaser {
   lang: Locale;
 }
 
-/** Card colour per faculty (Strapi: Faculty → accent). */
-export type FacultyAccent = "green" | "maroon" | "teal" | "blue" | "coral" | "gold";
-
 export interface FacultyCard {
   id: string;
   name: string;
@@ -148,10 +148,6 @@ export interface EventsAndNotices {
 
 /* ---------- Strapi shapes (only what is read) ---------- */
 
-interface Doc {
-  documentId: string;
-  locale: string;
-}
 
 interface StrapiHomepage extends Doc {
   quickActions: StrapiLink[];
@@ -230,9 +226,6 @@ interface StrapiCampus extends Doc {
   image: StrapiMedia | null;
 }
 
-interface Collection<T> {
-  data: T[];
-}
 
 /* ---------- Helpers ---------- */
 
@@ -253,16 +246,6 @@ const isMidnightInPakistan = (date: Date) => (date.getTime() + 5 * 3_600_000) % 
 
 const calendarDay = (iso: string) => new Date(iso.length === 10 ? `${iso}T12:00:00+05:00` : iso);
 
-function toImage(media: StrapiMedia | null | undefined, fallbackAlt = ""): SiteImage | null {
-  if (!media?.url) return null;
-  return {
-    src: strapiMediaUrl(media.url),
-    alt: media.alternativeText ?? fallbackAlt,
-    width: media.width ?? 1600,
-    height: media.height ?? 900,
-    credit: parseImageCredit(media.caption),
-  };
-}
 
 function toCta(label: string | null, url: string | null): Cta | null {
   if (!label || !url) return null;
@@ -270,64 +253,7 @@ function toCta(label: string | null, url: string | null): Cta | null {
   return { label, href, external: isExternalHref(href) };
 }
 
-const imageFields = ["url", "alternativeText", "caption", "width", "height", "name"] as const;
 
-/** `populate[<field>][fields][n]` for a media field, keeping responses small. */
-function populateImage(field: string): Record<string, string> {
-  return Object.fromEntries(imageFields.map((name, i) => [`populate[${field}][fields][${i}]`, name]));
-}
-
-/**
- * A collection in the requested locale, topped up from English (by documentId) when Urdu has fewer
- * than `limit` entries. Each item is tagged with the language it is actually written in.
- */
-async function localizedList<T extends Doc>(
-  path: string,
-  query: Record<string, QueryValue>,
-  locale: Locale,
-  limit: number,
-): Promise<(T & { lang: Locale })[]> {
-  const base = { ...query, "pagination[pageSize]": limit };
-  const primary = (await strapiGet<Collection<T>>(path, { ...base, locale })).data.map((d) => ({ ...d, lang: locale }));
-  if (locale === routing.defaultLocale || primary.length >= limit) return primary;
-
-  const fallback = (await strapiGet<Collection<T>>(path, { ...base, locale: routing.defaultLocale })).data;
-  const seen = new Set(primary.map((d) => d.documentId));
-  const merged = [...primary, ...fallback.filter((d) => !seen.has(d.documentId)).map((d) => ({ ...d, lang: routing.defaultLocale }))];
-  return merged.slice(0, limit);
-}
-
-/** A single type in the requested locale, or English when the translation isn't published (404). */
-async function localizedSingle<T extends Doc>(path: string, query: Record<string, QueryValue>, locale: Locale) {
-  const get = async (l: Locale) => {
-    try {
-      return { ...(await strapiGet<{ data: T }>(path, { ...query, locale: l })).data, lang: l };
-    } catch (error) {
-      if (error instanceof StrapiError && error.status === 404) return null;
-      throw error;
-    }
-  };
-  return (await get(locale)) ?? (locale === routing.defaultLocale ? null : await get(routing.defaultLocale));
-}
-
-/** Inside a "use cache" loader: empty data while building without Strapi (see buildTimeFallback). */
-async function guarded<T>(what: string, fallback: T, load: () => Promise<T>): Promise<T> {
-  try {
-    return await load();
-  } catch (error) {
-    return buildTimeFallback(error, what, fallback, () => cacheLife("minutes"));
-  }
-}
-
-/** Outside the cache: a Strapi outage hides one section instead of breaking the page. Not cached. */
-async function safely<T>(what: string, fallback: T, load: () => Promise<T>): Promise<T> {
-  try {
-    return await load();
-  } catch (error) {
-    console.error(`[strapi] ${what} unavailable:`, error instanceof Error ? error.message : error);
-    return fallback;
-  }
-}
 
 const postFields = {
   "fields[0]": "title",

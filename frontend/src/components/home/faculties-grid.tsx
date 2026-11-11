@@ -9,7 +9,7 @@ import { Card, CardBody, CardDescription, CardFooter, CardLink, CardMedia, CardT
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Reveal } from "@/components/ui/reveal";
-import { FACULTY_ACCENTS, FacultyArt } from "./faculty-art";
+import { FACULTY_ACCENTS, FacultyArt } from "@/components/academics/faculty-art";
 
 interface FacultiesGridProps {
   faculties: FacultyCard[];

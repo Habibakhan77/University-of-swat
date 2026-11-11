@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
-import type { FacultyAccent } from "@/lib/strapi/home";
+import type { CSSProperties } from "react";
+import type { FacultyAccent } from "@/lib/strapi/academics-model";
 
 /**
  * Accent colours for faculty cards. `base` carries white text and icons, so every base is at least
@@ -13,6 +14,16 @@ export const FACULTY_ACCENTS: Record<FacultyAccent, { base: string; deep: string
   coral: { base: "#a8402f", deep: "#3d140d", tint: "#f3c3b8" },
   gold: { base: "#80600f", deep: "#2c1f08", tint: "#efd993" },
 };
+
+/**
+ * CSS variables for a faculty's accent, set on a page or card wrapper:
+ * `--fac` (base), `--fac-deep`, `--fac-tint`. Utilities such as `text-fac` and `bg-fac-soft`
+ * (globals.css) read them and switch to the light tint in dark mode, where the base would be too dark.
+ */
+export function accentStyle(accent: FacultyAccent): CSSProperties {
+  const c = FACULTY_ACCENTS[accent];
+  return { "--fac": c.base, "--fac-deep": c.deep, "--fac-tint": c.tint } as CSSProperties;
+}
 
 interface FacultyArtProps {
   /** Unique per card, for the SVG pattern id. */

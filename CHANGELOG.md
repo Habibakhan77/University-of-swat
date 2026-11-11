@@ -264,3 +264,50 @@
   the uswat.edu.pk homepage (cms1.uswat.edu.pk), then Programs & eligibility and Fee Structure.
 - Admissions page seed: the "Spring 2027" banner and the four invented "tentative" important dates are removed;
   the banner now points to the CMS admission portal and the dates are left for the Admissions Directorate.
+
+## Phase 6 — Academics
+
+- **Pages** (all content from Strapi, English and Urdu):
+  - `/academics`: every faculty and centre as a band in its own accent colour, with all its departments listed,
+    so any department is one click from the page; live counts of faculties, departments and programs.
+  - `/academics/[faculty]`: about text, departments (program and member counts), dean or director, contact,
+    and links to the faculty's programs and people. Hunerkada (no departments) shows its own text instead.
+  - `/academics/[faculty]/[department]`: overview, programs grouped by level (undergraduate, postgraduate,
+    doctoral), faculty members (head first), contact, an "At a glance" panel and "On this page" links.
+    A department opened under the wrong faculty redirects to its real address.
+  - `/academics/programs`: every program, filterable by text, faculty and level group.
+  - `/academics/programs/[program]`: overview, eligibility, fees (breakdown table, per-semester/admission fee,
+    or a pointer to the fee structure), merit lists and documents, at-a-glance facts, the department that
+    offers it and its sibling programs. "Apply now" only when Strapi marks admissions open with an apply URL.
+  - `/faculty-directory`: searchable and filterable by faculty, department and designation, grouped by
+    department with the head first, 24 at a time with "Show more".
+- **Filters live in the URL** (`?q=`, `?faculty=`, `?department=`, `?designation=`, `?level=`), written with
+  `history.replaceState` on user changes only, so filtered views can be shared and department pages deep-link
+  into the directory. The prerendered HTML holds the full unfiltered list (works without JavaScript, indexable).
+  Native `<select>`s, labelled search fields, `aria-pressed` level chips and a polite live result count.
+- **Faculty accent colours from Strapi** (Faculty → `accent`) carried through every page: hero band, card
+  borders, icons and links, via `accentStyle()` and new `text-fac` / `bg-fac` / `bg-fac-soft` / `border-fac` /
+  `bg-fac-gradient` utilities that switch to the light tint in dark mode.
+- **Static generation**: every faculty, department and program is prerendered in both languages
+  (6 + 27 + 80 pages per locale) through `generateStaticParams`. The department route returns both its
+  segments, because `[faculty]` takes its params on a page, not a layout. If Strapi is unreachable during a CI
+  build, the routes return a placeholder `_` slug (Cache Components needs at least one), which renders the 404 page.
+  `instant = false` lets a page published after the build render on its first visit and then be cached.
+- **Placeholders stay marked**: seeded faculty members show a "Placeholder" badge (with a screen-reader hint)
+  and a neutral silhouette instead of the stock photo, plus a notice above any list that contains them. The
+  dean is badged when `deanIsPlaceholder` is set, and seeded merit-list PDFs are tagged "Sample file".
+- **Urdu**: translated fields are used where editors have written them, otherwise English per field, marked
+  `lang="en"` with an "available in English only" note on long sections. English fragments on Urdu pages are
+  now isolated left-to-right runs (`globals.css`), which fixes punctuation landing at the wrong end.
+- **SEO**: per-page title, description, canonical, `hreflang` alternates and Open Graph (`lib/seo.ts`, from each
+  entry's SEO component with sensible fallbacks); BreadcrumbList on every page, `CollegeOrUniversity` JSON-LD
+  for departments and `EducationalOccupationalProgram` for programs.
+- **Data layer**: `lib/strapi/academics.ts` (cached loaders, tag `academics`) with view models in the
+  client-safe `academics-model.ts`; shared helpers moved from `home.ts` to `lib/strapi/query.ts`
+  (`fetchAll` follows pagination, `fetchPairs` / `pick` merge English and Urdu per field). New `RichText` renderer
+  for Strapi blocks. The revalidation webhook now expires `academics` for faculties, departments, programs,
+  faculty members, campuses and downloads.
+- **Content**: faculty descriptions and department overviews no longer repeat the department and program lists
+  that the pages build from the real entries (seed changed; the live database was updated in place).
+- Verified on a production build at 1440px and 375px in English and Urdu: no horizontal scroll, no page
+  errors, filters, deep links and keyboard access work, and dark mode was checked. Lint, typecheck and build are clean.
