@@ -51,7 +51,7 @@ export async function generateStaticParams({ params }: { params: { locale: strin
 
 async function load(params: Props["params"]) {
   const { faculty: facultySlug, department: slug } = await params;
-  const locale = await resolveLocale(params);
+  const locale = await resolveLocale();
   const [index, detail, members] = await Promise.all([
     getAcademicIndex(locale),
     getDepartmentDetail(slug, locale),

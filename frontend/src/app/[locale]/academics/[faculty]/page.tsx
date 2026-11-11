@@ -40,7 +40,7 @@ export async function generateStaticParams({ params }: { params: { locale: strin
 
 async function load(params: PageProps<"/[locale]/academics/[faculty]">["params"]) {
   const { faculty: slug } = await params;
-  const locale = await resolveLocale(params);
+  const locale = await resolveLocale();
   const [index, detail] = await Promise.all([getAcademicIndex(locale), getFacultyDetail(slug, locale)]);
   const faculty = index.faculties.find((f) => f.slug === slug);
   if (!faculty || !detail) notFound();

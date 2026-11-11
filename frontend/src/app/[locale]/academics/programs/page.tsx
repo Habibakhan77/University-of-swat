@@ -10,8 +10,8 @@ import { ProgramExplorer, ProgramExplorerFromUrl } from "@/components/academics/
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 
-export async function generateMetadata({ params }: PageProps<"/[locale]/academics/programs">): Promise<Metadata> {
-  const locale = await resolveLocale(params);
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await resolveLocale();
   const t = await getTranslations({ locale, namespace: "academics" });
   return pageMetadata({ locale, path: programsHref, title: t("programsTitle"), description: t("programsIntro") });
 }
@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: PageProps<"/[locale]/academic
  * All programs, filterable by level, faculty and text. The list is static HTML (every program is in
  * the prerendered page, so it works without JavaScript and is indexed); filtering happens in the browser.
  */
-export default async function ProgramsPage({ params }: PageProps<"/[locale]/academics/programs">) {
-  const locale = await resolveLocale(params);
+export default async function ProgramsPage() {
+  const locale = await resolveLocale();
   const [{ index, faculties, departments }, t, tCommon] = await Promise.all([
     getExplorerOptions(locale),
     getTranslations({ locale, namespace: "academics" }),

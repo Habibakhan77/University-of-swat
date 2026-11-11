@@ -22,6 +22,11 @@ function strapiImagePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // app/global-not-found.tsx: the root layout is app/[locale]/layout.tsx, so there is no single
+    // layout to build a 404 for URLs outside every route from.
+    globalNotFound: true,
+  },
   turbopack: {
     rules: {
       "*.css": {

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { notFound } from "next/navigation";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { NextIntlClientProvider } from "next-intl";
+import { getTranslations } from "next-intl/server";
+import { resolveLocale } from "@/i18n/locale";
 import { localeDirection, routing } from "@/i18n/routing";
 import { ThemeScript } from "@/components/theme/theme-script";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -15,9 +15,8 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
-  const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) return {};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await resolveLocale();
   const chrome = await getSiteChrome(locale);
   const t = await getTranslations({ locale, namespace: "common" });
   const siteName = chrome?.siteName ?? t("siteName");
@@ -37,10 +36,8 @@ export const viewport: Viewport = {
   ],
 };
 
-export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
-  const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) notFound();
-  setRequestLocale(locale);
+export default async function LocaleLayout({ children }: LayoutProps<"/[locale]">) {
+  const locale = await resolveLocale();
 
   const [chrome, t] = await Promise.all([getSiteChrome(locale), getTranslations({ locale, namespace: "common" })]);
 

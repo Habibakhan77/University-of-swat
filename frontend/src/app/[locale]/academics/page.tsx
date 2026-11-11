@@ -12,15 +12,15 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 
-export async function generateMetadata({ params }: PageProps<"/[locale]/academics">): Promise<Metadata> {
-  const locale = await resolveLocale(params);
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await resolveLocale();
   const t = await getTranslations({ locale, namespace: "academics" });
   return pageMetadata({ locale, path: academicsHref, title: t("indexTitle"), description: t("indexIntro") });
 }
 
 /** Faculties & departments: every faculty with its departments listed, so any department is one click away. */
-export default async function AcademicsPage({ params }: PageProps<"/[locale]/academics">) {
-  const locale = await resolveLocale(params);
+export default async function AcademicsPage() {
+  const locale = await resolveLocale();
   const [index, t, tCommon] = await Promise.all([
     getAcademicIndex(locale),
     getTranslations({ locale, namespace: "academics" }),

@@ -324,3 +324,22 @@
   Phones keep the bottom-up gradient.
 - Checked on a production build at 1440px and 375px, all three slides in English and Urdu: correct copy and
   links, no horizontal scroll, no page errors.
+
+### Phase 6.2 — Language switcher and Urdu hero fixes
+
+- **Language switcher**: switching to English from an Urdu page did nothing. The proxy remembered the
+  language in a `NEXT_LOCALE` cookie and redirected unprefixed URLs back to `/ur`, and the router had cached
+  that redirect from prefetching. The URL alone now decides the language (`localeDetection: false`,
+  `localeCookie: false`), so shared and crawled links always open in the language they name. The switcher is
+  a plain same-tab `<a>` to the final URL (`/ur/academics` ↔ `/academics`, keeping the path), never
+  `target="_blank"` or `window.open`; the full load swaps `<html lang dir>` and fonts cleanly. `/en/...` still
+  redirects to the unprefixed path.
+- **Urdu hero**: the slide text column is `minmax(0, 1fr)` and full width with `text-start`, so long
+  Nastaliq lines wrap inside the container on the right instead of widening the column past the screen edge.
+- **Dev overlay issue** ("URL data outside of Suspense" on every page): the locale is now read with
+  `next/root-params` instead of awaiting `params`. That needed `app/[locale]/layout.tsx` to be the real root
+  layout, so the pass-through `app/layout.tsx` is gone and the last-resort 404 moved to
+  `app/global-not-found.tsx` (`experimental.globalNotFound`). The localized 404s are unchanged.
+- Tested in a real browser on a production build: the utility-bar and mobile-menu switchers in both
+  directions on the home, academics, programs, directory and department pages (same path, same tab, survives
+  reload); the Urdu and English hero at 1440px, 1280px and 375px, all slides, with no text outside the container.

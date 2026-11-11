@@ -137,8 +137,13 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
           {heading}
         </h1>
 
-        {/* All slide texts share one grid cell, so the block is as tall as the tallest one. */}
-        <div className="grid max-w-3xl">
+        {/*
+          All slide texts share one grid cell, so the block is as tall as the tallest one. The column is
+          minmax(0, 1fr) so long Nastaliq lines wrap inside the container (an auto track grows to the
+          widest line's min-content and pushed RTL text past the screen edge). text-start keeps it on
+          the reading side: left in English, right in Urdu.
+        */}
+        <div className="grid w-full max-w-3xl min-w-0 grid-cols-[minmax(0,1fr)] text-start">
           {slides.map((slide, i) => {
             const active = i === index;
             const lang = slide.lang !== locale ? slide.lang : undefined;

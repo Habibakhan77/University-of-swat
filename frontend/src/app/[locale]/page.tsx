@@ -26,8 +26,8 @@ const intlLocale: Record<Locale, string> = { en: "en-GB", ur: "ur-PK" };
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 const homePath = (locale: Locale) => (locale === routing.defaultLocale ? "/" : `/${locale}`);
 
-export async function generateMetadata({ params }: PageProps<"/[locale]">): Promise<Metadata> {
-  const locale = await resolveLocale(params);
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await resolveLocale();
   const [seo, chrome] = await Promise.all([getHomepageSeo(locale), getSiteChrome(locale)]);
   const siteName = chrome?.siteName ?? (await getTranslations({ locale, namespace: "common" }))("siteName");
   const title = seo?.title ?? siteName;
@@ -70,8 +70,8 @@ function structuredData(chrome: SiteChrome | null, locale: Locale) {
   };
 }
 
-export default async function HomePage({ params }: PageProps<"/[locale]">) {
-  const locale = await resolveLocale(params);
+export default async function HomePage() {
+  const locale = await resolveLocale();
   const [data, chrome, t, tCommon] = await Promise.all([
     getHomepageData(locale),
     getSiteChrome(locale),

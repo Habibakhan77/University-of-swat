@@ -43,8 +43,8 @@ const principles = [
   { icon: Smartphone, label: "Mobile first", detail: "44px targets, fluid type" },
 ];
 
-export default async function StyleguidePage({ params }: PageProps<"/[locale]/styleguide">) {
-  await resolveLocale(params);
+export default async function StyleguidePage() {
+  await resolveLocale();
 
   return (
     <>

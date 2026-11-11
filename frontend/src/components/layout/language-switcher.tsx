@@ -2,7 +2,7 @@
 
 import { Languages } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { getPathname, usePathname } from "@/i18n/navigation";
 import { localeNames, routing, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 
@@ -15,20 +15,22 @@ interface LanguageSwitcherProps {
 }
 
 /**
- * Keeps the visitor on the same page in the other language. Each option is a real link
- * (hreflang + lang), so it works without JavaScript and search engines see the alternate.
+ * Keeps the visitor on the same page in the other language. Each option is a plain same-tab
+ * <a> to the final URL ("/academics" or "/ur/academics"): a full load swaps <html lang/dir> and
+ * fonts cleanly, skips the router's prefetch cache, and works without JavaScript.
+ * Never add target="_blank" or window.open here.
  */
 export function LanguageSwitcher({ variant = "link", tone = "surface", className, onNavigate }: LanguageSwitcherProps) {
   const locale = useLocale();
   const pathname = usePathname();
   const t = useTranslations("language");
+  const hrefFor = (target: Locale) => getPathname({ href: pathname, locale: target });
 
   if (variant === "link") {
     const other: Locale = routing.locales.find((l) => l !== locale) ?? routing.defaultLocale;
     return (
-      <Link
-        href={pathname}
-        locale={other}
+      <a
+        href={hrefFor(other)}
         hrefLang={other}
         onClick={onNavigate}
         aria-label={t("switchTo", { language: localeNames[other] })}
@@ -42,7 +44,7 @@ export function LanguageSwitcher({ variant = "link", tone = "surface", className
         <span lang={other} className={other === "ur" ? "font-urdu text-[0.95em] leading-none" : undefined}>
           {localeNames[other]}
         </span>
-      </Link>
+      </a>
     );
   }
 
@@ -55,10 +57,9 @@ export function LanguageSwitcher({ variant = "link", tone = "surface", className
       {routing.locales.map((option) => {
         const current = option === locale;
         return (
-          <Link
+          <a
             key={option}
-            href={pathname}
-            locale={option}
+            href={hrefFor(option)}
             hrefLang={option}
             onClick={onNavigate}
             aria-current={current ? "true" : undefined}
@@ -68,7 +69,7 @@ export function LanguageSwitcher({ variant = "link", tone = "surface", className
             )}
           >
             <span lang={option}>{localeNames[option]}</span>
-          </Link>
+          </a>
         );
       })}
     </div>
