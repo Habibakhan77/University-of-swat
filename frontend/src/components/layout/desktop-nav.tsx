@@ -42,19 +42,19 @@ interface DesktopNavProps {
 const pathOf = (href: string) => href.split(/[?#]/)[0] || "/";
 
 /**
- * Which top-level item the current page belongs to: the item whose URL prefixes the path, otherwise
- * the item that links to this exact page. Shown with the gold underline and aria-current.
+ * Which top-level item the current page belongs to: only the item whose own URL contains the path
+ * (/academics is active on /academics/physical-sciences/physics). A page that is merely linked from a
+ * panel, such as /downloads under Academics or /tenders under News & Events, lives in its own section
+ * and highlights nothing. Shown with the gold underline and aria-current.
  */
 function activeGroupIndex(groups: NavGroup[], pathname: string): number {
   // "Home" (/) is active on the homepage only; it would otherwise prefix every path.
   if (pathname === "/") return groups.findIndex((g) => g.href !== null && pathOf(g.href) === "/");
-  const byPrefix = groups.findIndex((g) => {
+  return groups.findIndex((g) => {
     if (!g.href) return false;
     const base = pathOf(g.href);
     return base !== "/" && (pathname === base || pathname.startsWith(`${base}/`));
   });
-  if (byPrefix !== -1) return byPrefix;
-  return groups.findIndex((g) => g.links.some((l) => !l.external && pathOf(l.href) === pathname));
 }
 
 const HOVER_OPEN_DELAY = 90;

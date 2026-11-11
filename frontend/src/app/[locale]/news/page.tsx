@@ -42,6 +42,7 @@ export default async function NewsPage({ searchParams }: PageProps<"/[locale]/ne
   return (
     <>
       <AcademicHero
+        compact
         id="news"
         accent="green"
         icon={Newspaper}
@@ -51,7 +52,7 @@ export default async function NewsPage({ searchParams }: PageProps<"/[locale]/ne
         summary={t("newsIntro")}
         meta={posts.length ? <HeroChip icon={Newspaper}>{t("itemsCount", { count: posts.length })}</HeroChip> : null}
       />
-      <Container size="wide" className="py-section-sm">
+      <Container size="wide" className="pt-6 pb-section sm:pt-8">
         <Suspense fallback={<NewsList posts={posts} category="" page={1} locale={locale} />}>
           <NewsFromUrl posts={posts} searchParams={searchParams} locale={locale} />
         </Suspense>

@@ -71,6 +71,7 @@ export async function NoticeListPage({
   return (
     <>
       <AcademicHero
+        compact
         id={kind}
         accent={c.accent}
         icon={c.icon}
@@ -80,7 +81,7 @@ export async function NoticeListPage({
         summary={t(c.intro)}
         meta={notices.length ? <HeroChip icon={c.icon}>{t("itemsCount", { count: notices.length })}</HeroChip> : null}
       />
-      <Container size="wide" className="py-section-sm">
+      <Container size="wide" className="pt-6 pb-section sm:pt-8">
         <Suspense fallback={<NoticeList kind={kind} notices={notices} status="" page={1} now={null} locale={locale} />}>
           <NoticeListFromUrl kind={kind} notices={notices} searchParams={searchParams} locale={locale} />
         </Suspense>

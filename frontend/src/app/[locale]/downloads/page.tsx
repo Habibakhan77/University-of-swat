@@ -33,6 +33,7 @@ export default async function DownloadsPage() {
   return (
     <>
       <AcademicHero
+        compact
         id="downloads"
         accent="green"
         icon={FolderDown}
@@ -42,7 +43,7 @@ export default async function DownloadsPage() {
         summary={t("downloadsIntro")}
         meta={listed.length ? <HeroChip icon={FolderDown}>{t("resultsCount", { count: listed.length })}</HeroChip> : null}
       />
-      <Container size="wide" className="py-section-sm">
+      <Container size="wide" className="pt-6 pb-section sm:pt-8">
         <Suspense fallback={<DownloadsExplorer items={listed} />}>
           <DownloadsExplorerFromUrl items={listed} />
         </Suspense>

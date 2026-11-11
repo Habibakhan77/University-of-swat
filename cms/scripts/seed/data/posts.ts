@@ -66,10 +66,9 @@ export const POSTS: PostSeed[] = [
     source: '/2026/11/allama-iqbal-day/',
     attachments: [{ file: '2026/11/WhatsApp-Image-2026-11-07-at-21.15.03-e1794125551373.jpeg', title: 'Notification closing the university on Allama Iqbal Day, 9 November 2026' }],
     title: 'Allama Iqbal Day',
-    category: 'event',
+    // A closure notice, not an event: no event date or venue.
+    category: 'announcement',
     date: '2026-11-08',
-    eventStart: '2026-11-09T00:00:00+05:00',
-    eventLocation: 'All campuses',
     excerpt: 'The university will remain closed on Monday, 9 November 2026, on the occasion of Allama Iqbal Day. Announced exams, tests and interviews will be rescheduled.',
     content: blocks(
       'Under the Government of Pakistan’s Cabinet Division press release of 30 October 2026, the University of Swat will remain closed on Monday, 9 November 2026, on the occasion of Allama Iqbal Day (notification No. UoS/Acad/363, Office of the Registrar, Academics Section, 5 November 2026).',

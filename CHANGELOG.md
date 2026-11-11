@@ -490,3 +490,21 @@
 - On-demand revalidation now covers tenders, jobs and downloads (and office changes on tender/job pages).
 - Lint, typecheck and build are clean. Verified on a production build at 1440px and 375px in English and Urdu
   (filters, pagination, empty "open" lists, RTL, no horizontal scroll, structured data).
+
+## Phase 8.1 — Review fixes
+
+- **Compact listing heroes.** News & Events, Tenders, Jobs and Downloads use a new `compact` variant of the page
+  hero: breadcrumb, eyebrow, smaller title, a one-line intro and the count chip in a band about half the old
+  height (194px at 1440px). The filters and the first row of items are now visible without scrolling at
+  1440x900 and at 375px, in English and Urdu. The homepage and landing pages (Academics, Admissions, faculty and
+  department pages) keep the full hero.
+- **Allama Iqbal Day** is now an Announcement (the university was closed on 9 November), without the event date
+  and venue, so it no longer appears under Events or carries Event structured data. The other event posts were
+  checked: all are real seminars, lectures, a conference, an awareness drive and the Youm-e-Siah walk.
+- **Active navigation.** A main-menu item is highlighted only when the current page is inside its own section
+  (its URL is a prefix of the path). Pages that are only linked from a panel, such as Downloads (under
+  Academics) and Tenders and Jobs (under News & Events), now highlight nothing instead of the wrong item.
+- **Dev overlay issue on /tenders and /jobs** ("Blocking Route: Date.now()") fixed: the open/closed filter now
+  calls `connection()` before reading the clock, so the time is read per request.
+- Reseeded with `--reset`. Lint, typecheck and build are clean; verified on a production build at 1440px and
+  375px in English and Urdu (no horizontal scroll, intros not cut off, RTL) and in the dev server (no issues).

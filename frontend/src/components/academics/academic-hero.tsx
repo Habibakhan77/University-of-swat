@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import type { FacultyAccent } from "@/lib/strapi/academics";
 import type { SiteImage } from "@/lib/strapi/site";
 import { SITE_URL } from "@/lib/seo";
+import { cn } from "@/lib/cn";
 import { Breadcrumbs, type BreadcrumbItem } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { ImageCredit } from "@/components/ui/image-credit";
@@ -27,6 +28,11 @@ interface AcademicHeroProps {
   /** Chips under the summary (counts, level, duration…). */
   meta?: ReactNode;
   actions?: ReactNode;
+  /**
+   * Listing pages (news, tenders, jobs, downloads): a short band with a smaller title and a one-line
+   * intro, so the filters and the first items are visible without scrolling.
+   */
+  compact?: boolean;
 }
 
 /**
@@ -47,6 +53,7 @@ export function AcademicHero({
   image,
   meta,
   actions,
+  compact = false,
 }: AcademicHeroProps) {
   const t = useTranslations("common");
   return (
@@ -70,22 +77,38 @@ export function AcademicHero({
           ) : (
             <GandharaPattern className="-z-10 text-white/[0.07]" />
           )}
-          <MountainRidge className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-16 w-full text-black/15 sm:h-24" />
+          <MountainRidge
+            className={cn(
+              "pointer-events-none absolute inset-x-0 bottom-0 -z-10 w-full text-black/15",
+              compact ? "h-10 sm:h-14" : "h-16 sm:h-24",
+            )}
+          />
 
-          <div className="flex max-w-3xl flex-col items-start gap-4 px-5 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-16">
+          <div
+            className={cn(
+              "flex flex-col items-start",
+              compact ? "gap-2 px-5 py-6 sm:px-8 sm:py-7 lg:px-12" : "max-w-3xl gap-4 px-5 py-9 sm:px-10 sm:py-12 lg:px-14 lg:py-16",
+            )}
+          >
             <p className="inline-flex items-center gap-3 text-overline text-gold-200 uppercase">
               <span aria-hidden className="h-px w-8 bg-current" />
               {eyebrow}
             </p>
-            <h1 lang={titleLang} className="text-display-lg text-balance [text-shadow:0_1px_2px_rgb(0_0_0/0.25)]">
+            <h1
+              lang={titleLang}
+              className={cn(compact ? "text-heading-xl" : "text-display-lg", "text-balance [text-shadow:0_1px_2px_rgb(0_0_0/0.25)]")}
+            >
               {title}
             </h1>
             {summary ? (
-              <p lang={summaryLang} className="max-w-2xl text-body-lg text-pretty text-white/90">
+              <p
+                lang={summaryLang}
+                className={cn("text-pretty text-white/90", compact ? "max-w-5xl text-body sm:line-clamp-1" : "max-w-2xl text-body-lg")}
+              >
                 {summary}
               </p>
             ) : null}
-            {meta ? <div className="mt-1 flex flex-wrap items-center gap-2">{meta}</div> : null}
+            {meta ? <div className={cn("flex flex-wrap items-center gap-2", compact ? "mt-0.5" : "mt-1")}>{meta}</div> : null}
             {actions ? <div className="mt-3 flex flex-wrap gap-3">{actions}</div> : null}
           </div>
           {image?.credit ? <ImageCredit credit={image.credit} className="absolute end-3 bottom-3" /> : null}

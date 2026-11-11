@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import type { ReactNode } from "react";
 import { ArrowRight, Building2, CalendarClock, CalendarDays, FileText, Gavel, Hash, Tag, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -236,5 +237,7 @@ export async function NoticeListFromUrl({
   const raw = one(params.status);
   const status = (STATUS_FILTERS as readonly string[]).includes(raw) ? (raw as StatusFilter) : "";
   const page = Math.max(1, Number.parseInt(one(params.page), 10) || 1);
+  // Open/closed depends on the time of this request, not of the prerender.
+  await connection();
   return <NoticeList kind={kind} notices={notices} status={status} page={page} now={Date.now()} locale={locale} />;
 }
