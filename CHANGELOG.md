@@ -311,3 +311,16 @@
   that the pages build from the real entries (seed changed; the live database was updated in place).
 - Verified on a production build at 1440px and 375px in English and Urdu: no horizontal scroll, no page
   errors, filters, deep links and keyboard access work, and dark mode was checked. Lint, typecheck and build are clean.
+
+### Phase 6.1 — Hero copy and crisp hero text
+
+- New hero copy in English and Urdu, one slide per photo: "Knowledge rooted in the valley" (main building with
+  snow-capped mountains → Explore faculties, Our story), "Begin your journey here" (main gate → Explore
+  admissions, Merit lists on cms1.uswat.edu.pk) and "Research that serves the region" (aerial view → Research
+  at UoS, Latest news). The eyebrow on every slide is the site name from Site Settings ("University of Swat" /
+  "جامعہ سوات"), shown once as the page h1. Seed updated and reseeded with `--reset`.
+- Hero text has no text-shadow any more (it blurred the letters). Legibility comes from a darker gradient on
+  the text side instead (95% → 80% across the text column, fading out by 75% of the width; mirrored in Urdu).
+  Phones keep the bottom-up gradient.
+- Checked on a production build at 1440px and 375px, all three slides in English and Urdu: correct copy and
+  links, no horizontal scroll, no page errors.

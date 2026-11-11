@@ -174,45 +174,58 @@ export const PARTNERS = [
   { key: 'kpef', name: 'Khyber Pakhtunkhwa Education Foundation (KPEF)', country: 'Pakistan' },
 ];
 
+/**
+ * Homepage hero, one slide per campus photo (see HERO_PHOTOS in index.ts). The eyebrow above every slide is
+ * the site name from Site Settings ("University of Swat" / "جامعہ سوات"), rendered once as the page h1.
+ */
 export const HERO_SLIDES = [
   {
-    key: 'admissions',
-    title: 'Your future starts in the valley',
-    subtitle: 'Undergraduate and postgraduate programs across five faculties. Explore programs, eligibility and fees in one place.',
-    ctaLabel: 'Explore admissions',
-    ctaUrl: '/admissions',
-    secondaryCtaLabel: 'Browse programs',
-    secondaryCtaUrl: '/academics/programs',
-    ur: { title: 'آپ کا مستقبل وادی سے شروع ہوتا ہے', subtitle: 'پانچ فیکلٹیز میں انڈرگریجویٹ اور پوسٹ گریجویٹ پروگرام۔ پروگرام، اہلیت اور فیس ایک ہی جگہ۔', ctaLabel: 'داخلے دیکھیں', secondaryCtaLabel: 'پروگرام دیکھیں' },
-  },
-  {
     key: 'campus',
-    title: 'Study beneath the peaks of Swat',
-    subtitle: 'Five faculties and the Hunerkada centre share one hillside campus at Charbagh, with snow-capped mountains on the horizon.',
+    title: 'Knowledge rooted in the valley',
+    subtitle:
+      'A public university serving Swat and the Malakand Division since 2010, with programs from languages and law to computing and health sciences.',
     ctaLabel: 'Explore faculties',
     ctaUrl: '/academics',
-    secondaryCtaLabel: 'Campus life',
-    secondaryCtaUrl: '/campus-life',
+    secondaryCtaLabel: 'Our story',
+    secondaryCtaUrl: '/about',
     ur: {
-      title: 'سوات کی چوٹیوں کے دامن میں تعلیم',
-      subtitle: 'چارباغ کے پہاڑی کیمپس میں پانچ فیکلٹیز اور ہنرکدہ، اور افق پر برف پوش پہاڑ۔',
-      ctaLabel: 'فیکلٹیز دیکھیں',
-      secondaryCtaLabel: 'کیمپس لائف',
+      title: 'علم، وادیٔ سوات کے دامن میں',
+      subtitle:
+        '2010 سے سوات اور ملاکنڈ ڈویژن کی خدمت کرنے والی سرکاری جامعہ، زبانوں اور قانون سے لے کر کمپیوٹنگ اور صحت کے علوم تک۔',
+      ctaLabel: 'شعبہ جات دیکھیں',
+      secondaryCtaLabel: 'ہمارے بارے میں',
     },
   },
   {
-    key: 'gateway',
-    title: 'Your gateway to higher education',
-    subtitle: 'Need-based and merit scholarships, and a clear path from application to merit list.',
-    ctaLabel: 'Scholarships & financial aid',
-    ctaUrl: '/admissions#scholarships',
-    secondaryCtaLabel: 'How to apply',
-    secondaryCtaUrl: '/admissions',
+    key: 'admissions',
+    title: 'Begin your journey here',
+    subtitle: 'Find your program, check eligibility and fees, and follow every step from application to merit list.',
+    ctaLabel: 'Explore admissions',
+    ctaUrl: '/admissions',
+    secondaryCtaLabel: 'Merit lists',
+    secondaryCtaUrl: 'https://cms1.uswat.edu.pk/admission/program/list/final',
     ur: {
-      title: 'اعلیٰ تعلیم کا دروازہ',
-      subtitle: 'ضرورت اور میرٹ کی بنیاد پر وظائف، اور درخواست سے میرٹ لسٹ تک ایک واضح راستہ۔',
-      ctaLabel: 'وظائف و مالی معاونت',
-      secondaryCtaLabel: 'درخواست کا طریقہ',
+      title: 'اپنا سفر یہیں سے شروع کریں',
+      subtitle: 'اپنا پروگرام منتخب کریں، اہلیت اور فیس دیکھیں، اور درخواست سے میرٹ لسٹ تک ہر مرحلہ آسانی سے مکمل کریں۔',
+      ctaLabel: 'داخلے',
+      secondaryCtaLabel: 'میرٹ لسٹ',
+    },
+  },
+  {
+    key: 'research',
+    title: 'Research that serves the region',
+    subtitle:
+      'From Gandhara heritage to climate and public health, our faculty and students work on questions that matter to Swat and beyond.',
+    ctaLabel: 'Research at UoS',
+    ctaUrl: '/research',
+    secondaryCtaLabel: 'Latest news',
+    secondaryCtaUrl: '/news',
+    ur: {
+      title: 'خطے کی خدمت کے لیے تحقیق',
+      subtitle:
+        'گندھارا کے ورثے سے لے کر ماحولیات اور صحتِ عامہ تک، ہمارے اساتذہ اور طلبہ سوات اور اس سے آگے کے اہم سوالات پر کام کر رہے ہیں۔',
+      ctaLabel: 'تحقیق',
+      secondaryCtaLabel: 'تازہ خبریں',
     },
   },
 ];

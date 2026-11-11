@@ -113,15 +113,15 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
         </div>
       ))}
       {/*
-        Legibility on any photo: an even dark wash over the whole image, then a gradient behind the
-        text. On phones the text spans the width at the bottom, so the gradient runs bottom to top; from
-        lg it runs from the text side (mirrored in RTL). Behind the heading the image is always covered
-        by at least ~75% dark, enough for white text to pass WCAG AA on a white photo.
+        Legibility on any photo without text shadows (they blur the letters): an even dark wash over the
+        whole image, then a strong gradient behind the text. On phones the text spans the width at the
+        bottom, so the gradient runs bottom to top; from lg it runs from the text side (left, mirrored to
+        the right in Urdu) and stays near-opaque across the text column before fading out.
       */}
       <div aria-hidden className="absolute inset-0 -z-10 bg-forest-950/35" />
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-linear-to-t from-forest-950/95 via-forest-950/80 to-forest-950/45 lg:bg-linear-to-r lg:from-forest-950/90 lg:via-forest-950/60 lg:to-transparent lg:rtl:bg-linear-to-l"
+        className="absolute inset-0 -z-10 bg-linear-to-t from-forest-950/95 via-forest-950/80 to-forest-950/45 lg:bg-linear-to-r lg:from-forest-950/95 lg:from-10% lg:via-forest-950/80 lg:via-40% lg:to-forest-950/0 lg:to-75% lg:rtl:bg-linear-to-l"
       />
       <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 hidden h-1/2 bg-linear-to-t from-forest-950/80 to-transparent lg:block" />
 
@@ -132,7 +132,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
       ) : null}
 
       <div className="mx-auto flex min-h-[30rem] w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] flex-col justify-end px-gutter pt-14 pb-36 sm:min-h-[38rem] sm:pt-20 sm:pb-40 lg:min-h-[44rem] lg:pb-48">
-        <h1 className="mb-5 inline-flex items-center gap-2.5 text-overline text-gold-200 uppercase [text-shadow:0_1px_8px_rgb(0_0_0/0.4)]">
+        <h1 className="mb-5 inline-flex items-center gap-2.5 text-overline text-gold-200 uppercase">
           <Rosette className="size-5 text-gold-300" />
           {heading}
         </h1>
@@ -156,11 +156,11 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                   active ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0 motion-reduce:translate-y-0",
                 )}
               >
-                <p lang={lang} className="text-display-xl text-balance text-white [text-shadow:0_2px_24px_rgb(0_0_0/0.35)] [&:lang(ur)]:text-display-lg">
+                <p lang={lang} className="text-display-xl text-balance text-white [&:lang(ur)]:text-display-lg">
                   {slide.title}
                 </p>
                 {slide.subtitle ? (
-                  <p lang={lang} className="max-w-2xl text-body-lg text-pretty text-sand-50 [text-shadow:0_1px_12px_rgb(0_0_0/0.4)]">
+                  <p lang={lang} className="max-w-2xl text-body-lg text-pretty text-sand-50">
                     {slide.subtitle}
                   </p>
                 ) : null}
