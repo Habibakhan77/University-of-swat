@@ -20,6 +20,9 @@ function strapiImagePatterns(): NonNullable<NonNullable<NextConfig["images"]>["r
 }
 
 const nextConfig: NextConfig = {
+  // The Docker image sets BUILD_STANDALONE=1: `next build` then writes a self-contained server
+  // (.next/standalone) with only the node_modules it needs. Local builds keep `next start`.
+  output: process.env.BUILD_STANDALONE === "1" ? "standalone" : undefined,
   cacheComponents: true,
   partialPrefetching: true,
   experimental: {

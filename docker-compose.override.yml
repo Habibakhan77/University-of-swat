@@ -1,0 +1,40 @@
+# Local use only: `docker compose up --build` merges this file automatically.
+# (On the server, COMPOSE_FILE=docker-compose.yml in .env keeps it out.)
+#
+#   Website        http://localhost:8080
+#   Strapi admin   http://cms.localhost:8081/admin
+#   PostgreSQL     localhost:5433  (5432 stays free for a natively installed PostgreSQL)
+#
+# Ports differ from `npm run dev` (3000 / 1337) so both can run side by side.
+# No Nginx/TLS locally: there is no Cloudflare certificate on a laptop.
+#
+# In .env for local use set:
+#   SITE_URL=http://localhost:8080
+#   CMS_URL=http://cms.localhost:8081
+# Browsers resolve *.localhost to this machine. The website container reaches the same address
+# through the Docker host (extra_hosts below), so media URLs work in the browser and in next/image.
+
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:5433:5432"
+
+  cms:
+    environment:
+      IS_PROXIED: "false"
+    ports:
+      - "8081:1337"
+
+  frontend:
+    build:
+      args:
+        # Strapi media is on the Docker host's private address locally; allow next/image to fetch it.
+        IMAGES_ALLOW_LOCAL_IP: "1"
+    extra_hosts:
+      - "cms.localhost:host-gateway"
+    ports:
+      - "127.0.0.1:8080:3000"
+
+  nginx:
+    # Not started locally (needs the Cloudflare Origin Certificate). Run it with --profile proxy.
+    profiles: [proxy]

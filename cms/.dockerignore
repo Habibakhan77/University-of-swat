@@ -1,0 +1,23 @@
+# Keep the build context small and free of secrets and local data
+node_modules
+dist
+build
+.tmp
+.cache
+.strapi
+.seed-cache
+exports
+types/generated
+public/uploads/*
+!public/uploads/.gitkeep
+*.sqlite
+*.db
+.env
+.env.*
+!.env.example
+npm-debug.log*
+Dockerfile
+.dockerignore
+.git
+.vscode
+.idea

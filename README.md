@@ -18,10 +18,20 @@ A full-stack replacement for [uswat.edu.pk](https://uswat.edu.pk), built for the
 ```
 /frontend                 Next.js app
 /cms                      Strapi app
-/nginx/nginx.conf         Reverse proxy config
-docker-compose.yml        Production stack
-.github/workflows/ci.yml  CI pipeline
+/nginx/nginx.conf         Reverse proxy config (+ snippets/, Dockerfile with Brotli)
+docker-compose.yml        Production stack: nginx, frontend, cms, postgres
+docker-compose.override.yml  Local Docker stack (merged automatically on a laptop)
+.env.example              Every docker-compose setting, documented
+.github/workflows/ci.yml  CI: lint, typecheck, build both apps, build the Docker images, nginx -t
+DEPLOY.md                 Ubuntu VPS + Cloudflare setup, updates, backups
 ```
+
+## Deployment
+
+Production runs as four containers (`docker compose up -d`) behind Cloudflare: Nginx terminates TLS with a
+Cloudflare Origin Certificate and proxies the website and `cms.<domain>` (Strapi). Each app image is a
+multi-stage build on `node:22-alpine` that runs as the unprivileged `node` user. See
+**[DEPLOY.md](DEPLOY.md)** for the server, DNS/SSL/caching and backup steps.
 
 ## Local development (prerequisites)
 

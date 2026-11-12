@@ -1,0 +1,151 @@
+# University of Swat website: production stack
+#
+#   Internet -> Cloudflare -> nginx (:80/:443) -> frontend (Next.js :3000)
+#                                              -> cms      (Strapi :1337) -> postgres (:5432)
+#
+# Settings come from ./.env (copy .env.example). On the server, set COMPOSE_FILE=docker-compose.yml
+# in .env so docker-compose.override.yml (local development only) is never applied there.
+# See DEPLOY.md for the full server setup.
+
+name: uswat
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+# Environment shared by the Strapi server and the one-off seed job.
+x-cms-env: &cms-env
+  NODE_ENV: production
+  HOST: 0.0.0.0
+  PORT: 1337
+  PUBLIC_URL: ${CMS_URL:?Set CMS_URL in .env}
+  IS_PROXIED: "true"
+  APP_KEYS: ${APP_KEYS:?Set APP_KEYS in .env}
+  API_TOKEN_SALT: ${API_TOKEN_SALT:?Set API_TOKEN_SALT in .env}
+  ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET:?Set ADMIN_JWT_SECRET in .env}
+  TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT:?Set TRANSFER_TOKEN_SALT in .env}
+  JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Set ENCRYPTION_KEY in .env}
+  DATABASE_CLIENT: postgres
+  DATABASE_HOST: postgres
+  DATABASE_PORT: 5432
+  DATABASE_NAME: ${POSTGRES_DB:-uswat}
+  DATABASE_USERNAME: ${POSTGRES_USER:-uswat}
+  DATABASE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+  DATABASE_SCHEMA: public
+  DATABASE_SSL: "false"
+  # Strapi tells the website (over the internal network) to refresh pages when content changes.
+  FRONTEND_REVALIDATE_URL: http://frontend:3000/api/revalidate
+  REVALIDATE_SECRET: ${REVALIDATE_SECRET:?Set REVALIDATE_SECRET in .env}
+  CONTACT_FORM_SECRET: ${CONTACT_FORM_SECRET:-}
+  SYNC_ADMIN_ROLES: ${SYNC_ADMIN_ROLES:-false}
+  FLAG_NPS: "false"
+  FLAG_PROMOTE_EE: "false"
+  STRAPI_TELEMETRY_DISABLED: "true"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-uswat}
+      POSTGRES_USER: ${POSTGRES_USER:-uswat}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C.UTF-8
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [db]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    shm_size: 128mb
+    logging: *logging
+
+  cms:
+    build:
+      context: ./cms
+      target: runner
+    image: uswat-cms:latest
+    restart: unless-stopped
+    init: true
+    environment: *cms-env
+    volumes:
+      # Media Library files (photos, PDFs). Back this up together with the database.
+      - cms_uploads:/opt/app/public/uploads
+    networks: [web, db]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *logging
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_SITE_URL: ${SITE_URL:?Set SITE_URL in .env}
+        NEXT_PUBLIC_STRAPI_URL: ${CMS_URL:?Set CMS_URL in .env}
+        IMAGES_ALLOW_LOCAL_IP: ""
+    image: uswat-frontend:latest
+    restart: unless-stopped
+    init: true
+    environment:
+      NODE_ENV: production
+      STRAPI_URL: http://cms:1337
+      STRAPI_API_TOKEN: ${STRAPI_API_TOKEN:-}
+      REVALIDATE_SECRET: ${REVALIDATE_SECRET:?Set REVALIDATE_SECRET in .env}
+      CONTACT_FORM_SECRET: ${CONTACT_FORM_SECRET:-}
+    networks: [web]
+    depends_on:
+      cms:
+        condition: service_healthy
+    logging: *logging
+
+  nginx:
+    build: ./nginx
+    image: uswat-nginx:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      # Cloudflare Origin Certificate: origin.pem + origin.key (never committed).
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - nginx_cache:/var/cache/nginx
+    networks: [web]
+    depends_on:
+      - frontend
+      - cms
+    logging: *logging
+
+  # One-off: fill an empty database with University of Swat content.
+  #   docker compose --profile seed run --rm cms-seed            (empty database only)
+  #   docker compose --profile seed run --rm cms-seed --reset    (wipe website content and reseed)
+  cms-seed:
+    profiles: [seed]
+    build:
+      context: ./cms
+      target: builder
+    image: uswat-cms-builder:latest
+    environment: *cms-env
+    entrypoint: ["node", "scripts/seed.js"]
+    volumes:
+      - cms_uploads:/opt/app/public/uploads
+    networks: [web, db]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  web: {}
+  # No route to the internet: only Strapi can reach PostgreSQL.
+  db:
+    internal: true
+
+volumes:
+  pgdata: {}
+  cms_uploads: {}
+  nginx_cache: {}

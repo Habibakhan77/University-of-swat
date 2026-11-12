@@ -778,3 +778,52 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   correct `lang`/`dir`, console clean apart from the deliberate 404 test); screenshots match the previous
   design. The Phase 11 reseed was confirmed via the API (28 departments, 78 programs, 56 placeholder faculty
   members, no program with a shift).
+
+## Phase 12 (part 1) — Docker, Nginx, CI and deployment guide
+
+- **Docker images** (multi-stage, `node:22-alpine`, run as the unprivileged `node` user, health checks):
+  - `frontend/Dockerfile`: deps → build → runtime with only Next.js's **standalone** server, `.next/static` and
+    `public/`. `next.config.ts` switches to `output: "standalone"` only when `BUILD_STANDALONE=1` (set in the
+    image and CI), so local `next start` is unchanged. `NEXT_PUBLIC_*` URLs and `IMAGES_ALLOW_LOCAL_IP` are
+    build args, because `next.config.ts` and public env values are fixed at build time.
+  - `cms/Dockerfile`: production-only `node_modules` + compiled `dist/` (server + admin panel). A `builder`
+    target with dev dependencies runs the seed script once (`docker compose --profile seed run --rm cms-seed`).
+    Strapi starts directly (not through npm) so it gets SIGTERM.
+  - `nginx/Dockerfile`: Alpine's nginx + the Brotli module package.
+- **Found while testing:** in a fresh clone the CMS typecheck and `strapi build` both failed, because
+  `cms/types/generated` is git-ignored (only `strapi develop` writes it). New `npm run typegen`, run before the
+  build in the Dockerfile and CI with placeholder settings (no database connection is made).
+- **Strapi behind a proxy:** `config/server.ts` reads `PUBLIC_URL` and `IS_PROXIED` (koa `proxy`), so Strapi
+  sees HTTPS through Nginx and admin session cookies are marked secure. Both default to the old behaviour locally.
+- **`docker-compose.yml`:** nginx, frontend, cms, postgres 17 (volume `pgdata`), media volume `cms_uploads`,
+  Nginx cache volume. PostgreSQL is on an `internal` network that only Strapi joins. Required secrets fail
+  fast (`${VAR:?}`). Strapi's revalidation webhook and the contact form use the internal network
+  (`http://frontend:3000`, `http://cms:1337`). Log rotation on every service.
+  **`docker-compose.override.yml`** (local): no Nginx, website on :8080, Strapi on `cms.localhost:8081`,
+  PostgreSQL on :5433, so it runs next to `npm run dev` and a native PostgreSQL.
+- **`nginx/nginx.conf`** (no domain written in; `cms.*` and `www.*` are matched by name):
+  website, `www` → apex 301, and `cms.<domain>` for Strapi. TLS 1.2/1.3 and HTTP/2 with a Cloudflare Origin
+  Certificate. gzip + Brotli. Real visitor IP taken from `CF-Connecting-IP` only for Cloudflare ranges, and
+  forwarded headers are overwritten so the contact form's rate limit can't be spoofed. Origin cache for
+  `/_next/image` (one copy per AVIF/WebP/other) and `/uploads/`; `public/` files cached 7 days, hashed
+  `/_next/static` left at Next's immutable 1 year. Security headers on every response: HSTS, CSP,
+  `X-Frame-Options`, `Referrer-Policy`, `nosniff`, `Permissions-Policy`, COOP. Strapi keeps its own admin CSP.
+  Upload limit 50 MB on the CMS, 1 MB on the site. POST rate limits on pages and admin/API logins.
+  `/api/revalidate` and Strapi's `/api/contact-messages` are closed to the internet (only used internally).
+- **Env files:** new root `.env.example` (all compose settings, a one-line secret generator). `cms/.env.example`
+  and `frontend/.env.example` now list every variable the code reads. **Git history checked** for committed
+  secrets (env files, keys, tokens, passwords in all 34 commits): none found. Only the `.env.example` files were
+  ever committed.
+- **CI** (`.github/workflows/ci.yml`, every push and PR): frontend lint, typecheck and standalone build; CMS
+  typegen, typecheck and build; then the three Docker images (BuildKit, GitHub Actions cache), `docker compose
+  config` for both compose files, and `nginx -t` on the built Nginx image with a throwaway certificate.
+- **`DEPLOY.md`:** Ubuntu 24.04 VPS setup (SSH, UFW, swap, Docker), `.env`, Cloudflare DNS (keeping mail records
+  DNS-only), SSL Full (strict) with an Origin Certificate, cache rules, settings that break React (Rocket Loader,
+  e-mail obfuscation), first start, seeding, editors, checks, updates, nightly PostgreSQL + media backups with
+  restore steps, troubleshooting, and a Cloudflare-only firewall for Docker.
+- **Checked here** (Docker isn't available on this laptop): CMS typecheck and build, frontend lint, typecheck and
+  standalone build, all from a clean worktree like CI. The standalone server answered 200 for `/`,
+  `/admissions`, `/ur`, `/news`, `/sitemap.xml` and images with proxy headers (`Host`, `X-Forwarded-Proto: https`).
+  With `HOSTNAME=127.0.0.1` it broke the locale rewrite (307/500). The image uses `0.0.0.0` and carries a
+  comment about this. **Not yet run:** the images themselves, `docker compose up`, and Nginx. CI builds them
+  on the first push.
