@@ -14,6 +14,7 @@ import {
   directoryHref,
   getAcademicIndex,
   getFacultyDetail,
+  displayName,
   langAttr,
   OFFLINE_SLUG,
   programsHref,
@@ -71,6 +72,8 @@ export default async function FacultyPage({ params }: PageProps<"/[locale]/acade
   const typeLabel = isFaculty ? t("faculty") : faculty.type === "center" ? t("centre") : t("institute");
   const members = faculty.departments.reduce((sum, d) => sum + d.memberCount, 0);
 
+  const facultyLabel = displayName(faculty, locale);
+
   return (
     <div style={accentStyle(faculty.accent)}>
       <AcademicHero
@@ -81,7 +84,7 @@ export default async function FacultyPage({ params }: PageProps<"/[locale]/acade
         breadcrumbs={[
           { label: tCommon("home"), href: "/" },
           { label: t("breadcrumb"), href: academicsHref },
-          { label: faculty.shortName?.value ?? faculty.name.value },
+          { label: facultyLabel.value, lang: langAttr(facultyLabel, locale) },
         ]}
         eyebrow={typeLabel}
         title={faculty.name.value}

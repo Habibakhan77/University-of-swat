@@ -25,6 +25,7 @@ import {
   academicsHref,
   getAcademicIndex,
   getProgramDetail,
+  displayName,
   langAttr,
   levelGroupOf,
   programsHref,
@@ -133,6 +134,9 @@ export default async function ProgramPage({ params }: Props) {
     provider: { "@type": "CollegeOrUniversity", name: department.name.value, url: `${SITE_URL}${localePath(department.href, locale)}` },
   };
 
+  const facultyLabel = displayName(faculty, locale);
+  const departmentLabel = displayName(department, locale);
+
   return (
     <div style={accentStyle(faculty.accent)}>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
@@ -144,9 +148,9 @@ export default async function ProgramPage({ params }: Props) {
         breadcrumbs={[
           { label: tCommon("home"), href: "/" },
           { label: t("breadcrumb"), href: academicsHref },
-          { label: faculty.shortName?.value ?? faculty.name.value, href: faculty.href },
-          { label: department.shortName?.value ?? department.name.value, href: department.href },
-          { label: program.name.value },
+          { label: facultyLabel.value, href: faculty.href, lang: langAttr(facultyLabel, locale) },
+          { label: departmentLabel.value, href: department.href, lang: langAttr(departmentLabel, locale) },
+          { label: program.name.value, lang: langAttr(program.name, locale) },
         ]}
         eyebrow={`${t(`levelGroups.${levelGroupOf(program.level)}`)} · ${levelLabel}`}
         title={program.name.value}

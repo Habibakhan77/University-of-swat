@@ -845,3 +845,17 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   the content flow, ISR + webhook revalidation, search, Urdu RTL, roles, Docker/Nginx/Cloudflare, and 15 likely
   questions) and **docs/SUBMISSION.md** (one-page summary for the Chairman, DCST).
 - `.gitignore`: `docs/` stays local except the submission documents (`docs/*.md`) and `docs/screenshots/`.
+
+### Phase 13.1 — Urdu breadcrumbs and Urdu demo script
+
+- **Urdu breadcrumbs** on faculty, department and program pages: Urdu short names are not translated in Strapi,
+  so the crumbs fell back to the English short name ("Computer Science") in the Nastaliq font's serif Latin
+  glyphs. New `displayName()` (`lib/strapi/academics-model.ts`) prefers a name in the page language (short name,
+  then full name) and otherwise uses the full English name. `BreadcrumbItem` takes an optional `lang`, rendered as
+  `<bdi lang="en" dir="ltr">` so English keeps Inter and runs left to right (also on the phone "back" link). The
+  department page's eyebrow and "At a glance" faculty use the same name. English pages are unchanged.
+- Checked on the production build: Urdu department, faculty and program crumbs at 1440, 1024 and 390 px (Urdu names,
+  English fallback in Inter, no horizontal scroll); department screenshots in `docs/screenshots` retaken.
+- **docs/DEMO_SCRIPT_UR.md**: a 3-minute Urdu demo script in 12 scenes with timings. Each scene has the clicks in
+  English, the narration in Urdu script and in Roman Urdu, and an Urdu + English caption.
+- README: "How this was built" refers to Habiba by name instead of pronouns.

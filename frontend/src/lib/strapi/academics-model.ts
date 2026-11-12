@@ -16,6 +16,19 @@ export function langAttr(text: { lang: Locale } | null | undefined, locale: Loca
 }
 
 /**
+ * Short label for breadcrumbs, eyebrows and fact panels. Prefers a name written in the page language
+ * (short name first, then the full name); only when neither is translated does it fall back, and then to
+ * the full English name, since English short names ("Computer Science") are abbreviations.
+ */
+export function displayName(
+  item: { name: Localized<string>; shortName?: Localized<string> | null },
+  locale: Locale,
+): Localized<string> {
+  if (item.shortName && item.shortName.lang === locale) return item.shortName;
+  return item.name;
+}
+
+/**
  * `lang="en"` for text with no Arabic-script letters on a non-English page: official titles and
  * document names that are shared between languages and kept as published.
  */

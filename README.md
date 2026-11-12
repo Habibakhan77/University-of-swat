@@ -281,7 +281,7 @@ they can't see or change other departments. Setting up editors: [DEPLOY.md › E
 ## How this was built
 
 This entry was designed and built by **Habiba Khan**, with **[Claude Code](https://claude.com/claude-code)**
-(Anthropic's AI coding assistant) writing most of the code under her direction. Being open about this matters:
+(Anthropic's AI coding assistant) writing most of the code under Habiba's direction. Being open about this matters:
 judges should know what the tool did and what the person did.
 
 **What Habiba decided:**
@@ -292,9 +292,9 @@ judges should know what the tool did and what the person did.
 
 **What Habiba checked:**
 - Each phase in the browser before moving on; the review-fix phases in the [changelog](CHANGELOG.md) (5.3, 6.1–6.5,
-  8.1, 9.1) are her findings, for example the hero copy, sharper campus photos, short hero intros and the
+  8.1, 9.1) are Habiba's findings, for example the hero copy, sharper campus photos, short hero intros and the
   language switcher.
-- Content against the official site. She caught the first version of the Vice Chancellor's message being our own
+- Content against the official site. Habiba caught the first version of the Vice Chancellor's message being our own
   text shown as his words, and had it replaced by his verbatim published message with a source link.
 - That lint, typecheck and build pass after every feature, and that CI is green on GitHub.
 
@@ -310,6 +310,7 @@ small commits) are in `CLAUDE.md`.
 | [`docs/SUBMISSION.md`](docs/SUBMISSION.md) | One-page summary for the Chairman, DCST |
 | [`docs/JUDGES_QA.md`](docs/JUDGES_QA.md) | How the main parts work, in plain language, and likely judge questions |
 | [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md) | 2–3 minute demo video script with timings |
+| [`docs/DEMO_SCRIPT_UR.md`](docs/DEMO_SCRIPT_UR.md) | The same demo in Urdu: narration in Urdu script and Roman Urdu, with bilingual captions |
 | [`DEPLOY.md`](DEPLOY.md) | Server, Cloudflare, backups and updates |
 | [`CHANGELOG.md`](CHANGELOG.md) | What was built in each phase, with test results |
 | [`cms/scripts/seed/README.md`](cms/scripts/seed/README.md) | Seed content and the checklist for university staff |

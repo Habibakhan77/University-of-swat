@@ -8,6 +8,18 @@ export interface BreadcrumbItem {
   label: string;
   /** Omit on the last item (the current page). */
   href?: string;
+  /** Set when the label is not in the page language (e.g. an English name on an Urdu page). */
+  lang?: string;
+}
+
+/** A label in another language: its own font (via :lang) and, for English, an isolated left-to-right run. */
+function Label({ item }: { item: BreadcrumbItem }) {
+  if (!item.lang) return <>{item.label}</>;
+  return (
+    <bdi lang={item.lang} dir={item.lang === "ur" ? "rtl" : "ltr"}>
+      {item.label}
+    </bdi>
+  );
 }
 
 interface BreadcrumbsProps {
@@ -59,7 +71,7 @@ export function Breadcrumbs({
           <ChevronLeft aria-hidden className="size-4 rtl:-scale-x-100" />
           <span>
             <span className="sr-only">{backLabel} </span>
-            {parent.label}
+            <Label item={parent} />
           </span>
         </Link>
       ) : null}
@@ -75,11 +87,11 @@ export function Breadcrumbs({
                   className="inline-flex items-center gap-1.5 rounded-sm text-fg-muted transition-colors hover:text-primary-text"
                 >
                   {index === 0 ? <Home aria-hidden className="size-3.5" /> : null}
-                  {item.label}
+                  <Label item={item} />
                 </Link>
               ) : (
                 <span aria-current={isLast ? "page" : undefined} className="truncate font-medium text-fg">
-                  {item.label}
+                  <Label item={item} />
                 </span>
               )}
               {!isLast ? <ChevronRight aria-hidden className="size-3.5 shrink-0 text-fg-subtle/70 rtl:-scale-x-100" /> : null}

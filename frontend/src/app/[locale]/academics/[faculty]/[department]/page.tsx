@@ -17,6 +17,7 @@ import {
   getAcademicIndex,
   getDepartmentDetail,
   getDepartmentMembers,
+  displayName,
   langAttr,
   levelGroupOf,
   type LevelGroup,
@@ -86,6 +87,8 @@ export default async function DepartmentPage({ params }: Props) {
     getTranslations({ locale, namespace: "common" }),
   ]);
   const name = department.name.value;
+  const facultyLabel = displayName(faculty, locale);
+  const departmentLabel = displayName(department, locale);
   const groups = (Object.keys(LEVEL_GROUPS) as LevelGroup[])
     .map((group) => ({ group, items: programs.filter((p) => levelGroupOf(p.level) === group) }))
     .filter((g) => g.items.length);
@@ -106,10 +109,10 @@ export default async function DepartmentPage({ params }: Props) {
       label: t("faculty"),
       value: (
         <Link href={faculty.href} className="text-primary-text hover:underline">
-          {faculty.shortName?.value ?? faculty.name.value}
+          {facultyLabel.value}
         </Link>
       ),
-      lang: langAttr(faculty.shortName ?? faculty.name, locale),
+      lang: langAttr(facultyLabel, locale),
     },
     ...(detail.campus ? [{ icon: MapPin, label: t("campus"), value: detail.campus.name.value, lang: langAttr(detail.campus.name, locale) }] : []),
     ...(detail.establishedYear ? [{ icon: CalendarDays, label: t("established"), value: <span className="tabular">{detail.establishedYear}</span> }] : []),
@@ -143,10 +146,10 @@ export default async function DepartmentPage({ params }: Props) {
         breadcrumbs={[
           { label: tCommon("home"), href: "/" },
           { label: t("breadcrumb"), href: academicsHref },
-          { label: faculty.shortName?.value ?? faculty.name.value, href: faculty.href },
-          { label: department.shortName?.value ?? name },
+          { label: facultyLabel.value, href: faculty.href, lang: langAttr(facultyLabel, locale) },
+          { label: departmentLabel.value, lang: langAttr(departmentLabel, locale) },
         ]}
-        eyebrow={<span lang={langAttr(faculty.shortName ?? faculty.name, locale)}>{(faculty.shortName ?? faculty.name).value}</span>}
+        eyebrow={<span lang={langAttr(facultyLabel, locale)}>{facultyLabel.value}</span>}
         title={name}
         titleLang={langAttr(department.name, locale)}
         summary={department.summary?.value}
