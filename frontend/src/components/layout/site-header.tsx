@@ -1,6 +1,6 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import type { Locale } from "@/i18n/routing";
+import { localeNames, routing, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
 import { getLatestPost } from "@/lib/strapi/posts";
@@ -29,10 +29,12 @@ interface SiteHeaderProps {
  *    translucent with a subtle backdrop blur, a soft shadow and a thin gold line along the bottom.
  */
 export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
-  const [t, tTheme, tCommon, latestNews] = await Promise.all([
+  const [t, tTheme, tCommon, tLanguage, tSearch, latestNews] = await Promise.all([
     getTranslations({ locale, namespace: "header" }),
     getTranslations({ locale, namespace: "theme" }),
     getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "language" }),
+    getTranslations({ locale, namespace: "search" }),
     getLatestPost(locale, "news"),
   ]);
 
@@ -40,6 +42,13 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
   const homeLabel = t("homeLink", { siteName });
   const groups = chrome?.mainNavigation ?? [];
   const themeLabels = { toggle: tTheme("toggle") };
+  // Translated here so the always-loaded client components need no message formatting.
+  const otherLocale = routing.locales.find((l) => l !== locale) ?? routing.defaultLocale;
+  const languageLabels = {
+    switchTo: tLanguage("switchTo", { language: localeNames[otherLocale] }),
+    label: tLanguage("label"),
+  };
+  const searchLabels = { button: tSearch("button"), buttonLong: tSearch("buttonLong"), shortcut: tSearch("shortcut") };
   const apply = chrome?.applyHref ? { href: chrome.applyHref, external: chrome.applyExternal } : null;
 
   // Featured slot in the News & Events panel: the newest story from Strapi.
@@ -78,7 +87,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
             </ul>
           </nav>
           <div className="flex shrink-0 items-center gap-2">
-            <LanguageSwitcher tone="inverted" />
+            <LanguageSwitcher tone="inverted" labels={languageLabels} />
             <span aria-hidden className="h-4 w-px bg-white/15" />
             <ThemeToggle size="sm" tone="inverted" labels={themeLabels} />
           </div>
@@ -128,7 +137,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
           </div>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <SearchCommand groups={groups} />
+            <SearchCommand groups={groups} labels={searchLabels} />
             {apply ? (
               <SmartLink
                 href={apply.href}
@@ -161,6 +170,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                 preferences: t("preferences"),
                 homeLink: homeLabel,
                 theme: themeLabels,
+                language: languageLabels,
               }}
             />
           </div>

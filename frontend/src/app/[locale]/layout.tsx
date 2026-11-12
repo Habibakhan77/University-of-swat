@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { ClientMessages } from "@/i18n/client-messages";
 import { resolveLocale } from "@/i18n/locale";
 import { localeDirection, routing } from "@/i18n/routing";
 import { ThemeScript } from "@/components/theme/theme-script";
@@ -59,13 +59,13 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
         >
           {t("skipToContent")}
         </a>
-        <NextIntlClientProvider>
+        <ClientMessages>
           <SiteHeader locale={locale} chrome={chrome} />
           <main id="main" tabIndex={-1} className="flex-1 outline-none">
             {children}
           </main>
           <SiteFooter locale={locale} chrome={chrome} />
-        </NextIntlClientProvider>
+        </ClientMessages>
       </body>
     </html>
   );

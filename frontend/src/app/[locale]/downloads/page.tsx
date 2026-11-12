@@ -8,6 +8,7 @@ import { downloadsHref, getDownloads } from "@/lib/strapi/notices";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
 import { DownloadsExplorer, DownloadsExplorerFromUrl } from "@/components/notices/downloads-explorer";
 import { Container } from "@/components/ui/container";
+import { ClientMessages } from "@/i18n/client-messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -31,23 +32,25 @@ export default async function DownloadsPage() {
   const listed = items.filter((i) => i.file ?? i.sourceUrl);
 
   return (
-    <>
-      <AcademicHero
-        compact
-        id="downloads"
-        accent="green"
-        icon={FolderDown}
-        breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("downloadsTitle") }]}
-        eyebrow={t("eyebrow")}
-        title={t("downloadsTitle")}
-        summary={t("downloadsIntro")}
-        meta={listed.length ? <HeroChip icon={FolderDown}>{t("resultsCount", { count: listed.length })}</HeroChip> : null}
-      />
-      <Container size="wide" className="pt-6 pb-section sm:pt-8">
-        <Suspense fallback={<DownloadsExplorer items={listed} />}>
-          <DownloadsExplorerFromUrl items={listed} />
-        </Suspense>
-      </Container>
-    </>
+    <ClientMessages namespaces={["notices"]}>
+      <>
+        <AcademicHero
+          compact
+          id="downloads"
+          accent="green"
+          icon={FolderDown}
+          breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("downloadsTitle") }]}
+          eyebrow={t("eyebrow")}
+          title={t("downloadsTitle")}
+          summary={t("downloadsIntro")}
+          meta={listed.length ? <HeroChip icon={FolderDown}>{t("resultsCount", { count: listed.length })}</HeroChip> : null}
+        />
+        <Container size="wide" className="pt-6 pb-section sm:pt-8">
+          <Suspense fallback={<DownloadsExplorer items={listed} />}>
+            <DownloadsExplorerFromUrl items={listed} />
+          </Suspense>
+        </Container>
+      </>
+    </ClientMessages>
   );
 }

@@ -1,12 +1,21 @@
 "use client";
 
 import { Languages } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { getPathname, usePathname } from "@/i18n/navigation";
 import { localeNames, routing, type Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
 
+/** Translated on the server, so this always-loaded component needs no message formatting. */
+export interface LanguageSwitcherLabels {
+  /** Accessible name of the link to the other language, e.g. "Switch to Urdu". */
+  switchTo: string;
+  /** Accessible name of the segmented group. */
+  label: string;
+}
+
 interface LanguageSwitcherProps {
+  labels: LanguageSwitcherLabels;
   /** "link": one link to the other language (utility bar). "segmented": both options (mobile menu). */
   variant?: "link" | "segmented";
   tone?: "surface" | "inverted";
@@ -20,10 +29,9 @@ interface LanguageSwitcherProps {
  * fonts cleanly, skips the router's prefetch cache, and works without JavaScript.
  * Never add target="_blank" or window.open here.
  */
-export function LanguageSwitcher({ variant = "link", tone = "surface", className, onNavigate }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ labels, variant = "link", tone = "surface", className, onNavigate }: LanguageSwitcherProps) {
   const locale = useLocale();
   const pathname = usePathname();
-  const t = useTranslations("language");
   const hrefFor = (target: Locale) => getPathname({ href: pathname, locale: target });
 
   if (variant === "link") {
@@ -33,7 +41,7 @@ export function LanguageSwitcher({ variant = "link", tone = "surface", className
         href={hrefFor(other)}
         hrefLang={other}
         onClick={onNavigate}
-        aria-label={t("switchTo", { language: localeNames[other] })}
+        aria-label={labels.switchTo}
         className={cn(
           "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-semibold transition-colors",
           tone === "inverted" ? "text-forest-50 hover:bg-white/10" : "text-fg-muted hover:bg-canvas-subtle hover:text-fg",
@@ -51,7 +59,7 @@ export function LanguageSwitcher({ variant = "link", tone = "surface", className
   return (
     <div
       role="group"
-      aria-label={t("label")}
+      aria-label={labels.label}
       className={cn("inline-flex w-full items-center gap-0.5 rounded-full border border-line bg-surface p-0.5 shadow-xs", className)}
     >
       {routing.locales.map((option) => {

@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useRef } from "react";
+import type { CSSProperties } from "react";
 
 interface StatCounterProps {
   value: number;
@@ -10,57 +8,40 @@ interface StatCounterProps {
   className?: string;
 }
 
-const DURATION = 1800;
-const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - 2 ** (-10 * t));
-
 /**
- * Counts up from 0 to `value` the first time it scrolls into view. The real number is in the HTML
- * from the server (so search engines, no-JS visitors and screen readers get it), the animated digits
- * are aria-hidden, and visitors who prefer reduced motion just see the number. Writes to the DOM
- * directly, so the animation costs no React re-renders.
+ * A number that counts up from 0 as the stats band scrolls into view, in CSS only (`.stat-count` in
+ * globals.css): the digits are CSS counters animated with a scroll timeline. The real number is in the
+ * HTML for search engines and screen readers (the drawn digits are aria-hidden), and with reduced motion
+ * or without scroll-driven animations the final number is simply shown.
+ *
+ * CSS counters only draw Latin digits without grouping, so numbers up to 999,999 are drawn as
+ * "thousands, separator, three padded digits". Anything the counters can't reproduce exactly (other
+ * digit systems, larger numbers) is shown as plain text instead.
  */
 export function StatCounter({ value, suffix, intlLocale, className }: StatCounterProps) {
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const format = new Intl.NumberFormat(intlLocale).format;
-    let frame = 0;
-
-    const run = () => {
-      const start = performance.now();
-      const tick = (now: number) => {
-        const progress = Math.min(1, (now - start) / DURATION);
-        el.textContent = format(Math.round(value * easeOutExpo(progress)));
-        if (progress < 1) frame = requestAnimationFrame(tick);
-      };
-      frame = requestAnimationFrame(tick);
-    };
-
-    el.textContent = format(0);
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        run();
-      },
-      { threshold: 0.6 },
-    );
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      cancelAnimationFrame(frame);
-      el.textContent = format(value);
-    };
-  }, [value, intlLocale]);
-
   const final = new Intl.NumberFormat(intlLocale).format(value);
+  const whole = Number.isInteger(value) && value >= 0;
+  const grouped = /^(\d{1,3})(\D)(\d{3})$/.exec(final);
+
+  let digits: { style: CSSProperties; split: boolean } | null = null;
+  if (whole && value < 1000 && /^\d+$/.test(final)) {
+    digits = { style: { "--stat-a": value, "--stat-b": 0 } as CSSProperties, split: false };
+  } else if (whole && value < 1_000_000 && grouped) {
+    digits = {
+      style: {
+        "--stat-a": Math.floor(value / 1000),
+        "--stat-b": value % 1000,
+        "--stat-sep": JSON.stringify(grouped[2]),
+      } as CSSProperties,
+      split: true,
+    };
+  }
+
   return (
     <span className={className}>
       {/* Numbers read left to right ("80+") and use the Latin UI font, also on Urdu pages. */}
       <span aria-hidden dir="ltr" className="inline-block font-sans tabular-nums">
-        <span ref={ref}>{final}</span>
+        {digits ? <span className="stat-count" data-split={digits.split || undefined} style={digits.style} /> : final}
         {suffix}
       </span>
       <span className="sr-only">

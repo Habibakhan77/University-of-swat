@@ -1,48 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
-import { Home, Phone, RotateCw } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { Rosette } from "@/components/brand/motifs";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
+import dynamic from "next/dynamic";
 
 /**
- * Shown inside the normal header and footer when a page fails to render (for example, Strapi is
- * unreachable for a page that isn't cached yet). The visitor can retry, go home or call the university.
+ * Error boundary for every page. Next.js loads this file with each page, so it is only a shell: the
+ * message, translations and buttons (components/layout/error-view.tsx) load when an error is shown.
  */
-export default function LocaleError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  const t = useTranslations("errorPage");
+const ErrorView = dynamic(() => import("@/components/layout/error-view"));
 
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
-
-  return (
-    <Container size="narrow" className="flex flex-col items-start gap-5 py-section">
-      <Rosette className="size-10 text-accent-text" />
-      <p className="text-overline text-accent-text uppercase">{t("eyebrow")}</p>
-      <h1 className="text-display-lg text-balance">{t("title")}</h1>
-      <p className="max-w-xl text-body-lg text-fg-muted">{t("text")}</p>
-      <div className="flex flex-wrap gap-3">
-        <Button size="lg" onClick={reset} leadingIcon={<RotateCw aria-hidden />}>
-          {t("retry")}
-        </Button>
-        <Link href="/" className={buttonVariants({ variant: "outline", size: "lg" })}>
-          <Home aria-hidden />
-          {t("home")}
-        </Link>
-        <Link href="/contact" className={buttonVariants({ variant: "ghost", size: "lg" })}>
-          <Phone aria-hidden />
-          {t("contact")}
-        </Link>
-      </div>
-      {error.digest ? (
-        <p className="text-caption text-fg-subtle">
-          {t("reference")} <code dir="ltr">{error.digest}</code>
-        </p>
-      ) : null}
-    </Container>
-  );
+export default function LocaleError(props: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorView {...props} />;
 }

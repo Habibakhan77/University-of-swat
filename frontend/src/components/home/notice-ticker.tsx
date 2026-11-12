@@ -1,11 +1,9 @@
-"use client";
-
-import { ArrowRight, Megaphone, Pause, Play } from "lucide-react";
-import { useId, useState, type CSSProperties } from "react";
+import { ArrowRight, Megaphone } from "lucide-react";
+import type { CSSProperties } from "react";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { cn } from "@/lib/cn";
 import type { Notice } from "@/lib/strapi/home";
+import { TickerPause } from "./ticker-pause";
 
 interface NoticeTickerProps {
   notices: Notice[];
@@ -17,11 +15,11 @@ interface NoticeTickerProps {
  * Scrolling notices bar (Strapi posts flagged "Show in ticker"). Pauses on hover and keyboard focus
  * and has a pause button (WCAG 2.2.2). With reduced motion it does not move: it becomes a row you
  * can scroll. The track is two identical halves, so it loops without a jump; the copy is inert.
+ * A Server Component: the motion is a CSS animation, and only the pause button is a client leaf.
  */
 export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
-  const [paused, setPaused] = useState(false);
-  const titleId = useId();
   if (!notices.length) return null;
+  const titleId = "home-notices";
 
   // Repeat short lists so one half of the track is always wider than the screen.
   const repeat = Math.max(1, Math.ceil(6 / notices.length));
@@ -48,7 +46,11 @@ export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
     ));
 
   return (
-    <section aria-labelledby={titleId} className="relative z-30 bg-maroon-800 text-maroon-50 [--ring:var(--color-gold-300)] dark:bg-maroon-900">
+    <section
+      data-ticker
+      aria-labelledby={titleId}
+      className="group/tick relative z-30 bg-maroon-800 text-maroon-50 [--ring:var(--color-gold-300)] dark:bg-maroon-900"
+    >
       <div className="mx-auto flex h-12 w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] items-center gap-3 px-gutter">
         <h2
           id={titleId}
@@ -60,13 +62,12 @@ export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
 
         <div className="group/ticker relative min-w-0 flex-1 overflow-hidden mask-x-from-95% motion-reduce:overflow-x-auto">
           <div
-            className={cn(
+            className={[
               "flex w-max",
               "animate-[marquee_var(--ticker-duration)_linear_infinite] rtl:animate-[marquee-rtl_var(--ticker-duration)_linear_infinite]",
               "group-hover/ticker:[animation-play-state:paused] group-focus-within/ticker:[animation-play-state:paused]",
-              "motion-reduce:animate-none!",
-              paused && "[animation-play-state:paused]",
-            )}
+              "group-data-paused/tick:[animation-play-state:paused] motion-reduce:animate-none!",
+            ].join(" ")}
             style={{ "--ticker-duration": duration } as CSSProperties}
           >
             <ul className="flex shrink-0 items-center gap-10 pe-10">{items(false)}</ul>
@@ -76,15 +77,7 @@ export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setPaused((p) => !p)}
-          aria-label={paused ? labels.play : labels.pause}
-          title={paused ? labels.play : labels.pause}
-          className="relative z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-maroon-100 transition-colors hover:bg-white/10 hover:text-white motion-reduce:hidden"
-        >
-          {paused ? <Play aria-hidden className="size-4" /> : <Pause aria-hidden className="size-4" />}
-        </button>
+        <TickerPause labels={{ pause: labels.pause, play: labels.play }} />
         <Link
           href="/news?category=announcement"
           className="hidden shrink-0 items-center gap-1.5 rounded-sm text-caption font-semibold text-gold-200 hover:text-gold-100 md:inline-flex"

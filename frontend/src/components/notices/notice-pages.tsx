@@ -19,6 +19,7 @@ import { LiveStatus } from "./live-status";
 import { NoticeList, NoticeListFromUrl, listHref, noticeFacts } from "./notice-views";
 import { ShareButtons } from "./share-buttons";
 import { Documents, SourceNote } from "./shared";
+import { ClientMessages } from "@/i18n/client-messages";
 
 /**
  * Tenders and Jobs share one layout: a filterable, paginated list and a detail page per notice.
@@ -69,24 +70,26 @@ export async function NoticeListPage({
   ]);
   const c = copy(kind);
   return (
-    <>
-      <AcademicHero
-        compact
-        id={kind}
-        accent={c.accent}
-        icon={c.icon}
-        breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t(c.title) }]}
-        eyebrow={t("eyebrow")}
-        title={t(c.title)}
-        summary={t(c.intro)}
-        meta={notices.length ? <HeroChip icon={c.icon}>{t("itemsCount", { count: notices.length })}</HeroChip> : null}
-      />
-      <Container size="wide" className="pt-6 pb-section sm:pt-8">
-        <Suspense fallback={<NoticeList kind={kind} notices={notices} status="" page={1} now={null} locale={locale} />}>
-          <NoticeListFromUrl kind={kind} notices={notices} searchParams={searchParams} locale={locale} />
-        </Suspense>
-      </Container>
-    </>
+    <ClientMessages namespaces={["notices"]}>
+      <>
+        <AcademicHero
+          compact
+          id={kind}
+          accent={c.accent}
+          icon={c.icon}
+          breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t(c.title) }]}
+          eyebrow={t("eyebrow")}
+          title={t(c.title)}
+          summary={t(c.intro)}
+          meta={notices.length ? <HeroChip icon={c.icon}>{t("itemsCount", { count: notices.length })}</HeroChip> : null}
+        />
+        <Container size="wide" className="pt-6 pb-section sm:pt-8">
+          <Suspense fallback={<NoticeList kind={kind} notices={notices} status="" page={1} now={null} locale={locale} />}>
+            <NoticeListFromUrl kind={kind} notices={notices} searchParams={searchParams} locale={locale} />
+          </Suspense>
+        </Container>
+      </>
+    </ClientMessages>
   );
 }
 
@@ -166,89 +169,91 @@ export async function NoticeDetailPage({ kind, params }: { kind: NoticeKind; par
         };
 
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
-      <Container size="wide" className="pt-5 sm:pt-6">
-        <Breadcrumbs
-          items={[{ label: tCommon("home"), href: "/" }, { label: t(c.title), href: base }, { label: notice.title.value }]}
-          siteUrl={SITE_URL}
-          label={tCommon("breadcrumb")}
-          backLabel={tCommon("backTo")}
-        />
-      </Container>
+    <ClientMessages namespaces={["notices"]}>
+      <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
+        <Container size="wide" className="pt-5 sm:pt-6">
+          <Breadcrumbs
+            items={[{ label: tCommon("home"), href: "/" }, { label: t(c.title), href: base }, { label: notice.title.value }]}
+            siteUrl={SITE_URL}
+            label={tCommon("breadcrumb")}
+            backLabel={tCommon("backTo")}
+          />
+        </Container>
 
-      <Container size="wide" className="grid gap-10 pt-6 pb-section lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
-        <article className="flex min-w-0 flex-col gap-8">
-          <header className="flex max-w-3xl flex-col items-start gap-4">
-            <div className="flex min-h-7 flex-wrap items-center gap-2">
-              <LiveStatus state={notice.state} deadline={notice.deadline} />
-              <span className="text-caption font-semibold text-fg-subtle uppercase">
-                {notice.jobType ? t(`jobTypes.${notice.jobType}`) : t(c.title)}
+        <Container size="wide" className="grid gap-10 pt-6 pb-section lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
+          <article className="flex min-w-0 flex-col gap-8">
+            <header className="flex max-w-3xl flex-col items-start gap-4">
+              <div className="flex min-h-7 flex-wrap items-center gap-2">
+                <LiveStatus state={notice.state} deadline={notice.deadline} />
+                <span className="text-caption font-semibold text-fg-subtle uppercase">
+                  {notice.jobType ? t(`jobTypes.${notice.jobType}`) : t(c.title)}
+                </span>
+              </div>
+              <h1 lang={langAttr(notice.title, locale)} className="text-heading-xl text-balance text-fg">
+                {notice.title.value}
+              </h1>
+              {notice.summary ? (
+                <p lang={langAttr(notice.summary, locale)} className="text-body-lg text-pretty text-fg-muted">
+                  {notice.summary.value}
+                </p>
+              ) : null}
+              <ClosedNote notice={notice} message={t("closedNote", { kind })} />
+            </header>
+
+            {description ? (
+              <div className="flex flex-col gap-2">
+                <EnglishOnlyNote content={description} />
+                <RichText blocks={description.value} lang={langAttr(description, locale)} className="max-w-prose text-body-lg" />
+              </div>
+            ) : null}
+
+            <div className="max-w-3xl">
+              <Documents files={notice.documents} headingId="notice-documents" lang={notice.title.lang === locale ? undefined : "en"} />
+            </div>
+
+            <div className="max-w-prose">
+              <SourceNote url={notice.sourceUrl} />
+            </div>
+
+            <div>
+              <ButtonLink href={base} variant="ghost" leadingIcon={<ArrowLeft aria-hidden className="rtl:-scale-x-100" />}>
+                {kind === "tender" ? t("allTenders") : t("allJobs")}
+              </ButtonLink>
+            </div>
+          </article>
+
+          <aside className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
+            <section aria-labelledby="notice-details" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:p-6">
+              <h2 id="notice-details" className="text-overline text-fg-subtle uppercase">
+                {t("details")}
+              </h2>
+              <dl className="flex flex-col gap-4">
+                {facts.map(({ key, icon: Icon, label, value }) => (
+                  <div key={key} className="relative min-h-9 min-w-0 ps-12">
+            <dt className="text-caption text-fg-subtle">
+              <span aria-hidden className="absolute start-0 top-0 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
+                <Icon aria-hidden className="size-4.5" />
               </span>
-            </div>
-            <h1 lang={langAttr(notice.title, locale)} className="text-heading-xl text-balance text-fg">
-              {notice.title.value}
-            </h1>
-            {notice.summary ? (
-              <p lang={langAttr(notice.summary, locale)} className="text-body-lg text-pretty text-fg-muted">
-                {notice.summary.value}
-              </p>
-            ) : null}
-            <ClosedNote notice={notice} message={t("closedNote", { kind })} />
-          </header>
-
-          {description ? (
-            <div className="flex flex-col gap-2">
-              <EnglishOnlyNote content={description} />
-              <RichText blocks={description.value} lang={langAttr(description, locale)} className="max-w-prose text-body-lg" />
-            </div>
-          ) : null}
-
-          <div className="max-w-3xl">
-            <Documents files={notice.documents} headingId="notice-documents" lang={notice.title.lang === locale ? undefined : "en"} />
+              {label}
+            </dt>
+            <dd className="text-body-sm font-semibold break-words text-fg">{value}</dd>
           </div>
-
-          <div className="max-w-prose">
-            <SourceNote url={notice.sourceUrl} />
-          </div>
-
-          <div>
-            <ButtonLink href={base} variant="ghost" leadingIcon={<ArrowLeft aria-hidden className="rtl:-scale-x-100" />}>
-              {kind === "tender" ? t("allTenders") : t("allJobs")}
-            </ButtonLink>
-          </div>
-        </article>
-
-        <aside className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
-          <section aria-labelledby="notice-details" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:p-6">
-            <h2 id="notice-details" className="text-overline text-fg-subtle uppercase">
-              {t("details")}
-            </h2>
-            <dl className="flex flex-col gap-4">
-              {facts.map(({ key, icon: Icon, label, value }) => (
-                <div key={key} className="relative min-h-9 min-w-0 ps-12">
-          <dt className="text-caption text-fg-subtle">
-            <span aria-hidden className="absolute start-0 top-0 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
-              <Icon aria-hidden className="size-4.5" />
-            </span>
-            {label}
-          </dt>
-          <dd className="text-body-sm font-semibold break-words text-fg">{value}</dd>
-        </div>
-              ))}
-            </dl>
-            {notice.applyUrl ? (
-              <a href={notice.applyUrl} target="_blank" rel="noopener" className={buttonVariants({ fullWidth: true })}>
-                {t("apply")}
-                <ExternalLink aria-hidden className="size-4" />
-                <span className="sr-only">{tCommon("opensInNewTab")}</span>
-              </a>
-            ) : null}
-          </section>
-          <ShareButtons url={url} title={notice.title.value} className="rounded-2xl border border-line bg-surface p-5 sm:p-6" />
-        </aside>
-      </Container>
-    </>
+                ))}
+              </dl>
+              {notice.applyUrl ? (
+                <a href={notice.applyUrl} target="_blank" rel="noopener" className={buttonVariants({ fullWidth: true })}>
+                  {t("apply")}
+                  <ExternalLink aria-hidden className="size-4" />
+                  <span className="sr-only">{tCommon("opensInNewTab")}</span>
+                </a>
+              ) : null}
+            </section>
+            <ShareButtons url={url} title={notice.title.value} className="rounded-2xl border border-line bg-surface p-5 sm:p-6" />
+          </aside>
+        </Container>
+      </>
+    </ClientMessages>
   );
 }
 

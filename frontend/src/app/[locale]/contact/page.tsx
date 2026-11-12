@@ -15,6 +15,7 @@ import { PhoneDirectory } from "@/components/contact/phone-directory";
 import { SourceNote } from "@/components/notices/shared";
 import { OfficeCard, OnThisPage } from "@/components/organisation/parts";
 import { Container } from "@/components/ui/container";
+import { ClientMessages } from "@/i18n/client-messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -62,99 +63,101 @@ export default async function ContactPage() {
   };
 
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
-      <AcademicHero
-        compact
-        id="contact"
-        accent="green"
-        icon={MessageSquare}
-        breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: page?.title ?? t("title") }]}
-        eyebrow={tCommon("siteName")}
-        title={page?.title ?? t("title")}
-        titleLang={lang}
-        summary={page?.intro ?? t("intro")}
-        summaryLang={lang}
-      />
+    <ClientMessages namespaces={["contact"]}>
+      <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
+        <AcademicHero
+          compact
+          id="contact"
+          accent="green"
+          icon={MessageSquare}
+          breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: page?.title ?? t("title") }]}
+          eyebrow={tCommon("siteName")}
+          title={page?.title ?? t("title")}
+          titleLang={lang}
+          summary={page?.intro ?? t("intro")}
+          summaryLang={lang}
+        />
 
-      <Container size="wide" className="pt-6">
-        <OnThisPage label={t("onThisPage")} items={sections} />
-      </Container>
+        <Container size="wide" className="pt-6">
+          <OnThisPage label={t("onThisPage")} items={sections} />
+        </Container>
 
-      <Container size="wide" className="flex flex-col gap-section-sm pt-8 pb-section [&>section]:scroll-mt-32">
-        <section aria-labelledby="reach" className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
-          <div className="flex flex-col gap-4">
-            <SectionTitle id="reach">{t("reachUs")}</SectionTitle>
-            <ul className="flex flex-col gap-3">
-              {address ? (
-                <ContactRow icon={<MapPin className="size-5" />} label={t("address")}>
-                  {address}
-                </ContactRow>
-              ) : null}
-              {phone ? (
-                <ContactRow icon={<Phone className="size-5" />} label={t("phone")}>
-                  <a href={tel(phone)} dir="ltr" className="font-sans tabular text-primary-text hover:underline">
-                    {phone}
-                  </a>
-                </ContactRow>
-              ) : null}
-              {mainLines.map((line) => {
-                const n = phoneNumber(line.number, page?.areaCode ?? null);
-                return (
-                  <ContactRow key={line.id} icon={<Phone className="size-5" />} label={<span lang={langAttr(line.name, locale)}>{line.name.value}</span>}>
-                    <a href={n.tel} dir="ltr" className="font-sans tabular text-primary-text hover:underline">
-                      {n.display}
+        <Container size="wide" className="flex flex-col gap-section-sm pt-8 pb-section [&>section]:scroll-mt-32">
+          <section aria-labelledby="reach" className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
+            <div className="flex flex-col gap-4">
+              <SectionTitle id="reach">{t("reachUs")}</SectionTitle>
+              <ul className="flex flex-col gap-3">
+                {address ? (
+                  <ContactRow icon={<MapPin className="size-5" />} label={t("address")}>
+                    {address}
+                  </ContactRow>
+                ) : null}
+                {phone ? (
+                  <ContactRow icon={<Phone className="size-5" />} label={t("phone")}>
+                    <a href={tel(phone)} dir="ltr" className="font-sans tabular text-primary-text hover:underline">
+                      {phone}
                     </a>
                   </ContactRow>
-                );
-              })}
-              {email ? (
-                <ContactRow icon={<Mail className="size-5" />} label={t("email")}>
-                  <a href={`mailto:${email}`} dir="ltr" className="font-sans break-all text-primary-text hover:underline">
-                    {email}
-                  </a>
-                </ContactRow>
-              ) : null}
-            </ul>
-          </div>
-          {page?.mapQuery ? <MapEmbed query={page.mapQuery} title={t("mapTitle")} /> : null}
-        </section>
-
-        {page?.keyOffices.length ? (
-          <section aria-labelledby="offices">
-            <SectionTitle id="offices">{t("keyOffices")}</SectionTitle>
-            <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {page.keyOffices.map((o) => (
-                <li key={o.slug}>
-                  <OfficeCard office={o} showType={false} />
-                </li>
-              ))}
-            </ul>
+                ) : null}
+                {mainLines.map((line) => {
+                  const n = phoneNumber(line.number, page?.areaCode ?? null);
+                  return (
+                    <ContactRow key={line.id} icon={<Phone className="size-5" />} label={<span lang={langAttr(line.name, locale)}>{line.name.value}</span>}>
+                      <a href={n.tel} dir="ltr" className="font-sans tabular text-primary-text hover:underline">
+                        {n.display}
+                      </a>
+                    </ContactRow>
+                  );
+                })}
+                {email ? (
+                  <ContactRow icon={<Mail className="size-5" />} label={t("email")}>
+                    <a href={`mailto:${email}`} dir="ltr" className="font-sans break-all text-primary-text hover:underline">
+                      {email}
+                    </a>
+                  </ContactRow>
+                ) : null}
+              </ul>
+            </div>
+            {page?.mapQuery ? <MapEmbed query={page.mapQuery} title={t("mapTitle")} /> : null}
           </section>
-        ) : null}
 
-        {entries.length ? (
-          <section aria-labelledby="directory" className="flex flex-col gap-4">
-            <SectionTitle id="directory">{t("directory")}</SectionTitle>
-            <p className="max-w-prose text-body text-fg-muted">{t("directoryIntro", { code: page?.areaCode ?? "" })}</p>
-            <PhoneDirectory entries={entries} areaCode={page?.areaCode ?? null} />
-            <SourceNote url={page?.directorySourceUrl ?? null} kind="page" />
+          {page?.keyOffices.length ? (
+            <section aria-labelledby="offices">
+              <SectionTitle id="offices">{t("keyOffices")}</SectionTitle>
+              <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {page.keyOffices.map((o) => (
+                  <li key={o.slug}>
+                    <OfficeCard office={o} showType={false} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          {entries.length ? (
+            <section aria-labelledby="directory" className="flex flex-col gap-4">
+              <SectionTitle id="directory">{t("directory")}</SectionTitle>
+              <p className="max-w-prose text-body text-fg-muted">{t("directoryIntro", { code: page?.areaCode ?? "" })}</p>
+              <PhoneDirectory entries={entries} areaCode={page?.areaCode ?? null} />
+              <SourceNote url={page?.directorySourceUrl ?? null} kind="page" />
+            </section>
+          ) : null}
+
+          <section aria-labelledby="message" className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+            <div>
+              <SectionTitle id="message">{t("sendMessage")}</SectionTitle>
+              <p className="max-w-prose text-body text-fg-muted" lang={lang}>
+                {page?.formIntro ?? t("formIntro")}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-line bg-surface p-5 shadow-xs sm:p-8">
+              <ContactForm />
+            </div>
           </section>
-        ) : null}
-
-        <section aria-labelledby="message" className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-          <div>
-            <SectionTitle id="message">{t("sendMessage")}</SectionTitle>
-            <p className="max-w-prose text-body text-fg-muted" lang={lang}>
-              {page?.formIntro ?? t("formIntro")}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-line bg-surface p-5 shadow-xs sm:p-8">
-            <ContactForm />
-          </div>
-        </section>
-      </Container>
-    </>
+        </Container>
+      </>
+    </ClientMessages>
   );
 }
 

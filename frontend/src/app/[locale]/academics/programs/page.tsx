@@ -9,6 +9,7 @@ import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
 import { ProgramExplorer, ProgramExplorerFromUrl } from "@/components/academics/program-explorer";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { ClientMessages } from "@/i18n/client-messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -30,32 +31,34 @@ export default async function ProgramsPage() {
   const props = { programs: index.programs, faculties, departments };
 
   return (
-    <>
-      <AcademicHero
-        id="programs"
-        accent="green"
-        icon={GraduationCap}
-        breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb"), href: academicsHref }, { label: t("programsTitle") }]}
-        eyebrow={t("breadcrumb")}
-        title={t("programsTitle")}
-        summary={t("programsIntro")}
-        meta={index.programs.length ? <HeroChip icon={GraduationCap}>{t("programsCount", { count: index.programs.length })}</HeroChip> : null}
-        actions={
-          <ButtonLink
-            href={directoryHref}
-            variant="outline"
-            leadingIcon={<Users aria-hidden />}
-            className="border-white/40 bg-white/5 text-white hover:border-white hover:bg-white/15 hover:text-white"
-          >
-            {t("findTeacher")}
-          </ButtonLink>
-        }
-      />
-      <Container size="wide" className="py-section-sm">
-        <Suspense fallback={<ProgramExplorer {...props} />}>
-          <ProgramExplorerFromUrl {...props} />
-        </Suspense>
-      </Container>
-    </>
+    <ClientMessages namespaces={["academics"]}>
+      <>
+        <AcademicHero
+          id="programs"
+          accent="green"
+          icon={GraduationCap}
+          breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb"), href: academicsHref }, { label: t("programsTitle") }]}
+          eyebrow={t("breadcrumb")}
+          title={t("programsTitle")}
+          summary={t("programsIntro")}
+          meta={index.programs.length ? <HeroChip icon={GraduationCap}>{t("programsCount", { count: index.programs.length })}</HeroChip> : null}
+          actions={
+            <ButtonLink
+              href={directoryHref}
+              variant="outline"
+              leadingIcon={<Users aria-hidden />}
+              className="border-white/40 bg-white/5 text-white hover:border-white hover:bg-white/15 hover:text-white"
+            >
+              {t("findTeacher")}
+            </ButtonLink>
+          }
+        />
+        <Container size="wide" className="py-section-sm">
+          <Suspense fallback={<ProgramExplorer {...props} />}>
+            <ProgramExplorerFromUrl {...props} />
+          </Suspense>
+        </Container>
+      </>
+    </ClientMessages>
   );
 }

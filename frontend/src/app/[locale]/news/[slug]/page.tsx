@@ -18,6 +18,7 @@ import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
+import { ClientMessages } from "@/i18n/client-messages";
 
 type Props = PageProps<"/[locale]/news/[slug]">;
 
@@ -159,104 +160,106 @@ export default async function PostPage({ params }: Props) {
   ].filter((f) => f !== null);
 
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
-      <Container size="wide" className="pt-5 sm:pt-6">
-        <Breadcrumbs
-          items={[
-            { label: tCommon("home"), href: "/" },
-            { label: t("newsTitle"), href: newsHref },
-            {
-              label: t(`categories.${post.category}`),
-              href: `${newsHref}?category=${post.category}`,
-            },
-            { label: post.title.value },
-          ]}
-          siteUrl={SITE_URL}
-          label={tCommon("breadcrumb")}
-          backLabel={tCommon("backTo")}
-        />
-      </Container>
+    <ClientMessages namespaces={["notices"]}>
+      <>
+        <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
+        <Container size="wide" className="pt-5 sm:pt-6">
+          <Breadcrumbs
+            items={[
+              { label: tCommon("home"), href: "/" },
+              { label: t("newsTitle"), href: newsHref },
+              {
+                label: t(`categories.${post.category}`),
+                href: `${newsHref}?category=${post.category}`,
+              },
+              { label: post.title.value },
+            ]}
+            siteUrl={SITE_URL}
+            label={tCommon("breadcrumb")}
+            backLabel={tCommon("backTo")}
+          />
+        </Container>
 
-      <Container size="wide" className="grid gap-10 pt-6 pb-section lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
-        <article className="flex min-w-0 flex-col gap-8">
-          <header className="flex max-w-3xl flex-col items-start gap-4">
-            <CategoryBadge category={post.category} />
-            <h1 lang={langAttr(post.title, locale)} className="text-heading-xl text-balance sm:text-display-lg text-fg">
-              {post.title.value}
-            </h1>
-            {post.excerpt ? (
-              <p lang={langAttr(post.excerpt, locale)} className="text-body-lg text-pretty text-fg-muted">
-                {post.excerpt.value}
-              </p>
+        <Container size="wide" className="grid gap-10 pt-6 pb-section lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
+          <article className="flex min-w-0 flex-col gap-8">
+            <header className="flex max-w-3xl flex-col items-start gap-4">
+              <CategoryBadge category={post.category} />
+              <h1 lang={langAttr(post.title, locale)} className="text-heading-xl text-balance sm:text-display-lg text-fg">
+                {post.title.value}
+              </h1>
+              {post.excerpt ? (
+                <p lang={langAttr(post.excerpt, locale)} className="text-body-lg text-pretty text-fg-muted">
+                  {post.excerpt.value}
+                </p>
+              ) : null}
+            </header>
+
+            {post.image ? (
+              <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface-sunken shadow-sm">
+                <PostCover id={post.id} category={post.category} image={post.image} priority showCredit sizes="(min-width: 1024px) 860px, 100vw" />
+              </div>
             ) : null}
-          </header>
 
-          {post.image ? (
-            <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface-sunken shadow-sm">
-              <PostCover id={post.id} category={post.category} image={post.image} priority showCredit sizes="(min-width: 1024px) 860px, 100vw" />
+            {body ? (
+              <div className="flex flex-col gap-4">
+                <EnglishOnlyNote content={body} />
+                <RichText blocks={body.value} lang={langAttr(body, locale)} className="max-w-prose text-body-lg" />
+              </div>
+            ) : null}
+
+            <div className="max-w-3xl">
+              <Documents files={post.attachments} headingId="post-documents" />
             </div>
-          ) : null}
 
-          {body ? (
-            <div className="flex flex-col gap-4">
-              <EnglishOnlyNote content={body} />
-              <RichText blocks={body.value} lang={langAttr(body, locale)} className="max-w-prose text-body-lg" />
+            <div className="max-w-prose">
+              <SourceNote url={post.sourceUrl} />
             </div>
-          ) : null}
+          </article>
 
-          <div className="max-w-3xl">
-            <Documents files={post.attachments} headingId="post-documents" />
+          <aside className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
+            <dl className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:p-6">
+              {facts.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="relative min-h-9 min-w-0 ps-12">
+            <dt className="text-caption text-fg-subtle">
+              <span aria-hidden className="absolute start-0 top-0 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
+                <Icon aria-hidden className="size-4.5" />
+              </span>
+              {label}
+            </dt>
+            <dd className="text-body-sm font-semibold text-fg">{value}</dd>
           </div>
-
-          <div className="max-w-prose">
-            <SourceNote url={post.sourceUrl} />
-          </div>
-        </article>
-
-        <aside className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
-          <dl className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:p-6">
-            {facts.map(({ icon: Icon, label, value }) => (
-              <div key={label} className="relative min-h-9 min-w-0 ps-12">
-          <dt className="text-caption text-fg-subtle">
-            <span aria-hidden className="absolute start-0 top-0 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
-              <Icon aria-hidden className="size-4.5" />
-            </span>
-            {label}
-          </dt>
-          <dd className="text-body-sm font-semibold text-fg">{value}</dd>
-        </div>
-            ))}
-          </dl>
-          <ShareButtons url={url} title={post.title.value} className="rounded-2xl border border-line bg-surface p-5 sm:p-6" />
-        </aside>
-      </Container>
-
-      {related.length ? (
-        <section aria-labelledby="related" className="border-t border-line bg-canvas-subtle py-section-sm">
-          <Container size="wide" className="flex flex-col gap-6">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <h2 id="related" className="text-heading-xl text-fg">
-                {t("more")}
-              </h2>
-              <ButtonLink
-                href={`${newsHref}?category=${post.category}`}
-                variant="outline"
-                trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}
-              >
-                {t(`categories.${post.category}`)}
-              </ButtonLink>
-            </div>
-            <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {related.map((p) => (
-                <li key={p.id}>
-                  <PostCard post={p} headingLevel="h3" />
-                </li>
               ))}
-            </ul>
-          </Container>
-        </section>
-      ) : null}
-    </>
+            </dl>
+            <ShareButtons url={url} title={post.title.value} className="rounded-2xl border border-line bg-surface p-5 sm:p-6" />
+          </aside>
+        </Container>
+
+        {related.length ? (
+          <section aria-labelledby="related" className="border-t border-line bg-canvas-subtle py-section-sm">
+            <Container size="wide" className="flex flex-col gap-6">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <h2 id="related" className="text-heading-xl text-fg">
+                  {t("more")}
+                </h2>
+                <ButtonLink
+                  href={`${newsHref}?category=${post.category}`}
+                  variant="outline"
+                  trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}
+                >
+                  {t(`categories.${post.category}`)}
+                </ButtonLink>
+              </div>
+              <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {related.map((p) => (
+                  <li key={p.id}>
+                    <PostCard post={p} headingLevel="h3" />
+                  </li>
+                ))}
+              </ul>
+            </Container>
+          </section>
+        ) : null}
+      </>
+    </ClientMessages>
   );
 }

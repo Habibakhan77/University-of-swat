@@ -724,3 +724,57 @@ and phone numbers are copied exactly from the official pages. What isn't publish
     throttling LCP improved on every page. Re-measure on the server with PageSpeed Insights.
   - SEO was already 100 when the build's `NEXT_PUBLIC_SITE_URL` matches the tested host; a mismatch (testing
     on another port) fails the canonical audit.
+
+## Phase 12 — Less JavaScript on the main thread
+
+- **Server Components first.** The notices ticker, stat counters and scroll reveal are now Server Components
+  with CSS-only motion; `"use client"` stays on small leaves (ticker pause button, theme toggle, language
+  switcher, menu/search buttons).
+  - Ticker: the marquee was already CSS; the pause button (`ticker-pause.tsx`) flags `[data-ticker]` and CSS
+    pauses the animation.
+  - Stat counters: the digits are CSS counters animated with a scroll timeline (`@property` integers,
+    `animation-timeline: view()`); the real number stays in the HTML for screen readers and search engines.
+    Without scroll-driven animation support, or with reduced motion, the final number is simply shown.
+  - Reveal: `animation-timeline: view()` fade-and-rise in CSS (`.reveal`), no hydration. Blocks already on
+    screen are fully visible; reduced motion gets no animation.
+- **framer-motion removed** (it only powered the fade-ins).
+- **Lazy-loaded with `next/dynamic`**, fetched on first hover, focus or open: the search dialog and index
+  (`search-dialog.tsx`), the mobile menu sheet (`mobile-sheet.tsx`), the mega-menu panel contents with the icon
+  set (`desktop-nav-panel.tsx`, never loaded on phones), and the error page body (`error-view.tsx`).
+- **Hero:** the first slide (text, buttons, priority photo) is server HTML/CSS. Once the browser is idle,
+  `hero-enhancer.tsx` loads `hero-interactive.tsx`, which adds the other photos, the controls (portaled into a
+  slot that a look-alike holds until then, so nothing shifts) and autoplay. The progress bar animates
+  `transform` instead of `width`.
+- **Translations:** the layout no longer serialises every message into every page. `ClientMessages`
+  (`src/i18n/client-messages.tsx`) sends only `common`, `search` and `errorPage`; pages with interactive
+  explorers add their own namespaces. Header labels are translated on the server and passed as props.
+- **Homepage below the fold** uses `content-visibility: auto` (`.home-below`), so those sections skip style
+  and layout until scrolled near.
+- **Bundle** (start-up JS of the HTML, measured from the build; `next analyze` used to find the heavy parts):
+
+  | Page | Before | After |
+  |---|---|---|
+  | Home | 802 KB (253 KB gzip), 15 files | 684 KB (214 KB gzip), 14 files |
+  | /admissions | 744 KB (231 KB gzip) | 710 KB (221 KB gzip) |
+
+  What remains is mostly React DOM and the Next.js runtime (about 570 KB raw), plus next-intl's client
+  provider (about 46 KB; every locale-aware `Link` reads the locale from it).
+- **Lighthouse mobile**, median of 3, before and after builds served side by side and run alternately so both
+  see the same CPU. The laptop was on battery, so the CPU slowdown was calibrated to the host (1.4× instead of
+  4×, as Lighthouse's throttling guide recommends for a slow machine):
+
+  | Page | Performance | LCP | TBT | Main-thread work | A11y / BP / SEO |
+  |---|---|---|---|---|---|
+  | Home | 57 → 61 | 4.2 → 3.9 s | 1,405 → 1,135 ms | 5.3 → 3.7 s | 100 / 100 / 100 |
+  | /admissions | 67 → 69 | 4.0 → 3.8 s | 771 → 722 ms | 2.4 → 2.7 s | 100 / 100 / 100 |
+
+  At the default 4× on the same throttled CPU (also alternated): Home 40 → 45, main-thread work 19.4 → 11.0 s,
+  JS execution 5.8 → 3.7 s; Admissions 44 → 48. Single runs vary by 10–20 points on this laptop; the CPU
+  benchmark ranged from 480 to 2,700 during the session. Earlier one-off runs of the new build reached 73 / 72
+  on a fast CPU, but there was no before run at that speed to compare with.
+- **Checked** on the production build: home functional checks (hero hand-over, next slide, ticker pause,
+  counters, Ctrl+K search, mobile menu, mega menu with ↓) in English and Urdu at 375 and 1440 px; keyboard
+  suite (all pass); 26 pages × en/ur × 375/768/1440 with axe light/dark (no violations, no horizontal scroll,
+  correct `lang`/`dir`, console clean apart from the deliberate 404 test); screenshots match the previous
+  design. The Phase 11 reseed was confirmed via the API (28 departments, 78 programs, 56 placeholder faculty
+  members, no program with a shift).

@@ -1,54 +1,23 @@
-"use client";
-
-import { useEffect, useRef, type ReactNode } from "react";
-import { animate, inView } from "framer-motion";
+import type { CSSProperties, ReactNode } from "react";
+import { cn } from "@/lib/cn";
 
 interface RevealProps {
   children: ReactNode;
-  /** Seconds. Use small steps (0.05–0.1) to stagger items in a grid. */
+  /** Seconds, as before; used as a small offset so items in a grid arrive one after another. */
   delay?: number;
   className?: string;
 }
 
-const EASE = [0.16, 1, 0.3, 1] as const;
-
 /**
- * Subtle fade-and-rise when a block scrolls into view, once.
- *
- * The server HTML is always visible: content never depends on JavaScript to appear, and nothing above the
- * fold waits for hydration to paint (that delayed the Largest Contentful Paint). After hydration, only
- * blocks that are still below the fold are hidden (off screen, so nothing flashes) and animated in when
- * they scroll into view. Visitors who prefer reduced motion get no animation at all.
+ * Subtle fade-and-rise as a block scrolls into view. Pure CSS (`.reveal` in globals.css), driven by the
+ * scroll position with `animation-timeline: view()`: no JavaScript, nothing to hydrate. Blocks already on
+ * screen at load are fully visible, browsers without scroll-driven animations show everything as is, and
+ * visitors who prefer reduced motion get no animation.
  */
 export function Reveal({ children, delay = 0, className }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (el.getBoundingClientRect().top < window.innerHeight) return;
-
-    el.style.opacity = "0";
-    el.style.transform = "translateY(16px)";
-    let controls: ReturnType<typeof animate> | undefined;
-    const stop = inView(
-      el,
-      () => {
-        controls = animate(el, { opacity: 1, transform: "translateY(0px)" }, { duration: 0.7, delay, ease: EASE });
-        stop(); // once only
-      },
-      { margin: "0px 0px -10% 0px" },
-    );
-    return () => {
-      stop();
-      controls?.stop();
-      el.style.opacity = "";
-      el.style.transform = "";
-    };
-  }, [delay]);
-
+  const style = delay ? ({ "--reveal-shift": Math.round(delay * 100) } as CSSProperties) : undefined;
   return (
-    <div ref={ref} className={className}>
+    <div className={cn("reveal", className)} style={style}>
       {children}
     </div>
   );

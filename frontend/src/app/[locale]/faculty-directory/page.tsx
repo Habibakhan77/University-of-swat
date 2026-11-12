@@ -9,6 +9,7 @@ import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
 import { DirectoryExplorer, DirectoryExplorerFromUrl } from "@/components/academics/directory-explorer";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { ClientMessages } from "@/i18n/client-messages";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -29,41 +30,43 @@ export default async function FacultyDirectoryPage() {
   const withMembers = new Set(members.map((m) => m.departmentSlug)).size;
 
   return (
-    <>
-      <AcademicHero
-        id="directory"
-        accent="green"
-        icon={Users}
-        breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb"), href: academicsHref }, { label: t("directoryTitle") }]}
-        eyebrow={t("breadcrumb")}
-        title={t("directoryTitle")}
-        summary={t("directoryIntro")}
-        meta={
-          members.length ? (
-            <>
-              <HeroChip icon={Users}>{t("membersCount", { count: members.length })}</HeroChip>
-              <HeroChip icon={Building2}>{t("departmentsCount", { count: withMembers })}</HeroChip>
-            </>
-          ) : null
-        }
-        actions={
-          index.programs.length ? (
-            <ButtonLink
-              href={programsHref}
-              variant="outline"
-              leadingIcon={<GraduationCap aria-hidden />}
-              className="border-white/40 bg-white/5 text-white hover:border-white hover:bg-white/15 hover:text-white"
-            >
-              {t("browsePrograms")}
-            </ButtonLink>
-          ) : null
-        }
-      />
-      <Container size="wide" className="py-section-sm">
-        <Suspense fallback={<DirectoryExplorer {...props} />}>
-          <DirectoryExplorerFromUrl {...props} />
-        </Suspense>
-      </Container>
-    </>
+    <ClientMessages namespaces={["academics"]}>
+      <>
+        <AcademicHero
+          id="directory"
+          accent="green"
+          icon={Users}
+          breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb"), href: academicsHref }, { label: t("directoryTitle") }]}
+          eyebrow={t("breadcrumb")}
+          title={t("directoryTitle")}
+          summary={t("directoryIntro")}
+          meta={
+            members.length ? (
+              <>
+                <HeroChip icon={Users}>{t("membersCount", { count: members.length })}</HeroChip>
+                <HeroChip icon={Building2}>{t("departmentsCount", { count: withMembers })}</HeroChip>
+              </>
+            ) : null
+          }
+          actions={
+            index.programs.length ? (
+              <ButtonLink
+                href={programsHref}
+                variant="outline"
+                leadingIcon={<GraduationCap aria-hidden />}
+                className="border-white/40 bg-white/5 text-white hover:border-white hover:bg-white/15 hover:text-white"
+              >
+                {t("browsePrograms")}
+              </ButtonLink>
+            ) : null
+          }
+        />
+        <Container size="wide" className="py-section-sm">
+          <Suspense fallback={<DirectoryExplorer {...props} />}>
+            <DirectoryExplorerFromUrl {...props} />
+          </Suspense>
+        </Container>
+      </>
+    </ClientMessages>
   );
 }

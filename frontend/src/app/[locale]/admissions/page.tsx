@@ -30,6 +30,7 @@ import { SmartLink } from "@/components/layout/smart-link";
 import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
+import { ClientMessages } from "@/i18n/client-messages";
 
 const PATH = "/admissions";
 const intlLocale: Record<Locale, string> = { en: "en-PK", ur: "ur-PK" };
@@ -96,181 +97,183 @@ export default async function AdmissionsHubPage() {
     : null;
 
   return (
-    <>
-      {faqLd ? <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(faqLd)} /> : null}
-      <AcademicHero
-        id="admissions"
-        accent="green"
-        icon={GraduationCap}
-        image={page?.heroImage}
-        breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb") }]}
-        eyebrow={t("eyebrow")}
-        title={page?.title.value ?? t("breadcrumb")}
-        titleLang={langAttr(page?.title, locale)}
-        summary={page?.intro?.value}
-        summaryLang={langAttr(page?.intro, locale)}
-        meta={
-          <>
-            {index.programs.length ? <HeroChip icon={GraduationCap}>{t("programsCount", { count: index.programs.length })}</HeroChip> : null}
-            {facultyCount ? <HeroChip icon={Building2}>{t("facultiesCount", { count: facultyCount })}</HeroChip> : null}
-          </>
-        }
-        actions={
-          <>
-            {page?.apply?.action ? (
-              <ActionAnchor action={page.apply.action} className={cn(buttonVariants({ variant: "accent", size: "lg" }), "shadow-lg")}>
-                {page.apply.action.label}
-                {page.apply.action.external ? <ExternalLink aria-hidden /> : <ArrowRight aria-hidden className="rtl:-scale-x-100" />}
-              </ActionAnchor>
-            ) : null}
-            {page?.meritLists.value.length ? (
-              <a
-                href="#merit-lists"
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "lg" }),
-                  "border-white/40 bg-white/5 text-white hover:border-white hover:bg-white/15 hover:text-white",
-                )}
-              >
-                <ListChecks aria-hidden />
-                {t("meritListsButton")}
-              </a>
-            ) : null}
-          </>
-        }
-      />
+    <ClientMessages namespaces={["academics", "admissions"]}>
+      <>
+        {faqLd ? <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(faqLd)} /> : null}
+        <AcademicHero
+          id="admissions"
+          accent="green"
+          icon={GraduationCap}
+          image={page?.heroImage}
+          breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb") }]}
+          eyebrow={t("eyebrow")}
+          title={page?.title.value ?? t("breadcrumb")}
+          titleLang={langAttr(page?.title, locale)}
+          summary={page?.intro?.value}
+          summaryLang={langAttr(page?.intro, locale)}
+          meta={
+            <>
+              {index.programs.length ? <HeroChip icon={GraduationCap}>{t("programsCount", { count: index.programs.length })}</HeroChip> : null}
+              {facultyCount ? <HeroChip icon={Building2}>{t("facultiesCount", { count: facultyCount })}</HeroChip> : null}
+            </>
+          }
+          actions={
+            <>
+              {page?.apply?.action ? (
+                <ActionAnchor action={page.apply.action} className={cn(buttonVariants({ variant: "accent", size: "lg" }), "shadow-lg")}>
+                  {page.apply.action.label}
+                  {page.apply.action.external ? <ExternalLink aria-hidden /> : <ArrowRight aria-hidden className="rtl:-scale-x-100" />}
+                </ActionAnchor>
+              ) : null}
+              {page?.meritLists.value.length ? (
+                <a
+                  href="#merit-lists"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "lg" }),
+                    "border-white/40 bg-white/5 text-white hover:border-white hover:bg-white/15 hover:text-white",
+                  )}
+                >
+                  <ListChecks aria-hidden />
+                  {t("meritListsButton")}
+                </a>
+              ) : null}
+            </>
+          }
+        />
 
-      <Container size="wide" className="grid gap-10 py-section-sm lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-12 lg:py-section xl:grid-cols-[minmax(0,1fr)_21rem]">
-        <div className="flex min-w-0 flex-col gap-section-sm">
-          <HubNav items={nav} label={t("onThisPage")} variant="chips" />
+        <Container size="wide" className="grid gap-10 py-section-sm lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-12 lg:py-section xl:grid-cols-[minmax(0,1fr)_21rem]">
+          <div className="flex min-w-0 flex-col gap-section-sm">
+            <HubNav items={nav} label={t("onThisPage")} variant="chips" />
 
-          <HubSection id="programs" title={t("sections.programs")} intro={t("programsIntro")}>
-            <Suspense fallback={<ProgramFinder {...finderProps} />}>
-              <ProgramFinderFromUrl {...finderProps} />
-            </Suspense>
-          </HubSection>
-
-          {/* One notice for eligibility, fees and dates: the advertisement always takes precedence. */}
-          <OfficialNotice {...noticeProps} />
-
-          {hasEligibility ? (
-            <HubSection id="eligibility" title={t("sections.eligibility")}>
-              <div className="flex flex-col gap-5">
-                {page?.eligibilitySource ? <SourceTag link={page.eligibilitySource} locale={locale} /> : null}
-                {page?.eligibilityRules.value.length ? (
-                  <EligibilityRules rules={page.eligibilityRules.value} lang={langAttr(page.eligibilityRules, locale)} />
-                ) : null}
-                {page?.eligibility ? (
-                  <div>
-                    <EnglishOnlyNote content={page.eligibility} />
-                    <RichText blocks={page.eligibility.value} lang={langAttr(page.eligibility, locale)} className="max-w-prose text-body text-fg-muted" />
-                  </div>
-                ) : null}
-              </div>
+            <HubSection id="programs" title={t("sections.programs")} intro={t("programsIntro")}>
+              <Suspense fallback={<ProgramFinder {...finderProps} />}>
+                <ProgramFinderFromUrl {...finderProps} />
+              </Suspense>
             </HubSection>
-          ) : null}
 
-          <HubSection id="fees" title={t("sections.fees")}>
-            <div className="flex flex-col gap-6">
-              {page?.programFees.length ? (
-                <FeeTable
-                  page={page}
-                  programs={index.programs}
-                  locale={locale}
-                  labels={{
-                    caption: t("feesTable.caption"),
-                    program: t("feesTable.program"),
-                    perSemester: t("feesTable.perSemester"),
-                    admissionFee: t("feesTable.admissionFee"),
-                  }}
-                />
-              ) : null}
-              {page?.feeNote ? (
-                <div>
-                  <EnglishOnlyNote content={page.feeNote} />
-                  <RichText blocks={page.feeNote.value} lang={langAttr(page.feeNote, locale)} className="max-w-prose text-body text-fg-muted" />
-                </div>
-              ) : null}
-              {page?.feeLinks.value.length ? (
-                <div>
-                  <h3 className="mb-3 text-overline text-fg-subtle uppercase">{t("feeLinks")}</h3>
-                  <LinkCards links={page.feeLinks.value} lang={langAttr(page.feeLinks, locale)} />
-                </div>
-              ) : null}
-            </div>
-          </HubSection>
+            {/* One notice for eligibility, fees and dates: the advertisement always takes precedence. */}
+            <OfficialNotice {...noticeProps} />
 
-          {page?.schedules.value.length ? (
-            <HubSection id="dates" title={t("sections.dates")}>
-              <div lang={langAttr(page.schedules, locale)} className="flex flex-col gap-10">
-                {page.schedules.value.map((schedule) => (
-                  <div key={schedule.title} className="flex flex-col gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <h3 className="text-heading-md text-fg">{schedule.title}</h3>
-                      {schedule.note ? <p className="max-w-prose text-body-sm text-fg-muted">{schedule.note}</p> : null}
-                      {schedule.source ? (
-                        <ActionAnchor
-                          action={schedule.source}
-                          className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary-text hover:underline"
-                        >
-                          {t("source", { label: schedule.source.label })}
-                          <ExternalLink aria-hidden className="size-3.5 shrink-0" />
-                        </ActionAnchor>
-                      ) : null}
+            {hasEligibility ? (
+              <HubSection id="eligibility" title={t("sections.eligibility")}>
+                <div className="flex flex-col gap-5">
+                  {page?.eligibilitySource ? <SourceTag link={page.eligibilitySource} locale={locale} /> : null}
+                  {page?.eligibilityRules.value.length ? (
+                    <EligibilityRules rules={page.eligibilityRules.value} lang={langAttr(page.eligibilityRules, locale)} />
+                  ) : null}
+                  {page?.eligibility ? (
+                    <div>
+                      <EnglishOnlyNote content={page.eligibility} />
+                      <RichText blocks={page.eligibility.value} lang={langAttr(page.eligibility, locale)} className="max-w-prose text-body text-fg-muted" />
                     </div>
-                    <DatesTimeline dates={schedule.dates} />
+                  ) : null}
+                </div>
+              </HubSection>
+            ) : null}
+
+            <HubSection id="fees" title={t("sections.fees")}>
+              <div className="flex flex-col gap-6">
+                {page?.programFees.length ? (
+                  <FeeTable
+                    page={page}
+                    programs={index.programs}
+                    locale={locale}
+                    labels={{
+                      caption: t("feesTable.caption"),
+                      program: t("feesTable.program"),
+                      perSemester: t("feesTable.perSemester"),
+                      admissionFee: t("feesTable.admissionFee"),
+                    }}
+                  />
+                ) : null}
+                {page?.feeNote ? (
+                  <div>
+                    <EnglishOnlyNote content={page.feeNote} />
+                    <RichText blocks={page.feeNote.value} lang={langAttr(page.feeNote, locale)} className="max-w-prose text-body text-fg-muted" />
                   </div>
-                ))}
+                ) : null}
+                {page?.feeLinks.value.length ? (
+                  <div>
+                    <h3 className="mb-3 text-overline text-fg-subtle uppercase">{t("feeLinks")}</h3>
+                    <LinkCards links={page.feeLinks.value} lang={langAttr(page.feeLinks, locale)} />
+                  </div>
+                ) : null}
               </div>
             </HubSection>
-          ) : null}
 
-          {page?.steps.value.length ? (
-            <HubSection id="how-to-apply" title={t("sections.howToApply")}>
-              <div className="flex flex-col gap-5">
-                {page.stepsSource ? <SourceTag link={page.stepsSource} locale={locale} /> : null}
-                <ApplySteps steps={page.steps.value} lang={langAttr(page.steps, locale)} />
-              </div>
-            </HubSection>
-          ) : null}
+            {page?.schedules.value.length ? (
+              <HubSection id="dates" title={t("sections.dates")}>
+                <div lang={langAttr(page.schedules, locale)} className="flex flex-col gap-10">
+                  {page.schedules.value.map((schedule) => (
+                    <div key={schedule.title} className="flex flex-col gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <h3 className="text-heading-md text-fg">{schedule.title}</h3>
+                        {schedule.note ? <p className="max-w-prose text-body-sm text-fg-muted">{schedule.note}</p> : null}
+                        {schedule.source ? (
+                          <ActionAnchor
+                            action={schedule.source}
+                            className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary-text hover:underline"
+                          >
+                            {t("source", { label: schedule.source.label })}
+                            <ExternalLink aria-hidden className="size-3.5 shrink-0" />
+                          </ActionAnchor>
+                        ) : null}
+                      </div>
+                      <DatesTimeline dates={schedule.dates} />
+                    </div>
+                  ))}
+                </div>
+              </HubSection>
+            ) : null}
 
-          {page?.meritLists.value.length ? (
-            <HubSection id="merit-lists" title={t("sections.meritLists")}>
-              <LinkCards links={page.meritLists.value} lang={langAttr(page.meritLists, locale)} />
-            </HubSection>
-          ) : null}
+            {page?.steps.value.length ? (
+              <HubSection id="how-to-apply" title={t("sections.howToApply")}>
+                <div className="flex flex-col gap-5">
+                  {page.stepsSource ? <SourceTag link={page.stepsSource} locale={locale} /> : null}
+                  <ApplySteps steps={page.steps.value} lang={langAttr(page.steps, locale)} />
+                </div>
+              </HubSection>
+            ) : null}
 
-          {page?.scholarships ? (
-            <HubSection id="scholarships" title={t("sections.scholarships")}>
-              <EnglishOnlyNote content={page.scholarships} />
-              <RichText blocks={page.scholarships.value} lang={langAttr(page.scholarships, locale)} className="max-w-prose text-body text-fg-muted" />
-            </HubSection>
-          ) : null}
+            {page?.meritLists.value.length ? (
+              <HubSection id="merit-lists" title={t("sections.meritLists")}>
+                <LinkCards links={page.meritLists.value} lang={langAttr(page.meritLists, locale)} />
+              </HubSection>
+            ) : null}
 
-          {page?.faqs.length ? (
-            <HubSection id="faqs" title={t("sections.faqs")}>
-              <FaqAccordion faqs={page.faqs} categories={FAQ_CATEGORIES} />
-            </HubSection>
-          ) : null}
+            {page?.scholarships ? (
+              <HubSection id="scholarships" title={t("sections.scholarships")}>
+                <EnglishOnlyNote content={page.scholarships} />
+                <RichText blocks={page.scholarships.value} lang={langAttr(page.scholarships, locale)} className="max-w-prose text-body text-fg-muted" />
+              </HubSection>
+            ) : null}
 
-          {page?.offices.length ? (
-            <HubSection id="contact" title={t("sections.contact")}>
-              <ul className="grid gap-4 md:grid-cols-2">
-                {page.offices.map((o) => (
-                  <li key={o.slug}>
-                    <OfficeCard office={o} />
-                  </li>
-                ))}
-              </ul>
-            </HubSection>
-          ) : null}
-        </div>
+            {page?.faqs.length ? (
+              <HubSection id="faqs" title={t("sections.faqs")}>
+                <FaqAccordion faqs={page.faqs} categories={FAQ_CATEGORIES} />
+              </HubSection>
+            ) : null}
 
-        <aside className="hidden flex-col gap-5 lg:sticky lg:top-28 lg:flex lg:self-start xl:top-32">
-          {page?.apply ? <ApplyCard page={page} /> : null}
-          <HubNav items={nav} label={t("onThisPage")} variant="list" />
-        </aside>
-      </Container>
-    </>
+            {page?.offices.length ? (
+              <HubSection id="contact" title={t("sections.contact")}>
+                <ul className="grid gap-4 md:grid-cols-2">
+                  {page.offices.map((o) => (
+                    <li key={o.slug}>
+                      <OfficeCard office={o} />
+                    </li>
+                  ))}
+                </ul>
+              </HubSection>
+            ) : null}
+          </div>
+
+          <aside className="hidden flex-col gap-5 lg:sticky lg:top-28 lg:flex lg:self-start xl:top-32">
+            {page?.apply ? <ApplyCard page={page} /> : null}
+            <HubNav items={nav} label={t("onThisPage")} variant="list" />
+          </aside>
+        </Container>
+      </>
+    </ClientMessages>
   );
 }
 
