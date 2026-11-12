@@ -926,3 +926,18 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   original (else the thumbnail), written to the photo field only, then the website is asked to refresh.
 - Reseeded while uswat.edu.pk was unreachable: the real names and details are in, and photos already in the
   seed's download cache are attached; the other profiles show the silhouette until `npm run faculty-photos` runs.
+
+## Phase 14.2 — Faculty photos
+
+- `npm run faculty-photos` now fetches politely: one request at a time with a random 2–3 s pause before
+  each, two retries (30 s and 60 s later) after a network or server error, a second pass over failures two
+  minutes later, and a full stop on HTTP 403/429 or a bot-protection page instead of the file.
+- Run on 12 Nov 2026 (uswat.edu.pk reachable again, never blocked): 134 photos attached without a reseed,
+  in addition to the 7 already present. 141 of the 158 real faculty members now have their official photo.
+- Still without a photo (17): 14 whose department page shows only the generic silhouette (Botany: Dr. Shazia
+  Sakhi, Dr. Zakia Ahmad, Dr. Shazia; Education: Ms. Sadarat, Dr. Maryam Imad; Islamic and Arabic Studies:
+  Dr. Shafiqa Bushra; Law & Shariah: Ms. Nazish Inayat, Ms. Kalsoom Bibi; Management & Commerce: Dr. Neelam
+  Akbar Marwat, Dr. Lala Rukh; Psychological Studies: Ms.Palwasha Rahim, Ms. Roya Shahhiman Zada; Zoology:
+  Ms. Shabnam, Ms. Rohi Naz) and 3 whose photo is a broken link (404) on the official page itself (Mr. Murad
+  Ali, Biotechnology; Dr. Muzammil Khan, Computer and Software Technology; Dr. Naveed Ali, Economics). These
+  show the neutral silhouette until the department uploads a photo in Strapi.

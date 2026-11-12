@@ -26,8 +26,25 @@ interface MemberRow {
   photo: { id: number } | null;
 }
 
+/**
+ * Gentle on uswat.edu.pk's bot protection: one request at a time with a 2–3 s pause before each, two
+ * retries 30 s and 60 s after a network or server error, a second pass over failures two minutes later,
+ * and a full stop on 403/429 or a challenge page (later fetches are skipped; run the script again later).
+ */
+const POLITE = { minDelayMs: 2_000, maxDelayMs: 3_000, retries: 2, retryDelayMs: 30_000 };
+const SECOND_PASS_DELAY_MS = 120_000;
+
+interface Pending {
+  name: string;
+  department: string;
+  photo: string;
+  source: string;
+  rows: MemberRow[];
+}
+
 export async function runFacultyPhotos(strapi: Core.Strapi): Promise<void> {
   const media = new MediaFactory(strapi);
+  media.setPolite(POLITE);
   await media.init();
   try {
     await attachMissing(strapi, media);
@@ -37,10 +54,9 @@ export async function runFacultyPhotos(strapi: Core.Strapi): Promise<void> {
 }
 
 async function attachMissing(strapi: Core.Strapi, media: MediaFactory): Promise<void> {
-  let attached = 0;
   let present = 0;
   let notFound = 0;
-  const failed: string[] = [];
+  const pending: Pending[] = [];
 
   for (const [department, listing] of Object.entries(FACULTY_LISTS)) {
     const source = `${SITE_URL}${listing.source}`;
@@ -59,28 +75,70 @@ async function attachMissing(strapi: Core.Strapi, media: MediaFactory): Promise<
       }
       for (const documentId of new Set(rows.map((r) => r.documentId))) {
         const doc = rows.filter((r) => r.documentId === documentId);
-        if (doc.some((r) => r.photo)) {
-          present += 1;
-          continue;
-        }
-        const photo = await media.remoteFirst(photoCandidates(m.photo), { alt: m.name, source }, 'portrait');
-        if (photo === null) {
-          failed.push(`${m.name} (${department})`);
-          continue;
-        }
-        for (const row of doc) await strapi.db.query(MEMBER).update({ where: { id: row.id }, data: { photo } });
-        attached += 1;
-        log(`Attached ${m.name} (${department})`);
+        if (doc.some((r) => r.photo)) present += 1;
+        else pending.push({ name: m.name, department, photo: m.photo, source, rows: doc });
       }
     }
   }
+  log(`${pending.length} profile(s) without a photo to fetch, ${present} already have one.`);
 
-  log(`${attached} photo(s) attached, ${present} profile(s) already had one, ${failed.length} could not be downloaded${notFound ? `, ${notFound} profile(s) not found` : ''}.`);
+  let attached = 0;
+  const attach = async (items: Pending[]): Promise<Pending[]> => {
+    const failed: Pending[] = [];
+    for (const [i, p] of items.entries()) {
+      if (media.blocked) {
+        failed.push(...items.slice(i));
+        break;
+      }
+      const photo = await media.remoteFirst(photoCandidates(p.photo), { alt: p.name, source: p.source }, 'portrait');
+      if (photo === null) {
+        failed.push(p);
+        continue;
+      }
+      for (const row of p.rows) await strapi.db.query(MEMBER).update({ where: { id: row.id }, data: { photo } });
+      attached += 1;
+      log(`Attached ${p.name} (${p.department}) [${attached}]`);
+    }
+    return failed;
+  };
+
+  let failed = await attach(pending);
+  if (failed.length && !media.blocked) {
+    log(`${failed.length} failed; trying them again in ${SECOND_PASS_DELAY_MS / 60_000} minutes…`);
+    await new Promise((resolve) => setTimeout(resolve, SECOND_PASS_DELAY_MS));
+    media.missing.length = 0;
+    failed = await attach(failed);
+  }
+
+  if (media.blocked) log(`STOPPED: ${media.blocked}. Wait a while (or change network) and run the script again.`);
+  log(`${attached} photo(s) attached, ${present} profile(s) already had one, ${failed.length} not downloaded${notFound ? `, ${notFound} profile(s) not found` : ''}.`);
   if (failed.length) {
-    log('Not downloaded (run again later):');
+    log('Not downloaded:');
     for (const line of media.missing) log(`  ${line}`);
   }
+  await reportWithoutPhoto(strapi);
   if (attached) await revalidate();
+}
+
+/** Every real faculty member still without a photo, by department, and whether their page shows one. */
+async function reportWithoutPhoto(strapi: Core.Strapi): Promise<void> {
+  const rows = (await strapi.db.query(MEMBER).findMany({
+    where: { isPlaceholder: false, locale: 'en', publishedAt: { $notNull: true } },
+    select: ['name'],
+    populate: { photo: { select: ['id'] }, department: { select: ['name'] } },
+  })) as Array<{ name: string; photo: { id: number } | null; department: { name: string } | null }>;
+  const missing = rows.filter((r) => !r.photo);
+  log(`Real faculty members without a photo: ${missing.length} of ${rows.length}`);
+  const byDepartment = new Map<string, string[]>();
+  for (const r of missing) {
+    const department = r.department?.name ?? '(no department)';
+    const listed = FACULTY_LISTS[department]?.members.find((m) => m.name === r.name);
+    const why = listed?.photo ? 'download failed' : 'page shows no photo';
+    byDepartment.set(department, [...(byDepartment.get(department) ?? []), `${r.name} (${why})`]);
+  }
+  for (const [department, names] of [...byDepartment].sort(([a], [b]) => a.localeCompare(b))) {
+    log(`  ${department}: ${names.join('; ')}`);
+  }
 }
 
 /** Same request the Strapi webhook sends, so the department pages and the directory refresh now. */

@@ -173,6 +173,17 @@ export interface ImageRequest {
 }
 
 /** Generates and uploads seed media, caching by key so shared images are uploaded once. */
+export interface PoliteOptions {
+  /** Random pause before every network request, between these bounds. */
+  minDelayMs: number;
+  maxDelayMs: number;
+  /** Extra attempts after a network or 5xx error, waiting retryDelayMs × attempt first. */
+  retries: number;
+  retryDelayMs: number;
+}
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
 export class MediaFactory {
   private readonly cache = new Map<string, UploadedFile>();
   private dir = '';
@@ -183,8 +194,19 @@ export class MediaFactory {
   readonly missing: string[] = [];
   /** Consecutive network failures (no HTTP answer); after three, uswat.edu.pk counts as offline for this run. */
   private networkFailures = 0;
+  /** Why downloading stopped for this run (blocked or unreachable); later fetches are skipped. */
+  blocked: string | null = null;
+  private polite: PoliteOptions = { minDelayMs: 0, maxDelayMs: 0, retries: 0, retryDelayMs: 0 };
 
   constructor(private readonly strapi: Core.Strapi) {}
+
+  /**
+   * Fetch gently: a random pause before every request (one at a time, as the seed already does), retries
+   * with a longer wait after network or server errors, and a full stop when the site refuses us.
+   */
+  setPolite(options: PoliteOptions): void {
+    this.polite = options;
+  }
 
   private get service(): UploadService {
     return this.strapi.plugin('upload').service('upload') as unknown as UploadService;
@@ -352,30 +374,50 @@ export class MediaFactory {
     } catch {
       // not cached yet
     }
-    if (this.networkFailures >= 3) {
-      if (!quiet) this.missing.push(`skipped, uswat.edu.pk unreachable: ${url}`);
-      return null;
-    }
-    try {
-      const response = await fetch(url, {
-        headers: { 'User-Agent': 'uswat-website-seed' },
-        signal: AbortSignal.timeout(180_000),
-      });
-      this.networkFailures = 0;
-      if (!response.ok) {
-        if (!quiet) this.missing.push(`${response.status} ${url}`);
+    const { minDelayMs, maxDelayMs, retries, retryDelayMs } = this.polite;
+    let lastError = '';
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+      if (this.networkFailures >= 3) this.blocked ??= 'uswat.edu.pk stopped answering';
+      if (this.blocked) {
+        if (!quiet) this.missing.push(`skipped (${this.blocked}): ${url}`);
         return null;
       }
-      const buffer = Buffer.from(await response.arrayBuffer());
-      await mkdir(dir, { recursive: true });
-      await writeFile(cached, buffer);
-      return buffer;
-    } catch (error) {
-      this.networkFailures += 1;
-      if (quiet) return null;
-      this.missing.push(`${error instanceof Error ? error.message : String(error)} ${url}`);
-      return null;
+      if (attempt > 0) await sleep(retryDelayMs * attempt);
+      if (maxDelayMs > 0) await sleep(minDelayMs + Math.random() * (maxDelayMs - minDelayMs));
+      try {
+        const response = await fetch(url, {
+          headers: { 'User-Agent': 'uswat-website-seed' },
+          signal: AbortSignal.timeout(180_000),
+        });
+        this.networkFailures = 0;
+        // Refused or rate-limited, or a challenge page instead of the file: bot protection. Stop for this run.
+        const html = (response.headers.get('content-type') ?? '').startsWith('text/html');
+        if (response.status === 403 || response.status === 429 || (response.ok && html)) {
+          this.blocked = response.ok ? 'bot protection page instead of the file' : `HTTP ${response.status}`;
+          await response.body?.cancel();
+          continue;
+        }
+        if (response.status >= 500) {
+          lastError = `${response.status}`;
+          await response.body?.cancel();
+          continue;
+        }
+        if (!response.ok) {
+          if (!quiet) this.missing.push(`${response.status} ${url}`);
+          return null;
+        }
+        const buffer = Buffer.from(await response.arrayBuffer());
+        await mkdir(dir, { recursive: true });
+        await writeFile(cached, buffer);
+        return buffer;
+      } catch (error) {
+        this.networkFailures += 1;
+        lastError = error instanceof Error ? error.message : String(error);
+      }
     }
+    if (!quiet && !this.blocked) this.missing.push(`${lastError} ${url}`);
+    else if (!quiet) this.missing.push(`skipped (${this.blocked}): ${url}`);
+    return null;
   }
 
   /** Deletes every placeholder, seed photo and copied official file uploaded by a previous seed run. */
