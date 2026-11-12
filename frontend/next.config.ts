@@ -48,8 +48,9 @@ const nextConfig: NextConfig = {
     qualities: [75, 90],
     remotePatterns: strapiImagePatterns(),
     // Next.js 16 refuses to optimise images from private addresses. Local development serves them from
-    // Strapi on localhost:1337, so allow it there only; production builds keep the protection.
-    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
+    // Strapi on localhost:1337, so allow it there; production builds keep the protection unless
+    // IMAGES_ALLOW_LOCAL_IP=1 is set (testing a production build against a local Strapi, e.g. Lighthouse).
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === "development" || process.env.IMAGES_ALLOW_LOCAL_IP === "1",
   },
 };
 

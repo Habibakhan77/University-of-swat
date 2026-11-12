@@ -36,7 +36,7 @@ export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
           href={notice.href}
           tabIndex={copy || i >= notices.length ? -1 : undefined}
           aria-hidden={copy || i >= notices.length ? true : undefined}
-          className="rounded-sm text-body-sm font-medium whitespace-nowrap text-maroon-50 hover:text-white hover:underline"
+          className="inline-flex min-h-6 items-center rounded-sm text-body-sm font-medium whitespace-nowrap text-maroon-50 hover:text-white hover:underline"
         >
           <time dateTime={notice.date} className="me-2 text-caption font-semibold text-gold-200">
             <bdi>{notice.dateLabel}</bdi>
@@ -81,7 +81,7 @@ export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
           onClick={() => setPaused((p) => !p)}
           aria-label={paused ? labels.play : labels.pause}
           title={paused ? labels.play : labels.pause}
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-maroon-100 transition-colors hover:bg-white/10 hover:text-white motion-reduce:hidden"
+          className="relative z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-maroon-100 transition-colors hover:bg-white/10 hover:text-white motion-reduce:hidden"
         >
           {paused ? <Play aria-hidden className="size-4" /> : <Pause aria-hidden className="size-4" />}
         </button>

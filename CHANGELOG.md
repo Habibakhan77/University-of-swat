@@ -629,3 +629,98 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   card on the dev server; search ranking tested against the live index in English and Urdu.
   **Not yet done**: reseeding (`npm run seed -- --reset`) and the visual check at 1440px / 375px, because
   the dev servers were not running.
+
+## Phase 11 — Quality pass
+
+- **Content accuracy (academics).** Every department and program was checked against its official page on
+  uswat.edu.pk (and the Faculty of Allied Health Sciences and Hunerkada pages); anything not published there
+  was removed. The source path is recorded on every department in `cms/scripts/seed/data/academics.ts`.
+  - **Programs** now match each department's published list (80 → 78). Removed invented entries: every
+    "BS (5th semester entry)" program, BS Arabic, BS Commerce, BS Gender Studies, BS Agriculture, BS Nursing,
+    MS Public Health, MS Clinical Psychology, MS Geology, and MPhil/PhD programs no page lists (English, Pashto,
+    Urdu, Physics, Economics, Archaeology, Pakistan Studies, Media, Chemistry PhD, Zoology). Added the published ones
+    that were missing: BS Artificial Intelligence, BS Data Science, PhD Computer Science; BS Digital Marketing,
+    Business Analytics, Accounting and Finance, Islamic Banking and Finance, MBA and Executive MBA (business /
+    non-business stream), PhD Management Sciences; BS Development Studies; BS Culinary Arts; MS Media and Communication Studies; BS Criminology,
+    PhD Sociology; B.Ed (1.5 Year), Associate Degree in Education; BS Disaster Preparedness and Climate Change,
+    MS/MPhil and PhD Environmental Sciences, PGD Geomatics; BS Genetics, PhD Biotechnology and Microbiology;
+    BS Fisheries and Aquaculture, MSc Zoology; MPhil Forestry; MPhil Linguistics, MPhil Arabic Studies;
+    BS Dental Technology. Names follow the pages (BA LL.B (Law & Shariah), B.Ed (Hons), BS Radiography &
+    Imaging Technology, BS Forensic Sciences).
+  - **Durations, semesters and credit hours**: the HEC-default figures on every program are gone; only the
+    published ones remain (BS Geology 4 years / 8 semesters / 132 credit hours; MBA and EMBA 35 or 65 credit
+    hours; BA LL.B and DPT 5 years; B.Ed 4 years, B.Ed 1.5 years, ADE 2 years; BS Environmental Sciences,
+    Disaster Preparedness, Media, Statistics, Zoology and Fisheries 4 years; PGD 1 year).
+  - **Shift**: no shift is published anywhere, so "Morning" (every program) and "Morning & evening" (BS
+    Computer Science, BBA) are gone, and the Program `shift` field no longer defaults to "morning".
+  - **Department text**: the invented "Areas of focus" lists are gone; overviews are rewritten from each
+    official page. Founding years only where a page gives one: removed for English, Physics, Computer Science
+    and Botany; Chemistry corrected 2010 → 2013; added for Islamic & Arabic Studies (2017), Mathematics &
+    Statistics (2010), Geology (2014), Archaeology and Tourism (2025), Psychology (2012), Education (2010),
+    Environmental Sciences (2012), Zoology (2011), Agriculture & Forestry (2014), Biotechnology (2011).
+  - **Program text**: "A 4-year program …" and the generic "curriculum follows HEC guidelines" sentence are
+    replaced by "Offered by the Department of …", plus the department's own description where one is published
+    (BS AI, BS Data Science, BS Geology, BS and MS Media). Eligibility from the department page on 11 programs
+    (Physics, Geology, Tourism, Culinary Arts, Pakistan Studies, Media BS/MS, Chemistry BS/MPhil, Forestry
+    BS/MPhil); the rest point to the admission advertisement as before.
+  - **Allied Health Sciences**: the three invented units are replaced by the four departments on the faculty
+    page (Medical Technologies; Nursing and Public Health; Pharmaceutical and Rehabilitation Sciences; Food and
+    Nutrition Sciences). Faculty summaries corrected where they claimed unpublished things (Physical Sciences,
+    Allied Health, Hunerkada: now its published BFA and BDes programs).
+  - Open questions for the Admissions Directorate are in the seed README checklist. Reseeded with `--reset`.
+- **Program and department pages**: compact hero (like the other inner pages), and the Overview never opens
+  with the hero's intro: the seed no longer repeats it, and `withoutLead()` drops a first paragraph that
+  repeats the summary if an editor pastes it in.
+- **Performance.**
+  - The header's hidden widgets are no longer in every page's HTML: mega-menu panel contents mount when the
+    pointer or focus first enters the nav, the mobile menu and search dialog contents on first use. Header
+    markup went from about 1,180 to 200 elements and a program page's HTML from 309 KB to 195 KB, so the page
+    body paints with the header instead of after it.
+  - `Reveal` no longer server-renders content at `opacity: 0`: everything is visible without JavaScript, and
+    only blocks still below the fold animate in on scroll.
+  - Hero images get `fetchPriority="high"` (Next 16's `priority` only preloads); the first faculty photo on
+    Academics loads eagerly; the home slider renders slides 2 and 3 only after the first photo has loaded
+    (they sit in the viewport, so `loading="lazy"` fetched all three at once).
+  - `IMAGES_ALLOW_LOCAL_IP=1` (off by default) lets a production build optimise images from a local Strapi,
+    for testing; production keeps Next's private-address protection.
+- **Accessibility.**
+  - Valid definition lists in the "At a glance", news and notice fact panels (the icon sat between `<dl>` and
+    `<dt>`).
+  - Dark-mode contrast: `bg-fac` falls back to the dark forest green (white text was 3.2:1 on the light green);
+    chip counts, quick-action and search meta text are no longer dimmed to 80%; closed admission dates use a
+    sunken background instead of `opacity-75`.
+  - The brand link's accessible name includes the visible tagline, with a word space between name and tagline
+    so the computed visible text matches (WCAG 2.5.3); notice-ticker links are at
+    least 24 px tall and the pause button sits above them (2.5.8).
+  - Search: one Esc always closes it (a search field used to spend the first Esc clearing itself), and the
+    field shows a focus line. Mobile menu: focus goes to the close button on open again.
+- **Checked** on the production build:
+  - Keyboard, English and Urdu: skip link; mega menu (Enter, ↓/↑, ←/→ mirrored in RTL, Esc returns focus, Tab
+    out closes); mobile menu (focus on close, focus stays inside, sections open with Enter, Esc returns focus);
+    search (Ctrl+K, results, arrow keys, Esc); news filters; FAQ accordions; directory filters with live count.
+  - axe (WCAG 2.2 AA) on 26 pages × English/Urdu × 375/1440 px × light/dark: no violations after the fixes.
+  - 26 pages × English/Urdu × 375/768/1440 px: no horizontal scroll, nothing past the viewport edge, correct
+    `lang`/`dir`, no console errors or failed requests (except the deliberate 404 test).
+  - Dev server browser console: one warning remains, Turbopack's dev-only "CSS preloaded but not used" for
+    its global stylesheet chunk; it is not in production builds.
+  - Lint, typecheck (frontend and CMS) and build are clean.
+- **Lighthouse** (12.8.2, production build on this laptop, Strapi on localhost; median of 3 runs, default
+  simulated throttling; before = the Phase 10 frontend with the same data and config):
+
+  | Page | Mobile perf | Desktop perf | Accessibility | Best Practices | SEO |
+  |---|---|---|---|---|---|
+  | Home | 47 → 47 | 88 → 81 | 100 → 100 | 100 → 100 | 100 → 100 |
+  | Department (Computer & Software Technology) | 50 → 59 | 94 → 96 | 93 → 100 | 100 → 100 | 100 → 100 |
+  | Program (BS Artificial Intelligence) | 59 → 65 | 96 → 97 | 93 → 100 | 100 → 100 | 100 → 100 |
+  | /admissions | 57 → 57 | 90 → 95 | 96 → 100 | 100 → 100 | 100 → 100 |
+  | News detail | 76 → 62 | 98 → 96 | 93 → 100 | 100 → 100 | 100 → 100 |
+
+  Mobile LCP with real (DevTools) throttling, 2 runs: Home 4.0 / 2.8 s → 2.6 / 2.6 s, Department 3.0 / 3.0 →
+  2.8 / 2.6, Program 2.8 / 3.3 → 2.6 / 2.5, Admissions 3.0 / 2.7 → 2.7 / 2.1, News 3.1 / 2.7 → 2.3 / 2.3.
+  - Mobile performance does not reach 95 here: Total Blocking Time is 1–2.5 s, mostly React DOM and the Next.js
+    runtime at Lighthouse's 4× CPU slowdown on a laptop with under 1 GB free RAM; single runs vary by up to 20
+    points. The simulated News/Admissions mobile drop is a localhost artifact: with the lighter HTML the page
+    first paints after the (instantly local) scripts have run, so the simulation charges them to LCP; with real
+    throttling LCP improved on every page. Re-measure on the server with PageSpeed Insights.
+  - SEO was already 100 when the build's `NEXT_PUBLIC_SITE_URL` matches the tested host; a mismatch (testing
+    on another port) fails the canonical audit.

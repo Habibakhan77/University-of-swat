@@ -17,9 +17,9 @@ server, so it can run while `npm run dev` is running.
 | --- | --- | --- |
 | Campuses | 2 | Main Campus (Charbagh), Women Campus — en + ur |
 | Faculties | 6 | 5 faculties + Hunerkada (type `center`) — en + ur |
-| Departments | 27 | Real names from uswat.edu.pk — en + ur |
-| Programs | 80 | BS / BS 5th semester / MPhil / MS / PhD, HEC-standard durations and credit hours; no fees or eligibility (only published in the admission advertisement); one-sentence summaries — en + ur (degree titles kept as written) |
-| Faculty members | 54 | 2 per department, **all placeholders** (`isPlaceholder: true`) — en + ur |
+| Departments | 28 | Real names from uswat.edu.pk (Allied Health Sciences: the four departments on its faculty page); overview rewritten from each official department page, founding year only where the page gives one — en + ur |
+| Programs | 78 | Exactly the degree programs listed on each department page (checked November 2026). Duration, semesters and credit hours only where the page states them (e.g. BS Geology 4 years / 132 credit hours, MBA 35 or 65 credit hours); no shift anywhere (none is published); eligibility only where the department page publishes it; no fees — en + ur (degree titles kept as written) |
+| Faculty members | 56 | 2 per department, **all placeholders** (`isPlaceholder: true`) — en + ur |
 | Offices & directorates | 23 | Offices, directorates, centres and student services with heads, emails, phones, staff and documents copied from each office page on uswat.edu.pk (source link on every entry); real head photos where published — en + ur |
 | Posts | 26 | Real news, announcements and events (Sep–Nov 2026), rewritten text, a link to each original; real event photos as covers, posters and notices attached in full; Urdu title, excerpt and venue (the body stays in English, shown with an "in English" note) |
 | Tenders / Jobs | 10 / 10 | The latest items on uswat.edu.pk with their official PDFs and advertisements; all `closed` (deadlines from the documents) |
@@ -34,7 +34,7 @@ server, so it can run while `npm run dev` is running.
 | Single types | 7 | Homepage, About (official vision, mission, values, motto, rewritten history, accreditations), VC Message, Admissions Page, Research Page, Contact Page, Site Settings (2-level nav) — en + ur |
 
 Stat counters use `source` = `campuses` / `faculties` / `departments` / `programs`, so `GET /api/stats`
-counts them from the database (2 / 5 / 27 / 80 after seeding) and they update as editors add content.
+counts them from the database (2 / 5 / 28 / 78 after seeding) and they update as editors add content.
 
 ## Placeholder media
 
@@ -66,8 +66,16 @@ from uswat.edu.pk (about 75 MB the first time, cached in `cms/.seed-cache/`, git
 - [ ] **Media Cell**: has no page on uswat.edu.pk, so it is not seeded as an office.
 - [ ] **Deans**: placeholders, except the Allied Health Sciences focal person (Dr. Ali Akbar).
 - [ ] **Faculty members**: replace the placeholder entries for each department.
-- [ ] **Program list**: representative of each department. The Admissions Directorate should confirm it,
-      and also which programs run at the Women Campus (programs are linked to the Main Campus for now).
+- [ ] **Program list**: copied from each department page on uswat.edu.pk (source path on every entry in
+      `data/academics.ts`). Some pages are out of date or disagree with the Fall 2026 advertisement, so the
+      Admissions Directorate should confirm: Physics lists its MS/MPhil as "intended" (left out); Zoology lists an
+      MSc; Pakistan Studies mentions a Master's program it doesn't list (left out); Allied Health Sciences publishes
+      its programs per faculty, so each was linked to the department its name belongs to (MLT, Dental and
+      Radiography → Medical Technologies; DPT → Pharmaceutical and Rehabilitation Sciences); Nursing and Public
+      Health and Food and Nutrition Sciences list no programs yet. Also confirm which programs run at the Women
+      Campus (programs are linked to the Main Campus for now).
+- [ ] **Program durations, credit hours and shifts**: only set where a department page states them. Departments
+      should add the rest from their scheme of studies, and the shift (morning / evening) when they publish it.
 - [ ] **Fees and seats**: not set on programs. Upload the official fee structure PDF.
 - [ ] **Admissions eligibility, dates and how to apply**: Fall 2026 values transcribed from the advertisement posters
       (`ELIGIBILITY_RULES`, `SCHEDULES`, `HOW_TO_APPLY` in `data/site.ts`). Replace them with each new intake's advertisement.

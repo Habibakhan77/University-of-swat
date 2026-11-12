@@ -156,7 +156,7 @@ export const POSTS: PostSeed[] = [
     content: blocks(
       'The School of Nursing and Public Health organised an awareness session on cervical cancer prevention. Speakers explained risk factors, the importance of regular screening and the HPV vaccine, and answered students’ questions.',
     ),
-    department: 'School of Nursing and Public Health',
+    department: 'Department of Nursing and Public Health',
   },
   {
     slug: 'climate-resilience-conference-bara-gali',

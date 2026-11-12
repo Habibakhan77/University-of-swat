@@ -7,11 +7,11 @@
  *   (faculties, departments, campuses, offices, stats, slides, single types and featured news).
  */
 import type { Core, UID } from '@strapi/strapi';
-import { blocks, h, ul, type Block } from './lib/blocks';
+import { blocks, ul, type Block } from './lib/blocks';
 import { Writer } from './lib/docs';
 import { MediaFactory } from './lib/media';
 import { CAMPUS_PHOTOS, FACULTY_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
-import { FACULTIES, LEVEL_DEFAULTS, type DepartmentSeed, type ProgramSeed } from './data/academics';
+import { FACULTIES, LEVEL_LABELS, type DepartmentSeed, type ProgramSeed } from './data/academics';
 import { CAMPUSES, MAIN_ADDRESS, OFFICES, PHONE_DIRECTORY, PHONE_DIRECTORY_UR, UPLOADS } from './data/organisation';
 import { CONTACT_PAGE, FACILITIES, RESEARCH_PAGE, RESEARCH_PROJECTS } from './data/pages';
 import { POSTS } from './data/posts';
@@ -85,7 +85,7 @@ const DESIGNATIONS = ['professor', 'associate_professor', 'assistant_professor',
 
 function programName(p: ProgramSeed): string {
   if (p.name) return p.name;
-  const label = p.level === 'bs_5th_semester' ? 'BS' : LEVEL_DEFAULTS[p.level].label;
+  const label = p.level === 'bs_5th_semester' ? 'BS' : LEVEL_LABELS[p.level];
   return `${label} ${p.subject ?? ''}`.trim();
 }
 
@@ -93,8 +93,8 @@ function programSlug(p: ProgramSeed): string {
   return slugify(p.level === 'bs_5th_semester' ? `${programName(p)} 5th semester` : programName(p));
 }
 
-// No program eligibility is seeded: the figures are only published in each admission advertisement,
-// so program pages show the "Check the latest admission advertisement" notice until a department adds them.
+// Program eligibility is only seeded where the department page publishes it; other program pages show the
+// "Check the latest admission advertisement" notice until the department adds it.
 
 export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promise<void> {
   const started = Date.now();
@@ -259,7 +259,6 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
               additionalRole: m === 0 ? 'Chairperson' : undefined,
               isHead: m === 0,
               qualification: 'PhD (placeholder)',
-              specialization: d.focus.split(',')[0],
               bio: blocks('PLACEHOLDER PROFILE — not a real person. The department editor should replace this entry with real faculty details.'),
               photo: memberPhoto,
               order: m + 1,
@@ -270,7 +269,6 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
               name: `عارضی رکنِ فیکلٹی ${urduDigits(m + 1)}`,
               additionalRole: m === 0 ? 'چیئرپرسن' : undefined,
               qualification: 'پی ایچ ڈی (عارضی)',
-              specialization: d.urShort.replace(/۔$/, ''),
               bio: blocks('عارضی پروفائل — یہ کوئی حقیقی شخص نہیں۔ شعبے کے ایڈیٹر اس اندراج کو حقیقی اساتذہ کی معلومات سے تبدیل کریں۔'),
               department: departmentId,
             },
@@ -542,12 +540,10 @@ async function createDepartment(
   campusId: string | undefined,
   order: number,
 ): Promise<string> {
-  const slug = slugify(d.name.replace(/^Department of /, ''));
-  const overview: Block[] = blocks(
-    d.summary,
-    h('Areas of focus', 3),
-    `${d.focus}.`,
-  );
+  const slug = slugify(d.name.replace(/^Department (of|for) /, ''));
+  // The overview is only what the department's official page says, rewritten; the hero sentence (summary)
+  // is not repeated in it. Departments without an official page get no overview.
+  const overview: Block[] | undefined = d.overview?.length ? blocks(...d.overview) : undefined;
   return w.create(
     'api::department.department',
     {
@@ -562,7 +558,7 @@ async function createDepartment(
       campus: campusId,
       contact: { address: `${d.name}, ${MAIN_ADDRESS}` },
       order,
-      seo: seo(d.name, d.summary),
+      seo: seo(d.name, d.overview?.[0] ?? d.short),
     },
     { name: d.ur, summary: d.urShort, faculty: facultyId, campus: campusId },
   );
@@ -575,44 +571,32 @@ async function createProgram(
   departmentId: string,
   campusId: string | undefined,
 ): Promise<string> {
-  const defaults = LEVEL_DEFAULTS[p.level];
   const name = programName(p);
-  const durationYears = p.durationYears ?? defaults.durationYears;
-  // One short sentence for the hero, cards and search; the fuller description opens the overview.
-  const length = durationYears < 1 ? 'six-month' : `${durationYears}-year`;
-  const summary = `A ${length} program of the ${d.name}.`;
-  const description = `${name} offered by the ${d.name}: a ${length} program focused on ${d.focus.toLowerCase()}.`;
-  const urLength = durationYears < 1 ? 'چھ ماہ کا' : `${urduDigits(durationYears)} سالہ`;
-  const urSummary = `${d.ur} کا ${urLength} پروگرام۔`;
+  // The hero sentence only states the department; facts (duration, credit hours) appear only when published.
+  const summary = `Offered by the ${d.name}.`;
+  const urSummary = `${d.ur} کا پروگرام۔`;
   const department = { department: departmentId, campus: campusId };
   return w.create('api::program.program', {
     name,
     slug: programSlug(p),
     level: p.level,
     summary,
-    overview: blocks(
-      description,
-      p.level === 'bs_5th_semester' ? 'Students join directly in the 5th semester after a two-year degree.' : 'The curriculum follows HEC guidelines and combines core courses, electives and a final-year project or thesis.',
-    ),
-    durationYears,
-    semesters: p.semesters ?? defaults.semesters,
-    creditHours: p.creditHours ?? defaults.creditHours,
-    shift: p.shift ?? 'morning',
+    overview: p.about ? blocks(p.about) : undefined,
+    eligibility: p.eligibility ? blocks(p.eligibility) : undefined,
+    durationYears: p.durationYears,
+    semesters: p.semesters,
+    creditHours: p.creditHours,
+    shift: null,
     isAdmissionOpen: false,
     department: departmentId,
     campus: campusId,
-    seo: seo(name, description),
+    seo: seo(name, p.about ?? `${name}, ${d.name}, University of Swat.`),
   },
-  // Urdu: the degree title stays as officially written (the website shows it in the Latin font).
+  // Urdu: the degree title stays as officially written (the website shows it in the Latin font). The program
+  // description and eligibility are English only, so the website shows them with an "in English" note.
   {
     name,
     summary: urSummary,
-    overview: blocks(
-      urSummary,
-      p.level === 'bs_5th_semester'
-        ? 'طلبہ دو سالہ ڈگری کے بعد براہِ راست پانچویں سمسٹر میں داخل ہوتے ہیں۔'
-        : 'نصاب ایچ ای سی کی ہدایات کے مطابق ہے، جس میں لازمی اور اختیاری مضامین اور آخری سال کا پروجیکٹ یا تھیسس شامل ہیں۔',
-    ),
     ...department,
     seo: { metaTitle: fit(`${name} — جامعہ سوات`, 70), metaDescription: urSummary },
   });

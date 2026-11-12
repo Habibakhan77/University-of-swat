@@ -226,15 +226,15 @@ export async function NoticeDetailPage({ kind, params }: { kind: NoticeKind; par
             </h2>
             <dl className="flex flex-col gap-4">
               {facts.map(({ key, icon: Icon, label, value }) => (
-                <div key={key} className="flex items-start gap-3">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
-                    <Icon aria-hidden className="size-4.5" />
-                  </span>
-                  <div className="min-w-0">
-                    <dt className="text-caption text-fg-subtle">{label}</dt>
-                    <dd className="text-body-sm font-semibold break-words text-fg">{value}</dd>
-                  </div>
-                </div>
+                <div key={key} className="relative min-h-9 min-w-0 ps-12">
+          <dt className="text-caption text-fg-subtle">
+            <span aria-hidden className="absolute start-0 top-0 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
+              <Icon aria-hidden className="size-4.5" />
+            </span>
+            {label}
+          </dt>
+          <dd className="text-body-sm font-semibold break-words text-fg">{value}</dd>
+        </div>
               ))}
             </dl>
             {notice.applyUrl ? (

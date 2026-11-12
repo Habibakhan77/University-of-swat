@@ -8,7 +8,7 @@ import { Link, redirect } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { iconFor } from "@/lib/icons";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
-import { blocksToText } from "@/lib/strapi/blocks";
+import { blocksToText, withoutLead } from "@/lib/strapi/blocks";
 import {
   LEVEL_GROUPS,
   OFFLINE_SLUG,
@@ -91,8 +91,10 @@ export default async function DepartmentPage({ params }: Props) {
     .filter((g) => g.items.length);
   const hasPlaceholders = members.some((m) => m.isPlaceholder);
 
+  // The hero already shows the summary: never open the overview with the same sentence.
+  const overview = detail.overview ? withoutLead(detail.overview.value, department.summary?.value) : null;
   const sections = [
-    { id: "overview", label: t("overview"), show: Boolean(detail.overview) },
+    { id: "overview", label: t("overview"), show: Boolean(overview) },
     { id: "programs", label: t("programs"), show: true },
     { id: "members", label: t("members"), show: true },
     { id: "contact", label: t("contact"), show: Boolean(detail.contact) },
@@ -133,6 +135,7 @@ export default async function DepartmentPage({ params }: Props) {
     <div style={accentStyle(faculty.accent)}>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
       <AcademicHero
+        compact
         id={`department-${department.slug}`}
         accent={faculty.accent}
         icon={iconFor(faculty.icon)}
@@ -180,11 +183,11 @@ export default async function DepartmentPage({ params }: Props) {
 
       <Container size="wide" className="grid gap-10 pt-8 pb-section lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-14">
         <div className="flex min-w-0 flex-col gap-section-sm [&>section]:scroll-mt-32">
-          {detail.overview ? (
+          {detail.overview && overview ? (
             <section aria-labelledby="overview">
               <SectionTitle id="overview">{t("overview")}</SectionTitle>
               <EnglishOnlyNote content={detail.overview} />
-              <RichText blocks={detail.overview.value} lang={langAttr(detail.overview, locale)} className="max-w-prose text-body-lg" />
+              <RichText blocks={overview} lang={langAttr(detail.overview, locale)} className="max-w-prose text-body-lg" />
             </section>
           ) : null}
 

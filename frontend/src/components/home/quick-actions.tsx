@@ -56,7 +56,7 @@ export function QuickActions({ actions, label }: QuickActionsProps) {
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="text-body font-semibold">{action.label}</span>
                     {action.description ? (
-                      <span className={cn("text-caption", primary ? "text-accent-fg/80" : "text-fg-subtle")}>
+                      <span className={cn("text-caption", primary ? "text-accent-fg" : "text-fg-subtle")}>
                         {action.description}
                       </span>
                     ) : null}

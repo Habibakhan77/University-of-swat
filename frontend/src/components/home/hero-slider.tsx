@@ -63,6 +63,14 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
   const playing = count > 1 && !userPaused && !reducedMotion;
   const running = playing && !interacting;
 
+  // The other slides' photos are rendered once the first one has loaded (or after 3 s), so they don't
+  // compete with it for bandwidth: they sit in the viewport, so loading="lazy" alone fetches them at once.
+  const [restReady, setRestReady] = useState(false);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setRestReady(true), 3000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const go = useCallback((next: number) => setIndex(((next % count) + count) % count), [count]);
 
   useEffect(() => {
@@ -96,13 +104,15 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
             i === index ? "opacity-100" : "opacity-0",
           )}
         >
-          {slide.image ? (
+          {slide.image && (i === 0 || i === index || restReady) ? (
             <Image
               src={slide.image.src}
               alt=""
               fill
               sizes="100vw"
               preload={i === 0}
+              fetchPriority={i === 0 ? "high" : undefined}
+              onLoad={i === 0 ? () => setRestReady(true) : undefined}
               loading={i === 0 ? undefined : "lazy"}
               className={cn(
                 "object-cover",

@@ -114,7 +114,6 @@
         "morning_and_evening",
         "weekend"
       ],
-      "default": "morning",
       "pluginOptions": {
         "i18n": {
           "localized": false

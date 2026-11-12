@@ -49,7 +49,7 @@ export function PostCover({
   if (!image) return <FacultyArt id={`post-${id}`} accent={style.accent} icon={style.icon} />;
   return (
     <>
-      <Image src={image.src} alt={image.alt} fill sizes={sizes} priority={priority} className="object-cover" />
+      <Image src={image.src} alt={image.alt} fill sizes={sizes} priority={priority} fetchPriority={priority ? "high" : undefined} className="object-cover" />
       {showCredit && image.credit ? (
         <div className="absolute end-2 bottom-2 z-10 flex max-w-[calc(100%-1rem)] justify-end">
           <ImageCredit credit={image.credit} className="max-w-full" />
@@ -115,7 +115,7 @@ export function FilterLinks({
             >
               {o.label}
               {typeof o.count === "number" ? (
-                <span className={cn("tabular text-caption", o.active ? "text-primary-fg/80" : "text-fg-subtle")}>{o.count}</span>
+                <span className={cn("tabular text-caption", o.active ? "text-primary-fg" : "text-fg-subtle")}>{o.count}</span>
               ) : null}
             </Link>
           </li>

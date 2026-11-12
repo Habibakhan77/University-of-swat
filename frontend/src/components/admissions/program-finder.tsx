@@ -213,7 +213,7 @@ function FacultyChip({
       <span lang={lang} className="min-w-0">
         {label}
       </span>
-      <span className={cn("tabular text-caption", active ? "text-white/80" : "text-fg-subtle")}>{count}</span>
+      <span className={cn("tabular text-caption", active ? "text-current" : "text-fg-subtle")}>{count}</span>
     </button>
   );
 }

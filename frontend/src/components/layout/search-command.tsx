@@ -2,6 +2,7 @@
 
 import { CornerDownLeft, Loader2, Search, SquareArrowOutUpRight, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import { flushSync } from "react-dom";
 import { useDeferredValue, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -88,8 +89,11 @@ export function SearchCommand({ groups }: { groups: NavGroup[] }) {
   const modifier = useModifierKey();
   const id = useId();
   const deferred = useDeferredValue(query);
+  /** The dialog's contents are rendered on first use (hover, focus or open), not in every page's HTML. */
+  const [mounted, setMounted] = useState(false);
 
   const preload = () => {
+    setMounted(true);
     if (status === "ready" || status === "loading") return;
     setStatus("loading");
     loadIndex(locale).then(
@@ -160,6 +164,7 @@ export function SearchCommand({ groups }: { groups: NavGroup[] }) {
     if (!dialog || dialog.open) return;
     setQuery("");
     setActive(0);
+    flushSync(() => setMounted(true));
     preload();
     dialog.showModal();
     requestAnimationFrame(() => inputRef.current?.focus());
@@ -246,6 +251,8 @@ export function SearchCommand({ groups }: { groups: NavGroup[] }) {
         <h2 id={`${id}-title`} className="sr-only">
           {t("dialogTitle")}
         </h2>
+        {mounted ? (
+        <>
         <form
           role="search"
           action={searchHref}
@@ -253,7 +260,7 @@ export function SearchCommand({ groups }: { groups: NavGroup[] }) {
             event.preventDefault();
             submit();
           }}
-          className="flex items-center gap-3 border-b border-line px-4 sm:px-5"
+          className="flex items-center gap-3 border-b border-line px-4 focus-within:shadow-[inset_0_-2px_0_var(--ring)] sm:px-5"
         >
           {status === "loading" && trimmed ? (
             <Loader2 aria-hidden className="size-5 shrink-0 animate-spin text-fg-subtle motion-reduce:animate-none" />
@@ -292,6 +299,10 @@ export function SearchCommand({ groups }: { groups: NavGroup[] }) {
               } else if (event.key === "End" && event.ctrlKey) {
                 event.preventDefault();
                 setActive(Math.max(options.length - 1, 0));
+              } else if (event.key === "Escape") {
+                // A search field would spend the first Esc clearing itself; one Esc always closes.
+                event.preventDefault();
+                close();
               }
             }}
             className="h-16 min-w-0 flex-1 bg-transparent text-body-lg text-fg outline-none placeholder:text-fg-subtle [&::-webkit-search-cancel-button]:hidden"
@@ -384,6 +395,8 @@ export function SearchCommand({ groups }: { groups: NavGroup[] }) {
             {t("hintClose")}
           </span>
         </div>
+        </>
+        ) : null}
       </dialog>
     </>
   );
@@ -445,7 +458,7 @@ function ResultOption({
           {doc.lang !== locale ? <InEnglishTag label={inEnglish} /> : null}
         </span>
         {doc.meta ? (
-          <span className={cn("truncate text-caption", selected ? "text-primary-soft-fg/80" : "text-fg-subtle")}>{doc.meta}</span>
+          <span className={cn("truncate text-caption", selected ? "text-primary-soft-fg" : "text-fg-subtle")}>{doc.meta}</span>
         ) : null}
       </span>
       {doc.external ? (

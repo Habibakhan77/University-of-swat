@@ -19,7 +19,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { iconFor } from "@/lib/icons";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
-import { blocksToText } from "@/lib/strapi/blocks";
+import { blocksToText, withoutLead } from "@/lib/strapi/blocks";
 import {
   OFFLINE_SLUG,
   academicsHref,
@@ -101,6 +101,8 @@ export default async function ProgramPage({ params }: Props) {
   };
   const money = new Intl.NumberFormat(intlLocale[locale], { style: "currency", currency: "PKR", maximumFractionDigits: 0 });
   const levelLabel = t(`levels.${program.level}`);
+  // The hero already shows the summary: never open the overview with the same sentence.
+  const overview = detail.overview ? withoutLead(detail.overview.value, program.summary?.value) : null;
 
   const facts: Fact[] = [
     { icon: GraduationCap, label: t("levelLabel"), value: levelLabel },
@@ -135,6 +137,7 @@ export default async function ProgramPage({ params }: Props) {
     <div style={accentStyle(faculty.accent)}>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
       <AcademicHero
+        compact
         id={`program-${program.slug}`}
         accent={faculty.accent}
         icon={iconFor(faculty.icon)}
@@ -168,18 +171,18 @@ export default async function ProgramPage({ params }: Props) {
               <SmartLink
                 href={detail.apply.href}
                 external
-                className="inline-flex h-13 items-center gap-2 rounded-xl bg-accent px-7 text-body font-semibold text-accent-fg shadow-sm transition-colors hover:bg-accent-hover"
+                className="inline-flex h-11 items-center gap-2 rounded-lg bg-accent px-5 text-body-sm font-semibold text-accent-fg shadow-sm transition-colors hover:bg-accent-hover"
               >
                 {t("applyNow")}
                 <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
               </SmartLink>
             ) : (
-              <ButtonLink href={detail.apply.href} variant="accent" size="lg" trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}>
+              <ButtonLink href={detail.apply.href} variant="accent" size="md" trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}>
                 {t("applyNow")}
               </ButtonLink>
             )
           ) : (
-            <ButtonLink href="/admissions" variant="accent" size="lg" trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}>
+            <ButtonLink href="/admissions" variant="accent" size="md" trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}>
               {t("admissionsInfo")}
             </ButtonLink>
           )
@@ -188,11 +191,11 @@ export default async function ProgramPage({ params }: Props) {
 
       <Container size="wide" className="grid gap-10 py-section lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-14">
         <div className="flex min-w-0 flex-col gap-section-sm">
-          {detail.overview ? (
+          {detail.overview && overview ? (
             <section aria-labelledby="overview">
               <SectionTitle id="overview">{t("overview")}</SectionTitle>
               <EnglishOnlyNote content={detail.overview} />
-              <RichText blocks={detail.overview.value} lang={langAttr(detail.overview, locale)} className="max-w-prose text-body-lg" />
+              <RichText blocks={overview} lang={langAttr(detail.overview, locale)} className="max-w-prose text-body-lg" />
             </section>
           ) : null}
 

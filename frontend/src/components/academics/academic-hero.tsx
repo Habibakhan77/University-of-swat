@@ -65,7 +65,7 @@ export function AcademicHero({
         <header className="relative isolate overflow-hidden rounded-2xl bg-fac-gradient text-white shadow-lg sm:rounded-3xl">
           {image ? (
             <>
-              <Image src={image.src} alt="" fill priority sizes="(min-width: 1536px) 1472px, 100vw" className="-z-10 object-cover" />
+              <Image src={image.src} alt="" fill priority fetchPriority="high" sizes="(min-width: 1536px) 1472px, 100vw" className="-z-10 object-cover" />
               {/* The faculty's accent as a wash (like its card), then a dark gradient behind the text. */}
               <div aria-hidden className="absolute inset-0 -z-10 bg-fac opacity-40" />
               <div aria-hidden className="absolute inset-0 -z-10 bg-linear-to-r from-black/75 via-black/50 to-black/15 rtl:bg-linear-to-l" />

@@ -86,7 +86,7 @@ export default async function AcademicsPage() {
                 <div className="relative isolate flex flex-col items-start gap-4 p-6 text-white sm:p-8">
                   <div className="absolute inset-0 -z-10">
                     {faculty.image ? (
-                      <FacultyPhoto image={faculty.image} accent={faculty.accent} tint="text" sizes="(min-width: 1024px) 416px, 100vw" />
+                      <FacultyPhoto image={faculty.image} accent={faculty.accent} tint="text" priority={i === 0} sizes="(min-width: 1024px) 416px, 100vw" />
                     ) : (
                       <FacultyArt id={`index-${faculty.slug}`} accent={faculty.accent} icon={Icon} />
                     )}

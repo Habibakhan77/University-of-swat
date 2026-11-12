@@ -62,7 +62,7 @@ export function DatesTimeline({ dates, lang }: { dates: ImportantDate[]; lang?: 
             >
               <span className="text-caption font-semibold">{short.format(dayValue(item.start))}</span>
             </span>
-            <div className={cn("flex min-w-0 flex-1 flex-col gap-1 rounded-2xl border border-line bg-surface p-4 sm:p-5", status === "closed" && "opacity-75")}>
+            <div className={cn("flex min-w-0 flex-1 flex-col gap-1 rounded-2xl border border-line p-4 sm:p-5", status === "closed" ? "bg-canvas-subtle" : "bg-surface")}>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-body font-semibold text-fg">{item.label}</p>
                 {status ? (

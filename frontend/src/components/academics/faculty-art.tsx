@@ -76,17 +76,19 @@ interface FacultyPhotoProps {
    * "text": a strong wash, for white text set directly on the photo (at least 4.5:1).
    */
   tint?: "card" | "text";
+  /** The first photo on a page is usually its largest paint: load it eagerly, at high priority. */
+  priority?: boolean;
 }
 
 /**
  * A faculty's real photo under a semi-transparent wash of its accent colour, so the cards keep their
  * colour coding with a photo. Decorative here (alt=""): the card's heading names the faculty.
  */
-export function FacultyPhoto({ image, accent, sizes, tint = "card" }: FacultyPhotoProps) {
+export function FacultyPhoto({ image, accent, sizes, tint = "card", priority = false }: FacultyPhotoProps) {
   const c = FACULTY_ACCENTS[accent];
   return (
     <div aria-hidden className="absolute inset-0">
-      <Image src={image.src} alt="" fill sizes={sizes} className="object-cover" />
+      <Image src={image.src} alt="" fill sizes={sizes} priority={priority} fetchPriority={priority ? "high" : undefined} className="object-cover" />
       {tint === "card" ? (
         <div className="absolute inset-0" style={{ background: `linear-gradient(160deg, ${c.base}59 0%, ${c.deep}a6 100%)` }} />
       ) : (

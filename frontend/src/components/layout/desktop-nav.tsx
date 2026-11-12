@@ -71,12 +71,21 @@ const HOVER_CLOSE_DELAY = 220;
 export function DesktopNav({ groups, label, overviewLabel, features, promo }: DesktopNavProps) {
   const pathname = usePathname();
   const active = activeGroupIndex(groups, pathname);
+  /**
+   * Panel contents are rendered once the pointer or keyboard focus first enters the nav, not in the
+   * server HTML: six hidden panels were most of the page's markup and delayed the first paint of the
+   * content below the header. They mount before a panel opens, so the open transition still plays.
+   */
+  const [armed, setArmed] = useState(false);
   // The open panel is remembered together with the path it was opened on, so navigating closes it
   // without a state update inside an effect.
   const [openState, setOpenState] = useState<{ index: number; path: string } | null>(null);
   const open = openState && openState.path === pathname ? openState.index : null;
   const setOpen = useCallback(
-    (index: number | null) => setOpenState(index === null ? null : { index, path: pathname }),
+    (index: number | null) => {
+      if (index !== null) setArmed(true);
+      setOpenState(index === null ? null : { index, path: pathname });
+    },
     [pathname],
   );
   const navRef = useRef<HTMLElement>(null);
@@ -87,6 +96,9 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
   /** Set when a panel is opened from the keyboard; its first link is focused once the panel is visible. */
   const focusOnOpen = useRef(false);
   const baseId = useId();
+  const arm = () => {
+    if (!armed) setArmed(true);
+  };
 
   const clearHover = () => {
     if (hoverTimer.current !== null) window.clearTimeout(hoverTimer.current);
@@ -203,7 +215,11 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
         clearHover();
         hoverTimer.current = window.setTimeout(() => setOpen(null), HOVER_CLOSE_DELAY);
       }}
-      onPointerEnter={clearHover}
+      onPointerEnter={() => {
+        clearHover();
+        arm();
+      }}
+      onFocus={arm}
     >
       <ul className="flex h-full items-stretch gap-0.5">
         {groups.map((group, index) => {
@@ -285,6 +301,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                     : "invisible -translate-y-1 opacity-0 transition-[opacity,translate,visibility]",
                 )}
               >
+                {armed ? (
                 <Container
                   size="wide"
                   className={cn(
@@ -401,6 +418,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                     </div>
                   ) : null}
                 </Container>
+                ) : null}
               </div>
             </li>
           );

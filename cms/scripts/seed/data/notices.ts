@@ -283,7 +283,7 @@ export const JOBS: JobSeed[] = [
     'Assistant Professor of Public Health, as per UoS Statutes 2025',
     '/2026/02/quantification-sheet-of-assistant-professor-of-public-health/',
     [doc('2026/02/E.-Sheet-for-AP-Public-Health-as-per-UoS-Statutes-2025.pdf', 'Evaluation sheet, Assistant Professor of Public Health')],
-    'School of Nursing and Public Health',
+    'Department of Nursing and Public Health',
   ),
   quantification(
     'quantification-sheet-assistant-professor-mlt-nursing',
@@ -292,7 +292,7 @@ export const JOBS: JobSeed[] = [
     'Assistant Professor of Medical Laboratory Technology and Assistant Professor of Nursing',
     '/2026/02/quantification-sheet-of-assistant-professor-mlt-and-assistant-professor-of-nursing/',
     [doc('2026/02/AP-MLT.pdf', 'Evaluation sheet, Assistant Professor MLT'), doc('2026/02/AP-Nursing.pdf', 'Evaluation sheet, Assistant Professor of Nursing')],
-    'School of Nursing and Public Health',
+    'Department of Nursing and Public Health',
   ),
   quantification(
     'quantification-sheet-assistant-professor-physical-therapy',

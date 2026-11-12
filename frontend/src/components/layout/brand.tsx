@@ -20,10 +20,12 @@ const FALLBACK_LOGO = { src: "/brand/uswat-logo.png", width: 256, height: 256 } 
 /** Logo + name lockup linking home. Uses the crest from Strapi Site Settings, else the built-in copy. */
 export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", className, onNavigate }: BrandProps) {
   const crest = logo ?? FALLBACK_LOGO;
+  // The accessible name must contain the visible text (WCAG 2.5.3), so the tagline goes in too.
+  const label = tagline ? homeLabel.replace(siteName, `${siteName} ${tagline}`) : homeLabel;
   return (
     <Link
       href="/"
-      aria-label={homeLabel}
+      aria-label={label}
       onClick={onNavigate}
       className={cn("group/brand inline-flex min-w-0 items-center gap-3 rounded-lg", className)}
     >
@@ -50,6 +52,8 @@ export function Brand({ siteName, tagline, logo, homeLabel, tone = "surface", cl
         >
           {siteName}
         </span>
+        {/* Keeps the name and tagline as separate words in the computed text (no visual effect in a flex column). */}
+        {tagline ? " " : null}
         {tagline ? (
           <span
             className={cn(

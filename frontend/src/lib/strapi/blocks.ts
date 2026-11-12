@@ -73,3 +73,20 @@ export function blocksToText(blocks: Block[] | null | undefined): string {
   };
   return (blocks ?? []).map(walk).filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
 }
+
+/**
+ * The overview without an opening paragraph that only repeats the page's hero intro (editors often paste the
+ * summary as the first line). Returns null when nothing else is left.
+ */
+export function withoutLead(blocks: Block[] | null | undefined, lead: string | null | undefined): Block[] | null {
+  if (!blocks?.length) return null;
+  const norm = (s: string) => s.toLowerCase().replace(/[\s.،۔!?:;,]+/g, " ").trim();
+  const first = blocks[0];
+  const repeated = Boolean(lead) && first.type === "paragraph" && (() => {
+    const a = norm(blocksToText([first]));
+    const b = norm(lead ?? "");
+    return a.length > 0 && b.length > 0 && (a === b || a.startsWith(b) || b.startsWith(a));
+  })();
+  const rest = repeated ? blocks.slice(1) : blocks;
+  return rest.length ? rest : null;
+}

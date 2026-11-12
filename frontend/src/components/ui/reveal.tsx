@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { LazyMotion, domAnimation, m, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, type ReactNode } from "react";
+import { animate, inView } from "framer-motion";
 
 interface RevealProps {
   children: ReactNode;
@@ -10,25 +10,46 @@ interface RevealProps {
   className?: string;
 }
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+
 /**
- * Subtle fade-and-rise when a block scrolls into view, once. Renders a plain div (no motion at all)
- * when the visitor prefers reduced motion. Uses LazyMotion so only the small DOM animation bundle loads.
+ * Subtle fade-and-rise when a block scrolls into view, once.
+ *
+ * The server HTML is always visible: content never depends on JavaScript to appear, and nothing above the
+ * fold waits for hydration to paint (that delayed the Largest Contentful Paint). After hydration, only
+ * blocks that are still below the fold are hidden (off screen, so nothing flashes) and animated in when
+ * they scroll into view. Visitors who prefer reduced motion get no animation at all.
  */
 export function Reveal({ children, delay = 0, className }: RevealProps) {
-  const reduce = useReducedMotion();
-  if (reduce) return <div className={className}>{children}</div>;
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight) return;
+
+    el.style.opacity = "0";
+    el.style.transform = "translateY(16px)";
+    let controls: ReturnType<typeof animate> | undefined;
+    const stop = inView(
+      el,
+      () => {
+        controls = animate(el, { opacity: 1, transform: "translateY(0px)" }, { duration: 0.7, delay, ease: EASE });
+        stop(); // once only
+      },
+      { margin: "0px 0px -10% 0px" },
+    );
+    return () => {
+      stop();
+      controls?.stop();
+      el.style.opacity = "";
+      el.style.transform = "";
+    };
+  }, [delay]);
 
   return (
-    <LazyMotion features={domAnimation} strict>
-      <m.div
-        className={className}
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-        transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
-      >
-        {children}
-      </m.div>
-    </LazyMotion>
+    <div ref={ref} className={className}>
+      {children}
+    </div>
   );
 }

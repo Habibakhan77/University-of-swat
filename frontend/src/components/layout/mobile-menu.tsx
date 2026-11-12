@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
+import { flushSync } from "react-dom";
 import { useEffect, useId, useRef, useState } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
@@ -39,13 +40,21 @@ interface MobileMenuProps {
  */
 export function MobileMenu({ groups, services, apply, brand, labels }: MobileMenuProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
+  /** The sheet's contents are rendered on first use, not in every page's HTML (it duplicates the whole nav). */
+  const [mounted, setMounted] = useState(false);
+  const prepare = () => setMounted(true);
   const pathname = usePathname();
   const titleId = useId();
   const accordionName = useId();
 
   const show = () => {
+    // Render the contents first (flushSync), open the dialog, then focus the close button: React's
+    // autoFocus would run while the dialog is still closed.
+    flushSync(() => setMounted(true));
     dialogRef.current?.showModal();
+    closeRef.current?.focus();
     setOpen(true);
   };
   const hide = () => dialogRef.current?.close();
@@ -68,6 +77,8 @@ export function MobileMenu({ groups, services, apply, brand, labels }: MobileMen
       <button
         type="button"
         onClick={show}
+        onPointerEnter={prepare}
+        onFocus={prepare}
         aria-haspopup="dialog"
         aria-expanded={open}
         className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "xl:hidden")}
@@ -86,6 +97,7 @@ export function MobileMenu({ groups, services, apply, brand, labels }: MobileMen
         }}
         className="sheet bg-canvas text-fg xl:hidden"
       >
+        {mounted ? (
         <div className="flex h-full flex-col">
           <div className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-line px-5">
             <h2 id={titleId} className="sr-only">
@@ -93,10 +105,10 @@ export function MobileMenu({ groups, services, apply, brand, labels }: MobileMen
             </h2>
             <Brand siteName={brand.siteName} logo={brand.logo} homeLabel={labels.homeLink} onNavigate={hide} />
             <button
+              ref={closeRef}
               type="button"
               onClick={hide}
               className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "-me-2")}
-              autoFocus
             >
               <X aria-hidden className="size-5!" />
               <span className="sr-only">{labels.close}</span>
@@ -221,6 +233,7 @@ export function MobileMenu({ groups, services, apply, brand, labels }: MobileMen
             </div>
           ) : null}
         </div>
+        ) : null}
       </dialog>
     </>
   );

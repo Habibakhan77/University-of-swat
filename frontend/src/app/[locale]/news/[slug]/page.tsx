@@ -217,15 +217,15 @@ export default async function PostPage({ params }: Props) {
         <aside className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
           <dl className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:p-6">
             {facts.map(({ icon: Icon, label, value }) => (
-              <div key={label} className="flex items-start gap-3">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
-                  <Icon aria-hidden className="size-4.5" />
-                </span>
-                <div className="min-w-0">
-                  <dt className="text-caption text-fg-subtle">{label}</dt>
-                  <dd className="text-body-sm font-semibold text-fg">{value}</dd>
-                </div>
-              </div>
+              <div key={label} className="relative min-h-9 min-w-0 ps-12">
+          <dt className="text-caption text-fg-subtle">
+            <span aria-hidden className="absolute start-0 top-0 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
+              <Icon aria-hidden className="size-4.5" />
+            </span>
+            {label}
+          </dt>
+          <dd className="text-body-sm font-semibold text-fg">{value}</dd>
+        </div>
             ))}
           </dl>
           <ShareButtons url={url} title={post.title.value} className="rounded-2xl border border-line bg-surface p-5 sm:p-6" />

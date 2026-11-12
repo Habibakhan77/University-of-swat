@@ -537,8 +537,10 @@
     color: var(--fac-tint, var(--primary-text));
   }
 }
+/* Without a faculty, the fallback is the dark forest green in both themes (like every faculty base colour),
+   so white text on it keeps >= 4.5:1; --primary turns light green in dark mode. */
 @utility bg-fac {
-  background-color: var(--fac, var(--primary));
+  background-color: var(--fac, var(--color-forest-600));
 }
 @utility bg-fac-soft {
   background-color: color-mix(in oklab, var(--fac, var(--primary)) 9%, var(--surface));

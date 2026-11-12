@@ -152,7 +152,7 @@ export function ChipGroup<V extends string>({
             >
               {o.label}
               {typeof o.count === "number" ? (
-                <span className={cn("tabular text-caption", active ? "text-primary-fg/80" : "text-fg-subtle")}>{o.count}</span>
+                <span className={cn("tabular text-caption", active ? "text-primary-fg" : "text-fg-subtle")}>{o.count}</span>
               ) : null}
             </button>
           );
