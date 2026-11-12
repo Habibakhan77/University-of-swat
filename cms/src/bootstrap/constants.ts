@@ -71,6 +71,6 @@ export const OWN_PROFILE_CONDITION = 'api::own-profile';
 export const OWN_PUBLICATION_CONDITION = 'api::own-publication';
 
 /** Faculty Member fields that only the department (or a Super Admin) sets: identity, placement and the login link. */
-export const PROFILE_LOCKED_FIELDS = ['name', 'slug', 'designation', 'additionalRole', 'isHead', 'isPlaceholder', 'order', 'department', 'accountEmail', 'publications'] as const;
+export const PROFILE_LOCKED_FIELDS = ['name', 'slug', 'designation', 'designationTitle', 'additionalRole', 'isHead', 'isPlaceholder', 'order', 'department', 'accountEmail', 'publications'] as const;
 
 export const SUPER_ADMIN_CODE = 'strapi-super-admin';

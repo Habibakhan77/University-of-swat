@@ -2,11 +2,13 @@
  * Demo logins for the judges' walkthrough (run with `npm run demo-accounts`, see scripts/demo-accounts.js):
  *
  * - a Department Editor for the Department of Computer and Software Technology
- * - a Faculty Member linked to one (placeholder) faculty profile in that department
+ * - a Faculty Member linked to one real faculty profile in that department (Mr. Abdul Haq, Lecturer, as
+ *   listed on the department page), so the walkthrough shows a genuine profile
  *
  * Both get a fresh random password on every run, written to cms/demo-accounts.local.md (git-ignored).
- * They use the reserved example.com domain, so they can never be mistaken for real university staff, and
- * the faculty login is linked to a profile marked as a placeholder, never to a real teacher.
+ * They use the reserved example.com domain, so they can never be mistaken for real university staff.
+ * Edits made with the demo faculty login change that teacher's public profile: delete the demo logins
+ * (Settings → Users) and re-check the profile before going live, or never run this script on the server.
  *
  * `npm run seed -- --reset` recreates departments and faculty members; it calls `linkDemoAccounts` at the
  * end so existing demo users stay assigned (passwords are not changed by the seed).
@@ -19,8 +21,8 @@ import { ROLE_CODES } from '../../src/bootstrap/constants';
 import { parseEmails } from '../../src/bootstrap/roles';
 
 export const DEMO_DEPARTMENT_SLUG = 'computer-and-software-technology';
-/** The second placeholder profile in that department (the first is the placeholder head). */
-export const DEMO_PROFILE_SLUG = 'placeholder-computer-science-2';
+/** A real profile in that department (data/faculty-members.ts), not the head's. */
+export const DEMO_PROFILE_SLUG = 'abdul-haq';
 
 const ACCOUNTS = [
   { key: 'department', email: 'cs.editor@example.com', firstname: 'Demo', lastname: 'Department Editor', role: ROLE_CODES.department },
@@ -104,7 +106,7 @@ export async function runDemoAccounts(strapi: Core.Strapi): Promise<void> {
 
   const linked = await linkDemoAccounts(strapi);
   if (!linked.department || !linked.faculty) {
-    log('Warning: run "npm run seed" first; the CS department or its placeholder profile was not found.');
+    log('Warning: run "npm run seed" first; the CS department or the demo faculty profile was not found.');
   }
 
   const file = path.join(strapi.dirs.app.root, 'demo-accounts.local.md');
@@ -122,7 +124,7 @@ export async function runDemoAccounts(strapi: Core.Strapi): Promise<void> {
       ...lines,
       '',
       `- **Department Editor** is assigned to the Department of Computer and Software Technology (${DEMO_DEPARTMENT_SLUG}).`,
-      `- **Faculty Member** is linked to the placeholder profile \`${DEMO_PROFILE_SLUG}\` in that department.`,
+      `- **Faculty Member** is linked to the real profile \`${DEMO_PROFILE_SLUG}\` (Mr. Abdul Haq) in that department; its edits change his public profile.`,
       '- Both use the reserved example.com domain. Delete or block them (Settings → Users) before going live.',
       '',
     ].join('\n'),

@@ -17,6 +17,7 @@ import { CAMPUSES, MAIN_ADDRESS, OFFICES, PHONE_DIRECTORY, PHONE_DIRECTORY_UR, U
 import { CONTACT_PAGE, FACILITIES, RESEARCH_PAGE, RESEARCH_PROJECTS } from './data/pages';
 import { POSTS } from './data/posts';
 import { DEPARTMENT_ABOUT, DEPARTMENT_GALLERY, LABS } from './data/department-pages';
+import { FACULTY_LISTS, photoCandidates } from './data/faculty-members';
 import { DOWNLOADS, FAQS, JOBS, TENDERS, uploadMonth, uploadUrl, type SeedDocument } from './data/notices';
 import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE_SETTINGS, STATS, VC_MESSAGE } from './data/site';
 
@@ -211,9 +212,13 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     }
 
     // ---------- Faculties, departments, programs, faculty members ----------
-    log('Faculties, departments, programs and placeholder faculty members…');
+    log('Faculties, departments, programs and faculty members (photos copied from uswat.edu.pk)…');
+    const unknownListings = Object.keys(FACULTY_LISTS).filter((name) => !FACULTIES.some((f) => f.departments.some((d) => d.name === name)));
+    if (unknownListings.length) throw new Error(`FACULTY_LISTS names unknown departments: ${unknownListings.join(', ')}`);
     const departmentIds = new Map<string, string>();
     const programIds = new Map<string, string>();
+    const memberSlugs = new Set<string>();
+    let realMembers = 0;
     const memberPhoto = await media.image({ ratio: 'portrait', key: 'faculty-member', title: 'Faculty member', kicker: 'Photo', theme: 'slate' });
     let deptOrder = 0;
 
@@ -254,6 +259,39 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           programIds.set(programSlug(p), id);
         }
 
+        // Real faculty lists, copied from the department's page (data/faculty-members.ts).
+        const listing = FACULTY_LISTS[d.name];
+        if (listing) {
+          const source = officialUrl(listing.source);
+          for (const [i, m] of listing.members.entries()) {
+            const base = slugify(m.name.replace(/^((Prof|Dr|Mr|Ms|Mrs)\.\s*)+/i, ''));
+            const slug = memberSlugs.has(base) ? `${base}-${slugify(d.shortName ?? d.name)}` : base;
+            if (memberSlugs.has(slug)) throw new Error(`Duplicate faculty member slug ${slug}`);
+            memberSlugs.add(slug);
+            // The WordPress original when it exists, else the thumbnail the page shows. If uswat.edu.pk is
+            // unreachable the profile gets no photo (silhouette); `npm run faculty-photos` attaches it later.
+            const photo = m.photo ? await media.remoteFirst(photoCandidates(m.photo), { alt: m.name, source }, 'portrait') : null;
+            await w.create('api::faculty-member.faculty-member', {
+              name: m.name,
+              slug,
+              isPlaceholder: false,
+              designation: m.designation,
+              designationTitle: m.title,
+              additionalRole: m.roles?.join(' · '),
+              isHead: Boolean(m.isHead),
+              qualification: m.qualification?.join('; '),
+              email: m.email,
+              googleScholarUrl: m.googleScholarUrl,
+              photo: photo ?? undefined,
+              order: i + 1,
+              department: departmentId,
+            });
+            realMembers += 1;
+          }
+          continue;
+        }
+
+        // No published list: two clearly marked placeholders.
         const slugBase = slugify(d.shortName ?? d.name);
         for (let m = 0; m < 2; m += 1) {
           await w.create(
@@ -283,6 +321,8 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
         }
       }
     }
+
+    log(`  ${realMembers} faculty members from the department pages; placeholders only where no list is published`);
 
     // ---------- Posts ----------
     log('News, announcements and events (posters copied from uswat.edu.pk)…');
@@ -582,7 +622,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
 
   // Departments and profiles were recreated: keep any demo logins (npm run demo-accounts) assigned.
   const demo = await linkDemoAccounts(strapi);
-  if (demo.department || demo.faculty) log('Demo accounts re-linked to the CS department and its placeholder profile');
+  if (demo.department || demo.faculty) log('Demo accounts re-linked to the CS department and its demo faculty profile');
 
   log('Done. Created:');
   for (const [uid, n] of w.counts) log(`  ${String(n).padStart(3)} × ${uid}`);

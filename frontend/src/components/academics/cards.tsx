@@ -155,8 +155,9 @@ export function PersonCard({ member, department, headingLevel: Heading = "h3", h
           {member.name.value}
         </Heading>
         <p className="text-body-sm font-medium text-fac">
-          {t(`designations.${member.designation}`)}
-          {member.additionalRole && !member.isHead ? (
+          {/* English: the title as the department publishes it; Urdu: the translated designation. */}
+          {locale === "en" && member.designationTitle ? member.designationTitle : t(`designations.${member.designation}`)}
+          {member.additionalRole ? (
             <span lang={langAttr(member.additionalRole, locale)}> · {member.additionalRole.value}</span>
           ) : null}
         </p>

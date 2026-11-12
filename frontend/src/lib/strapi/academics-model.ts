@@ -199,6 +199,8 @@ export interface FacultyMember {
   name: Localized<string>;
   isPlaceholder: boolean;
   designation: Designation;
+  /** The designation exactly as the department page writes it ("Lecturer in Finance"), English only. */
+  designationTitle: string | null;
   additionalRole: Localized<string> | null;
   isHead: boolean;
   qualification: Localized<string> | null;

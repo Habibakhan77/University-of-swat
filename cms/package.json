@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "typegen": "strapi ts:generate-types",
     "seed": "node scripts/seed.js",
-    "demo-accounts": "node scripts/demo-accounts.js"
+    "demo-accounts": "node scripts/demo-accounts.js",
+    "faculty-photos": "node scripts/faculty-photos.js"
   },
   "dependencies": {
     "@strapi/database": "5.61.1",

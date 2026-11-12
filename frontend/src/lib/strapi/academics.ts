@@ -135,6 +135,7 @@ interface StrapiMember extends Doc {
   slug: string;
   isPlaceholder: boolean | null;
   designation: Designation;
+  designationTitle: string | null;
   additionalRole: string | null;
   isHead: boolean | null;
   qualification: string | null;
@@ -442,6 +443,7 @@ async function loadMembers(locale: Locale): Promise<FacultyMember[]> {
           "slug",
           "isPlaceholder",
           "designation",
+          "designationTitle",
           "additionalRole",
           "isHead",
           "qualification",
@@ -467,6 +469,7 @@ async function loadMembers(locale: Locale): Promise<FacultyMember[]> {
         // The flag defaults to true in Strapi: an entry shows without the badge only once an editor clears it.
         isPlaceholder: p.en.isPlaceholder !== false,
         designation: p.en.designation,
+        designationTitle: p.en.designationTitle?.trim() || null,
         additionalRole: pick(p, "additionalRole", locale),
         isHead: Boolean(p.en.isHead),
         qualification: pick(p, "qualification", locale),

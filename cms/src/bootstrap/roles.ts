@@ -61,7 +61,7 @@ const FULL = [A.create, A.read, A.update, A.delete, A.publish];
  * Bump when the role definitions below change: on the next boot the three roles are reset to
  * these defaults once (Super Admins' later fine-tuning is kept until the next bump).
  */
-const ROLES_VERSION = 2;
+const ROLES_VERSION = 3;
 /** admin_roles.description is varchar(255). */
 const MAX_DESCRIPTION = 255;
 

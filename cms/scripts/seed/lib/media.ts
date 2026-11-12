@@ -181,6 +181,8 @@ export class MediaFactory {
   files = 0;
   /** Official files that could not be fetched (reported at the end of the seed). */
   readonly missing: string[] = [];
+  /** Consecutive network failures (no HTTP answer); after three, uswat.edu.pk counts as offline for this run. */
+  private networkFailures = 0;
 
   constructor(private readonly strapi: Core.Strapi) {}
 
@@ -320,6 +322,18 @@ export class MediaFactory {
     return sharp(rotated).resize(w, Math.round((w * 5) / 4), { fit: 'cover', position: 'attention' });
   }
 
+  /**
+   * The first of several candidate URLs that can be fetched, e.g. a WordPress original and then the
+   * thumbnail the page shows. Only a failure of the last candidate is reported as missing.
+   */
+  async remoteFirst(urls: string[], file: Omit<RemoteFile, 'url'>, crop?: 'portrait'): Promise<number | null> {
+    for (const [i, url] of urls.entries()) {
+      if (i < urls.length - 1 && !(await this.fetchCached(url, true))) continue;
+      return this.remote({ ...file, url }, crop);
+    }
+    return null;
+  }
+
   /** Several remote files, skipping any that can't be fetched. */
   async remoteAll(files: RemoteFile[]): Promise<number[]> {
     const ids: number[] = [];
@@ -330,7 +344,7 @@ export class MediaFactory {
     return ids;
   }
 
-  private async fetchCached(url: string): Promise<Buffer | null> {
+  private async fetchCached(url: string, quiet = false): Promise<Buffer | null> {
     const dir = path.join(this.strapi.dirs.app.root, CACHE_DIR);
     const cached = path.join(dir, encodeURIComponent(url).replace(/%/g, '_').slice(-180));
     try {
@@ -338,13 +352,18 @@ export class MediaFactory {
     } catch {
       // not cached yet
     }
+    if (this.networkFailures >= 3) {
+      if (!quiet) this.missing.push(`skipped, uswat.edu.pk unreachable: ${url}`);
+      return null;
+    }
     try {
       const response = await fetch(url, {
         headers: { 'User-Agent': 'uswat-website-seed' },
         signal: AbortSignal.timeout(180_000),
       });
+      this.networkFailures = 0;
       if (!response.ok) {
-        this.missing.push(`${response.status} ${url}`);
+        if (!quiet) this.missing.push(`${response.status} ${url}`);
         return null;
       }
       const buffer = Buffer.from(await response.arrayBuffer());
@@ -352,6 +371,8 @@ export class MediaFactory {
       await writeFile(cached, buffer);
       return buffer;
     } catch (error) {
+      this.networkFailures += 1;
+      if (quiet) return null;
       this.missing.push(`${error instanceof Error ? error.message : String(error)} ${url}`);
       return null;
     }

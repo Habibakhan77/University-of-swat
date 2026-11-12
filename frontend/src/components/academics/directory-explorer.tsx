@@ -59,6 +59,7 @@ export function DirectoryExplorer({ members, faculties, departments, initial }: 
           m.specialization?.value,
           m.qualification?.value,
           m.additionalRole?.value,
+          m.designationTitle,
           t(`designations.${m.designation}`),
           d?.name.value,
           d?.englishName,

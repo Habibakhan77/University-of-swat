@@ -19,7 +19,7 @@ server, so it can run while `npm run dev` is running.
 | Faculties | 6 | 5 faculties + Hunerkada (type `center`) — en + ur |
 | Departments | 28 | Real names from uswat.edu.pk (Allied Health Sciences: the four departments on its faculty page); overview rewritten from each official department page, founding year only where the page gives one — en + ur |
 | Programs | 78 | Exactly the degree programs listed on each department page (checked November 2026). Duration, semesters and credit hours only where the page states them (e.g. BS Geology 4 years / 132 credit hours, MBA 35 or 65 credit hours); no shift anywhere (none is published); eligibility only where the department page publishes it; no fees — en + ur (degree titles kept as written) |
-| Faculty members | 56 | 2 per department, **all placeholders** (`isPlaceholder: true`) — en + ur |
+| Faculty members | 168 | 158 real members of 23 departments, copied exactly from each department's faculty list (name, designation as written, roles, qualifications, e-mail, photo; English only, the Urdu site shows the names as written and translates the designation) — see `data/faculty-members.ts`. 2 marked placeholders (`isPlaceholder: true`, en + ur) for each of the 5 departments without a list: Urdu and the four Allied Health departments |
 | Offices & directorates | 23 | Offices, directorates, centres and student services with heads, emails, phones, staff and documents copied from each office page on uswat.edu.pk (source link on every entry); real head photos where published — en + ur |
 | Department pages | 21 | Vision and/or mission from each department's own page (official statements, only spelling slips fixed); the head's message where one is published (Biotechnology, Economics), copied verbatim and never translated, with `aboutSourceUrl` — see `data/department-pages.ts` |
 | Labs & facilities | 5 | Only labs a department page names: Forestry Lab and Tree Ring Laboratory (Agricultural Sciences and Forestry), Food and Beverages Laboratory (Tourism and Hospitality, opened 15 Oct 2024, with its photo), Environmental Laboratory (under establishment) and GIS Laboratory (planned) (Environmental Sciences) |
@@ -69,7 +69,13 @@ from uswat.edu.pk (about 75 MB the first time, cached in `cms/.seed-cache/`, git
       Life page when routes and fees are published.
 - [ ] **Media Cell**: has no page on uswat.edu.pk, so it is not seeded as an office.
 - [ ] **Deans**: placeholders, except the Allied Health Sciences focal person (Dr. Ali Akbar).
-- [ ] **Faculty members**: replace the placeholder entries for each department.
+- [ ] **Faculty members**: replace the placeholder entries of Urdu and the Allied Health departments; ask
+      Botany for Dr. Muhammad Adil's e-mail (the page repeats Dr. Shahid Hussain's) and the departments for
+      photos where the page shows only a silhouette.
+- [ ] **Faculty photos**: the seed downloads each photo from uswat.edu.pk; if the site is unreachable, profiles
+      get the silhouette and the seed lists what it skipped. Run `npm run faculty-photos` later: it attaches
+      the missing photos to profiles that still have none (only the photo field; drafts are not published and
+      an editor's photo is never replaced), then asks the website to refresh. Safe to run repeatedly.
 - [ ] **Program list**: copied from each department page on uswat.edu.pk (source path on every entry in
       `data/academics.ts`). Some pages are out of date or disagree with the Fall 2026 advertisement, so the
       Admissions Directorate should confirm: Physics lists its MS/MPhil as "intended" (left out); Zoology lists an
