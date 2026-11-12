@@ -100,9 +100,15 @@ The whole homepage, top to bottom: [home-desktop-en-light-full.webp](docs/screen
 **For staff**
 - Everything on the site is edited in Strapi; nothing is hardcoded in the front end.
 - A change is live on the next page view: Strapi notifies the website, which refreshes only the affected pages.
-- Three roles: **Super Admin**, **Media Cell Editor** (news, events, hero slides) and **Department Editor**
-  (only their own department, its programs, faculty members, downloads and research projects; enforced on
-  the server, not only hidden in the admin panel).
+- Four roles: **Super Admin**, **Media Cell Editor** (news, events, hero slides), **Department Editor** (a
+  Department Admin: only their own department and its programs, people, news, publications, labs, alumni,
+  achievements, gallery, downloads and research projects) and **Faculty Member** (only their own profile and
+  publications). Enforced on the server, not only hidden in the admin panel.
+- A dashboard on the Strapi admin homepage for each role: university-wide counts for the Super Admin, their own
+  department's counts and a "still missing" checklist for a Department Editor, profile completeness and
+  publications for a Faculty Member. The Super Admin assigns Department Admins and faculty logins from a widget.
+- Departments can be switched off (**isActive**): an inactive department disappears from the website, menus,
+  search, the directory and the live counters, without deleting anything.
 - Draft and publish, Urdu translations side by side, a Media Library with captions used as photo credits.
 - A seed script fills an empty database with the university's real structure and content.
 
@@ -223,6 +229,7 @@ cp .env.example .env            # set DATABASE_PASSWORD and the secrets
 npm install
 npm run dev                     # http://localhost:1337/admin — create the first administrator
 npm run seed                    # in a second terminal: fill the empty database
+npm run demo-accounts           # optional: demo Department Editor + Faculty logins (see below)
 
 # 2. Website
 cd ../frontend
@@ -259,6 +266,23 @@ Staff never touch code. A Media Cell editor publishes a news story in about two 
 
 Department editors work the same way on their own department, programs, faculty members and downloads;
 they can't see or change other departments. Setting up editors: [DEPLOY.md › Editors and roles](DEPLOY.md#43-editors-and-roles).
+
+### Department microsites and the role dashboards
+
+Every department page has the same sections: **About** (overview, vision, mission, head's message),
+**Programs**, **Faculty members**, **Publications**, **Labs & facilities**, **News**, **Events**,
+**Achievements**, **Alumni**, **Gallery** and **Contact**, reachable from a section bar under the header. Each is
+its own Strapi content type linked to the department (Publication, Lab / Facility, Alumni Story, Achievement,
+Gallery Item; posts carry a department), so a Department Editor fills them in without touching the page layout.
+Only what uswat.edu.pk publishes is seeded: a vision and/or mission for 21 departments, the two published head's
+messages (verbatim, in English on the Urdu site too, linked to the source), five named labs and 14 real event
+photos. No department lists publications, alumni stories or achievements, so those sections show an empty state
+("No publications listed yet") instead of invented entries.
+
+**Demo logins** (local only): `npm run demo-accounts` in `cms/` creates a Department Editor assigned to the
+Department of Computer and Software Technology and a Faculty Member linked to a placeholder profile in it, with
+random passwords written to `cms/demo-accounts.local.md` (git-ignored; never committed). Both use the reserved
+`example.com` domain. Running it again issues new passwords; `npm run seed -- --reset` keeps them assigned.
 
 ## Content policy
 

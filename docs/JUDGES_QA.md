@@ -100,17 +100,38 @@ On the server, the webhook travels on the internal Docker network; Nginx blocks 
 |---|---|
 | **Super Admin** | Everything, including users, roles and settings |
 | **Media Cell Editor** | Create, edit and publish news, announcements, events and homepage hero slides; use the Media Library |
-| **Department Editor** | Edit **only their own department** and its programs, faculty members, downloads and research projects |
+| **Department Editor** (Department Admin) | Edit **only their own department**: its page (overview, vision, mission, head's message, contact) and its programs, faculty members, news and events, publications, labs, alumni stories, achievements, gallery, downloads and research projects. Cannot hide a department, change its address or assign editors |
+| **Faculty Member** | Edit **only their own profile** (qualification, specialization, biography, photo, contact, Google Scholar / ORCID) and **their own publications**. Name, designation, department and "head" are set by the department |
 
-How the department rule works: each Department has a list of editor e-mail addresses (`editorEmails`). A
-Department Editor sees and edits only departments that list their login e-mail. It is enforced twice:
+How the rules work:
 
-1. **Strapi permission conditions** filter what the editor can see and edit in the admin panel.
-2. A **server-side guard** (`cms/src/bootstrap/department-guard.ts`) rejects any attempt to create, copy or move
-   a program, faculty member, download or project into someone else's department, even through the API.
+- **Department Admins**: each Department has a list of editor e-mail addresses. A Super Admin assigns them in the
+  *Department admins & faculty logins* widget on the admin homepage (pick a department, pick a user with the
+  Department Editor role, **Assign**); the endpoint refuses users who don't have that role.
+- **Faculty logins**: each Faculty Member profile has a private *Account email*. The Super Admin links a login in the
+  same widget; one login edits one profile.
+- **Hiding a department**: the Super Admin switches off **isActive** on the department. It disappears from the
+  website, menus, search, the faculty directory and the live counters; nothing is deleted. Editors can't change it.
 
-This was tested with a real Department Editor login: 11 of 11 cases behaved correctly. The roles are created
-automatically when Strapi starts (`cms/src/bootstrap/roles.ts`).
+Every rule is enforced twice:
+
+1. **Strapi permission conditions** ("Is my department", "Belongs to my department", "Is my faculty profile",
+   "Is one of my publications") filter what each user sees and can edit in the admin panel.
+2. A **server-side guard** (`cms/src/bootstrap/department-guard.ts`) checks every write, even through the API:
+   a Department Editor can't create or move content into another department or credit a publication to another
+   department's teacher; a Faculty Member can't edit a colleague's profile, change locked fields, or touch anyone
+   else's publications, and a new publication is filed under their own name and department by the server.
+
+Tested with the demo logins through the real admin API: 28 of 28 Department Editor and Faculty cases, plus 13
+Super Admin cases (dashboard counts, assigning and removing editors, linking logins, refusing users without the
+right role, hiding a department). The roles are created automatically when Strapi starts
+(`cms/src/bootstrap/roles.ts`).
+
+**Dashboards.** The admin homepage starts with a *University of Swat dashboard*. The server decides what it shows
+(`GET /uswat/dashboard`): university-wide counts for a Super Admin (departments, programs, faculty, posts,
+publications, pending drafts); for a Department Editor their department's counts and a checklist of what its page
+still lacks; for a Faculty Member their profile completeness (as a percentage, with the missing items) and
+their publications.
 
 ## 7. Docker, Nginx and Cloudflare
 
@@ -201,4 +222,11 @@ was built" section explains who did what.
 
 **15. Can a department editor change another department's page?**
 No. Strapi's permission conditions hide other departments, and a server-side guard rejects any attempt through
-the API as well. This was tested with a real Department Editor account.
+the API as well. The same applies to teachers: a Faculty Member login edits only its own profile and
+publications. Both were tested with real logins (see section 6).
+
+**16. Why are some department sections empty?**
+Because the old site publishes nothing for them. Publications, alumni stories and achievements appear on no
+department page of uswat.edu.pk, so instead of inventing entries each section says so ("No publications listed
+yet") and the department adds real ones in Strapi. Vision, mission, head's messages, labs and gallery photos are
+filled in where the department's own page or news posts publish them, with a link to the source.

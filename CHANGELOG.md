@@ -859,3 +859,44 @@ and phone numbers are copied exactly from the official pages. What isn't publish
 - **docs/DEMO_SCRIPT_UR.md**: a 3-minute Urdu demo script in 12 scenes with timings. Each scene has the clicks in
   English, the narration in Urdu script and in Roman Urdu, and an Urdu + English caption.
 - README: "How this was built" refers to Habiba by name instead of pronouns.
+
+## Phase 14 — Department microsites, Faculty role, dashboards
+
+- **Department microsites**: every department page now has the same sections, reachable from the section bar:
+  About (overview, vision, mission, head's message), Programs, Faculty members, Publications, Labs & facilities,
+  News, Events, Achievements, Alumni, Gallery and Contact. Each list has an empty state ("No publications listed
+  yet") instead of invented items. Department news and events are the posts linked to the department.
+- **New Strapi types**, each linked to a department: Publication (authors, year, type, venue, DOI/URL; also linked to
+  the faculty member who owns it; not localized), Lab / Facility (state: in use / being set up / planned, opening
+  date, photos), Alumni Story, Achievement, Gallery Item. Department gained `isActive`, `vision`, `mission`,
+  `headMessage` + `headMessageBy` (not localized: a real person's words) and `aboutSourceUrl`. Faculty Member
+  gained a private `accountEmail`. Lab status is called `state` because `status` is reserved by draft & publish.
+- **Real content only** (checked against all 24 department pages on uswat.edu.pk, 12 Nov 2026): vision and/or
+  mission for 21 departments, the two published head's messages copied character for character, five named labs,
+  14 gallery photos from the departments' own news. No department publishes publications, alumni or achievements.
+- **Faculty Member role**: a teacher linked to one profile edits only that profile (qualification, specialization,
+  biography, photo, contact, research links) and their own publications. RBAC conditions "Is my faculty profile" and
+  "Is one of my publications", plus server-side checks in the document-service guard: no edits to colleagues'
+  profiles or locked fields (name, designation, department, head, order), no access to others' publications, and a
+  new publication is filed under the teacher's own profile and department by the server.
+- **Department Editor (Department Admin)** now also manages the department's posts (without the homepage flags),
+  publications, labs, alumni, achievements and gallery; the guard also stops crediting a publication to another
+  department's teacher. Editors can't change `isActive`, the editor list or faculty logins.
+- **Super Admin**: `isActive` hides a department from the website, menus, search, the directory (with its people),
+  the homepage faculty counts and the live department counter. A homepage widget assigns Department Admins and links
+  faculty logins (`POST /uswat/department-admins`, `POST /uswat/faculty-accounts`, Super Admin only, refuses users
+  without the matching role).
+- **Admin dashboards** (`cms/src/admin/app.tsx`, `GET /uswat/dashboard`, scoped on the server): university-wide counts
+  for the Super Admin (departments, programs, faculty, posts, publications, pending drafts); counts and a "still
+  missing" checklist per department for a Department Editor; profile completeness and publications for a Faculty Member.
+  Strapi 5.61 filters homepage widgets by permission only, so one role-aware widget serves all roles and the
+  assignment widget requires `admin::users.update`.
+- **Roles are versioned** (`ROLES_VERSION`): changed role definitions re-sync once on the next boot. Role
+  descriptions are checked against the 255-character column limit (a longer one crashed boot during development).
+- **Demo logins**: `npm run demo-accounts` creates a CS Department Editor and a Faculty Member linked to a placeholder
+  CS profile (`example.com` addresses, random passwords in git-ignored `cms/demo-accounts.local.md`). The seed
+  re-links them after `--reset`.
+- On-demand revalidation covers the new types (tag `academics`).
+- Tested through the real admin API with the demo logins: 28/28 Department Editor and Faculty cases and 13/13 Super
+  Admin cases (temporary account, deleted afterwards). Checked on a production build: department pages in English
+  and Urdu at 1440px and 390px, no console errors, no horizontal scroll; all three dashboards in the admin panel.

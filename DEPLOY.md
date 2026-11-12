@@ -231,11 +231,20 @@ docker compose up -d --build frontend
 
 ### 4.3 Editors and roles
 
-The roles **Media Cell Editor** and **Department Editor** are created automatically on boot (see
-`cms/src/bootstrap/roles.ts`). In *Settings → Administration panel → Users*, invite each editor and give
-them one role. For a Department Editor, also add their e-mail address to that department's
-**Editor emails** field (Content Manager → Department). They can then edit only that department and its
-programs, faculty members, downloads and research projects.
+The roles **Media Cell Editor**, **Department Editor** and **Faculty Member** are created automatically on boot
+(see `cms/src/bootstrap/roles.ts`). In *Settings → Administration panel → Users*, invite each person and give
+them one role. Then, on the admin homepage, use the **Department admins & faculty logins** widget:
+
+- **Department Editor**: choose the department, choose the user, **Assign**. They can then edit only that
+  department and its programs, people, news, publications, labs, alumni, achievements, gallery, downloads and
+  research projects.
+- **Faculty Member**: choose the teacher's profile, choose the user, **Link**. They can then edit only that
+  profile and their own publications.
+
+To take a department off the website without deleting it, switch off **isActive** on the department (Super Admin only).
+
+Delete the demo logins (`*@example.com`, created by `npm run demo-accounts`) before going live, or never run that
+script on the server.
 
 ### 4.4 Checks
 
