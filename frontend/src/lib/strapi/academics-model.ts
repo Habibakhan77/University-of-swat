@@ -151,6 +151,12 @@ export interface FacultyDetail {
 export interface DepartmentDetail {
   slug: string;
   overview: Localized<Block[]> | null;
+  vision: Localized<string> | null;
+  mission: Localized<Block[]> | null;
+  /** Verbatim, English only. `by` is the title the department page gives it ("Chairman"). */
+  headMessage: { blocks: Block[]; by: string | null; sourceUrl: string | null } | null;
+  /** The official page vision, mission and message come from. */
+  aboutSourceUrl: string | null;
   establishedYear: number | null;
   campus: { slug: string; name: Localized<string> } | null;
   contact: ContactInfo | null;

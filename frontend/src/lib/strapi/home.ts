@@ -199,7 +199,7 @@ interface StrapiFaculty extends Doc {
   icon: string | null;
   accent: FacultyAccent | null;
   image: StrapiMedia | null;
-  departments: { count: number } | null;
+  departments: Array<{ slug: string }> | null;
 }
 
 interface StrapiCampus extends Doc {
@@ -476,7 +476,10 @@ async function loadFaculties(locale: Locale): Promise<FacultyCard[]> {
         "fields[3]": "summary",
         "fields[4]": "icon",
         "fields[5]": "accent",
-        "populate[departments][count]": true,
+        // Departments hidden by a Super Admin (isActive = false) are not counted.
+        "populate[departments][fields][0]": "slug",
+        "populate[departments][filters][$or][0][isActive][$eq]": "true",
+        "populate[departments][filters][$or][1][isActive][$null]": "true",
         ...populateImage("image"),
       },
       locale,
@@ -491,7 +494,7 @@ async function loadFaculties(locale: Locale): Promise<FacultyCard[]> {
       image: f.image?.name.toLowerCase().startsWith("placeholder") ? null : toImage(f.image),
       accent: f.accent ?? "green",
       icon: f.icon,
-      departments: f.departments?.count ?? 0,
+      departments: f.departments?.length ?? 0,
       isCenter: f.type !== "faculty",
       lang: f.lang,
     }));

@@ -86,6 +86,11 @@ interface StrapiCampusRef extends SlugRef {
 interface StrapiDepartmentFull extends Doc {
   slug: string;
   overview: Block[] | null;
+  vision: string | null;
+  mission: Block[] | null;
+  headMessage: Block[] | null;
+  headMessageBy: string | null;
+  aboutSourceUrl: string | null;
   establishedYear: number | null;
   campus: StrapiCampusRef | null;
   contact: StrapiContact | null;
@@ -174,6 +179,15 @@ async function bySlug<T extends Doc>(path: string, slug: string, query: Record<s
 
 const EMPTY_INDEX: AcademicIndex = { faculties: [], departments: [], programs: [] };
 
+/**
+ * Only active departments are on the website (Strapi: Department → isActive, set by a Super Admin).
+ * Entries saved before the flag existed have no value and count as active.
+ */
+export const ACTIVE_DEPARTMENT_FILTER = {
+  "filters[$or][0][isActive][$eq]": "true",
+  "filters[$or][1][isActive][$null]": "true",
+} as const;
+
 async function loadIndex(locale: Locale): Promise<AcademicIndex> {
   "use cache";
   cacheTag("academics", `academics:${locale}`);
@@ -194,6 +208,7 @@ async function loadIndex(locale: Locale): Promise<AcademicIndex> {
         "/departments",
         {
           "sort[0]": "order:asc",
+          ...ACTIVE_DEPARTMENT_FILTER,
           ...selectFields("fields", ["name", "slug", "shortName", "summary", "order"]),
           ...populateImage("image"),
           "populate[faculty][fields][0]": "slug",
@@ -316,7 +331,8 @@ async function loadDepartment(slug: string, locale: Locale): Promise<DepartmentD
       "/departments",
       slug,
       {
-        ...selectFields("fields", ["slug", "overview", "establishedYear"]),
+        ...ACTIVE_DEPARTMENT_FILTER,
+        ...selectFields("fields", ["slug", "overview", "establishedYear", "vision", "mission", "headMessage", "headMessageBy", "aboutSourceUrl"]),
         "populate[contact]": true,
         "populate[campus][fields][0]": "slug",
         "populate[campus][fields][1]": "name",
@@ -328,6 +344,13 @@ async function loadDepartment(slug: string, locale: Locale): Promise<DepartmentD
     return {
       slug: pair.en.slug,
       overview: pick(pair, "overview", locale),
+      vision: pick(pair, "vision", locale),
+      mission: pick(pair, "mission", locale),
+      // A real person's words: always the English original as published, never a translation.
+      headMessage: pair.en.headMessage?.length
+        ? { blocks: pair.en.headMessage, by: pair.en.headMessageBy, sourceUrl: pair.en.aboutSourceUrl ? normalizeHref(pair.en.aboutSourceUrl) : null }
+        : null,
+      aboutSourceUrl: pair.en.aboutSourceUrl ? normalizeHref(pair.en.aboutSourceUrl) : null,
       establishedYear: pair.en.establishedYear,
       campus: campusOf(pair, locale),
       contact: contactOf(pair, locale),
@@ -409,6 +432,8 @@ async function loadMembers(locale: Locale): Promise<FacultyMember[]> {
   cacheLife("max");
 
   return guarded(`faculty members (${locale})`, [], async () => {
+    // Members of a department hidden by a Super Admin are hidden with it.
+    const active = new Set((await loadIndex(locale)).departments.map((d) => d.slug));
     const pairs = await fetchPairs<StrapiMember>(
       "/faculty-members",
       {
@@ -434,6 +459,7 @@ async function loadMembers(locale: Locale): Promise<FacultyMember[]> {
     );
     const httpsOnly = (url: string | null) => (url ? normalizeHref(url) : null);
     return pairs
+      .filter((p) => !p.en.department || active.has(p.en.department.slug))
       .map((p) => ({
         id: p.en.documentId,
         slug: p.en.slug,

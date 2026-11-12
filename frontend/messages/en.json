@@ -655,5 +655,64 @@
     "home": "Homepage",
     "contact": "Contact",
     "reference": "Reference:"
+  },
+  "department": {
+    "sectionsLabel": "Department sections",
+    "about": "About",
+    "vision": "Vision",
+    "mission": "Mission",
+    "headMessageTitle": "Message from the head of department",
+    "headMessageBy": "{by}, {department}",
+    "headMessageSource": "As published on the department page",
+    "headMessageUrduNote": "This message is shown in its original English words.",
+    "statementsSource": "Vision and mission from the department’s page on uswat.edu.pk",
+    "publications": "Publications",
+    "labs": "Labs & facilities",
+    "news": "News",
+    "events": "Events",
+    "alumni": "Alumni",
+    "achievements": "Achievements",
+    "gallery": "Gallery",
+    "empty": {
+      "about": "The department has not published its vision and mission yet.",
+      "publications": "No publications listed yet.",
+      "labs": "No labs or facilities listed yet.",
+      "news": "No news from this department yet.",
+      "events": "No events listed yet.",
+      "alumni": "No alumni stories yet.",
+      "achievements": "No achievements listed yet.",
+      "gallery": "No photos yet."
+    },
+    "emptyHint": "The department adds these in the university’s content system.",
+    "allNews": "All news & events",
+    "alumniCta": "Graduated from this department? Join the University of Swat Alumni Association.",
+    "alumniLink": "Alumni Association",
+    "classOf": "Class of {year}",
+    "opened": "Opened {date}",
+    "source": "Source",
+    "viewOnline": "View publication",
+    "publicationsCount": "{count, plural, one {# publication} other {# publications}}",
+    "publicationTypes": {
+      "journal_article": "Journal article",
+      "conference_paper": "Conference paper",
+      "book": "Book",
+      "book_chapter": "Book chapter",
+      "report": "Report",
+      "thesis": "Thesis",
+      "other": "Publication"
+    },
+    "labStates": {
+      "operational": "In use",
+      "under_establishment": "Being set up",
+      "planned": "Planned"
+    },
+    "achievementCategories": {
+      "award": "Award",
+      "grant": "Grant",
+      "ranking": "Ranking",
+      "competition": "Competition",
+      "accreditation": "Accreditation",
+      "other": "Achievement"
+    }
   }
 }

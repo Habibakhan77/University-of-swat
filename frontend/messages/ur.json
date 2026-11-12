@@ -655,5 +655,64 @@
     "home": "سرورق",
     "contact": "رابطہ",
     "reference": "حوالہ:"
+  },
+  "department": {
+    "sectionsLabel": "شعبے کے حصے",
+    "about": "تعارف",
+    "vision": "وژن",
+    "mission": "مشن",
+    "headMessageTitle": "سربراہِ شعبہ کا پیغام",
+    "headMessageBy": "{by}، {department}",
+    "headMessageSource": "جیسا کہ شعبے کے صفحے پر شائع ہوا",
+    "headMessageUrduNote": "یہ پیغام اس کے اصل انگریزی الفاظ میں دیا گیا ہے۔",
+    "statementsSource": "وژن اور مشن uswat.edu.pk پر شعبے کے صفحے سے",
+    "publications": "تحقیقی اشاعتیں",
+    "labs": "تجربہ گاہیں اور سہولیات",
+    "news": "خبریں",
+    "events": "تقریبات",
+    "alumni": "سابق طلبہ",
+    "achievements": "کامیابیاں",
+    "gallery": "تصاویر",
+    "empty": {
+      "about": "شعبے نے ابھی اپنا وژن اور مشن شائع نہیں کیا۔",
+      "publications": "ابھی کوئی اشاعت درج نہیں۔",
+      "labs": "ابھی کوئی تجربہ گاہ یا سہولت درج نہیں۔",
+      "news": "اس شعبے کی ابھی کوئی خبر نہیں۔",
+      "events": "ابھی کوئی تقریب درج نہیں۔",
+      "alumni": "ابھی سابق طلبہ کی کوئی کہانی نہیں۔",
+      "achievements": "ابھی کوئی کامیابی درج نہیں۔",
+      "gallery": "ابھی کوئی تصویر نہیں۔"
+    },
+    "emptyHint": "شعبہ یہ معلومات جامعہ کے مواد کے نظام میں شامل کرتا ہے۔",
+    "allNews": "تمام خبریں اور تقریبات",
+    "alumniCta": "کیا آپ نے اس شعبے سے تعلیم مکمل کی ہے؟ جامعہ سوات کی ایلومنائی ایسوسی ایشن میں شامل ہوں۔",
+    "alumniLink": "ایلومنائی ایسوسی ایشن",
+    "classOf": "بیچ {year}",
+    "opened": "افتتاح {date}",
+    "source": "ماخذ",
+    "viewOnline": "اشاعت دیکھیں",
+    "publicationsCount": "{count, plural, one {# اشاعت} other {# اشاعتیں}}",
+    "publicationTypes": {
+      "journal_article": "جریدے کا مقالہ",
+      "conference_paper": "کانفرنس مقالہ",
+      "book": "کتاب",
+      "book_chapter": "کتاب کا باب",
+      "report": "رپورٹ",
+      "thesis": "مقالہ (تھیسس)",
+      "other": "اشاعت"
+    },
+    "labStates": {
+      "operational": "زیرِ استعمال",
+      "under_establishment": "زیرِ تعمیر",
+      "planned": "منصوبہ بندی میں"
+    },
+    "achievementCategories": {
+      "award": "اعزاز",
+      "grant": "گرانٹ",
+      "ranking": "درجہ بندی",
+      "competition": "مقابلہ",
+      "accreditation": "منظوری",
+      "other": "کامیابی"
+    }
   }
 }

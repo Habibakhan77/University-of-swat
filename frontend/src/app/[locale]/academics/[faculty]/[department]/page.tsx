@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ArrowRight, Building2, CalendarDays, GraduationCap, Layers, MapPin, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Building2, CalendarDays, CalendarRange, FlaskConical, GraduationCap, Layers, MapPin, Newspaper, Users } from "lucide-react";
 import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
@@ -22,7 +22,19 @@ import {
   levelGroupOf,
   type LevelGroup,
 } from "@/lib/strapi/academics";
+import { getDepartmentSections } from "@/lib/strapi/department";
+import { getPosts, newsHref } from "@/lib/strapi/notices";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import {
+  AboutStatements,
+  AchievementList,
+  AlumniList,
+  EmptyState,
+  GalleryGrid,
+  LabGrid,
+  PublicationList,
+} from "@/components/academics/department-sections";
+import { PostCard } from "@/components/notices/post-card";
 import { PersonCard, ProgramCard } from "@/components/academics/cards";
 import { accentStyle } from "@/components/academics/faculty-art";
 import { ContactDetails, EnglishOnlyNote, FactList, SectionTitle, SidePanel, type Fact } from "@/components/academics/panels";
@@ -53,10 +65,12 @@ export async function generateStaticParams({ params }: { params: { locale: strin
 async function load(params: Props["params"]) {
   const { faculty: facultySlug, department: slug } = await params;
   const locale = await resolveLocale();
-  const [index, detail, members] = await Promise.all([
+  const [index, detail, members, sections, posts] = await Promise.all([
     getAcademicIndex(locale),
     getDepartmentDetail(slug, locale),
     getDepartmentMembers(slug, locale),
+    getDepartmentSections(slug, locale),
+    getPosts(locale),
   ]);
   const department = index.departments.find((d) => d.slug === slug);
   if (!department || !detail) notFound();
@@ -65,7 +79,10 @@ async function load(params: Props["params"]) {
   const faculty = index.faculties.find((f) => f.slug === department.facultySlug);
   if (!faculty) notFound();
   const programs = index.programs.filter((p) => p.departmentSlug === slug);
-  return { locale, department, detail, members, faculty, programs };
+  const own = posts.filter((p) => p.department?.href === department.href);
+  const news = own.filter((p) => p.category !== "event").slice(0, 6);
+  const events = own.filter((p) => p.category === "event").slice(0, 6);
+  return { locale, department, detail, members, faculty, programs, sections, news, events };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -81,10 +98,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function DepartmentPage({ params }: Props) {
-  const { locale, department, detail, members, faculty, programs } = await load(params);
-  const [t, tCommon] = await Promise.all([
+  const { locale, department, detail, members, faculty, programs, sections, news, events } = await load(params);
+  const [t, tCommon, td] = await Promise.all([
     getTranslations({ locale, namespace: "academics" }),
     getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "department" }),
   ]);
   const name = department.name.value;
   const facultyLabel = displayName(faculty, locale);
@@ -96,12 +114,21 @@ export default async function DepartmentPage({ params }: Props) {
 
   // The hero already shows the summary: never open the overview with the same sentence.
   const overview = detail.overview ? withoutLead(detail.overview.value, department.summary?.value) : null;
-  const sections = [
-    { id: "overview", label: t("overview"), show: Boolean(overview) },
-    { id: "programs", label: t("programs"), show: true },
-    { id: "members", label: t("members"), show: true },
-    { id: "contact", label: t("contact"), show: Boolean(detail.contact) },
-  ].filter((s) => s.show);
+  // Every section is always there (with an empty state when the department has published nothing),
+  // so visitors and editors see the same structure on every department page.
+  const nav = [
+    { id: "overview", label: td("about") },
+    { id: "programs", label: t("programs") },
+    { id: "members", label: t("members") },
+    { id: "publications", label: td("publications") },
+    { id: "labs", label: td("labs") },
+    { id: "news", label: td("news") },
+    { id: "events", label: td("events") },
+    { id: "achievements", label: td("achievements") },
+    { id: "alumni", label: td("alumni") },
+    { id: "gallery", label: td("gallery") },
+    ...(detail.contact ? [{ id: "contact", label: t("contact") }] : []),
+  ];
 
   const facts: Fact[] = [
     {
@@ -118,6 +145,10 @@ export default async function DepartmentPage({ params }: Props) {
     ...(detail.establishedYear ? [{ icon: CalendarDays, label: t("established"), value: <span className="tabular">{detail.establishedYear}</span> }] : []),
     { icon: GraduationCap, label: t("programs"), value: t("programsCount", { count: programs.length }) },
     { icon: Users, label: t("members"), value: t("membersCount", { count: members.length }) },
+    ...(sections.publications.length
+      ? [{ icon: BookOpen, label: td("publications"), value: td("publicationsCount", { count: sections.publications.length }) }]
+      : []),
+    ...(sections.labs.length ? [{ icon: FlaskConical, label: td("labs"), value: <span className="tabular">{sections.labs.length}</span> }] : []),
   ];
 
   const structured = {
@@ -168,9 +199,9 @@ export default async function DepartmentPage({ params }: Props) {
       />
 
       <Container size="wide" className="pt-6">
-        <nav aria-label={t("onThisPage")} className="-mx-gutter overflow-x-auto px-gutter">
+        <nav aria-label={td("sectionsLabel")} className="-mx-gutter overflow-x-auto px-gutter">
           <ul className="flex w-max gap-2">
-            {sections.map((s) => (
+            {nav.map((s) => (
               <li key={s.id}>
                 <a
                   href={`#${s.id}`}
@@ -186,13 +217,19 @@ export default async function DepartmentPage({ params }: Props) {
 
       <Container size="wide" className="grid gap-10 pt-8 pb-section lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-14">
         <div className="flex min-w-0 flex-col gap-section-sm [&>section]:scroll-mt-32">
-          {detail.overview && overview ? (
-            <section aria-labelledby="overview">
-              <SectionTitle id="overview">{t("overview")}</SectionTitle>
-              <EnglishOnlyNote content={detail.overview} />
-              <RichText blocks={overview} lang={langAttr(detail.overview, locale)} className="max-w-prose text-body-lg" />
-            </section>
-          ) : null}
+          <section aria-labelledby="overview" className="flex flex-col gap-6">
+            <SectionTitle id="overview">{td("about")}</SectionTitle>
+            {detail.overview && overview ? (
+              <div>
+                <EnglishOnlyNote content={detail.overview} />
+                <RichText blocks={overview} lang={langAttr(detail.overview, locale)} className="max-w-prose text-body-lg" />
+              </div>
+            ) : null}
+            <AboutStatements detail={detail} departmentName={name} locale={locale} />
+            {!overview && !detail.vision && !detail.mission && !detail.headMessage ? (
+              <EmptyState locale={locale}>{td("empty.about")}</EmptyState>
+            ) : null}
+          </section>
 
           <section aria-labelledby="programs">
             <SectionTitle id="programs">{t("programs")}</SectionTitle>
@@ -249,6 +286,75 @@ export default async function DepartmentPage({ params }: Props) {
             ) : (
               <p className="text-body text-fg-muted">{t("noMembers")}</p>
             )}
+          </section>
+
+          <section aria-labelledby="publications">
+            <SectionTitle id="publications">{td("publications")}</SectionTitle>
+            <PublicationList publications={sections.publications} locale={locale} />
+          </section>
+
+          <section aria-labelledby="labs">
+            <SectionTitle id="labs">{td("labs")}</SectionTitle>
+            <LabGrid labs={sections.labs} locale={locale} />
+          </section>
+
+          <section aria-labelledby="news">
+            <SectionTitle
+              id="news"
+              action={
+                <Link href={newsHref} className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-fac hover:underline">
+                  {td("allNews")}
+                  <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
+                </Link>
+              }
+            >
+              {td("news")}
+            </SectionTitle>
+            {news.length ? (
+              <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {news.map((p) => (
+                  <li key={p.id}>
+                    <PostCard post={p} headingLevel="h3" />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyState icon={Newspaper} locale={locale}>
+                {td("empty.news")}
+              </EmptyState>
+            )}
+          </section>
+
+          <section aria-labelledby="events">
+            <SectionTitle id="events">{td("events")}</SectionTitle>
+            {events.length ? (
+              <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {events.map((p) => (
+                  <li key={p.id}>
+                    <PostCard post={p} headingLevel="h3" />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <EmptyState icon={CalendarRange} locale={locale}>
+                {td("empty.events")}
+              </EmptyState>
+            )}
+          </section>
+
+          <section aria-labelledby="achievements">
+            <SectionTitle id="achievements">{td("achievements")}</SectionTitle>
+            <AchievementList achievements={sections.achievements} locale={locale} />
+          </section>
+
+          <section aria-labelledby="alumni">
+            <SectionTitle id="alumni">{td("alumni")}</SectionTitle>
+            <AlumniList alumni={sections.alumni} locale={locale} />
+          </section>
+
+          <section aria-labelledby="gallery">
+            <SectionTitle id="gallery">{td("gallery")}</SectionTitle>
+            <GalleryGrid photos={sections.gallery} locale={locale} />
           </section>
 
           {detail.contact ? (

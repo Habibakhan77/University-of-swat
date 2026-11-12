@@ -29,6 +29,12 @@ const TAGS_BY_UID: Record<string, string[]> = {
   // Programs also feed the admissions hub (fees and eligibility flags).
   "api::program.program": ["academics", "admissions", "stats"],
   "api::faculty-member.faculty-member": ["academics", "stats"],
+  // Department microsite sections (department pages read them under the "academics" tag).
+  "api::publication.publication": ["academics"],
+  "api::lab.lab": ["academics"],
+  "api::alumni-story.alumni-story": ["academics"],
+  "api::achievement.achievement": ["academics"],
+  "api::gallery-item.gallery-item": ["academics"],
   // Merit lists and other files attached to programs appear on program pages.
   "api::download.download": ["academics", "downloads"],
   "api::tender.tender": ["tenders"],
