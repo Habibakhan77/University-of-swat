@@ -827,3 +827,21 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   With `HOSTNAME=127.0.0.1` it broke the locale rewrite (307/500). The image uses `0.0.0.0` and carries a
   comment about this. **Not yet run:** the images themselves, `docker compose up`, and Nginx. CI builds them
   on the first push.
+
+## Phase 13 — Submission package
+
+- **README.md** rewritten for the judges: overview with a hero screenshot, a respectful "Old site vs new site"
+  table, screenshot gallery, full feature list, the 11 required technologies and where each is used, a mermaid
+  architecture diagram, Lighthouse results (Accessibility / Best Practices / SEO 100; desktop and mobile
+  performance reported as measured, with the reasons), quick start for Docker Compose and local development,
+  how staff publish news in Strapi (with admin screenshots), the content policy and photo credits, and a
+  "How this was built" section (Habiba Khan with Claude Code as an AI coding assistant).
+- **Screenshots** (`docs/screenshots`, WebP): Home, About, Academics, a department, Admissions, News, Faculty
+  directory and Contact at 1440 × 900 and 390 × 844, in English and Urdu, light and dark (64 shots), plus the full
+  homepage, the search dialog in both languages, the mega menu, the mobile menu and two Strapi admin screens.
+  Taken from the production build with the seeded content, using headless Chrome. The Strapi screens were taken
+  with a temporary admin account that was deleted afterwards.
+- **docs/DEMO_SCRIPT.md** (2 min 45 s video script with timings), **docs/JUDGES_QA.md** (plain-language guide to
+  the content flow, ISR + webhook revalidation, search, Urdu RTL, roles, Docker/Nginx/Cloudflare, and 15 likely
+  questions) and **docs/SUBMISSION.md** (one-page summary for the Chairman, DCST).
+- `.gitignore`: `docs/` stays local except the submission documents (`docs/*.md`) and `docs/screenshots/`.

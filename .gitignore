@@ -76,7 +76,10 @@ desktop.ini
 # ---------- Local-only files ----------
 # Original photos and test screenshots stay on this machine
 /photos/
-/docs/
+/docs/*
+# ...except the submission documents and the README screenshots
+!/docs/*.md
+!/docs/screenshots/
 
 # ---------- Nginx TLS (Cloudflare Origin Certificate) ----------
 nginx/certs/*
