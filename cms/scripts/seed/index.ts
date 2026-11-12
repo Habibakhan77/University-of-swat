@@ -10,11 +10,13 @@ import type { Core, UID } from '@strapi/strapi';
 import { blocks, ul, type Block } from './lib/blocks';
 import { Writer } from './lib/docs';
 import { MediaFactory } from './lib/media';
+import { linkDemoAccounts } from './demo-accounts';
 import { CAMPUS_PHOTOS, FACULTY_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
 import { FACULTIES, LEVEL_LABELS, type DepartmentSeed, type ProgramSeed } from './data/academics';
 import { CAMPUSES, MAIN_ADDRESS, OFFICES, PHONE_DIRECTORY, PHONE_DIRECTORY_UR, UPLOADS } from './data/organisation';
 import { CONTACT_PAGE, FACILITIES, RESEARCH_PAGE, RESEARCH_PROJECTS } from './data/pages';
 import { POSTS } from './data/posts';
+import { DEPARTMENT_ABOUT, DEPARTMENT_GALLERY, LABS } from './data/department-pages';
 import { DOWNLOADS, FAQS, JOBS, TENDERS, uploadMonth, uploadUrl, type SeedDocument } from './data/notices';
 import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE_SETTINGS, STATS, VC_MESSAGE } from './data/site';
 
@@ -31,6 +33,11 @@ export interface SeedOptions {
 
 /** Deleted on --reset, children before parents. */
 const CONTENT_TYPES: UID.ContentType[] = [
+  'api::gallery-item.gallery-item',
+  'api::achievement.achievement',
+  'api::alumni-story.alumni-story',
+  'api::lab.lab',
+  'api::publication.publication',
   'api::phone-entry.phone-entry',
   'api::contact-page.contact-page',
   'api::research-page.research-page',
@@ -314,6 +321,57 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
       );
     }
 
+    // ---------- Department microsites: labs and gallery ----------
+    // Real only (see data/department-pages.ts). No department page lists publications, alumni stories or
+    // achievements, so those sections start empty and show an empty state on the website.
+    log('Department labs and gallery photos…');
+    const departmentOf = (name: string, where: string): string => {
+      const id = departmentIds.get(name);
+      if (!id) throw new Error(`Unknown department "${name}" in ${where}`);
+      return id;
+    };
+    for (const [i, lab] of LABS.entries()) {
+      const department = departmentOf(lab.department, `lab ${lab.name}`);
+      const sourceUrl = officialUrl(lab.source);
+      const images = await media.remoteAll((lab.images ?? []).map((img) => ({ url: uploadUrl(img.file), alt: img.alt, source: sourceUrl })));
+      await w.create(
+        'api::lab.lab',
+        {
+          name: lab.name,
+          state: lab.state,
+          summary: lab.summary,
+          inauguratedOn: lab.inauguratedOn,
+          image: images[0],
+          gallery: images,
+          sourceUrl,
+          order: i + 1,
+          department,
+        },
+      );
+    }
+    const gallery = [
+      // Each department post with a real event photo also goes into that department's gallery.
+      ...POSTS.filter((p) => p.department && POST_PHOTOS[p.slug]).map((p) => ({
+        department: p.department as string,
+        photo: POST_PHOTOS[p.slug],
+        caption: p.title,
+        takenOn: p.date,
+        source: p.source,
+      })),
+      ...DEPARTMENT_GALLERY.map((g) => ({ ...g, source: undefined })),
+    ];
+    for (const [i, g] of gallery.entries()) {
+      const department = departmentOf(g.department, `gallery photo ${g.photo}`);
+      await w.create('api::gallery-item.gallery-item', {
+        caption: fit(g.caption, 200),
+        image: await media.photo(g.photo, 'cover'),
+        takenOn: g.takenOn,
+        sourceUrl: g.source ? officialUrl(g.source) : undefined,
+        order: i + 1,
+        department,
+      });
+    }
+
     // ---------- Tenders, jobs, downloads ----------
     // Real items from uswat.edu.pk; their documents are copied from the official site (see MediaFactory.remote).
     log('Tenders, jobs and downloads (official files from uswat.edu.pk, cached in .seed-cache/)…');
@@ -522,6 +580,10 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     await media.dispose();
   }
 
+  // Departments and profiles were recreated: keep any demo logins (npm run demo-accounts) assigned.
+  const demo = await linkDemoAccounts(strapi);
+  if (demo.department || demo.faculty) log('Demo accounts re-linked to the CS department and its placeholder profile');
+
   log('Done. Created:');
   for (const [uid, n] of w.counts) log(`  ${String(n).padStart(3)} × ${uid}`);
   log(`  ${String(media.uploaded).padStart(3)} × media files (${media.photos} real photos, ${media.files} official files from uswat.edu.pk)`);
@@ -544,6 +606,11 @@ async function createDepartment(
   // The overview is only what the department's official page says, rewritten; the hero sentence (summary)
   // is not repeated in it. Departments without an official page get no overview.
   const overview: Block[] | undefined = d.overview?.length ? blocks(...d.overview) : undefined;
+  // Vision, mission and the head's message as published on the department page (data/department-pages.ts).
+  const about = DEPARTMENT_ABOUT[d.name];
+  const mission = about && (about.mission?.length || about.missionPoints?.length)
+    ? [...blocks(...(about.mission ?? [])), ...(about.missionPoints?.length ? [ul(about.missionPoints)] : [])]
+    : undefined;
   return w.create(
     'api::department.department',
     {
@@ -552,6 +619,13 @@ async function createDepartment(
       shortName: d.shortName,
       summary: d.short,
       overview,
+      isActive: true,
+      vision: about?.vision,
+      mission,
+      // Verbatim and never translated: shown in English on the Urdu site too, linked to its source.
+      headMessage: about?.headMessage ? blocks(...about.headMessage.paragraphs) : undefined,
+      headMessageBy: about?.headMessage?.by,
+      aboutSourceUrl: about ? officialUrl(about.source) : undefined,
       image: await media.image({ ratio: 'cover', key: `department-${slug}`, title: d.shortName ?? d.name, kicker: 'Department' }),
       establishedYear: d.establishedYear,
       faculty: facultyId,

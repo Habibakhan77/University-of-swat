@@ -161,6 +161,21 @@
       "relation": "manyToOne",
       "target": "api::department.department",
       "inversedBy": "facultyMembers"
+    },
+    "accountEmail": {
+      "type": "email",
+      "private": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "publications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::publication.publication",
+      "mappedBy": "facultyMember"
     }
   }
 }

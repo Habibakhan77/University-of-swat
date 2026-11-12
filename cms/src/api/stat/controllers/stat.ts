@@ -6,7 +6,7 @@ type Source = 'manual' | 'campuses' | 'faculties' | 'departments' | 'programs' |
 const SOURCES: Record<Exclude<Source, 'manual'>, { uid: UID.ContentType; filters?: Record<string, unknown> }> = {
   campuses: { uid: 'api::campus.campus' },
   faculties: { uid: 'api::faculty.faculty', filters: { type: 'faculty' } },
-  departments: { uid: 'api::department.department' },
+  departments: { uid: 'api::department.department', filters: { $or: [{ isActive: true }, { isActive: { $null: true } }] } },
   programs: { uid: 'api::program.program' },
   faculty_members: { uid: 'api::faculty-member.faculty-member', filters: { isPlaceholder: false } },
 };

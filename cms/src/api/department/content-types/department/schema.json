@@ -34,6 +34,16 @@
         }
       }
     },
+    "isActive": {
+      "type": "boolean",
+      "default": true,
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "shortName": {
       "type": "string",
       "pluginOptions": {
@@ -56,6 +66,47 @@
       "pluginOptions": {
         "i18n": {
           "localized": true
+        }
+      }
+    },
+    "vision": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "mission": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "headMessage": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "headMessageBy": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "aboutSourceUrl": {
+      "type": "string",
+      "regex": "^https://\\S+$",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
         }
       }
     },
@@ -163,6 +214,36 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::research-project.research-project",
+      "mappedBy": "department"
+    },
+    "publications": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::publication.publication",
+      "mappedBy": "department"
+    },
+    "labs": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::lab.lab",
+      "mappedBy": "department"
+    },
+    "alumniStories": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::alumni-story.alumni-story",
+      "mappedBy": "department"
+    },
+    "achievements": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::achievement.achievement",
+      "mappedBy": "department"
+    },
+    "galleryItems": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::gallery-item.gallery-item",
       "mappedBy": "department"
     }
   }

@@ -14,7 +14,8 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "typegen": "strapi ts:generate-types",
-    "seed": "node scripts/seed.js"
+    "seed": "node scripts/seed.js",
+    "demo-accounts": "node scripts/demo-accounts.js"
   },
   "dependencies": {
     "@strapi/database": "5.61.1",

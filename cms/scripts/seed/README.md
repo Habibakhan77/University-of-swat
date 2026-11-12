@@ -21,6 +21,10 @@ server, so it can run while `npm run dev` is running.
 | Programs | 78 | Exactly the degree programs listed on each department page (checked November 2026). Duration, semesters and credit hours only where the page states them (e.g. BS Geology 4 years / 132 credit hours, MBA 35 or 65 credit hours); no shift anywhere (none is published); eligibility only where the department page publishes it; no fees — en + ur (degree titles kept as written) |
 | Faculty members | 56 | 2 per department, **all placeholders** (`isPlaceholder: true`) — en + ur |
 | Offices & directorates | 23 | Offices, directorates, centres and student services with heads, emails, phones, staff and documents copied from each office page on uswat.edu.pk (source link on every entry); real head photos where published — en + ur |
+| Department pages | 21 | Vision and/or mission from each department's own page (official statements, only spelling slips fixed); the head's message where one is published (Biotechnology, Economics), copied verbatim and never translated, with `aboutSourceUrl` — see `data/department-pages.ts` |
+| Labs & facilities | 5 | Only labs a department page names: Forestry Lab and Tree Ring Laboratory (Agricultural Sciences and Forestry), Food and Beverages Laboratory (Tourism and Hospitality, opened 15 Oct 2024, with its photo), Environmental Laboratory (under establishment) and GIS Laboratory (planned) (Environmental Sciences) |
+| Gallery items | 14 | The real event photos of department posts, plus three faculty photos taken at one department's activity |
+| Publications / Alumni stories / Achievements | 0 | No department page publishes any; the website shows an empty state |
 | Posts | 26 | Real news, announcements and events (Sep–Nov 2026), rewritten text, a link to each original; real event photos as covers, posters and notices attached in full; Urdu title, excerpt and venue (the body stays in English, shown with an "in English" note) |
 | Tenders / Jobs | 10 / 10 | The latest items on uswat.edu.pk with their official PDFs and advertisements; all `closed` (deadlines from the documents) |
 | Downloads | 67 | Every working file on uswat.edu.pk/downloads (policies, regulations, fee notifications, forms, reports) |
@@ -85,4 +89,9 @@ from uswat.edu.pk (about 75 MB the first time, cached in `cms/.seed-cache/`, git
       none are seeded. Four links on the old Downloads page are dead (404) and were left out (see `data/notices.ts`).
 - [ ] **Urdu**: programs, faculty members, tenders, jobs, downloads and most posts are English only. The
       frontend should fall back to English.
+- [ ] **Department microsites**: publications, alumni stories (with the graduate's consent) and achievements for every
+      department; vision/mission for the 7 departments that publish none (CS, Psychology, Agricultural Sciences and the four
+      Allied Health departments); a real photo per department.
+- [ ] **Demo logins**: `npm run demo-accounts` creates `cs.editor@example.com` and `faculty.member@example.com` (passwords
+      in `cms/demo-accounts.local.md`, git-ignored). Delete them in Settings → Users before going live.
 - [ ] Every `placeholder-*` image and PDF.

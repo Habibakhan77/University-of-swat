@@ -1,0 +1,73 @@
+{
+  "kind": "collectionType",
+  "collectionName": "publications",
+  "info": {
+    "singularName": "publication",
+    "pluralName": "publications",
+    "displayName": "Publication",
+    "description": "Research output of a department or faculty member (journal articles, books, conference papers)."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "authors": {
+      "type": "text",
+      "required": true
+    },
+    "year": {
+      "type": "integer",
+      "min": 1950,
+      "max": 2100
+    },
+    "publicationType": {
+      "type": "enumeration",
+      "enum": [
+        "journal_article",
+        "conference_paper",
+        "book",
+        "book_chapter",
+        "report",
+        "thesis",
+        "other"
+      ],
+      "default": "journal_article",
+      "required": true
+    },
+    "venue": {
+      "type": "string"
+    },
+    "details": {
+      "type": "string"
+    },
+    "doi": {
+      "type": "string",
+      "regex": "^10\\.\\d{4,9}/\\S+$"
+    },
+    "url": {
+      "type": "string",
+      "regex": "^https://\\S+$"
+    },
+    "sourceUrl": {
+      "type": "string",
+      "regex": "^https://\\S+$"
+    },
+    "department": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::department.department",
+      "inversedBy": "publications"
+    },
+    "facultyMember": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::faculty-member.faculty-member",
+      "inversedBy": "publications"
+    }
+  }
+}

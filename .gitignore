@@ -74,6 +74,8 @@ desktop.ini
 .claude/settings.local.json
 
 # ---------- Local-only files ----------
+# Demo login credentials written by `npm run demo-accounts`
+*.local.md
 # Original photos and test screenshots stay on this machine
 /photos/
 /docs/*
