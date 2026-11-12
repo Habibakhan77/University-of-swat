@@ -230,6 +230,7 @@ npm install
 npm run dev                     # http://localhost:1337/admin — create the first administrator
 npm run seed                    # in a second terminal: fill the empty database
 npm run demo-accounts           # optional: demo Department Editor + Faculty logins (see below)
+npm run faculty-photos          # optional: attach faculty photos the seed could not download
 
 # 2. Website
 cd ../frontend
@@ -280,9 +281,11 @@ photos. No department lists publications, alumni stories or achievements, so tho
 ("No publications listed yet") instead of invented entries.
 
 **Demo logins** (local only): `npm run demo-accounts` in `cms/` creates a Department Editor assigned to the
-Department of Computer and Software Technology and a Faculty Member linked to a placeholder profile in it, with
-random passwords written to `cms/demo-accounts.local.md` (git-ignored; never committed). Both use the reserved
-`example.com` domain. Running it again issues new passwords; `npm run seed -- --reset` keeps them assigned.
+Department of Computer and Software Technology and a Faculty Member linked to a real profile in it (Mr. Abdul
+Haq, Lecturer, as listed on the department page), with random passwords written to `cms/demo-accounts.local.md`
+(git-ignored; never committed). Both use the reserved `example.com` domain. Running it again issues new
+passwords; `npm run seed -- --reset` keeps them assigned and restores the profile. Edits made with the demo
+faculty login change a real teacher's public profile, so delete the demo logins before going live.
 
 ## Content policy
 
@@ -292,8 +295,11 @@ random passwords written to `cms/demo-accounts.local.md` (git-ignored; never com
   is left out rather than guessed. Each post, tender, job, download and office keeps a link to its source.
 - **Official files.** Tender, job and download attachments are the university's own PDFs and forms, stored in
   the Media Library with a link to the original.
-- **No invented people.** Faculty members without published profiles are clearly marked placeholders
-  (badge, neutral silhouette, notice above the list), never a made-up real-sounding name.
+- **Real faculty lists.** The 158 faculty members of the 23 departments that publish a list are copied from
+  their department pages exactly as written: name, designation, roles, qualifications, e-mail address and photo
+  (the full-size original where the site has one). Departments that publish no list (Urdu, whose page shows a
+  Management & Commerce entry by mistake, and the four Allied Health departments) keep clearly marked
+  placeholders (badge, neutral silhouette, notice above the list), never a made-up real-sounding name.
 - **No invented quotes.** The Vice Chancellor's message is verbatim from his published message, in the English
   original on both language versions, with a link to the source.
 - **Photo credits.** Every photo is the University of Swat's own, from uswat.edu.pk or its official Facebook

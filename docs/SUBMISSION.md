@@ -55,8 +55,8 @@ directory, contact form) · Search · custom 404 and error pages.
 ## Content policy
 
 Only official University of Swat content, rewritten rather than copied, with links to the original pages.
-University photos are credited. Unpublished details are left out rather than guessed. Faculty members without
-published profiles are clearly marked placeholders.
+University photos are credited. Unpublished details are left out rather than guessed. Faculty lists are copied
+exactly from the department pages; departments that publish none keep clearly marked placeholders.
 
 ## How it was built
 

@@ -179,8 +179,10 @@ and keep a source link. Text is rewritten, not copied. Nothing unpublished is gu
 numbers or founding years are simply left out.
 
 **6. Are the faculty members real people?**
-Only where the official site publishes them. Every other faculty member is a clearly marked placeholder (badge,
-silhouette, notice) for the department to replace. We never invent real-sounding names.
+Yes. The 158 faculty members of the 23 departments that publish a faculty list are copied from those pages
+exactly as written (name, designation, roles such as "Chairman" or "Gold Medalist", qualifications, e-mail and
+photo). Only the departments with no list (Urdu and the four Allied Health departments) show placeholders,
+clearly marked (badge, silhouette, notice) for the department to replace. We never invent real-sounding names.
 
 **7. How does Urdu work, and is it a real translation?**
 Every page has an Urdu version at `/ur/…` with full right-to-left layout and the Nastaliq font. Interface text

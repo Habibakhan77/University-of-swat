@@ -900,3 +900,29 @@ and phone numbers are copied exactly from the official pages. What isn't publish
 - Tested through the real admin API with the demo logins: 28/28 Department Editor and Faculty cases and 13/13 Super
   Admin cases (temporary account, deleted afterwards). Checked on a production build: department pages in English
   and Urdu at 1440px and 390px, no console errors, no horizontal scroll; all three dashboards in the admin panel.
+
+## Phase 14.1 — Real faculty lists
+
+- The placeholder faculty members are replaced by the real lists of the 23 departments that publish one: 158
+  people, copied exactly from each department page (fetched 12 Nov 2026) in the page's order: name, designation
+  as written ("Lecturer in Finance", "Associate Professor (TTS)"), other lines under the name (Chairman, MS
+  Coordinator, Gold Medalist, on study leave…), qualifications, e-mail address, Google Scholar link where given,
+  and photo. Photos are the WordPress originals where the site keeps one, else the thumbnail the page shows,
+  cropped 4:5 and credited; the generic silhouette some entries use is not copied. Data:
+  `cms/scripts/seed/data/faculty-members.ts`.
+- The chairperson, director or in-charge named on each page is marked as head. People listed by two departments
+  have a profile in each, as on the official site.
+- Three corrections, noted in the data file: Dr. Muhammad Adil's e-mail is left out (the page repeats Dr. Shahid
+  Hussain's address); where a link and the shown address differ, the shown address is used; the Pashto in-charge's
+  designation comes from his entry on the Media Studies page. The Urdu department page shows a Management &
+  Commerce entry by mistake, so Urdu keeps placeholders, as do the four Allied Health departments (no list).
+- New Faculty Member field `designationTitle` (the designation as written, shown on the English site; the
+  Urdu site shows the translated designation). It is locked for the Faculty Member role (roles version 3).
+  Additional roles such as "Chairman" now show on the card for heads too.
+- The demo Faculty Member login is linked to a real CS profile (Mr. Abdul Haq, Lecturer) instead of a placeholder.
+- The seed tries each photo's original first and stops fetching after three network failures in a row, so an
+  unreachable uswat.edu.pk can't stall it.
+- `npm run faculty-photos` attaches faculty photos later without a reseed: profiles with no photo get the
+  original (else the thumbnail), written to the photo field only, then the website is asked to refresh.
+- Reseeded while uswat.edu.pk was unreachable: the real names and details are in, and photos already in the
+  seed's download cache are attached; the other profiles show the silhouette until `npm run faculty-photos` runs.
