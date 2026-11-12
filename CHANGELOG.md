@@ -779,7 +779,7 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   design. The Phase 11 reseed was confirmed via the API (28 departments, 78 programs, 56 placeholder faculty
   members, no program with a shift).
 
-## Phase 12 (part 1) — Docker, Nginx, CI and deployment guide
+## Phase 12b – Docker, Nginx & CI
 
 - **Docker images** (multi-stage, `node:22-alpine`, run as the unprivileged `node` user, health checks):
   - `frontend/Dockerfile`: deps → build → runtime with only Next.js's **standalone** server, `.next/static` and
