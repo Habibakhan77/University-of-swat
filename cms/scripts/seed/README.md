@@ -74,9 +74,9 @@ from uswat.edu.pk (about 75 MB the first time, cached in `cms/.seed-cache/`, git
       photos where the page shows only a silhouette.
 - [ ] **Faculty photos**: the seed downloads each photo from uswat.edu.pk; if the site is unreachable, profiles
       get the silhouette and the seed lists what it skipped. Run `npm run faculty-photos` later: it attaches
-      the missing photos to profiles that still have none, one request at a time with a 2–3 s pause (stops if
-      the site blocks it), (only the photo field; drafts are not published and
-      an editor's photo is never replaced), then asks the website to refresh. Safe to run repeatedly.
+      the missing photos to profiles that still have none, one request at a time with a 2–3 s pause, and stops
+      if the site blocks it. It writes only the photo field (drafts are not published and an editor's photo is
+      never replaced), then asks the website to refresh. Safe to run repeatedly.
 - [ ] **Program list**: copied from each department page on uswat.edu.pk (source path on every entry in
       `data/academics.ts`). Some pages are out of date or disagree with the Fall 2026 advertisement, so the
       Admissions Directorate should confirm: Physics lists its MS/MPhil as "intended" (left out); Zoology lists an
