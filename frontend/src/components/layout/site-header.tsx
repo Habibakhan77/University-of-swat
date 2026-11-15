@@ -58,10 +58,13 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
 
   return (
     <>
-      <div className="relative z-50 hidden bg-forest-900 text-forest-50 lg:block dark:bg-forest-950">
-        <Container size="wide" className="flex h-10 items-center justify-between gap-6">
+      {/* A slim, light top line (desktop): daily portals from Strapi, language and theme. A thin green-gold
+          rule keeps the crest colours at the very top without a heavy dark bar. */}
+      <div className="relative z-50 hidden border-b border-line/70 bg-canvas text-fg-muted lg:block">
+        <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-forest-700 via-forest-600 to-gold-400 rtl:bg-linear-to-l" />
+        <Container size="wide" className="flex h-9 items-center justify-between gap-6">
           <nav aria-label={t("utilityNavigation")} className="min-w-0">
-            <ul className="flex items-center gap-1">
+            <ul className="flex items-center gap-0.5">
               {(chrome?.utilityLinks ?? []).map((link) => {
                 const Icon = iconFor(link.icon);
                 return (
@@ -70,9 +73,9 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                       href={link.href}
                       external={link.external}
                       title={link.description ?? undefined}
-                      className="group/u inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption font-medium text-forest-100 transition-colors hover:bg-white/10 hover:text-white"
+                      className="group/u inline-flex min-h-7 items-center gap-1.5 rounded-full px-2.5 text-caption font-medium text-fg-muted transition-colors hover:bg-primary-soft hover:text-primary-soft-fg"
                     >
-                      <Icon aria-hidden className="size-3.5 text-gold-300" strokeWidth={1.75} />
+                      <Icon aria-hidden className="size-3.5 text-primary-text" strokeWidth={1.75} />
                       {link.label}
                       {link.external ? (
                         <ArrowUpRight
@@ -86,10 +89,10 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
               })}
             </ul>
           </nav>
-          <div className="flex shrink-0 items-center gap-2">
-            <LanguageSwitcher tone="inverted" labels={languageLabels} />
-            <span aria-hidden className="h-4 w-px bg-white/15" />
-            <ThemeToggle size="sm" tone="inverted" labels={themeLabels} />
+          <div className="flex shrink-0 items-center gap-1.5">
+            <LanguageSwitcher labels={languageLabels} />
+            <span aria-hidden className="h-4 w-px bg-line-strong" />
+            <ThemeToggle size="sm" labels={themeLabels} />
           </div>
         </Container>
       </div>
@@ -101,12 +104,16 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
           className={cn(
             "absolute inset-0 -z-10 border-b border-line bg-canvas",
             "transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ease-out",
-            "group-data-[scrolled=true]/header:border-gold-400 group-data-[scrolled=true]/header:bg-canvas/80 dark:group-data-[scrolled=true]/header:border-gold-400/60",
-            "group-data-[scrolled=true]/header:shadow-[0_6px_24px_-14px_rgb(20_30_25/0.35)] dark:group-data-[scrolled=true]/header:shadow-[0_6px_24px_-12px_rgb(0_0_0/0.7)]",
-            "group-data-[scrolled=true]/header:backdrop-blur-md",
+            "group-data-[scrolled=true]/header:border-line/60 group-data-[scrolled=true]/header:bg-canvas/75",
+            "group-data-[scrolled=true]/header:shadow-[0_8px_30px_-18px_rgb(20_30_25/0.45)] dark:group-data-[scrolled=true]/header:shadow-[0_8px_30px_-14px_rgb(0_0_0/0.8)]",
+            "group-data-[scrolled=true]/header:backdrop-blur-xl group-data-[scrolled=true]/header:backdrop-saturate-150",
           )}
         />
-        <Container size="wide" className="flex h-16 items-center gap-4 xl:h-20 xl:gap-6">
+        {/* Shrinks a little once stuck (height follows --header-h, see globals.css). */}
+        <Container
+          size="wide"
+          className="flex h-(--header-h) items-center gap-4 transition-[height] duration-300 ease-out-expo xl:gap-6"
+        >
           <Brand
             siteName={siteName}
             tagline={chrome?.tagline}

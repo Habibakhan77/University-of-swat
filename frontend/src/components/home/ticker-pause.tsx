@@ -20,7 +20,7 @@ export function TickerPause({ labels }: { labels: { pause: string; play: string 
       }}
       aria-label={label}
       title={label}
-      className="relative z-10 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-maroon-100 transition-colors hover:bg-white/10 hover:text-white motion-reduce:hidden"
+      className="relative z-10 inline-flex size-8 shrink-0 items-center justify-center rounded-full text-maroon-100 transition-colors hover:bg-white/10 hover:text-white motion-reduce:hidden"
     >
       {paused ? <Play aria-hidden className="size-4" /> : <Pause aria-hidden className="size-4" />}
     </button>

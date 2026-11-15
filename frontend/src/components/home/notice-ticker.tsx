@@ -51,16 +51,18 @@ export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
       aria-labelledby={titleId}
       className="group/tick relative z-30 bg-maroon-800 text-maroon-50 [--ring:var(--color-gold-300)] dark:bg-maroon-900"
     >
-      <div className="mx-auto flex h-12 w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] items-center gap-3 px-gutter">
+      <div className="mx-auto flex h-10 w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] items-center gap-2 px-gutter sm:gap-3">
         <h2
           id={titleId}
-          className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full bg-gold-400 px-3 text-caption font-bold tracking-wide text-ink-950 uppercase"
+          className="inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full bg-gold-400 px-2.5 text-[0.6875rem] font-bold tracking-wide text-ink-950 uppercase"
         >
           <Megaphone aria-hidden className="size-3.5" strokeWidth={2} />
           {labels.title}
         </h2>
 
-        <div className="group/ticker relative min-w-0 flex-1 overflow-hidden mask-x-from-95% motion-reduce:overflow-x-auto">
+        {/* Soft fades at both edges; each half of the track starts with the same gap, so the first notice
+            begins clear of the fade and the loop stays seamless. */}
+        <div className="group/ticker relative min-w-0 flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_3.5rem,black_calc(100%-3.5rem),transparent)] motion-reduce:overflow-x-auto">
           <div
             className={[
               "flex w-max",
@@ -70,8 +72,8 @@ export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
             ].join(" ")}
             style={{ "--ticker-duration": duration } as CSSProperties}
           >
-            <ul className="flex shrink-0 items-center gap-10 pe-10">{items(false)}</ul>
-            <ul aria-hidden inert className="flex shrink-0 items-center gap-10 pe-10 motion-reduce:hidden">
+            <ul className="flex shrink-0 items-center gap-14 ps-14">{items(false)}</ul>
+            <ul aria-hidden inert className="flex shrink-0 items-center gap-14 ps-14 motion-reduce:hidden">
               {items(true)}
             </ul>
           </div>
@@ -80,7 +82,7 @@ export function NoticeTicker({ notices, locale, labels }: NoticeTickerProps) {
         <TickerPause labels={{ pause: labels.pause, play: labels.play }} />
         <Link
           href="/news?category=announcement"
-          className="hidden shrink-0 items-center gap-1.5 rounded-sm text-caption font-semibold text-gold-200 hover:text-gold-100 md:inline-flex"
+          className="relative z-10 hidden min-h-8 shrink-0 items-center gap-1.5 rounded-full px-2 text-caption font-semibold text-gold-200 hover:bg-white/10 hover:text-gold-100 md:inline-flex"
         >
           {labels.all}
           <ArrowRight aria-hidden className="size-3.5 rtl:-scale-x-100" />
