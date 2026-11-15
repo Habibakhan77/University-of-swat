@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { createPortal } from "react-dom";
-import { useCallback, useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import type { HeroSlide } from "@/lib/strapi/home";
 import { ImageCredit } from "@/components/ui/image-credit";
@@ -46,10 +46,17 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
 
   const go = useCallback((next: number) => setIndex(((next % count) + count) % count), [count]);
 
-  // Hand over from the look-alike controls, and pause while the pointer or focus is inside.
-  useEffect(() => {
+  // Hand over from the look-alike controls in the same frame the real ones are portaled in (a layout
+  // effect runs before paint), so the two sets are never on screen together and nothing shifts.
+  useLayoutEffect(() => {
     if (!root) return;
     root.setAttribute("data-enhanced", "");
+    return () => root.removeAttribute("data-enhanced");
+  }, [root]);
+
+  // Pause while the pointer or keyboard focus is inside.
+  useEffect(() => {
+    if (!root) return;
     const enter = (e: PointerEvent) => e.pointerType === "mouse" && setInteracting(true);
     const leave = (e: PointerEvent) => e.pointerType === "mouse" && setInteracting(false);
     const focusIn = () => setInteracting(true);
@@ -61,7 +68,6 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
     root.addEventListener("focusin", focusIn);
     root.addEventListener("focusout", focusOut);
     return () => {
-      root.removeAttribute("data-enhanced");
       root.removeEventListener("pointerenter", enter);
       root.removeEventListener("pointerleave", leave);
       root.removeEventListener("focusin", focusIn);
@@ -81,6 +87,11 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
     }
     for (const el of root.querySelectorAll<HTMLElement>("[data-hero-first]")) el.toggleAttribute("data-off", index !== 0);
   }, [root, index]);
+
+  // A paused carousel holds the photo still too (the Ken Burns drift reads this flag).
+  useEffect(() => {
+    root?.toggleAttribute("data-paused", !playing);
+  }, [root, playing]);
 
   useEffect(() => {
     if (!running) return;
@@ -106,7 +117,7 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
             <span
               className={cn(
                 "relative block h-1 overflow-hidden rounded-full bg-white/30 transition-[width] duration-500 ease-out-expo group-hover/dot:bg-white/50",
-                i === index ? "w-12" : "w-6",
+                i === index ? "w-16" : "w-6",
               )}
             >
               {i === index ? (
@@ -160,7 +171,7 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
                 fill
                 sizes="100vw"
                 loading="lazy"
-                className={cn("object-cover", i === index && "motion-safe:animate-[hero-settle_9s_var(--ease-out-expo)_both]")}
+                className={cn("object-cover", i === index && "hero-kenburns")}
               />
             ) : null}
           </div>

@@ -57,23 +57,22 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
             sizes="100vw"
             preload
             fetchPriority="high"
-            className="object-cover motion-safe:animate-[hero-settle_9s_var(--ease-out-expo)_both]"
+            className="hero-kenburns object-cover"
           />
         ) : null}
       </div>
       {count > 1 ? <HeroEnhancer slides={slides} labels={labels} /> : null}
       {/*
-        Legibility on any photo without text shadows (they blur the letters): an even dark wash over the
-        whole image, then a strong gradient behind the text. On phones the text spans the width at the
-        bottom, so the gradient runs bottom to top; from lg it runs from the text side (left, mirrored to
-        the right in Urdu) and stays near-opaque across the text column before fading out.
+        Legibility without darkening the whole photo (and without text shadows, which blur the letters):
+        one gradient behind the text only. From lg it runs from the text side (left, mirrored to the right
+        in Urdu), stays strong across the text column and clears completely, so the far side of the photo
+        keeps its full colour. On phones the text spans the width at the bottom, so it runs bottom to top
+        and leaves the top of the photo bright.
       */}
-      <div aria-hidden className="absolute inset-0 -z-10 bg-forest-950/35" />
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-linear-to-t from-forest-950/95 via-forest-950/80 to-forest-950/45 lg:bg-linear-to-r lg:from-forest-950/95 lg:from-10% lg:via-forest-950/80 lg:via-40% lg:to-forest-950/0 lg:to-75% lg:rtl:bg-linear-to-l"
+        className="absolute inset-0 -z-10 bg-linear-to-t from-forest-950/95 from-15% via-forest-950/75 via-55% to-forest-950/5 lg:bg-linear-to-r lg:from-forest-950/90 lg:from-5% lg:via-forest-950/65 lg:via-45% lg:to-transparent lg:to-78% lg:rtl:bg-linear-to-l"
       />
-      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 hidden h-1/2 bg-linear-to-t from-forest-950/80 to-transparent lg:block" />
 
       {first.image?.credit ? (
         <div
@@ -161,7 +160,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
               <div className="flex items-center gap-2">
                 {slides.map((slide, i) => (
                   <span key={slide.id} className="flex h-11 items-center">
-                    <span className={cn("block h-1 rounded-full bg-white/30", i === 0 ? "w-12" : "w-6")} />
+                    <span className={cn("block h-1 rounded-full bg-white/30", i === 0 ? "w-16" : "w-6")} />
                   </span>
                 ))}
               </div>
