@@ -3,6 +3,7 @@ import { ArrowRight, BadgeCheck, CalendarCheck, ChevronDown, ExternalLink, Globe
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
+import { HubNavList } from "./hub-nav-list";
 import { langAttr } from "@/lib/strapi/academics-model";
 import type { ActionLink, AdmissionsCallout, ApplicationStep, Faq, FaqCategory, OfficeContact } from "@/lib/strapi/admissions";
 import type { NavLink } from "@/lib/strapi/site";
@@ -347,18 +348,6 @@ export function HubNav({ items, label, variant }: { items: HubNavItem[]; label: 
       </nav>
     );
   }
-  return (
-    <nav aria-label={label} className="rounded-2xl border border-line bg-surface p-5">
-      <p className="mb-3 text-overline text-fg-subtle uppercase">{label}</p>
-      <ul className="-mx-2 flex flex-col">
-        {items.map((item) => (
-          <li key={item.id}>
-            <a href={`#${item.id}`} className="flex min-h-10 items-center rounded-lg px-2 text-body-sm font-medium text-fg-muted hover:bg-canvas-subtle hover:text-fg">
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
+  // Desktop sidebar: marks the section being read.
+  return <HubNavList items={items} label={label} />;
 }

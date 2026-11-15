@@ -41,6 +41,7 @@ import { ContactDetails, EnglishOnlyNote, FactList, SectionTitle, SidePanel, typ
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
+import { SectionNav } from "@/components/ui/section-nav";
 
 type Props = PageProps<"/[locale]/academics/[faculty]/[department]">;
 
@@ -198,25 +199,11 @@ export default async function DepartmentPage({ params }: Props) {
         }
       />
 
-      <Container size="wide" className="pt-6">
-        <nav aria-label={td("sectionsLabel")} className="-mx-gutter overflow-x-auto px-gutter">
-          <ul className="flex w-max gap-2">
-            {nav.map((s) => (
-              <li key={s.id}>
-                <a
-                  href={`#${s.id}`}
-                  className="inline-flex h-10 items-center rounded-full border border-line bg-surface px-4 text-body-sm font-medium text-fg-muted transition-colors hover:border-fac hover:text-fac"
-                >
-                  {s.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </Container>
+      {/* Sticky tab bar under the header; it marks the section being read. */}
+      <SectionNav label={td("sectionsLabel")} items={nav} />
 
       <Container size="wide" className="grid gap-10 pt-8 pb-section lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-14">
-        <div className="flex min-w-0 flex-col gap-section-sm [&>section]:scroll-mt-32">
+        <div className="flex min-w-0 flex-col gap-section-sm">
           <section aria-labelledby="overview" className="flex flex-col gap-6">
             <SectionTitle id="overview">{td("about")}</SectionTitle>
             {detail.overview && overview ? (
@@ -367,7 +354,7 @@ export default async function DepartmentPage({ params }: Props) {
           ) : null}
         </div>
 
-        <aside className="flex flex-col gap-5 lg:sticky lg:top-28 lg:self-start">
+        <aside className="flex flex-col gap-5 lg:sticky lg:top-[calc(var(--header-h)+var(--subnav-h)+1.5rem)] lg:self-start">
           <SidePanel title={t("atAGlance")} id="glance">
             <FactList facts={facts} />
           </SidePanel>
