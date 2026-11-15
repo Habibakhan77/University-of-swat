@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 /** A titled box for the side column of department, faculty and program pages. */
 export function SidePanel({ title, id, children, className }: { title: string; id?: string; children: ReactNode; className?: string }) {
   return (
-    <section aria-labelledby={id} className={cn("rounded-2xl border border-line bg-surface p-5 sm:p-6", className)}>
+    <section aria-labelledby={id} className={cn("rounded-2xl border border-line bg-surface p-5 shadow-xs sm:p-6", className)}>
       <h2 id={id} className="mb-4 text-overline text-fac uppercase">
         {title}
       </h2>

@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 export const buttonVariants = cva(
   [
     "group/button relative inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap font-semibold",
-    "select-none transition-[background-color,color,border-color,box-shadow,transform] duration-200 ease-out-expo",
+    "select-none transition-[background-color,color,border-color,box-shadow,translate] duration-200 ease-out-expo",
     "active:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50",
     "[&_svg]:size-[1.1em] [&_svg]:shrink-0",
   ],

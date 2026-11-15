@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function Portrait({ member, priority = false }: { member: FacultyMember; priority?: boolean }) {
   return (
-    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-fac-soft">
+    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-fac-soft shadow-lg ring-1 ring-line">
       {member.photo ? (
         <Image
           src={member.photo.src}
@@ -270,7 +270,7 @@ export default async function FacultyProfilePage({ params }: Props) {
                   <li key={c.id}>
                     <Link
                       href={memberHref(c.slug)}
-                      className="group flex min-h-14 items-center gap-3 rounded-xl border border-line bg-surface p-3 transition-colors hover:border-fac"
+                      className="group flex min-h-14 items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-xs transition-[border-color,box-shadow,translate] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-fac hover:shadow-md motion-reduce:hover:translate-y-0"
                     >
                       <span className="relative size-11 shrink-0 overflow-hidden rounded-lg bg-fac-soft">
                         {c.photo ? (

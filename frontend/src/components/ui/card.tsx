@@ -3,7 +3,7 @@ import type { ComponentProps, ComponentPropsWithoutRef, ElementType } from "reac
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/cn";
 
-export const cardVariants = cva("group/card relative isolate flex flex-col overflow-hidden rounded-xl [--card-muted:var(--fg-muted)] [--card-subtle:var(--fg-subtle)]", {
+export const cardVariants = cva("group/card relative isolate flex flex-col overflow-hidden rounded-2xl [--card-muted:var(--fg-muted)] [--card-subtle:var(--fg-subtle)]", {
   variants: {
     variant: {
       outline: "border border-line bg-surface",
@@ -14,15 +14,15 @@ export const cardVariants = cva("group/card relative isolate flex flex-col overf
     },
     interactive: {
       true: [
-        "transition-[box-shadow,border-color,transform] duration-300 ease-out-expo",
-        "hover:-translate-y-0.5 hover:shadow-lg motion-reduce:hover:translate-y-0",
+        "transition-[box-shadow,border-color,translate] duration-300 ease-out-expo",
+        "hover:-translate-y-1 hover:shadow-lg motion-reduce:hover:translate-y-0",
         "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-canvas",
       ],
     },
     padding: { none: "", sm: "[--card-pad:1rem]", md: "[--card-pad:1.5rem]", lg: "[--card-pad:2rem]" },
   },
   compoundVariants: [
-    { variant: "outline", interactive: true, className: "hover:border-line-strong" },
+    { variant: "outline", interactive: true, className: "shadow-xs hover:border-line-strong" },
     { variant: "ghost", interactive: true, className: "hover:shadow-none hover:translate-y-0" },
   ],
   defaultVariants: { variant: "outline", padding: "md" },

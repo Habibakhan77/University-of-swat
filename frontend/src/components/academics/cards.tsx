@@ -126,7 +126,7 @@ export function PersonCard({ member, department, headingLevel: Heading = "h3", h
   return (
     <article
       className={cn(
-        "group/card relative isolate flex h-full gap-4 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-fac sm:p-5",
+        "group/card relative isolate flex h-full gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs transition-[border-color,box-shadow,translate] duration-300 ease-out-expo hover:-translate-y-1 hover:border-fac hover:shadow-lg has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-canvas motion-reduce:hover:translate-y-0 sm:p-5",
         highlightHead && member.isHead && "border-transparent bg-fac-soft",
         className,
       )}

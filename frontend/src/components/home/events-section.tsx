@@ -50,7 +50,7 @@ export function EventsSection({ events, announcements, locale, labels }: EventsS
             {events.map((event, i) => (
               <li key={event.id}>
                 <Reveal delay={0.06 * i}>
-                  <article className="group/ev relative flex items-center gap-4 rounded-2xl border border-line bg-surface p-3 pe-5 transition-[border-color,box-shadow] duration-300 hover:border-line-strong hover:shadow-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring sm:gap-5">
+                  <article className="group/ev relative flex items-center gap-4 rounded-2xl border border-line bg-surface p-3 pe-5 shadow-xs transition-[border-color,box-shadow,translate] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-line-strong hover:shadow-lg motion-reduce:hover:translate-y-0 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring sm:gap-5">
                     <time
                       dateTime={event.start}
                       className={cn(

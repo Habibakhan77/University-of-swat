@@ -150,8 +150,10 @@
   --radius-sm: 0.375rem;
   --radius-md: 0.625rem;
   --radius-lg: 0.875rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.75rem;
+  /* Cards and panels use 2xl, inner tiles xl, controls lg/md: one scale across the site. */
+  --radius-xl: 1.125rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
   --radius-full: 9999px;
 
   /* Elevation — layered, tinted shadows (colour switches per theme via --shadow-rgb) */
@@ -193,6 +195,11 @@
   @keyframes hero-settle {
     from { transform: scale(1.06); }
     to { transform: scale(1); }
+  }
+  /* Ken Burns: the active slide drifts in very slowly for longer than it is shown (7 s), so it never stops. */
+  @keyframes ken-burns {
+    from { transform: scale(1) translate3d(0, 0, 0); }
+    to { transform: scale(1.09) translate3d(-1.5%, -1%, 0); }
   }
 }
 
@@ -342,10 +349,29 @@
 }
 
 @layer base {
+  /*
+   * Height of the sticky header, which shrinks once the page scrolls (HeaderShell sets data-scrolled on
+   * <html>). Sticky in-page navigation sits right under it and anchors land below both.
+   */
+  :root {
+    --header-h: 4rem;
+    --subnav-h: 0px;
+  }
+  @media (width >= 80rem) {
+    :root {
+      --header-h: 5rem;
+    }
+    :root[data-scrolled] {
+      --header-h: 4.25rem;
+    }
+  }
   html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
-    scroll-padding-top: 6rem;
+    scroll-padding-top: calc(var(--header-h) + var(--subnav-h) + 1.5rem);
+  }
+  html:has([data-subnav]) {
+    --subnav-h: 3.5rem;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -548,18 +574,62 @@
   }
 
   /*
-   * Scroll-linked motion, no JavaScript:
-   * - .reveal (components/ui/reveal.tsx) fades and rises as a block enters; it is fully shown once 35% of
-   *   it is on screen, so anything already visible at load is simply there.
-   * - .stat-count counts up from 0 while the stats band scrolls in.
+   * Scroll reveal (components/ui/reveal.tsx + reveal-observer.tsx): blocks below the fold at load are
+   * marked data-reveal="hidden" by a small IntersectionObserver script and fade and rise in once they
+   * enter the screen. Blocks on screen at load are never touched, so first paint, LCP and CLS are
+   * unaffected; without JavaScript or with reduced motion everything is simply visible.
    */
   @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      transition:
+        opacity 0.7s var(--ease-out-expo),
+        translate 0.8s var(--ease-out-expo);
+      transition-delay: calc(var(--reveal-shift, 0) * 10ms);
+    }
+    .reveal[data-reveal="hidden"] {
+      opacity: 0;
+      translate: 0 1.25rem;
+      transition-duration: 0s;
+      transition-delay: 0s;
+    }
+  }
+
+  /*
+   * Hero: the active slide's photo drifts in slowly (Ken Burns). It restarts each time a slide becomes
+   * active, stops when the visitor pauses the carousel, and is off for reduced motion.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-kenburns {
+      animation: ken-burns 14s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+      will-change: transform;
+    }
+    [data-hero-first][data-off] .hero-kenburns {
+      animation: none;
+    }
+    [data-paused] .hero-kenburns {
+      animation-play-state: paused;
+    }
+  }
+
+  /*
+   * Arrow nudge on every button-styled link whose arrow sits directly inside it (hero, header Apply,
+   * links built from buttonVariants). <ButtonLink trailingIcon> animates its own wrapper instead.
+   */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .group\/button > .lucide-arrow-right {
+      transition: translate 0.3s var(--ease-out-expo);
+    }
+    .group\/button:hover > .lucide-arrow-right {
+      translate: 0.25rem 0;
+    }
+    [dir="rtl"] .group\/button:hover > .lucide-arrow-right {
+      translate: -0.25rem 0;
+    }
+  }
+
+  /* Stat counters count up from 0 while the stats band scrolls in (scroll-driven, no JavaScript). */
+  @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
-      .reveal {
-        animation: reveal-in linear both;
-        animation-timeline: view();
-        animation-range: entry calc(var(--reveal-shift, 0) * 1%) entry calc(35% + var(--reveal-shift, 0) * 1%);
-      }
       .stat-count {
         animation: stat-count linear both;
         animation-timeline: view();
@@ -569,11 +639,33 @@
   }
 }
 
-@keyframes reveal-in {
+/*
+ * Page transitions (View Transitions API through React's <ViewTransition> in the layout): on client
+ * navigation the old page fades out quickly and the new one fades in with a short rise, while the
+ * header and footer stay put. Browsers without the API navigate as before; reduced motion turns it off.
+ */
+::view-transition-old(.page) {
+  animation: 140ms ease-out both vt-page-out;
+}
+::view-transition-new(.page) {
+  animation: 320ms var(--ease-out-expo) 80ms both vt-page-in;
+}
+@keyframes vt-page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-page-in {
   from {
     opacity: 0;
-    translate: 0 16px;
-    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    translate: 0 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }
 @keyframes stat-count {
