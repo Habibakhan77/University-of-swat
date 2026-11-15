@@ -957,3 +957,63 @@ and phone numbers are copied exactly from the official pages. What isn't publish
 - Publication loading is shared between the department page and the profile (one query shape and mapper);
   the profile loader uses the existing "academics" cache tag, so the Strapi webhook refreshes it on edits.
 - No changes to Strapi roles, schemas or seed data.
+
+## UI polish (branch `ui-polish`, not merged)
+
+Visual and interaction polish only: no content, data, Strapi roles, schemas or URLs changed. Brand colours,
+fonts and the Swat identity stay; motion is CSS only (no new libraries), and every animation is off for
+visitors who prefer reduced motion.
+
+- **Header**: the dark green utility bar is now a slim, light top line (portals, language, theme) with a
+  thin green-to-gold rule. The sticky bar shrinks a little once the page scrolls (`--header-h`) and gets a
+  stronger frosted blur. Notices ticker is slimmer, with fades at both edges; every notice now starts clear
+  of the fade, and the "All notices" link meets the 24px target size (it failed Lighthouse before).
+- **Hero**: the even dark wash is gone; one gradient sits behind the text only (from the text side on
+  desktop, bottom-up on phones), so the rest of the photo keeps its colour. The active slide drifts in
+  slowly (Ken Burns), restarts on each slide and stops when the carousel is paused; the slide progress bar
+  is wider.
+- **"I am a…" pathways** under the hero: Prospective student, Current student, Faculty & staff, Visitor.
+  Native `<details>` cards (one open at a time, keyboard and no-JS friendly). Portal and merit-list links
+  come from Strapi (Homepage and Site Settings links, found by icon key); other links point at pages that
+  always exist, and at admissions sections or download categories only when Strapi has content for them.
+- **Homepage bento**: stats as a rounded green panel with glass tiles and the valley ridge; the VC message
+  as one card; news (one large + three small), events with date blocks and faculties on the shared card
+  style.
+- **One visual system**: radius scale (cards and panels 2xl, inner tiles xl, a 3xl for feature panels),
+  consistent soft shadows, card hover lift (the lift now actually animates: Tailwind v4 moves `translate`,
+  not `transform`), arrow nudge on button links.
+- **Scroll reveal** now runs on IntersectionObserver + CSS in every browser (was scroll-timeline only).
+  Blocks visible at load are never hidden, so first paint and LCP are unaffected.
+- **Page transitions** with the View Transitions API (React `<ViewTransition>` around the page): a quick
+  fade out and a short fade-and-rise in on client navigation; header and footer stay put.
+- **Department pages**: the section chips are a sticky tab bar under the header that highlights the
+  section being read and keeps it in view on phones; anchors land below it. The admissions sidebar marks
+  the current section the same way. Faculty profiles, person cards, panels and event cards share the new
+  radius, shadow and hover styles.
+- **Fixes found while testing**: React's `<ViewTransition>` also fired during the first load (streaming
+  and hydration count as transitions), which froze painting and added layout shift. The locale-aware
+  `Link` now tags navigations with a `page` transition type and only that type animates. The hero
+  controls could overlap their placeholder for one frame (CLS); the hand-over now happens before paint.
+  The stats `<dl>` had an icon outside `<dt>`/`<dd>` (axe), and the ticker's "All notices" link was
+  counted as covered by the moving notices; it now sits on its own layer.
+
+**Checks** (production build on :3100; dev servers untouched): lint, typecheck and build pass. Home,
+a department, a faculty profile, News and Admissions at 1440, 1024, 768 and 375 px, English and Urdu,
+light and dark (80 combinations): no sideways scroll, no axe WCAG 2.2 AA violations (including colour
+contrast). Motion verified in a browser: reveal hides only below-fold blocks, header shrinks, the tab bar
+sticks under the header and marks the current section, one view transition per navigation and none on
+load, and nothing moves with reduced motion.
+
+**Lighthouse, home** (3 runs each; this laptop's CPU benchmark was 600–1200 for the baseline runs and
+1900–2500 afterwards, so absolute performance numbers are not comparable):
+
+| | Performance | Accessibility | Best Practices | SEO | LCP observed | CLS |
+|---|---|---|---|---|---|---|
+| Mobile before | 50 / 51 / 50 | 100 | 100 | 100 | 1.4–3.3 s | 0 |
+| Mobile after | 66 / 77 / 67 | 100 | 100 | 100 | 0.5–0.8 s | 0 |
+| Desktop before | 93 / 96 / 96 | 100 / 97 / 97 | 100 | 100 | — | 0 |
+| Desktop after | 95 | 100 | 100 | 100 | 0.9 s | 0 |
+
+Mobile "Performance" is held down by Lighthouse's simulated LCP (about 5.9 s both before and after),
+the localhost artefact noted in Phase 11: scripts arrive instantly, so the simulation charges all
+JavaScript to LCP. In the actual trace the hero photo paints with the first paint.
