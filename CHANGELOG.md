@@ -941,3 +941,19 @@ and phone numbers are copied exactly from the official pages. What isn't publish
   Ms. Shabnam, Ms. Rohi Naz) and 3 whose photo is a broken link (404) on the official page itself (Mr. Murad
   Ali, Biotechnology; Dr. Muzammil Khan, Computer and Software Technology; Dr. Naveed Ali, Economics). These
   show the neutral silhouette until the department uploads a photo in Strapi.
+
+## Phase 14.3 — Faculty profile pages
+
+- New public profile page for every faculty member at `/faculty/<slug>` (and `/ur/faculty/<slug>`), all 169
+  prerendered in both languages: photo (or the neutral silhouette), name, designation and additional role,
+  department link, qualifications ("Not provided yet" when empty), specialization, email, phone, Google
+  Scholar and ORCID links where given, biography when one is written, and the member's publications from
+  Strapi (with an empty state when there are none), plus up to six colleagues from the same department.
+- Faculty cards on department pages and in the faculty directory now open the profile: the name is a
+  stretched link over the whole card, and the department, email, phone and Scholar links stay clickable on
+  their own above it (no nested links). Global search results for people also open the profile.
+- SEO: schema.org `Person` data for real members; placeholder profiles are `noindex`, carry the
+  "Placeholder" badge and a notice, and are left out of `sitemap.xml` (real profiles are listed).
+- Publication loading is shared between the department page and the profile (one query shape and mapper);
+  the profile loader uses the existing "academics" cache tag, so the Strapi webhook refreshes it on edits.
+- No changes to Strapi roles, schemas or seed data.

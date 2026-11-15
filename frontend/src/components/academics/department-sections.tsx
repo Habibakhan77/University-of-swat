@@ -89,9 +89,9 @@ export async function AboutStatements({ detail, departmentName, locale }: { deta
   );
 }
 
-export async function PublicationList({ publications, locale }: { publications: Publication[]; locale: Locale }) {
+export async function PublicationList({ publications, locale, empty }: { publications: Publication[]; locale: Locale; empty?: string }) {
   const t = await getTranslations({ locale, namespace: "department" });
-  if (!publications.length) return <EmptyState icon={BookOpen} locale={locale}>{t("empty.publications")}</EmptyState>;
+  if (!publications.length) return <EmptyState icon={BookOpen} locale={locale}>{empty ?? t("empty.publications")}</EmptyState>;
   return (
     <ol className="flex flex-col divide-y divide-line rounded-2xl border border-line bg-surface">
       {publications.map((p) => (

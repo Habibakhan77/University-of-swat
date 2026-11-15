@@ -136,6 +136,27 @@ const en = routing.defaultLocale;
 const https = (url: string | null | undefined) => (url ? normalizeHref(url) : null);
 const byDepartment = (slug: string) => ({ "filters[department][slug][$eq]": slug });
 
+/** Newest first; shared by the department page and each member's profile. */
+const PUBLICATION_QUERY = {
+  "sort[0]": "year:desc",
+  "sort[1]": "title:asc",
+  ...selectFields("fields", ["title", "authors", "year", "publicationType", "venue", "details", "doi", "url"]),
+  "populate[facultyMember][fields][0]": "slug",
+};
+
+const toPublication = (p: StrapiPublication): Publication => ({
+  id: p.documentId,
+  title: p.title,
+  authors: p.authors,
+  year: p.year,
+  type: p.publicationType,
+  venue: p.venue,
+  details: p.details,
+  doi: p.doi,
+  href: p.doi ? `https://doi.org/${p.doi}` : https(p.url),
+  memberSlug: p.facultyMember?.slug ?? null,
+});
+
 const EMPTY: DepartmentSections = { publications: [], labs: [], alumni: [], achievements: [], gallery: [] };
 
 async function loadSections(slug: string, locale: Locale): Promise<DepartmentSections> {
@@ -146,13 +167,7 @@ async function loadSections(slug: string, locale: Locale): Promise<DepartmentSec
   return guarded(`department sections ${slug} (${locale})`, EMPTY, async () => {
     const [publications, labs, alumni, achievements, gallery] = await Promise.all([
       // Not localized: titles stay in the language they were published in.
-      fetchAll<StrapiPublication>("/publications", {
-        ...byDepartment(slug),
-        "sort[0]": "year:desc",
-        "sort[1]": "title:asc",
-        ...selectFields("fields", ["title", "authors", "year", "publicationType", "venue", "details", "doi", "url"]),
-        "populate[facultyMember][fields][0]": "slug",
-      }),
+      fetchAll<StrapiPublication>("/publications", { ...byDepartment(slug), ...PUBLICATION_QUERY }),
       fetchPairs<StrapiLab>(
         "/labs",
         {
@@ -197,18 +212,7 @@ async function loadSections(slug: string, locale: Locale): Promise<DepartmentSec
     ]);
 
     return {
-      publications: publications.map((p) => ({
-        id: p.documentId,
-        title: p.title,
-        authors: p.authors,
-        year: p.year,
-        type: p.publicationType,
-        venue: p.venue,
-        details: p.details,
-        doi: p.doi,
-        href: p.doi ? `https://doi.org/${p.doi}` : https(p.url),
-        memberSlug: p.facultyMember?.slug ?? null,
-      })),
+      publications: publications.map(toPublication),
       labs: labs.map((p) => ({
         id: p.en.documentId,
         name: pick(p, "name", locale) ?? { value: p.en.name, lang: en },
@@ -257,3 +261,33 @@ async function loadSections(slug: string, locale: Locale): Promise<DepartmentSec
 }
 
 export const getDepartmentSections = (slug: string, locale: Locale) => loadSections(slug, locale);
+
+/* ---------- Faculty member profile ---------- */
+
+export interface MemberProfile {
+  bio: Localized<Block[]> | null;
+  publications: Publication[];
+}
+
+interface StrapiMemberBio extends Doc {
+  bio: Block[] | null;
+}
+
+const EMPTY_PROFILE: MemberProfile = { bio: null, publications: [] };
+
+/** The parts of a profile page the directory listing doesn't load: the biography and publications. */
+async function loadMemberProfile(slug: string, locale: Locale): Promise<MemberProfile> {
+  "use cache";
+  cacheTag("academics", `academics:${locale}`);
+  cacheLife("max");
+
+  return guarded(`member profile ${slug} (${locale})`, EMPTY_PROFILE, async () => {
+    const [bio, publications] = await Promise.all([
+      fetchPairs<StrapiMemberBio>("/faculty-members", { "filters[slug][$eq]": slug, ...selectFields("fields", ["bio"]) }, locale),
+      fetchAll<StrapiPublication>("/publications", { "filters[facultyMember][slug][$eq]": slug, ...PUBLICATION_QUERY }),
+    ]);
+    return { bio: bio[0] ? pick(bio[0], "bio", locale) : null, publications: publications.map(toPublication) };
+  });
+}
+
+export const getMemberProfile = (slug: string, locale: Locale) => loadMemberProfile(slug, locale);

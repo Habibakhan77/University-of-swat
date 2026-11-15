@@ -714,5 +714,23 @@
       "accreditation": "Accreditation",
       "other": "Achievement"
     }
+  },
+  "profile": {
+    "metaDescription": "{who}. Qualifications, contact details and publications at the University of Swat.",
+    "details": "Profile",
+    "designation": "Designation",
+    "department": "Department",
+    "qualifications": "Qualifications",
+    "specialization": "Specialization",
+    "notProvided": "Not provided yet",
+    "biography": "Biography",
+    "publications": "Publications",
+    "noPublications": "No publications are listed on this profile yet.",
+    "contact": "Contact & research profiles",
+    "scholarProfile": "Google Scholar profile",
+    "orcidProfile": "ORCID profile",
+    "colleagues": "Colleagues in this department",
+    "allColleagues": "All faculty members of the department",
+    "placeholderNotice": "This is a sample profile, not a real person. The department is replacing it with its own staff."
   }
 }

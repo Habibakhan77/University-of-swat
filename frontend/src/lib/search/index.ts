@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { createTranslator } from "next-intl";
 import { routing, type Locale } from "@/i18n/routing";
-import { getAcademicIndex, getFacultyMembers } from "@/lib/strapi/academics";
+import { getAcademicIndex, getFacultyMembers, memberHref } from "@/lib/strapi/academics";
 import { formatDay, getDownloads, getJobs, getPosts, getTenders, noticeStatus, type Notice } from "@/lib/strapi/notices";
 import { getFacilities, getOffices, getResearchProjects, researchHref } from "@/lib/strapi/organisation";
 import { getSiteChrome } from "@/lib/strapi/site";
@@ -168,7 +168,7 @@ async function collect(locale: Locale): Promise<SearchDoc[]> {
     });
   }
 
-  /* Faculty members link to their department's people section. */
+  /* Faculty members link to their profile pages. */
   for (const member of members) {
     const department = member.departmentSlug ? departmentName.get(member.departmentSlug) : undefined;
     docs.push({
@@ -177,7 +177,7 @@ async function collect(locale: Locale): Promise<SearchDoc[]> {
       title: member.name.value,
       lang: member.name.lang,
       meta: join(tAcademics(`designations.${member.designation}`), department?.name.value),
-      href: department ? `${department.href}#members` : `/faculty-directory?q=${encodeURIComponent(member.name.value)}`,
+      href: memberHref(member.slug),
       text: join(member.additionalRole?.value, member.specialization?.value, member.email),
     });
   }

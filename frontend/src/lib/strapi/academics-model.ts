@@ -228,3 +228,5 @@ export const directoryHref = "/faculty-directory";
 export const facultyHref = (faculty: string) => `/academics/${faculty}`;
 export const departmentHref = (faculty: string, department: string) => `/academics/${faculty}/${department}`;
 export const programHref = (program: string) => `/academics/programs/${program}`;
+/** A faculty member's public profile (slugs are shared by both languages). */
+export const memberHref = (member: string) => `/faculty/${member}`;

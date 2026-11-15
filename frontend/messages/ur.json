@@ -714,5 +714,23 @@
       "accreditation": "منظوری",
       "other": "کامیابی"
     }
+  },
+  "profile": {
+    "metaDescription": "{who}۔ جامعہ سوات میں تعلیمی قابلیت، رابطے کی تفصیل اور تحقیقی اشاعتیں۔",
+    "details": "پروفائل",
+    "designation": "عہدہ",
+    "department": "شعبہ",
+    "qualifications": "تعلیمی قابلیت",
+    "specialization": "شعبۂ تخصص",
+    "notProvided": "ابھی فراہم نہیں کی گئی",
+    "biography": "تعارف",
+    "publications": "تحقیقی اشاعتیں",
+    "noPublications": "اس پروفائل پر ابھی کوئی اشاعت درج نہیں۔",
+    "contact": "رابطہ اور تحقیقی پروفائلز",
+    "scholarProfile": "گوگل اسکالر پروفائل",
+    "orcidProfile": "ORCID پروفائل",
+    "colleagues": "اس شعبے کے دیگر اساتذہ",
+    "allColleagues": "شعبے کے تمام اساتذہ",
+    "placeholderNotice": "یہ نمونے کی پروفائل ہے، کوئی حقیقی شخص نہیں۔ شعبہ اسے اپنے عملے کی معلومات سے بدل رہا ہے۔"
   }
 }

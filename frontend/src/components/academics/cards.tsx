@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import {
   langAttr,
   levelGroupOf,
+  memberHref,
   type DepartmentSummary,
   type FacultyMember,
   type Localized,
@@ -125,7 +126,7 @@ export function PersonCard({ member, department, headingLevel: Heading = "h3", h
   return (
     <article
       className={cn(
-        "relative flex h-full gap-4 rounded-xl border border-line bg-surface p-4 sm:p-5",
+        "group/card relative isolate flex h-full gap-4 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-fac sm:p-5",
         highlightHead && member.isHead && "border-transparent bg-fac-soft",
         className,
       )}
@@ -152,7 +153,10 @@ export function PersonCard({ member, department, headingLevel: Heading = "h3", h
           ) : null}
         </div>
         <Heading className="text-heading-sm text-pretty text-fg" lang={nameLang}>
-          {member.name.value}
+          {/* The whole card opens the profile; the department and contact links sit above that hit area. */}
+          <CardLink href={memberHref(member.slug)} className="group-hover/card:text-fac focus-visible:underline">
+            {member.name.value}
+          </CardLink>
         </Heading>
         <p className="text-body-sm font-medium text-fac">
           {/* English: the title as the department publishes it; Urdu: the translated designation. */}
@@ -173,13 +177,13 @@ export function PersonCard({ member, department, headingLevel: Heading = "h3", h
             href={department.href}
             external={false}
             lang={langAttr(department.name, locale)}
-            className="w-fit text-body-sm text-fg-subtle underline decoration-line-strong underline-offset-3 hover:text-primary-text hover:decoration-primary-text"
+            className="relative z-20 w-fit text-body-sm text-fg-subtle underline decoration-line-strong underline-offset-3 hover:text-primary-text hover:decoration-primary-text"
           >
             {department.name.value}
           </SmartLink>
         ) : null}
         {member.email || member.phone || member.scholarUrl || member.orcidUrl ? (
-          <ul className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-body-sm">
+          <ul className="relative z-20 mt-1.5 flex w-fit flex-wrap gap-x-4 gap-y-1 text-body-sm">
             {member.email ? (
               <li>
                 <a href={`mailto:${member.email}`} className="inline-flex items-center gap-1.5 text-primary-text hover:underline" dir="ltr">

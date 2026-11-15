@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing } from "@/i18n/routing";
 import { languageAlternates, localePath, SITE_URL } from "@/lib/seo";
-import { getAcademicIndex } from "@/lib/strapi/academics";
+import { getAcademicIndex, getFacultyMembers, memberHref } from "@/lib/strapi/academics";
 import { getJobs, getPosts, getTenders } from "@/lib/strapi/notices";
 import { getFacilities, getOffices } from "@/lib/strapi/organisation";
 
@@ -39,8 +39,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   cacheTag("sitemap");
   cacheLife("hours");
 
-  const [academics, posts, tenders, jobs, offices, facilities] = await Promise.all([
+  const [academics, members, posts, tenders, jobs, offices, facilities] = await Promise.all([
     getAcademicIndex(en),
+    getFacultyMembers(en),
     getPosts(en),
     getTenders(en),
     getJobs(en),
@@ -54,6 +55,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...academics.faculties.map((f) => ({ path: f.href, priority: 0.7, changeFrequency: "monthly" as const })),
     ...academics.departments.map((d) => ({ path: d.href, priority: 0.7, changeFrequency: "monthly" as const })),
     ...academics.programs.map((p) => ({ path: p.href, priority: 0.7, changeFrequency: "monthly" as const })),
+    // Placeholder profiles are sample entries: not indexed.
+    ...members.filter((m) => !m.isPlaceholder).map((m) => ({ path: memberHref(m.slug), priority: 0.5, changeFrequency: "monthly" as const })),
     ...offices.filter((o) => !o.seo.noIndex).map((o) => ({ path: o.href, priority: 0.5, changeFrequency: "monthly" as const })),
     ...facilities.filter((f) => !f.seo.noIndex).map((f) => ({ path: f.href, priority: 0.5, changeFrequency: "monthly" as const })),
     ...posts.filter((p) => !p.seo.noIndex).map((p) => ({ path: p.href, priority: 0.6, lastModified: p.date })),
