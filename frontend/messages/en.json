@@ -160,7 +160,48 @@
     "aboutCampus": "About this campus",
     "partnersEyebrow": "Collaboration",
     "mou": "MoU {year}",
-    "languageNote": "In English"
+    "languageNote": "In English",
+    "pathways": {
+      "eyebrow": "Find your way",
+      "title": "I am a…",
+      "prospective": {
+        "title": "Prospective student",
+        "summary": "Programs, admissions and fees"
+      },
+      "current": {
+        "title": "Current student",
+        "summary": "Portals, results and calendars"
+      },
+      "staff": {
+        "title": "Faculty & staff",
+        "summary": "Office systems, research and forms"
+      },
+      "visitor": {
+        "title": "Visitor",
+        "summary": "About, news and how to reach us"
+      },
+      "links": {
+        "admissions": "Admissions hub",
+        "programs": "Programs & eligibility",
+        "fees": "Fee structure",
+        "howToApply": "How to apply",
+        "scholarships": "Scholarships & financial aid",
+        "faqs": "Admissions FAQs",
+        "dateSheets": "Date sheets",
+        "results": "Results",
+        "calendar": "Academic calendar",
+        "campusLife": "Library, hostels & campus life",
+        "directory": "Faculty directory",
+        "research": "Research, ORIC & QEC",
+        "forms": "Forms",
+        "jobs": "Jobs",
+        "about": "About the university",
+        "campuses": "Our campuses",
+        "news": "News & events",
+        "contact": "Contact & campus map",
+        "tenders": "Tenders"
+      }
+    }
   },
   "academics": {
     "breadcrumb": "Academics",

@@ -4,9 +4,13 @@ import { resolveLocale } from "@/i18n/locale";
 import { routing, type Locale } from "@/i18n/routing";
 import { searchHref } from "@/lib/search/model";
 import { localePath, pageMetadata, SITE_URL } from "@/lib/seo";
+import { buildPathways } from "@/lib/pathways";
+import { getAdmissionsPage } from "@/lib/strapi/admissions";
 import { getHomepageData, getHomepageSeo } from "@/lib/strapi/home";
+import { getDownloads } from "@/lib/strapi/notices";
 import { getSiteChrome, type SiteChrome } from "@/lib/strapi/site";
 import { AdmissionsBand } from "@/components/home/admissions-band";
+import { AudiencePathways } from "@/components/home/audience-pathways";
 import { CampusesSection } from "@/components/home/campuses-section";
 import { EventsSection } from "@/components/home/events-section";
 import { FacultiesGrid } from "@/components/home/faculties-grid";
@@ -82,16 +86,30 @@ function structuredData(chrome: SiteChrome | null, locale: Locale) {
 
 export default async function HomePage() {
   const locale = await resolveLocale();
-  const [data, chrome, t, tCommon] = await Promise.all([
+  const [data, chrome, admissions, downloads, t, tCommon, tPaths] = await Promise.all([
     getHomepageData(locale),
     getSiteChrome(locale),
+    getAdmissionsPage(locale),
+    getDownloads(locale),
     getTranslations({ locale, namespace: "home" }),
     getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "home.pathways" }),
   ]);
   const { home, slides, stats, news, ticker, events, announcements, vc, faculties, campuses } = data;
   const siteName = chrome?.siteName ?? tCommon("siteName");
   const quickActions = home?.quickActions ?? [];
   const jsonLd = structuredData(chrome, locale);
+  const pathways = buildPathways({
+    strapiLinks: [...quickActions, ...(home?.admissionsLinks ?? []), ...(chrome?.externalSystems ?? []), ...(chrome?.utilityLinks ?? [])],
+    downloads,
+    admissions: {
+      hasSteps: Boolean(admissions?.steps.value.length),
+      hasScholarships: Boolean(admissions?.scholarships),
+      hasFaqs: Boolean(admissions?.faqs.length),
+    },
+    hasCampuses: campuses.length > 0,
+    t: (key) => tPaths(key as Parameters<typeof tPaths>[0]),
+  });
 
   return (
     <>
@@ -129,6 +147,8 @@ export default async function HomePage() {
       )}
 
       <QuickActions actions={quickActions} label={t("quickActions")} />
+
+      <AudiencePathways pathways={pathways} labels={{ eyebrow: t("pathways.eyebrow"), title: t("pathways.title") }} />
 
       <div className={slides.length ? "mt-section-sm" : undefined}>
         <StatsBand stats={stats} eyebrow={t("statsEyebrow")} title={home?.headings.stats ?? null} intlLocale={intlLocale[locale]} />
