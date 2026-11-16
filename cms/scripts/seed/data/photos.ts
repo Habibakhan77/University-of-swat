@@ -13,8 +13,11 @@ export interface SeedPhoto {
   file: string;
   alt: string;
   credit: string;
-  /** Where the photo was published: a uswat.edu.pk page or the official Facebook page. */
-  source: string;
+  /**
+   * Where the photo was published: a uswat.edu.pk page or the official Facebook page. Null when the
+   * university supplied the photo directly; the credit is then shown without a link.
+   */
+  source: string | null;
 }
 
 const CREDIT = 'Photo: University of Swat';
@@ -44,6 +47,13 @@ export const PHOTOS = {
     'The white castellated main gate of the University of Swat, with the campus road winding into green hills behind it',
     FACEBOOK,
   ),
+  /** Front view of the main gate, supplied by the project team (no public source page yet). */
+  mainGateFront: {
+    file: 'main-gate-front.webp',
+    alt: 'The castellated white main gate of the University of Swat, its two arches opening onto the green hills of the campus',
+    credit: CREDIT,
+    source: null,
+  },
   womenCampus: photo(
     'women-campus.webp',
     'The University of Swat Women Campus: white and pink buildings behind a stone wall, below pine-covered hills',
@@ -226,5 +236,5 @@ export const LOGO = { file: 'uswat-logo.png', alt: 'University of Swat crest' } 
 
 /** Media Library caption: "Photo: University of Swat | https://uswat.edu.pk/…". */
 export function photoCaption(p: SeedPhoto): string {
-  return `${p.credit} | ${p.source}`;
+  return p.source ? `${p.credit} | ${p.source}` : p.credit;
 }

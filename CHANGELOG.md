@@ -1036,3 +1036,9 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   keep names, emails and English degrees left-to-right.
 - Checked Dr. Sana Ullah, a profile without a photo and one without qualifications at 1440 and 375px,
   light and dark, English and Urdu: no horizontal overflow, and axe (WCAG 2 AA) found no violations.
+- **Main gate photo in the hero.** A front view of the main gate (supplied by the team) is now the first
+  hero slide; the mountains photo moved to the admissions slide. The 1000×600 original was upscaled to
+  1920px (lanczos3) with a light saturation/contrast lift and sharpening, then saved as WebP. It's
+  credited "Photo: University of Swat" with no link until its source page is known. Applied to the live
+  data with the new `npm run hero-photos` (cms), which repoints the slides without a reseed and can be run
+  again safely. The seed uses the same mapping (`HERO_PHOTOS`).

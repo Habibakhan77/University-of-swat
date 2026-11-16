@@ -22,9 +22,9 @@ import { DOWNLOADS, FAQS, JOBS, TENDERS, uploadMonth, uploadUrl, type SeedDocume
 import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE_SETTINGS, STATS, VC_MESSAGE } from './data/site';
 
 /** Real photo for each hero slide (see data/photos.ts). */
-const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], PhotoKey> = {
-  campus: 'campusMountains', // main building with snow-capped mountains
-  admissions: 'mainGate', // main gate arches
+export const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], PhotoKey> = {
+  campus: 'mainGateFront', // the main gate, front view: the first thing visitors see
+  admissions: 'campusMountains', // main building with snow-capped mountains
   research: 'mainCampus', // Main Campus from above, lawns and misty hills
 };
 

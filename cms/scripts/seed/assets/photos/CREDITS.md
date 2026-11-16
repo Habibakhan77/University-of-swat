@@ -13,13 +13,14 @@ Those posts, and HEC DLSEI 3.0 Cohort 4 (only a flow-chart graphic), get a text-
 | File | Used for | Source page |
 | --- | --- | --- |
 | `main-campus.webp` | Hero (research), Main Campus card | Facebook page |
-| `main-gate.webp` | Hero (admissions) | Facebook page |
+| `main-gate-front.webp` | Hero (first slide) | Supplied by the project team (front view of the main gate; original 1000×600, upscaled to 1920px with a light colour lift). Credited without a link until the source page is known |
+| `main-gate.webp` | Not used at the moment (was the admissions hero) | Facebook page |
 | `women-campus.webp` | Women Campus card, About page hero (panorama, uploaded at its own size) | Facebook page |
 | `faculty-pncs-geology-field-work.webp` | Physical, Numerical and Computational Sciences card and header | `/2022/09/5-days-geological-field-excursion-in-north-pakistan/` |
 | `faculty-bcs-remote-sensing-training.webp` | Biological and Chemical Sciences card and header | `/2026/07/seven-day-training-program-on-climate-resilient-agriculture/` |
 | `faculty-rlhls-law-supreme-court.webp` | Religious, Languages, Humanities and Legal Studies card and header | `/2025/05/8th-semester-department-of-law-and-sharia-…/` |
 | `faculty-mass-heritage-seminar.webp` | Management, Art and Social Sciences card and header | `/2024/04/world-heritage-day/` |
-| `hero-campus-mountains.jpg` | Hero (campus), Admissions page hero, Open Graph image | `/maincampus/` |
+| `hero-campus-mountains.jpg` | Hero (admissions slide), Admissions page hero, Open Graph image | `/maincampus/` |
 | `vc-husnul-amin.jpg` | Vice Chancellor (homepage VC message, About leadership) | Homepage VC message |
 | `campus-library-hall.webp` | Central Library card and page (Campus Life). Right half of a two-photo collage, cropped to the library hall (714×496, below the usual 800px minimum: no larger library photo is published) | `/2023/09/chiragh-project/` |
 | `post-*.jpg`, `post-*.webp` | Cover of the matching news, announcement or event (event and meeting photos are never used in the hero) | That post |
