@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type { Locale } from "@/i18n/routing";
 import type { FacultyAccent } from "./academics";
-import { guarded, localizedList, localizedSingle, populateImage, safely, toImage, type Doc } from "./query";
+import { guarded, localizedList, localizedSingle, populateImage, safely, toImage, toRealImage, type Doc } from "./query";
 import { normalizeHref, isExternalHref, toNavLink, type NavLink, type SiteImage } from "./site";
 import type { StrapiLink, StrapiMedia } from "./types";
 import { getVcMessage } from "./vc-message";
@@ -125,8 +125,17 @@ export interface AdmissionsBanner {
   deadlineLabel: string | null;
 }
 
+/** The four "I am a…" audiences. */
+export type PathwayAudience = "prospective" | "current" | "staff" | "visitor";
+
 export interface HomeContent {
   quickActions: NavLink[];
+  /** Faint photo texture on the green Apply card (Homepage → Apply card image). */
+  applyCardImage: SiteImage | null;
+  /** Photo beside the stats (Homepage → Stats image). */
+  statsImage: SiteImage | null;
+  /** One real photo per "I am a…" card (Homepage → Pathway photos). */
+  pathwayPhotos: Partial<Record<PathwayAudience, SiteImage>>;
   banner: AdmissionsBanner | null;
   /** Links beside the admissions banner (Homepage → Admissions links); the first is highlighted. */
   admissionsLinks: NavLink[];
@@ -154,6 +163,9 @@ export interface EventsAndNotices {
 
 interface StrapiHomepage extends Doc {
   quickActions: StrapiLink[];
+  applyCardImage: StrapiMedia | null;
+  statsImage: StrapiMedia | null;
+  pathwayPhotos: { audience: PathwayAudience; image: StrapiMedia | null }[] | null;
   admissionsLinks: StrapiLink[] | null;
   admissionsBanner: {
     isVisible: boolean | null;
@@ -290,6 +302,9 @@ async function loadHome(locale: Locale): Promise<HomeContent | null> {
       "/homepage",
       {
         "populate[quickActions]": true,
+        ...populateImage("applyCardImage"),
+        ...populateImage("statsImage"),
+        ...Object.fromEntries(Object.entries(populateImage("image")).map(([k, v]) => [k.replace("populate[image]", "populate[pathwayPhotos][populate][image]"), v])),
         "populate[admissionsBanner]": true,
         "populate[admissionsLinks]": true,
         "populate[partners][populate][logo][fields][0]": "url",
@@ -307,6 +322,14 @@ async function loadHome(locale: Locale): Promise<HomeContent | null> {
     const b = data.admissionsBanner;
     return {
       quickActions: (data.quickActions ?? []).map(toNavLink),
+      applyCardImage: toRealImage(data.applyCardImage),
+      statsImage: toRealImage(data.statsImage),
+      pathwayPhotos: Object.fromEntries(
+        (data.pathwayPhotos ?? []).flatMap((p) => {
+          const image = toRealImage(p.image);
+          return image ? [[p.audience, image] as const] : [];
+        }),
+      ),
       admissionsLinks: (data.admissionsLinks ?? []).map(toNavLink),
       banner:
         b && b.isVisible !== false && b.title

@@ -1,8 +1,8 @@
+import Image from "next/image";
 import { iconFor } from "@/lib/icons";
 import type { StatItem } from "@/lib/strapi/home";
+import type { SiteImage } from "@/lib/strapi/site";
 import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { GandharaPattern, MountainRidge } from "@/components/brand/motifs";
 import { StatCounter } from "./stat-counter";
 
 interface StatsBandProps {
@@ -10,39 +10,57 @@ interface StatsBandProps {
   eyebrow: string;
   title: string | null;
   intlLocale: string;
+  /** The photo on the end side (Homepage → Stats image), e.g. the main gate. */
+  image: SiteImage | null;
 }
 
 /**
- * Live counters as a bento panel: the heading tile and one glass tile per figure on deep green, with the
- * Gandhara pattern and the valley ridge. The values come from GET /api/stats, which Strapi computes from
- * the database (campuses, faculties, departments, programs), so they are never 0 and never out of date.
+ * "The University at a Glance": a rounded deep-green banner with the heading, the live counters separated
+ * by thin dividers (each with a gold icon) and, on the end side, a real photo that melts into the green
+ * with a gold wave along its bottom edge. Below 1280px the photo sits on top. The values come from
+ * GET /api/stats, which Strapi counts from the database (published campuses, faculties and programs,
+ * active departments), so they are never 0 and never out of date; they count up as the banner scrolls
+ * into view (CSS only, off for reduced motion).
  */
-export function StatsBand({ stats, eyebrow, title, intlLocale }: StatsBandProps) {
+export function StatsBand({ stats, eyebrow, title, intlLocale, image }: StatsBandProps) {
   if (!stats.length) return null;
 
   return (
     <section aria-labelledby="home-stats">
       <Container size="wide">
-        <div className="relative isolate overflow-hidden rounded-3xl bg-forest-900 p-5 text-sand-50 shadow-lg sm:p-8 lg:p-10 dark:bg-forest-950 dark:ring-1 dark:ring-white/10">
-          <GandharaPattern className="-z-10 text-white opacity-[0.05]" />
-          <MountainRidge className="absolute inset-x-0 bottom-0 -z-10 h-16 text-forest-800 opacity-70 sm:h-24 dark:text-forest-900" />
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,18rem)_minmax(0,1fr)] lg:items-center lg:gap-10">
-            <SectionHeading id="home-stats" eyebrow={eyebrow} title={title ?? eyebrow} size="md" inverted className="py-2 lg:py-0" />
-            <dl className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+        <div className="relative isolate flex flex-col overflow-hidden rounded-3xl bg-forest-900 text-white shadow-xl shadow-forest-950/20 xl:block dark:ring-1 dark:ring-white/10">
+          {image ? (
+            <div aria-hidden className="relative h-44 w-full sm:h-56 lg:h-64 xl:absolute xl:inset-y-0 xl:end-0 xl:h-auto xl:w-[32%]">
+              <Image src={image.src} alt="" fill sizes="(min-width: 1280px) 32vw, 100vw" className="object-cover object-[50%_40%]" />
+              {/* Melts into the green: from the bottom up to 1279px, from the text side from 1280px. */}
+              <span className="absolute inset-0 bg-linear-to-t from-forest-900 via-forest-900/20 to-transparent xl:bg-linear-to-r xl:from-forest-900 xl:via-forest-900/40 xl:via-30% xl:to-transparent xl:to-60% rtl:xl:bg-linear-to-l" />
+              <GoldWave className="absolute inset-x-0 -bottom-px h-7 text-gold-bright sm:h-9" />
+            </div>
+          ) : null}
+
+          <div
+            className={`relative grid gap-7 px-6 py-6 sm:px-8 sm:py-8 xl:grid-cols-[minmax(0,16rem)_minmax(0,1fr)] xl:items-center xl:gap-8 xl:py-10 xl:ps-10 ${image ? "xl:pe-[33%]" : "xl:pe-10"}`}
+          >
+            <div className="flex flex-col gap-3">
+              <p className="inline-flex items-center gap-3 text-overline tracking-[0.18em] text-gold-bright uppercase">
+                <span aria-hidden className="h-0.5 w-9 rounded-full bg-current" />
+                {eyebrow}
+              </p>
+              <h2 id="home-stats" className="text-heading-xl text-balance text-white xl:text-[2rem]">
+                {title ?? eyebrow}
+              </h2>
+            </div>
+
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-4">
               {stats.map((stat) => {
                 const Icon = iconFor(stat.icon);
                 return (
-                  <div
-                    key={stat.id}
-                    className="flex flex-col items-start gap-3 rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10 backdrop-blur-[2px] transition-colors duration-300 ring-inset hover:bg-white/[0.1] sm:p-5"
-                  >
+                  <div key={stat.id} className="flex flex-col items-center gap-2 text-center sm:border-s sm:border-white/15 sm:first:border-s-0 xl:first:border-s">
                     {/* Label first in the markup (valid <dl>, read as "Campuses: 2"); shown under the number.
                         The icon lives inside <dd>: a <dl> group may only contain <dt> and <dd>. */}
-                    <dt className="order-3 text-body-sm font-medium text-forest-100">{stat.label}</dt>
-                    <dd className="order-2 flex flex-col items-start gap-3">
-                      <span aria-hidden className="flex size-9 items-center justify-center rounded-lg bg-gold-400/15 text-gold-300">
-                        <Icon className="size-4.5" strokeWidth={1.75} />
-                      </span>
+                    <dt className="order-3 text-body-sm font-medium text-forest-50">{stat.label}</dt>
+                    <dd className="order-2 flex flex-col items-center gap-2">
+                      <Icon aria-hidden className="size-8 text-gold-bright" strokeWidth={1.5} />
                       <span className="text-display-lg leading-none text-white">
                         <StatCounter value={stat.value} suffix={stat.suffix} intlLocale={intlLocale} />
                       </span>
@@ -55,5 +73,15 @@ export function StatsBand({ stats, eyebrow, title, intlLocale }: StatsBandProps)
         </div>
       </Container>
     </section>
+  );
+}
+
+/** A gold brush wave along the bottom edge of the stats photo (decorative). */
+function GoldWave({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 600 40" preserveAspectRatio="none" className={`pointer-events-none block w-full rtl:-scale-x-100 ${className ?? ""}`}>
+      <path fill="currentColor" d="M0 34C120 30 220 22 330 22s190 6 270-14v32H0Z" />
+      <path fill="none" stroke="currentColor" strokeOpacity="0.55" strokeWidth="2" d="M0 26C140 20 250 12 350 13s170 2 250-13" />
+    </svg>
   );
 }

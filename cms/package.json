@@ -17,7 +17,8 @@
     "seed": "node scripts/seed.js",
     "demo-accounts": "node scripts/demo-accounts.js",
     "faculty-photos": "node scripts/faculty-photos.js",
-    "hero-photos": "node scripts/hero-photos.js"
+    "hero-photos": "node scripts/hero-photos.js",
+    "home-photos": "node scripts/home-photos.js"
   },
   "dependencies": {
     "@strapi/database": "5.61.1",

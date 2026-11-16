@@ -1142,3 +1142,23 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   grid on phones, 4 columns from 640px, side by side from 1280px; mirrored in Urdu; same design in dark
   mode. All 30 footer links checked (internal ones return 200); axe clean at 1440/1024/375, EN/UR,
   light/dark; Lighthouse Accessibility 100.
+- **Homepage: quick actions, "I am a…" and stats redesigned (reference image).**
+  - *Quick actions* (directly under the hero): the first action (Apply) is a deep green card with a faint
+    campus photo (Homepage → Apply card image), a round icon and a bright gold arrow button; the others
+    are white cards with a soft shadow, a light-green icon tile and a round arrow (↗ and a new tab for
+    the external portals). Cards lift on hover (not with reduced motion). Phones: 2-column grid with
+    Apply across; 1024px: Apply above four; 1280px+: one row with a wider Apply card.
+  - *"I am a…"*: gold line + eyebrow, large heading, faint peaks and pines (`PeaksAndPines`). Each card
+    has an icon, title, one line, a green pill arrow and a real University of Swat photo cut with a
+    diagonal edge (mirrored in Urdu); it still opens its list of links (native `<details>`).
+  - *The University at a Glance*: rounded deep-green banner, gold line + "By the numbers", the four
+    live counters (Strapi counts published campuses, faculties and programs and active departments)
+    separated by thin dividers with gold icons, counting up on scroll (CSS, off for reduced motion), and
+    the main gate photo melting into the green with a gold wave along its bottom (on top below 1280px).
+  - *Strapi*: new non-localized Homepage fields `applyCardImage`, `statsImage` and `pathwayPhotos`
+    (component `home.pathway-photo`: audience + image). Seed `HOME_PHOTOS` (index.ts) uses real
+    University photos only: Main Campus aerial, Central Library hall, an academic block, the Swat Book
+    Fair, the Women Campus (texture) and the main gate. Live data filled with the new
+    `npm run home-photos`.
+  - Checked at 1440/1024/375, EN/UR, light/dark: axe clean, no horizontal scroll; Lighthouse
+    Accessibility 100.

@@ -146,12 +146,22 @@ export default async function HomePage() {
         <h1 className="sr-only">{siteName}</h1>
       )}
 
-      <QuickActions actions={quickActions} label={t("quickActions")} />
+      <QuickActions actions={quickActions} label={t("quickActions")} applyImage={home?.applyCardImage ?? null} />
 
-      <AudiencePathways pathways={pathways} labels={{ eyebrow: t("pathways.eyebrow"), title: t("pathways.title") }} />
+      <AudiencePathways
+        pathways={pathways}
+        photos={home?.pathwayPhotos ?? {}}
+        labels={{ eyebrow: t("pathways.eyebrow"), title: t("pathways.title") }}
+      />
 
       <div className={slides.length ? "mt-section-sm" : undefined}>
-        <StatsBand stats={stats} eyebrow={t("statsEyebrow")} title={home?.headings.stats ?? null} intlLocale={intlLocale[locale]} />
+        <StatsBand
+          stats={stats}
+          eyebrow={t("statsEyebrow")}
+          title={home?.headings.stats ?? null}
+          intlLocale={intlLocale[locale]}
+          image={home?.statsImage ?? null}
+        />
       </div>
 
       {/* Below the fold: rendered when scrolled near (content-visibility), see .home-below in globals.css. */}

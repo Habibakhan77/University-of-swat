@@ -1,79 +1,110 @@
+import Image from "next/image";
+import { createElement } from "react";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
-import type { NavLink } from "@/lib/strapi/site";
+import type { NavLink, SiteImage } from "@/lib/strapi/site";
 import { Container } from "@/components/ui/container";
 import { SmartLink } from "@/components/layout/smart-link";
 
 interface QuickActionsProps {
   actions: NavLink[];
   label: string;
+  /** Faint photo texture for the first (Apply) card: Homepage → Apply card image. */
+  applyImage: SiteImage | null;
 }
 
+/** The Lucide icon named in Strapi (link.icon). */
+function ActionIcon({ name, className }: { name: string | null | undefined; className?: string }) {
+  return createElement(iconFor(name), { "aria-hidden": true, className, strokeWidth: 1.75 });
+}
+
+const lift = "transition-[translate,box-shadow] duration-200 ease-out hover:-translate-y-1 motion-reduce:hover:translate-y-0";
+
 /**
- * The five things most visitors come for (Apply, Merit Lists, Exam Portal, CMS, Fee), as a card row
- * directly under the hero on the cream page background. It never overlaps the hero, so the photo
- * stays fully visible. Phones get a 2-column grid (Apply spans both); the first action (Apply in the
- * seed) is the gold one.
+ * The five things most visitors come for (Apply, Merit Lists, Exam Portal, CMS, Fee) as a row of cards
+ * directly under the hero (no overlap). The first action (Apply in the seed) is the deep green card with a
+ * faint campus photo and a gold arrow button; the others are white cards with a light-green icon tile
+ * and a small round arrow (↗ and a new tab for external portals). Phones: a 2-column grid with Apply
+ * across both columns; 1024px: Apply above a row of four; from 1280px all five in one row.
  */
-export function QuickActions({ actions, label }: QuickActionsProps) {
+export function QuickActions({ actions, label, applyImage }: QuickActionsProps) {
   if (!actions.length) return null;
+  const [primary, ...rest] = actions;
 
   return (
-    <nav aria-label={label} className="relative z-20 bg-canvas pt-4 sm:pt-6">
+    <nav aria-label={label} className="relative z-20 bg-canvas pt-6 sm:pt-8">
       <Container size="wide">
         <ul
           className={cn(
-            "grid grid-cols-2 gap-px overflow-hidden rounded-2xl bg-line shadow-xl ring-1 ring-line",
-            actions.length >= 5 ? "md:grid-cols-5" : actions.length === 4 ? "md:grid-cols-4" : "md:grid-cols-3",
+            "grid grid-cols-2 gap-3 sm:gap-4",
+            rest.length >= 4 ? "lg:grid-cols-4 xl:grid-cols-[minmax(0,1.35fr)_repeat(4,minmax(0,1fr))]" : "lg:grid-cols-3 xl:grid-cols-[minmax(0,1.35fr)_repeat(3,minmax(0,1fr))]",
           )}
         >
-          {actions.map((action, i) => {
+          {/* Apply: a full row on phones and at 1024px, the wider first card from 1280px. */}
+          <li className={cn("col-span-2 flex xl:col-span-1", rest.length >= 4 ? "lg:col-span-4" : "lg:col-span-3")}>
+            <SmartLink
+              href={primary.href}
+              external={primary.external}
+              externalIcon={false}
+              className={cn(
+                "group/qa relative isolate flex w-full items-center gap-4 overflow-hidden rounded-2xl bg-forest-800 p-5 text-white shadow-lg shadow-forest-950/20 hover:shadow-xl lg:p-6",
+                lift,
+              )}
+            >
+              {applyImage ? (
+                <Image
+                  src={applyImage.src}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 20vw, 100vw"
+                  className="-z-20 object-cover opacity-25 grayscale-[35%]"
+                />
+              ) : null}
+              {/* Keeps the text on solid green whatever the photo (WCAG AA). */}
+              <span aria-hidden className="absolute inset-0 -z-10 bg-linear-to-r from-forest-800 via-forest-800/85 to-forest-800/55 rtl:bg-linear-to-l" />
+              <span aria-hidden className="flex size-13 shrink-0 items-center justify-center rounded-full bg-white/12 ring-1 ring-white/25">
+                <ActionIcon name={primary.icon} className="size-6" />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="text-heading-md leading-tight font-bold">{primary.label}</span>
+                {primary.description ? <span className="text-body-sm text-forest-50">{primary.description}</span> : null}
+              </span>
+              <span
+                aria-hidden
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-gold-bright text-forest-950 shadow-md transition-transform duration-200 group-hover/qa:translate-x-0.5 rtl:group-hover/qa:-translate-x-0.5"
+              >
+                {primary.external ? <ArrowUpRight className="size-5 rtl:-scale-x-100" /> : <ArrowRight className="size-5 rtl:-scale-x-100" />}
+              </span>
+            </SmartLink>
+          </li>
+
+          {rest.map((action) => {
             const Icon = iconFor(action.icon);
-            const primary = i === 0;
             return (
-              <li key={`${action.label}-${action.href}`} className={cn("flex", primary && "col-span-2 md:col-span-1")}>
+              <li key={`${action.label}-${action.href}`} className="flex">
                 <SmartLink
                   href={action.href}
                   external={action.external}
                   externalIcon={false}
                   className={cn(
-                    "group/qa relative flex w-full gap-3 p-4 transition-colors duration-200 sm:p-5 md:flex-col md:items-start md:gap-4 lg:p-6",
-                    // Phones: Apply is a wide row; the others are compact tiles (icon above the label).
-                    primary ? "items-center gap-3.5" : "flex-col items-start",
-                    "focus-visible:z-10 focus-visible:outline-offset-[-3px]",
-                    primary ? "bg-accent text-accent-fg hover:bg-accent-hover" : "bg-surface text-fg hover:bg-primary-soft",
+                    "group/qa relative flex w-full flex-col items-start gap-3 rounded-2xl bg-surface p-4 text-fg shadow-md ring-1 shadow-ink-950/5 ring-line hover:shadow-lg sm:p-5",
+                    lift,
                   )}
                 >
+                  <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary-soft-fg">
+                    <Icon aria-hidden className="size-6" strokeWidth={1.75} />
+                  </span>
+                  <span className="flex min-w-0 flex-col gap-0.5 pe-1">
+                    <span className="text-heading-sm font-bold sm:text-heading-md sm:leading-tight">{action.label}</span>
+                    {action.description ? <span className="text-caption text-fg-subtle sm:text-body-sm">{action.description}</span> : null}
+                  </span>
                   <span
-                    className={cn(
-                      "flex size-11 shrink-0 items-center justify-center rounded-xl transition-colors duration-200",
-                      primary
-                        ? "bg-ink-950/10 text-accent-fg"
-                        : "bg-primary-soft text-primary-soft-fg group-hover/qa:bg-primary group-hover/qa:text-primary-fg",
-                    )}
+                    aria-hidden
+                    className="absolute end-3 top-3 flex size-9 items-center justify-center rounded-full bg-primary-soft text-primary-soft-fg transition-colors duration-200 group-hover/qa:bg-primary group-hover/qa:text-primary-fg sm:end-4 sm:top-4"
                   >
-                    <Icon aria-hidden className="size-5" strokeWidth={1.75} />
+                    {action.external ? <ArrowUpRight className="size-4 rtl:-scale-x-100" /> : <ArrowRight className="size-4 rtl:-scale-x-100" />}
                   </span>
-                  <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="text-body font-semibold">{action.label}</span>
-                    {action.description ? (
-                      <span className={cn("text-caption", primary ? "text-accent-fg" : "text-fg-subtle")}>
-                        {action.description}
-                      </span>
-                    ) : null}
-                  </span>
-                  {action.external ? (
-                    <ArrowUpRight
-                      aria-hidden
-                      className={cn("size-4 shrink-0 opacity-60 md:absolute md:end-5 md:top-5 lg:end-6 lg:top-6 rtl:-scale-x-100", !primary && "absolute end-4 top-4 sm:end-5 sm:top-5")}
-                    />
-                  ) : (
-                    <ArrowRight
-                      aria-hidden
-                      className={cn("size-4 shrink-0 opacity-60 transition-transform duration-300 group-hover/qa:translate-x-0.5 md:absolute md:end-5 md:top-5 lg:end-6 lg:top-6 rtl:-scale-x-100 rtl:group-hover/qa:-translate-x-0.5", !primary && "absolute end-4 top-4 sm:end-5 sm:top-5")}
-                    />
-                  )}
                 </SmartLink>
               </li>
             );

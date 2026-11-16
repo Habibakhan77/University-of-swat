@@ -183,3 +183,16 @@ export function PeakLineArt({ className }: MotifProps) {
     </svg>
   );
 }
+
+/** Faint filled peaks with a cluster of pines, for the end of a section heading (decorative). */
+export function PeaksAndPines({ className }: MotifProps) {
+  const pines: [number, number][] = [[452, 34], [468, 46], [484, 38], [500, 52], [516, 40], [532, 30]];
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 560 120" className={cn("pointer-events-none block rtl:-scale-x-100", className)}>
+      <path fill="currentColor" fillOpacity="0.35" d="M0 116 70 92l50 10 70-44 46 26 64-62 40 34 30-14 60 46 54-22 76 50H0Z" />
+      <path fill="#fff" fillOpacity="0.7" className="dark:opacity-40" d="m300 22 28 24-10-2-8 8-10-10-12 6-14 2 26-28Z" />
+      <path fill="currentColor" fillOpacity="0.55" d="M60 116c90-18 180-22 270-12s150 6 230-6v18Z" />
+      <path fill="currentColor" fillOpacity="0.6" d={pines.map(([x, h]) => pinePath(x, 116, h)).join("")} />
+    </svg>
+  );
+}

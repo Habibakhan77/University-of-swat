@@ -625,6 +625,14 @@
       pointer-events: none;
     }
   }
+  /* "I am a…" card photos: a diagonal cut on the side facing the text (mirrored in Urdu). */
+  .pathway-cut {
+    clip-path: polygon(34% 0, 100% 0, 100% 100%, 0 100%);
+  }
+  [dir="rtl"] .pathway-cut {
+    clip-path: polygon(0 0, 66% 0, 100% 100%, 0 100%);
+  }
+
   .hero-text-shadow {
     text-shadow:
       0 1px 3px rgb(0 0 0 / 0.45),

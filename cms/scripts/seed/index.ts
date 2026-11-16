@@ -31,6 +31,36 @@ export const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], { photo: P
   research: { photo: 'mainCampus', focalPoint: '50% 50%' }, // academic blocks, lawns and misty hills
 };
 
+/**
+ * Real photos for the homepage sections (Homepage → Apply card image, Stats image, Pathway photos):
+ * University of Swat photos only, never the illustration and never AI images of people. Shared by all
+ * locales. Applied to existing data with `npm run home-photos`.
+ */
+export const HOME_PHOTOS = {
+  /** Faint texture on the green "Apply now" quick-action card. */
+  applyCard: 'womenCampus',
+  /** Right side of "The University at a Glance". */
+  stats: 'mainGate',
+  /** The "I am a…" cards. */
+  pathways: {
+    prospective: 'mainCampus', // the Main Campus from above: lawns, academic blocks, hills
+    current: 'libraryHall', // students in the Central Library hall
+    staff: 'campusMountains', // an academic block below the snow peaks
+    visitor: 'bookFair', // the Swat Book Fair, open to the public
+  },
+} as const satisfies { applyCard: PhotoKey; stats: PhotoKey; pathways: Record<'prospective' | 'current' | 'staff' | 'visitor', PhotoKey> };
+
+/** Uploads the HOME_PHOTOS and returns the Homepage fields that point at them. */
+export async function homePhotoFields(media: MediaFactory) {
+  return {
+    applyCardImage: await media.photo(HOME_PHOTOS.applyCard, 'cover'),
+    statsImage: await media.photo(HOME_PHOTOS.stats, 'original'),
+    pathwayPhotos: await Promise.all(
+      Object.entries(HOME_PHOTOS.pathways).map(async ([audience, key]) => ({ audience, image: await media.photo(key, 'cover') })),
+    ),
+  };
+}
+
 export interface SeedOptions {
   reset: boolean;
 }
@@ -589,10 +619,11 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
       const { key, ...rest } = p;
       partners.push({ ...rest, logo: await media.image({ ratio: 'square', key: `partner-${key}`, title: p.name, kicker: 'Partner logo', theme: 'gold' }) });
     }
+    const homePhotos = await homePhotoFields(media);
     await w.single(
       'api::homepage.homepage',
-      { ...HOMEPAGE.en, quickActions: QUICK_ACTIONS.en, partners },
-      { ...HOMEPAGE.ur, quickActions: QUICK_ACTIONS.ur, partners },
+      { ...HOMEPAGE.en, quickActions: QUICK_ACTIONS.en, partners, ...homePhotos },
+      { ...HOMEPAGE.ur, quickActions: QUICK_ACTIONS.ur, partners, ...homePhotos },
     );
 
     const ogImage = await media.photo('campusMountains', 'og');
