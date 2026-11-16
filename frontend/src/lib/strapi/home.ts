@@ -23,9 +23,18 @@ export interface Cta {
   external: boolean;
 }
 
+/** A run of a hero title; `highlight` runs were written between *asterisks* in Strapi. */
+export interface TitlePart {
+  text: string;
+  highlight: boolean;
+}
+
 export interface HeroSlide {
   id: string;
+  /** The title as plain text (asterisks removed). */
   title: string;
+  /** The same title split into plain and highlighted (gold) runs. */
+  titleParts: TitlePart[];
   subtitle: string | null;
   image: SiteImage | null;
   /** CSS object-position ("x% y%") that keeps the photo's subject in frame. */
@@ -335,6 +344,23 @@ async function loadHome(locale: Locale): Promise<HomeContent | null> {
   });
 }
 
+/**
+ * Splits "Knowledge rooted *in the valley*" into plain and highlighted runs. Editors mark the gold words
+ * with asterisks; an unmatched asterisk is kept as written, so a typo never hides text.
+ */
+export function splitHighlight(title: string): TitlePart[] {
+  const parts: TitlePart[] = [];
+  const re = /\*([^*]+)\*/g;
+  let last = 0;
+  for (const m of title.matchAll(re)) {
+    if (m.index > last) parts.push({ text: title.slice(last, m.index), highlight: false });
+    parts.push({ text: m[1], highlight: true });
+    last = m.index + m[0].length;
+  }
+  if (last < title.length) parts.push({ text: title.slice(last), highlight: false });
+  return parts.filter((p) => p.text.length > 0);
+}
+
 async function loadHeroSlides(locale: Locale): Promise<HeroSlide[]> {
   "use cache";
   cacheTag("hero-slides", `hero-slides:${locale}`);
@@ -349,7 +375,8 @@ async function loadHeroSlides(locale: Locale): Promise<HeroSlide[]> {
     );
     return slides.map((s) => ({
       id: s.documentId,
-      title: s.title,
+      title: splitHighlight(s.title).map((p) => p.text).join(""),
+      titleParts: splitHighlight(s.title),
       subtitle: s.subtitle,
       image: toImage(s.image),
       focalPoint: toFocalPoint(s.focalPoint),

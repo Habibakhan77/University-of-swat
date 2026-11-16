@@ -21,7 +21,10 @@ export const fillTemplate = (template: string, values: Record<string, number>) =
 export const HERO_BUTTON_CLASS =
   "inline-flex size-11 items-center justify-center rounded-full bg-white/10 text-white ring-1 ring-white/20 backdrop-blur-sm transition-colors ring-inset hover:bg-white/20";
 
-/** Hero photos are served a little above the default quality: they fill the whole screen. */
+/** The photo box: full width up to 1279px, the end 64% of the hero from 1280px. */
+export const HERO_IMAGE_SIZES = "(min-width: 1280px) 64vw, 100vw";
+
+/** Hero photos are served a little above the default quality: they fill much of the screen. */
 export const HERO_IMAGE_QUALITY = 85;
 
 /**

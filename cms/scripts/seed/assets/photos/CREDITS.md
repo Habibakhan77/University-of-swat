@@ -13,7 +13,8 @@ Those posts, and HEC DLSEI 3.0 Cohort 4 (only a flow-chart graphic), get a text-
 | File | Used for | Source page |
 | --- | --- | --- |
 | `main-campus.jpg` | Hero (research slide), Main Campus card | Facebook page |
-| `main-gate.jpg` | Hero (first slide) | Facebook page |
+| `main-gate.jpg` | (kept; was the first hero slide) | Facebook page |
+| `hero-gate-illustration.jpg` | Hero (first slide). A drawn illustration supplied by the team, credited **"Illustration"** (never "Photo") with no link | Supplied by the team |
 | `women-campus.webp` | Women Campus card, About page hero (panorama, uploaded at its own size) | Facebook page |
 | `faculty-pncs-geology-field-work.webp` | Physical, Numerical and Computational Sciences card and header | `/2022/09/5-days-geological-field-excursion-in-north-pakistan/` |
 | `faculty-bcs-remote-sensing-training.webp` | Biological and Chemical Sciences card and header | `/2026/07/seven-day-training-program-on-climate-resilient-agriculture/` |

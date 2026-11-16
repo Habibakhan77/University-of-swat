@@ -193,35 +193,37 @@ export const PARTNERS = [
 /**
  * Homepage hero, one slide per campus photo (see HERO_PHOTOS in index.ts). The eyebrow above every slide is
  * the site name from Site Settings ("University of Swat" / "جامعہ سوات"), rendered once as the page h1.
+ * Words between *asterisks* in a title are shown in gold with a hand-drawn underline (when they end the
+ * title, on their own line); the asterisks themselves are never displayed.
  */
 export const HERO_SLIDES = [
   {
     key: 'campus',
-    title: 'Knowledge rooted in the valley',
+    title: 'Knowledge rooted *in the valley*',
     subtitle:
       'A public university serving Swat and the Malakand Division since 2010, with programs from languages and law to computing and health sciences.',
-    ctaLabel: 'Explore faculties',
-    ctaUrl: '/academics',
+    ctaLabel: 'Explore programs',
+    ctaUrl: '/academics/programs',
     secondaryCtaLabel: 'Our story',
     secondaryCtaUrl: '/about',
     ur: {
-      title: 'علم، وادیٔ سوات کے دامن میں',
+      title: 'علم، *وادیٔ سوات کے دامن میں*',
       subtitle:
         '2010 سے سوات اور ملاکنڈ ڈویژن کی خدمت کرنے والی سرکاری جامعہ، زبانوں اور قانون سے لے کر کمپیوٹنگ اور صحت کے علوم تک۔',
-      ctaLabel: 'شعبہ جات دیکھیں',
+      ctaLabel: 'پروگرام دیکھیں',
       secondaryCtaLabel: 'ہمارے بارے میں',
     },
   },
   {
     key: 'admissions',
-    title: 'Begin your journey here',
+    title: 'Begin your *journey here*',
     subtitle: 'Find your program, check eligibility and fees, and follow every step from application to merit list.',
     ctaLabel: 'Explore admissions',
     ctaUrl: '/admissions',
     secondaryCtaLabel: 'Merit lists',
     secondaryCtaUrl: 'https://cms1.uswat.edu.pk/admission/program/list/final',
     ur: {
-      title: 'اپنا سفر یہیں سے شروع کریں',
+      title: 'اپنا سفر *یہیں سے شروع کریں*',
       subtitle: 'اپنا پروگرام منتخب کریں، اہلیت اور فیس دیکھیں، اور درخواست سے میرٹ لسٹ تک ہر مرحلہ آسانی سے مکمل کریں۔',
       ctaLabel: 'داخلے',
       secondaryCtaLabel: 'میرٹ لسٹ',
@@ -229,7 +231,7 @@ export const HERO_SLIDES = [
   },
   {
     key: 'research',
-    title: 'Research that serves the region',
+    title: 'Research that *serves the region*',
     subtitle:
       'From Gandhara heritage to climate and public health, our faculty and students work on questions that matter to Swat and beyond.',
     ctaLabel: 'Research at UoS',
@@ -237,7 +239,7 @@ export const HERO_SLIDES = [
     secondaryCtaLabel: 'Latest news',
     secondaryCtaUrl: '/news',
     ur: {
-      title: 'خطے کی خدمت کے لیے تحقیق',
+      title: 'خطے کی خدمت کے لیے *تحقیق*',
       subtitle:
         'گندھارا کے ورثے سے لے کر ماحولیات اور صحتِ عامہ تک، ہمارے اساتذہ اور طلبہ سوات اور اس سے آگے کے اہم سوالات پر کام کر رہے ہیں۔',
       ctaLabel: 'تحقیق',

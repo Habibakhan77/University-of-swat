@@ -47,6 +47,16 @@ export const PHOTOS = {
     'The white castellated main gate of the University of Swat, with the campus road winding into green hills behind it',
     FACEBOOK,
   ),
+  /**
+   * A drawn illustration of the main gate (supplied by the team), not a photograph: credited
+   * "Illustration", never "Photo", and the alt text says it is an illustration.
+   */
+  mainGateIllustration: {
+    file: 'hero-gate-illustration.jpg',
+    alt: 'Illustration of the University of Swat main gate: the white castellated arch with its "University of Swat" lettering and crest, a university bus on the campus road and flower beds below green hills',
+    credit: 'Illustration',
+    source: null,
+  },
   womenCampus: photo(
     'women-campus.webp',
     'The University of Swat Women Campus: white and pink buildings behind a stone wall, below pine-covered hills',

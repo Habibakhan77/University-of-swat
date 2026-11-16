@@ -34,7 +34,7 @@ server, so it can run while `npm run dev` is running.
 | Phone directory | 38 | Every number on uswat.edu.pk/contact-list (offices and departments), area code 0946; the Registrar and Admission Office lines are `featured` and also shown under "Reach us" (the site publishes no general number); Urdu names, people's names kept as published |
 | Contact page | 1 | Intro, map query, six key offices, form text |
 | FAQs | 13 | Admissions, fees and scholarships (en + ur, verified answers only); exams, hostel, general |
-| Hero slides / Stats | 3 / 4 | Stats are live counters (campuses, faculties, departments, programs) |
+| Hero slides / Stats | 3 / 4 | Words between `*asterisks*` in a slide title show in gold with a drawn underline. Slide 1 uses the main-gate illustration (credited "Illustration"). Stats are live counters (campuses, faculties, departments, programs) |
 | Single types | 7 | Homepage, About (official vision, mission, values, motto, rewritten history, accreditations), VC Message, Admissions Page, Research Page, Contact Page, Site Settings (2-level nav) — en + ur |
 
 Stat counters use `source` = `campuses` / `faculties` / `departments` / `programs`, so `GET /api/stats`

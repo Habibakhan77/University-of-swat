@@ -1,13 +1,14 @@
 import Image from "next/image";
-import { ArrowRight, ChevronLeft, ChevronRight, Pause } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, GraduationCap, Pause } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { heroSerif } from "@/lib/hero-font";
 import type { Locale } from "@/i18n/routing";
 import type { HeroSlide } from "@/lib/strapi/home";
 import { buttonVariants } from "@/components/ui/button";
-import { MountainRidge, Rosette } from "@/components/brand/motifs";
+import { MountainMark, Swoosh, WaveEdge } from "@/components/brand/motifs";
 import { SmartLink } from "@/components/layout/smart-link";
 import { ImageCredit } from "@/components/ui/image-credit";
-import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, HERO_IMAGE_QUALITY, heroFraming, type HeroLabels } from "./hero-shared";
+import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, HERO_IMAGE_QUALITY, HERO_IMAGE_SIZES, heroFraming, type HeroLabels } from "./hero-shared";
 import { HeroEnhancer } from "./hero-enhancer";
 
 export type { HeroLabels } from "./hero-shared";
@@ -20,8 +21,34 @@ interface HeroSliderProps {
   labels: HeroLabels;
 }
 
+/** Gold, underlined runs of a title (marked with *asterisks* in Strapi); a run that ends the title gets its own line. */
+function SlideTitle({ slide }: { slide: HeroSlide }) {
+  const parts = slide.titleParts;
+  return parts.map((part, i) => {
+    if (!part.highlight) return <span key={i}>{part.text}</span>;
+    const word = (
+      <span className="relative inline-block max-w-full text-gold-300">
+        {part.text}
+        <Swoosh className="absolute inset-x-[2%] -bottom-[0.32em] h-[0.3em] w-[96%] text-gold-400" />
+      </span>
+    );
+    return i === parts.length - 1 && i > 0 ? (
+      <span key={i} className="block">
+        {word}
+      </span>
+    ) : (
+      <span key={i}>{word}</span>
+    );
+  });
+}
+
 /**
  * Homepage hero, following the WAI-ARIA carousel pattern.
+ *
+ * Layout: from 1280px a deep green text panel (the reading side: left in English, right in Urdu) with the
+ * slide photo filling the other side and fading into the green, no hard edge. Below 1280px the photo sits
+ * on top, wide enough for the whole gate, and fades into the green panel below it. A soft wave in the
+ * page colour closes the section.
  *
  * A Server Component: the first slide (photo priority-loaded, text and buttons) is plain HTML and CSS,
  * so it paints without waiting for any JavaScript. Once the browser is idle, HeroEnhancer loads the
@@ -29,7 +56,8 @@ interface HeroSliderProps {
  * then a look-alike of the controls holds their place, so nothing moves when they arrive.
  *
  * All slide texts share one grid cell, so the block is as tall as the tallest one; inactive slides are
- * hidden, aria-hidden and inert.
+ * hidden, aria-hidden and inert. The photo box has a fixed aspect ratio on phones and fills the section
+ * height on desktop, so nothing shifts while photos load.
  */
 export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps) {
   const count = slides.length;
@@ -42,144 +70,157 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
       id={HERO_ID}
       aria-roledescription="carousel"
       aria-label={labels.region}
-      className="group/hero relative isolate overflow-hidden bg-forest-950 text-sand-50"
+      className="group/hero relative isolate overflow-hidden bg-forest-900 text-sand-50"
     >
-      {/* First photo; the interactive part stacks the others above it and hides this one (data-off). */}
-      <div
-        aria-hidden
-        data-hero-first
-        className="absolute inset-0 -z-20 transition-opacity duration-1000 ease-out data-off:opacity-0"
-      >
-        {first.image ? (
-          <Image
-            src={first.image.src}
-            alt=""
-            fill
-            sizes="100vw"
-            quality={HERO_IMAGE_QUALITY}
-            preload
-            fetchPriority="high"
-            style={firstFraming?.style}
-            className={cn("object-cover", firstFraming?.kenBurns && "hero-kenburns")}
-          />
-        ) : null}
-      </div>
-      {count > 1 ? <HeroEnhancer slides={slides} labels={labels} /> : null}
       {/*
-        Legibility without darkening the whole photo (and without text shadows, which blur the letters):
-        one gradient behind the text only. From lg it runs from the text side (left, mirrored to the right
-        in Urdu), stays strong across the text column and clears completely, so the far side of the photo
-        keeps its full colour. On phones the text spans the width at the bottom, so it runs bottom to top
-        and leaves the top of the photo bright.
+        Photo side. Phones and tablets (up to 1279px): a box on top, 16:10 then 2:1, wide enough to show the
+        whole gate. Desktop: the end 64% of the section, full height, its start hidden under the green fade.
       */}
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 bg-linear-to-t from-forest-950/95 from-15% via-forest-950/75 via-55% to-forest-950/5 lg:bg-linear-to-r lg:from-forest-950/90 lg:from-5% lg:via-forest-950/65 lg:via-45% lg:to-transparent lg:to-78% lg:rtl:bg-linear-to-l"
-      />
-
-      {first.image?.credit ? (
-        <div
-          data-hero-first
-          className="absolute end-3 top-3 z-10 flex max-w-[min(32rem,calc(100%-1.5rem))] justify-end data-off:hidden sm:end-5 sm:top-4"
-        >
-          <ImageCredit credit={first.image.credit} className="max-w-full" />
+      <div className="relative isolate aspect-[16/10] w-full overflow-hidden sm:aspect-[2/1] xl:absolute xl:inset-y-0 xl:end-0 xl:aspect-auto xl:w-[64%]">
+        {/* First photo; the interactive part stacks the others above it and hides this one (data-off). */}
+        <div aria-hidden data-hero-first className="absolute inset-0 -z-20 transition-opacity duration-1000 ease-out data-off:opacity-0">
+          {first.image ? (
+            <Image
+              src={first.image.src}
+              alt=""
+              fill
+              sizes={HERO_IMAGE_SIZES}
+              quality={HERO_IMAGE_QUALITY}
+              preload
+              fetchPriority="high"
+              style={firstFraming?.style}
+              className={cn("object-cover", firstFraming?.kenBurns && "hero-kenburns")}
+            />
+          ) : null}
         </div>
-      ) : null}
-
-      <div className="mx-auto flex min-h-[30rem] w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] flex-col justify-end px-gutter pt-14 pb-36 sm:min-h-[38rem] sm:pt-20 sm:pb-40 lg:min-h-[44rem] lg:pb-48">
-        <h1 className="mb-5 inline-flex items-center gap-2.5 text-overline text-gold-200 uppercase">
-          <Rosette className="size-5 text-gold-300" />
-          {heading}
-        </h1>
+        {count > 1 ? <HeroEnhancer slides={slides} labels={labels} /> : null}
 
         {/*
-          The column is minmax(0, 1fr) so long Nastaliq lines wrap inside the container (an auto track
-          grows to the widest line's min-content and pushed RTL text past the screen edge). text-start
-          keeps it on the reading side: left in English, right in Urdu.
+          The photo melts into the green panel: from the text side on desktop (mirrored in Urdu), from the
+          bottom on phones. No overlay on the rest of the photo, so it keeps its full colour.
         */}
-        <div className="grid w-full max-w-3xl min-w-0 grid-cols-[minmax(0,1fr)] text-start">
-          {slides.map((slide, i) => {
-            const lang = slide.lang !== locale ? slide.lang : undefined;
-            return (
-              <div
-                key={slide.id}
-                id={`${HERO_ID}-slide-${i}`}
-                data-hero-slide={i}
-                data-current={i === 0 ? "" : undefined}
-                role="group"
-                aria-roledescription="slide"
-                aria-label={fillTemplate(labels.slide, { current: i + 1, total: count })}
-                aria-hidden={i === 0 ? undefined : true}
-                inert={i !== 0}
-                className={cn(
-                  "col-start-1 row-start-1 flex flex-col items-start gap-5 transition-[opacity,translate] duration-700 ease-out-expo",
-                  "pointer-events-none translate-y-3 opacity-0 motion-reduce:translate-y-0",
-                  "data-current:pointer-events-auto data-current:translate-y-0 data-current:opacity-100",
-                )}
-              >
-                <p lang={lang} className="text-display-xl text-balance text-white [&:lang(ur)]:text-display-lg">
-                  {slide.title}
-                </p>
-                {slide.subtitle ? (
-                  <p lang={lang} className="max-w-2xl text-body-lg text-pretty text-sand-50">
-                    {slide.subtitle}
-                  </p>
-                ) : null}
-                {slide.primary || slide.secondary ? (
-                  <div className="mt-2 flex flex-wrap items-center gap-3">
-                    {slide.primary ? (
-                      <SmartLink
-                        href={slide.primary.href}
-                        external={slide.primary.external}
-                        className={cn(buttonVariants({ variant: "accent", size: "lg" }), "shadow-lg")}
-                      >
-                        {slide.primary.label}
-                        <ArrowRight aria-hidden className="rtl:-scale-x-100" />
-                      </SmartLink>
-                    ) : null}
-                    {slide.secondary ? (
-                      <SmartLink
-                        href={slide.secondary.href}
-                        external={slide.secondary.external}
-                        className={cn(
-                          buttonVariants({ variant: "ghost", size: "lg" }),
-                          "text-white ring-1 ring-white/35 ring-inset hover:bg-white/10",
-                        )}
-                      >
-                        {slide.secondary.label}
-                      </SmartLink>
-                    ) : null}
-                  </div>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
+        <div aria-hidden className="absolute inset-y-0 start-0 -z-10 hidden w-[42%] bg-linear-to-r from-forest-900 from-10% via-forest-900/70 via-40% to-transparent xl:block rtl:bg-linear-to-l" />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-2/5 bg-linear-to-t from-forest-900 to-transparent xl:hidden" />
 
-        {count > 1 ? (
-          <div id={`${HERO_ID}-controls`} className="mt-8 flex items-center gap-4 sm:mt-10 [--ring:var(--color-gold-300)]">
-            {/* Look-alike of the controls (not interactive) until the real ones are portaled in here. */}
-            <div aria-hidden className="flex flex-1 items-center gap-4 group-data-enhanced/hero:hidden">
-              <div className="flex items-center gap-2">
-                {slides.map((slide, i) => (
-                  <span key={slide.id} className="flex h-11 items-center">
-                    <span className={cn("block h-1 rounded-full bg-white/30", i === 0 ? "w-16" : "w-6")} />
-                  </span>
-                ))}
-              </div>
-              <div className="ms-auto flex items-center gap-1.5">
-                {[Pause, ChevronLeft, ChevronRight].map((Icon, i) => (
-                  <span key={i} className={HERO_BUTTON_CLASS}>
-                    <Icon className={cn(i ? "size-5 rtl:-scale-x-100" : "size-4")} />
-                  </span>
-                ))}
-              </div>
-            </div>
+        {first.image?.credit ? (
+          <div data-hero-first className="absolute end-3 top-3 z-10 flex max-w-[min(32rem,calc(100%-1.5rem))] justify-end data-off:hidden sm:end-5 sm:top-4">
+            <ImageCredit credit={first.image.credit} className="max-w-full" />
           </div>
         ) : null}
       </div>
 
-      <MountainRidge className="absolute inset-x-0 bottom-0 h-20 text-canvas sm:h-28 lg:h-36" />
+      {/* Text panel: below the photo up to 1279px, then the reading side, about 42% of the width. */}
+      <div className="relative mx-auto w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] px-gutter pt-2 pb-20 sm:pb-24 xl:flex xl:min-h-[40rem] xl:items-center xl:pt-14 xl:pb-28">
+        <div className="flex w-full min-w-0 flex-col sm:max-w-2xl xl:w-[42%] xl:max-w-none">
+          <h1 className="mb-6 flex flex-col items-start gap-3 text-overline tracking-[0.3em] text-sand-100 uppercase">
+            <MountainMark />
+            {heading}
+          </h1>
+
+          {/*
+            The column is minmax(0, 1fr) so long Nastaliq lines wrap inside the panel (an auto track grows to
+            the widest line's min-content and pushed RTL text past the screen edge). text-start keeps it on
+            the reading side: left in English, right in Urdu.
+          */}
+          <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)] text-start">
+            {slides.map((slide, i) => {
+              const lang = slide.lang !== locale ? slide.lang : undefined;
+              // The serif display face is Latin only: Urdu headlines keep Nastaliq.
+              const serif = slide.lang === "en";
+              return (
+                <div
+                  key={slide.id}
+                  id={`${HERO_ID}-slide-${i}`}
+                  data-hero-slide={i}
+                  data-current={i === 0 ? "" : undefined}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={fillTemplate(labels.slide, { current: i + 1, total: count })}
+                  aria-hidden={i === 0 ? undefined : true}
+                  inert={i !== 0}
+                  className={cn(
+                    "col-start-1 row-start-1 flex flex-col items-start gap-6 transition-[opacity,translate] duration-700 ease-out-expo",
+                    "pointer-events-none translate-y-3 opacity-0 motion-reduce:translate-y-0",
+                    "data-current:pointer-events-auto data-current:translate-y-0 data-current:opacity-100",
+                  )}
+                >
+                  <p
+                    lang={lang}
+                    className={cn(
+                      "text-pretty text-sand-50",
+                      serif
+                        ? cn(heroSerif.className, "text-[clamp(2.125rem,1.3rem+2.4vw,3.6rem)] leading-[1.14] tracking-[-0.01em]")
+                        : "text-display-lg",
+                    )}
+                  >
+                    <SlideTitle slide={slide} />
+                  </p>
+                  {slide.subtitle ? (
+                    <p lang={lang} className="max-w-xl text-body-lg text-pretty text-sand-100">
+                      {slide.subtitle}
+                    </p>
+                  ) : null}
+                  {slide.primary || slide.secondary ? (
+                    <div className="mt-1 flex flex-wrap items-center gap-3">
+                      {slide.primary ? (
+                        <SmartLink
+                          href={slide.primary.href}
+                          external={slide.primary.external}
+                          externalIcon={false}
+                          className={cn(buttonVariants({ variant: "accent", size: "lg" }), "group/cta rounded-full px-6 shadow-lg shadow-black/25")}
+                        >
+                          <GraduationCap aria-hidden />
+                          {slide.primary.label}
+                          <ArrowRight
+                            aria-hidden
+                            className="transition-transform duration-150 group-hover/cta:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/cta:-translate-x-0.5"
+                          />
+                        </SmartLink>
+                      ) : null}
+                      {slide.secondary ? (
+                        <SmartLink
+                          href={slide.secondary.href}
+                          external={slide.secondary.external}
+                          className={cn(
+                            buttonVariants({ variant: "ghost", size: "lg" }),
+                            "rounded-full px-6 text-sand-50 ring-1 ring-sand-100/70 ring-inset hover:bg-white/10 hover:text-white",
+                          )}
+                        >
+                          {slide.secondary.label}
+                        </SmartLink>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+
+          {count > 1 ? (
+            <div id={`${HERO_ID}-controls`} className="mt-7 flex items-center gap-4 [--ring:var(--color-gold-300)]">
+              {/* Look-alike of the controls (not interactive) until the real ones are portaled in here. */}
+              <div aria-hidden className="flex items-center gap-4 group-data-enhanced/hero:hidden">
+                <div className="flex items-center gap-1">
+                  {slides.map((slide, i) => (
+                    <span key={slide.id} className="flex h-11 min-w-6 items-center justify-center">
+                      <span className={cn("block h-2.5 rounded-full", i === 0 ? "w-8 bg-gold-400" : "w-2.5 ring-[1.5px] ring-sand-100/70 ring-inset")} />
+                    </span>
+                  ))}
+                </div>
+                <div className="ms-2 flex items-center gap-1.5">
+                  {[Pause, ChevronLeft, ChevronRight].map((Icon, i) => (
+                    <span key={i} className={HERO_BUTTON_CLASS}>
+                      <Icon className={cn(i ? "size-5 rtl:-scale-x-100" : "size-4")} />
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      <WaveEdge className="absolute inset-x-0 -bottom-px z-10 h-12 text-canvas sm:h-16 xl:h-24" />
     </section>
   );
 }

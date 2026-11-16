@@ -96,3 +96,33 @@ export function OrnamentDivider({ className }: MotifProps) {
     </div>
   );
 }
+
+/** Line-art mountains (the Swat peaks), for the hero eyebrow. Cream outline with a gold inner ridge. */
+export function MountainMark({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 64 28" fill="none" strokeLinecap="round" strokeLinejoin="round" className={cn("h-7 w-16", className)}>
+      <path d="M2 26 18 8l7 8 9-13 12 15 5-5 11 13" stroke="currentColor" strokeWidth="1.6" className="text-sand-100" />
+      <path d="m21 21 6-6 4 4 5-7 6 8" stroke="currentColor" strokeWidth="1.4" className="text-gold-300" />
+    </svg>
+  );
+}
+
+/** Hand-drawn brush underline for highlighted headline words. Stretches to the width of its parent. */
+export function Swoosh({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 300 18" preserveAspectRatio="none" fill="none" className={cn("pointer-events-none block", className)}>
+      <path d="M4 13C58 6 128 3.5 190 4.5c40 .7 76 3 106 6.5" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" />
+      <path d="M46 15.5c50-5 118-7 176-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" opacity="0.6" />
+    </svg>
+  );
+}
+
+/** A soft double wave for the bottom edge of a section, filled with currentColor (the next surface). */
+export function WaveEdge({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 1440 120" preserveAspectRatio="none" className={cn("pointer-events-none block w-full", className)}>
+      <path fill="currentColor" fillOpacity="0.35" d="M0 70C220 30 420 28 640 58s430 52 800-6v68H0Z" />
+      <path fill="currentColor" d="M0 92c260-40 520-46 780-18s450 30 660-14v60H0Z" />
+    </svg>
+  );
+}

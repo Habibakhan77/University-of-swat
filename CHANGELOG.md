@@ -1091,3 +1091,20 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   to six small round avatars. Checked with and without photo and qualifications, at 1440 and 375px, light
   and dark, English and Urdu (names, emails and English degrees stay LTR): axe WCAG AA clean, no
   horizontal scroll, no console errors.
+- **Homepage hero redesign (split layout).** From 1280px a deep green text panel holds the text on the
+  reading side (left in English, right in Urdu) and the slide photo fills the other ~64%, melting into
+  the green with a soft horizontal gradient. Below 1280px the photo sits on top in a 16:10 / 2:1 box
+  (wide enough for the whole gate) and fades into the green panel. A line-art mountain mark sits above
+  the spaced-caps "UNIVERSITY OF SWAT" eyebrow (still the page h1); English headlines use Merriweather
+  bold italic (loaded only on the homepage, metric-matched fallback; Urdu keeps Nastaliq), cream with the
+  highlighted words in gold over a hand-drawn gold swoosh. Editors mark the gold words with `*asterisks*`
+  in the slide title (a final highlighted run gets its own line; asterisks never show). Gold "Explore
+  programs" button with a graduation cap, outlined cream "Our story", dots under the buttons (current =
+  gold pill) with the pause/previous/next buttons kept for WCAG 2.2.2, and a wave edge in the page colour.
+- **Slide 1 photo:** the team's main-gate illustration (`hero-gate-illustration.jpg`, 1600×817, WebP q85),
+  credited **"Illustration"** with no link and an alt text that says it is an illustration; focal point
+  `56% 42%` keeps the gate and its lettering in view. Applied to the live data with `npm run hero-photos`;
+  slide titles (with highlights) and the first button ("Explore programs" → /academics/programs) were
+  updated in the seed and the live data. Checked at 1920, 1440, 1280, 1024 and 375px, light and dark,
+  English and Urdu: axe WCAG AA clean, no horizontal scroll, no layout shift from the hero; Lighthouse
+  Accessibility 100 (desktop and mobile, EN and UR), desktop Performance 95.

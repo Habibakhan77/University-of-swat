@@ -7,7 +7,7 @@ import { useCallback, useEffect, useLayoutEffect, useState, useSyncExternalStore
 import { cn } from "@/lib/cn";
 import type { HeroSlide } from "@/lib/strapi/home";
 import { ImageCredit } from "@/components/ui/image-credit";
-import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, HERO_IMAGE_QUALITY, heroFraming, type HeroLabels } from "./hero-shared";
+import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, HERO_IMAGE_QUALITY, HERO_IMAGE_SIZES, heroFraming, type HeroLabels } from "./hero-shared";
 
 const INTERVAL = 7000;
 
@@ -19,7 +19,7 @@ function SlideImage({ image, focalPoint, zoom }: { image: NonNullable<HeroSlide[
       src={image.src}
       alt=""
       fill
-      sizes="100vw"
+      sizes={HERO_IMAGE_SIZES}
       quality={HERO_IMAGE_QUALITY}
       loading="lazy"
       style={style}
@@ -120,7 +120,8 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
 
   const controls = (
     <>
-      <div className="flex items-center gap-2">
+      {/* Dots: the current slide is a gold pill, the others outlined circles (44px tall hit areas). */}
+      <div className="flex items-center gap-1">
         {slides.map((slide, i) => (
           <button
             key={slide.id}
@@ -129,28 +130,18 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
             aria-label={fillTemplate(labels.goTo, { number: i + 1 })}
             aria-controls={`${HERO_ID}-slide-${i}`}
             aria-current={i === index ? "true" : undefined}
-            className="group/dot flex h-11 items-center"
+            className="group/dot flex h-11 min-w-6 items-center justify-center rounded-full"
           >
             <span
               className={cn(
-                "relative block h-1 overflow-hidden rounded-full bg-white/30 transition-[width] duration-500 ease-out-expo group-hover/dot:bg-white/50",
-                i === index ? "w-16" : "w-6",
+                "block h-2.5 rounded-full transition-[width,background-color,box-shadow] duration-300 ease-out-expo",
+                i === index ? "w-8 bg-gold-400" : "w-2.5 ring-[1.5px] ring-sand-100/70 ring-inset group-hover/dot:bg-sand-100/40",
               )}
-            >
-              {i === index ? (
-                <span
-                  key={`${index}-${running}`}
-                  className={cn(
-                    "absolute inset-0 origin-left bg-gold-300 rtl:origin-right",
-                    running && "animate-[hero-progress_7s_linear_forwards]",
-                  )}
-                />
-              ) : null}
-            </span>
+            />
           </button>
         ))}
       </div>
-      <div className="ms-auto flex items-center gap-1.5">
+      <div className="ms-2 flex items-center gap-1.5">
         <HeroButton onClick={() => setUserPaused((p) => !p)} label={playing ? labels.pause : labels.play}>
           {playing ? <Pause aria-hidden className="size-4" /> : <Play aria-hidden className="size-4" />}
         </HeroButton>

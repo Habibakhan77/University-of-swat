@@ -26,7 +26,7 @@ import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE
  * the part of the photo that must stay in view when the hero crops it to a wide or tall frame.
  */
 export const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], { photo: PhotoKey; focalPoint: string }> = {
-  campus: { photo: 'mainGate', focalPoint: '50% 72%' }, // the whole arch and its "UNIVERSITY OF SWAT" lettering
+  campus: { photo: 'mainGateIllustration', focalPoint: '56% 42%' }, // the whole gate and its "UNIVERSITY OF SWAT" lettering
   admissions: { photo: 'campusMountains', focalPoint: '55% 60%' }, // the academic block and the snowy peak
   research: { photo: 'mainCampus', focalPoint: '50% 50%' }, // academic blocks, lawns and misty hills
 };
