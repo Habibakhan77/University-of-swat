@@ -122,6 +122,8 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
             homeLabel={homeLabel}
             className="me-auto xl:me-0 min-[90rem]:shrink-0"
           />
+          {/* Thin gold rule between the identity block and the menu (desktop only). */}
+          <span aria-hidden className="hidden h-9 w-px shrink-0 bg-accent/70 xl:-mx-2 xl:block 2xl:mx-0" />
 
           <div className="hidden h-full flex-1 justify-center xl:flex">
             <DesktopNav
@@ -154,12 +156,14 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                   buttonVariants({ variant: "accent", size: "md" }),
                   // Visible at every width, compact on phones: the admissions path is never hidden in a menu.
                   "group/button h-9 gap-1.5 px-3 max-sm:rounded-md sm:h-11 sm:gap-2 sm:px-5",
+                  // A soft shadow that deepens as the button lifts a pixel on hover (no lift with reduced motion).
+                  "shadow-[0_2px_8px_-2px_rgb(120_80_0/0.35)] duration-150 hover:-translate-y-px hover:shadow-[0_6px_16px_-4px_rgb(120_80_0/0.45)] motion-reduce:hover:translate-y-0",
                 )}
               >
                 {t("apply")}
                 <ArrowRight
                   aria-hidden
-                  className="transition-transform duration-300 group-hover/button:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/button:-translate-x-0.5"
+                  className="transition-transform duration-150 ease-out group-hover/button:translate-x-1 rtl:-scale-x-100 rtl:group-hover/button:-translate-x-1"
                 />
               </SmartLink>
             ) : null}

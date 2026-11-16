@@ -43,7 +43,7 @@ const pathOf = (href: string) => href.split(/[?#]/)[0] || "/";
  * Which top-level item the current page belongs to: only the item whose own URL contains the path
  * (/academics is active on /academics/physical-sciences/physics). A page that is merely linked from a
  * panel, such as /downloads under Academics or /tenders under News & Events, lives in its own section
- * and highlights nothing. Shown with the gold underline and aria-current.
+ * and highlights nothing. Shown as a filled soft-green pill and aria-current.
  */
 function activeGroupIndex(groups: NavGroup[], pathname: string): number {
   // "Home" (/) is active on the homepage only; it would otherwise prefix every path.
@@ -223,7 +223,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
       }}
       onFocus={arm}
     >
-      <ul className="flex h-full items-stretch gap-0.5">
+      <ul className="flex h-full items-stretch gap-0.5 2xl:gap-1">
         {groups.map((group, index) => {
           const isOpen = open === index;
           const isActive = active === index;
@@ -231,18 +231,20 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
           const feature = group.href
             ? features.find((f) => pathOf(f.groupHref) === pathOf(group.href ?? ""))
             : undefined;
-          // A gold underline grows on hover, on the open item and on the section the current page belongs
-          // to. Labels never wrap ("News & Events" stays on one line).
+          // A rounded pill: a soft green tint on hover and on the open item, a stronger tint with green
+          // text on the section the current page belongs to. The <li> keeps the full bar height, so the
+          // hover area for opening a panel is unchanged. Labels never wrap ("News & Events" stays on one line).
           const triggerClass = cn(
-            "relative inline-flex h-full items-center gap-1 px-2.5 text-body-sm font-semibold whitespace-nowrap text-fg-muted transition-colors duration-200 hover:text-fg 2xl:px-3",
-            "after:absolute after:inset-x-3 after:bottom-4 after:h-0.5 after:origin-center after:scale-x-0 after:rounded-full after:bg-accent after:transition-transform after:duration-300 after:ease-out-expo xl:after:bottom-5",
-            "hover:after:scale-x-100 focus-visible:outline-offset-[-6px]",
-            (isOpen || isActive) && "text-fg after:scale-x-100",
+            "inline-flex h-10 items-center gap-1 rounded-full px-2.5 text-body-sm font-semibold whitespace-nowrap text-fg-muted 2xl:px-3",
+            "transition-[background-color,color] duration-150 ease-out hover:bg-primary/8 hover:text-fg",
+            "focus-visible:outline-2 focus-visible:outline-offset-2",
+            isOpen && "bg-primary/8 text-fg",
+            isActive && "bg-primary/12 text-primary-text hover:bg-primary/12 hover:text-primary-text",
           );
 
           if (!hasPanel) {
             return (
-              <li key={group.label} className="flex">
+              <li key={group.label} className="flex items-center">
                 {group.href ? (
                   <Link
                     ref={(el: HTMLAnchorElement | null) => {
@@ -263,7 +265,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
           return (
             <li
               key={group.label}
-              className="flex"
+              className="flex items-center"
               onPointerEnter={(event) => {
                 if (event.pointerType !== "mouse") return;
                 clearHover();
@@ -285,7 +287,7 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
                 {group.label}
                 <ChevronDown
                   aria-hidden
-                  className={cn("size-3.5 shrink-0 opacity-60 transition-transform duration-300 ease-out-expo", isOpen && "rotate-180")}
+                  className={cn("size-3.5 shrink-0 opacity-60 transition-transform duration-200 ease-out", isOpen && "rotate-180")}
                 />
               </button>
 

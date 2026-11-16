@@ -1070,3 +1070,12 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   new tab (`rel="noopener noreferrer"`), show a ↗ icon (now always visible in the utility bar, not only on
   hover), and have a tooltip and accessible name such as "Opens the official University of Swat CMS
   portal" (Urdu too). The visible text stays first in the accessible name.
+- **Main navigation refresh (desktop).** Menu items are rounded pills: a soft green tint (8%) on hover
+  and on the open item with a 150 ms transition, and a filled soft-green pill (12%, green text) for the
+  section you're in instead of the gold underline; chevrons rotate when a panel opens. A thin gold rule
+  separates the identity block from the menu. Apply has a soft shadow, lifts a pixel on hover (not with
+  reduced motion) and its arrow nudges further; the search button has a soft border that turns green on
+  hover/focus. Every item has a 2px focus ring. Spacing is tighter at 1280–1535px so the full university
+  name still fits. Checked at 1440 and 1280px, light and dark, English and Urdu: no overflow, axe WCAG AA
+  clean, Lighthouse Accessibility 100. The scroll state (80 → 68px, blur, soft shadow) and the mobile
+  menu are unchanged.
