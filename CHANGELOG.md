@@ -1119,3 +1119,13 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
 - **Main nav: solid green pills.** The current section is a solid brand-green pill (`forest-600`) with
   white text; hover, keyboard focus and the open menu use the same green at 85% with white text (150ms
   transition), focus adds the ring. Same green in dark mode. axe clean, Lighthouse Accessibility 100.
+- **Hero closer to the reference.** Slide 1 focal point `70% 60%` (seed + live data via `npm run
+  hero-photos`; the 1600px illustration never gets the Ken Burns zoom). Hero 656px tall at 1440×900.
+  Overlay much lighter: a 0.45 → 0 wash over the first 45% from the reading side, plus a soft blurred
+  shade (0.6, `.hero-text-shade`) that hugs only the text block, the measured minimum for WCAG AA over
+  the brightest parts of all 3 photos; the rest of the photo is untouched. Headline 64px (2 lines),
+  body 18px, text block max 560px, mountain mark centred over the eyebrow. New `gold-bright` token
+  (#F5C518) for the highlight, swoosh, "Explore programs" button (dark text) and active dot.
+- **Hero controls: dots only.** Pause/play, previous and next are visually hidden and appear when they
+  get keyboard focus (always available to screen readers). Arrow keys (mirrored in Urdu), Home and End
+  move between slides from the dots; choosing a slide stops auto-play, and hover/focus still pauses it.

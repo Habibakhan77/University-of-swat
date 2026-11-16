@@ -54,6 +54,9 @@
   --color-gold-800: #5e4512;
   --color-gold-900: #4d3913;
   --color-gold-950: #2c1f08;
+  /* Bright sun gold, only on photos (hero highlight, swoosh, primary button, active dot). */
+  --color-gold-bright: #f5c518;
+  --color-gold-bright-hover: #f8d240;
 
   /* Sand — warm neutral (off-white paper to deep ink). */
   --color-sand-0: #ffffff;
@@ -601,23 +604,31 @@
   @media (width >= 64rem) {
     .hero-scrim {
       --hero-scrim-dir: to right;
-      background: linear-gradient(
-        var(--hero-scrim-dir),
-        rgb(0 30 15 / 0.78) 0%,
-        rgb(0 30 15 / 0.72) 30%,
-        rgb(0 30 15 / 0.58) 44%,
-        rgb(0 30 15 / 0.25) 54%,
-        rgb(0 30 15 / 0) 64%
-      );
+      /* A light wash on the far reading edge only: 0.45, gone by 45%. */
+      background: linear-gradient(var(--hero-scrim-dir), rgb(0 30 15 / 0.45) 0%, rgb(0 30 15 / 0.22) 25%, rgb(0 30 15 / 0) 45%);
     }
     [dir="rtl"] .hero-scrim {
       --hero-scrim-dir: to left;
     }
+    /*
+     * A soft, borderless shade that hugs the text block (it moves with it at every width) so white and
+     * gold text keep WCAG AA over the brightest parts of the photos while the rest of the photo stays
+     * untouched. Its strength is the measured minimum.
+     */
+    .hero-text-shade {
+      position: absolute;
+      inset: -2.5rem -3.5rem;
+      z-index: -1;
+      border-radius: 4rem;
+      background: rgb(0 30 15 / var(--hero-shade, 0.6));
+      filter: blur(40px);
+      pointer-events: none;
+    }
   }
   .hero-text-shadow {
     text-shadow:
-      0 1px 2px rgb(0 0 0 / 0.35),
-      0 2px 14px rgb(0 20 10 / 0.35);
+      0 1px 3px rgb(0 0 0 / 0.45),
+      0 2px 18px rgb(0 20 10 / 0.45);
   }
 
   /*

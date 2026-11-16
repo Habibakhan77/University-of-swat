@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowRight, ChevronLeft, ChevronRight, GraduationCap, Pause } from "lucide-react";
+import { ArrowRight, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { heroSerif } from "@/lib/hero-font";
 import type { Locale } from "@/i18n/routing";
@@ -8,7 +8,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { MountainMark, Swoosh, WaveEdge } from "@/components/brand/motifs";
 import { SmartLink } from "@/components/layout/smart-link";
 import { ImageCredit } from "@/components/ui/image-credit";
-import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, HERO_IMAGE_QUALITY, HERO_IMAGE_SIZES, heroFraming, type HeroLabels } from "./hero-shared";
+import { fillTemplate, HERO_ID, HERO_IMAGE_QUALITY, HERO_IMAGE_SIZES, heroFraming, type HeroLabels } from "./hero-shared";
 import { HeroEnhancer } from "./hero-enhancer";
 
 export type { HeroLabels } from "./hero-shared";
@@ -26,11 +26,11 @@ function SlideTitle({ slide }: { slide: HeroSlide }) {
   const parts = slide.titleParts;
   return parts.map((part, i) => {
     if (!part.highlight) return <span key={i}>{part.text}</span>;
-    // A brighter gold than gold-300, so the highlight keeps 3:1 over light parts of every photo.
+    // The bright sun gold (gold-bright) for the highlight and its swoosh.
     const word = (
-      <span className="relative inline-block max-w-full text-[#f5cd4b]">
+      <span className="relative inline-block max-w-full text-gold-bright">
         {part.text}
-        <Swoosh className="absolute inset-x-[2%] -bottom-[0.32em] h-[0.3em] w-[96%] text-gold-400" />
+        <Swoosh className="absolute inset-x-[2%] -bottom-[0.32em] h-[0.3em] w-[96%] text-gold-bright" />
       </span>
     );
     return i === parts.length - 1 && i > 0 ? (
@@ -108,9 +108,11 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
       </div>
 
       {/* Text on the reading side; the subtle shadow only softens the edges, the gradient carries the contrast. */}
-      <div className="hero-text-shadow pointer-events-none relative mx-auto flex min-h-[34rem] w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] items-end px-gutter pt-28 pb-20 sm:min-h-[36rem] sm:pb-24 lg:min-h-[38rem] lg:items-center lg:pt-14 lg:pb-28 xl:min-h-[40rem]">
-        <div className="pointer-events-auto flex w-full min-w-0 flex-col sm:max-w-2xl lg:w-[46%] lg:max-w-none xl:w-[42%]">
-          <h1 className="mb-6 flex flex-col items-start gap-3 text-overline tracking-[0.3em] text-white uppercase">
+      <div className="hero-text-shadow pointer-events-none relative mx-auto flex min-h-[34rem] w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] items-end px-gutter pt-28 pb-20 sm:min-h-[36rem] sm:pb-24 lg:min-h-[39rem] lg:items-center lg:pt-12 lg:pb-24 xl:min-h-[41rem]">
+        <div className="pointer-events-auto relative isolate flex w-full min-w-0 max-w-[35rem] flex-col lg:w-[46%]">
+          <div aria-hidden className="hero-text-shade hidden lg:block" />
+          {/* The mountain mark is centred over the eyebrow; the pair sits on the reading side. */}
+          <h1 className="mb-5 flex w-fit flex-col items-center gap-2.5 text-overline tracking-[0.3em] text-white uppercase">
             <MountainMark />
             {heading}
           </h1>
@@ -147,14 +149,14 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                     className={cn(
                       "text-pretty text-white",
                       serif
-                        ? cn(heroSerif.className, "text-[clamp(2.125rem,1.3rem+2.4vw,3.6rem)] leading-[1.14] tracking-[-0.01em]")
+                        ? cn(heroSerif.className, "text-[clamp(2.125rem,1.2rem+3vw,4rem)] leading-[1.12] tracking-[-0.01em]")
                         : "text-display-lg",
                     )}
                   >
                     <SlideTitle slide={slide} />
                   </p>
                   {slide.subtitle ? (
-                    <p lang={lang} className="max-w-xl text-body-lg text-pretty text-white">
+                    <p lang={lang} className="text-[1.125rem] leading-relaxed text-pretty text-white">
                       {slide.subtitle}
                     </p>
                   ) : null}
@@ -165,7 +167,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                           href={slide.primary.href}
                           external={slide.primary.external}
                           externalIcon={false}
-                          className={cn(buttonVariants({ variant: "accent", size: "lg" }), "group/cta rounded-full bg-[#f5cd4b] px-6 text-forest-950 shadow-lg shadow-black/25 hover:bg-[#f8da70]")}
+                          className={cn(buttonVariants({ variant: "accent", size: "lg" }), "group/cta rounded-full bg-gold-bright px-6 text-forest-950 shadow-lg shadow-black/25 hover:bg-gold-bright-hover")}
                         >
                           <GraduationCap aria-hidden />
                           {slide.primary.label}
@@ -195,23 +197,14 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
           </div>
 
           {count > 1 ? (
-            <div id={`${HERO_ID}-controls`} className="mt-7 flex items-center gap-4 [--ring:var(--color-gold-300)]">
-              {/* Look-alike of the controls (not interactive) until the real ones are portaled in here. */}
-              <div aria-hidden className="flex items-center gap-4 group-data-enhanced/hero:hidden">
-                <div className="flex items-center gap-1">
-                  {slides.map((slide, i) => (
-                    <span key={slide.id} className="flex h-11 min-w-6 items-center justify-center">
-                      <span className={cn("block h-2.5 rounded-full", i === 0 ? "w-8 bg-[#f5cd4b]" : "w-2.5 ring-[1.5px] ring-white/85 ring-inset")} />
-                    </span>
-                  ))}
-                </div>
-                <div className="ms-2 flex items-center gap-1.5">
-                  {[Pause, ChevronLeft, ChevronRight].map((Icon, i) => (
-                    <span key={i} className={HERO_BUTTON_CLASS}>
-                      <Icon className={cn(i ? "size-5 rtl:-scale-x-100" : "size-4")} />
-                    </span>
-                  ))}
-                </div>
+            <div id={`${HERO_ID}-controls`} className="mt-6 flex items-center gap-4 [--ring:var(--color-gold-300)]">
+              {/* Look-alike of the dots (not interactive) until the real controls are portaled in here. */}
+              <div aria-hidden className="flex items-center gap-1 group-data-enhanced/hero:hidden">
+                {slides.map((slide, i) => (
+                  <span key={slide.id} className="flex h-11 min-w-6 items-center justify-center">
+                    <span className={cn("block h-2.5 rounded-full", i === 0 ? "w-8 bg-gold-bright" : "w-2.5 ring-[1.5px] ring-white/85 ring-inset")} />
+                  </span>
+                ))}
               </div>
             </div>
           ) : null}
