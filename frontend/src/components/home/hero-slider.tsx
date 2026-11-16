@@ -26,8 +26,9 @@ function SlideTitle({ slide }: { slide: HeroSlide }) {
   const parts = slide.titleParts;
   return parts.map((part, i) => {
     if (!part.highlight) return <span key={i}>{part.text}</span>;
+    // A brighter gold than gold-300, so the highlight keeps 3:1 over light parts of every photo.
     const word = (
-      <span className="relative inline-block max-w-full text-gold-300">
+      <span className="relative inline-block max-w-full text-[#f5cd4b]">
         {part.text}
         <Swoosh className="absolute inset-x-[2%] -bottom-[0.32em] h-[0.3em] w-[96%] text-gold-400" />
       </span>
@@ -45,10 +46,9 @@ function SlideTitle({ slide }: { slide: HeroSlide }) {
 /**
  * Homepage hero, following the WAI-ARIA carousel pattern.
  *
- * Layout: from 1280px a deep green text panel (the reading side: left in English, right in Urdu) with the
- * slide photo filling the other side and fading into the green, no hard edge. Below 1280px the photo sits
- * on top, wide enough for the whole gate, and fades into the green panel below it. A soft wave in the
- * page colour closes the section.
+ * Layout: the slide photo fills the whole hero; the text sits on it on the reading side (left in English,
+ * right in Urdu) over a soft dark gradient that keeps the photo bright. A soft wave in the page colour
+ * closes the section.
  *
  * A Server Component: the first slide (photo priority-loaded, text and buttons) is plain HTML and CSS,
  * so it paints without waiting for any JavaScript. Once the browser is idle, HeroEnhancer loads the
@@ -70,13 +70,10 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
       id={HERO_ID}
       aria-roledescription="carousel"
       aria-label={labels.region}
-      className="group/hero relative isolate overflow-hidden bg-forest-900 text-sand-50"
+      className="group/hero relative isolate overflow-hidden bg-forest-950 text-white"
     >
-      {/*
-        Photo side. Phones and tablets (up to 1279px): a box on top, 16:10 then 2:1, wide enough to show the
-        whole gate. Desktop: the end 64% of the section, full height, its start hidden under the green fade.
-      */}
-      <div className="relative isolate aspect-[16/10] w-full overflow-hidden sm:aspect-[2/1] xl:absolute xl:inset-y-0 xl:end-0 xl:aspect-auto xl:w-[64%]">
+      {/* The slide photo fills the whole hero (full-bleed); the text sits directly on it. */}
+      <div className="absolute inset-0 -z-10 isolate overflow-hidden">
         {/* First photo; the interactive part stacks the others above it and hides this one (data-off). */}
         <div aria-hidden data-hero-first className="absolute inset-0 -z-20 transition-opacity duration-1000 ease-out data-off:opacity-0">
           {first.image ? (
@@ -96,11 +93,12 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
         {count > 1 ? <HeroEnhancer slides={slides} labels={labels} /> : null}
 
         {/*
-          The photo melts into the green panel: from the text side on desktop (mirrored in Urdu), from the
-          bottom on phones. No overlay on the rest of the photo, so it keeps its full colour.
+          Legibility with the photo still bright: one soft dark-green gradient behind the text only (.hero-scrim
+          in globals.css). From 1024px it runs from the reading side (left, mirrored to the right in Urdu) and
+          clears by about 60% of the width; on narrower screens the text spans the width, so it runs from the
+          bottom up and leaves the top of the photo clear. Checked for WCAG AA contrast over every slide photo.
         */}
-        <div aria-hidden className="absolute inset-y-0 start-0 -z-10 hidden w-[42%] bg-linear-to-r from-forest-900 from-10% via-forest-900/70 via-40% to-transparent xl:block rtl:bg-linear-to-l" />
-        <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-2/5 bg-linear-to-t from-forest-900 to-transparent xl:hidden" />
+        <div aria-hidden className="hero-scrim absolute inset-0 -z-10" />
 
         {first.image?.credit ? (
           <div data-hero-first className="absolute end-3 top-3 z-10 flex max-w-[min(32rem,calc(100%-1.5rem))] justify-end data-off:hidden sm:end-5 sm:top-4">
@@ -109,10 +107,10 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
         ) : null}
       </div>
 
-      {/* Text panel: below the photo up to 1279px, then the reading side, about 42% of the width. */}
-      <div className="relative mx-auto w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] px-gutter pt-2 pb-20 sm:pb-24 xl:flex xl:min-h-[40rem] xl:items-center xl:pt-14 xl:pb-28">
-        <div className="flex w-full min-w-0 flex-col sm:max-w-2xl xl:w-[42%] xl:max-w-none">
-          <h1 className="mb-6 flex flex-col items-start gap-3 text-overline tracking-[0.3em] text-sand-100 uppercase">
+      {/* Text on the reading side; the subtle shadow only softens the edges, the gradient carries the contrast. */}
+      <div className="hero-text-shadow pointer-events-none relative mx-auto flex min-h-[34rem] w-full max-w-[calc(var(--container-wide)+2*var(--spacing-gutter))] items-end px-gutter pt-28 pb-20 sm:min-h-[36rem] sm:pb-24 lg:min-h-[38rem] lg:items-center lg:pt-14 lg:pb-28 xl:min-h-[40rem]">
+        <div className="pointer-events-auto flex w-full min-w-0 flex-col sm:max-w-2xl lg:w-[46%] lg:max-w-none xl:w-[42%]">
+          <h1 className="mb-6 flex flex-col items-start gap-3 text-overline tracking-[0.3em] text-white uppercase">
             <MountainMark />
             {heading}
           </h1>
@@ -147,7 +145,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                   <p
                     lang={lang}
                     className={cn(
-                      "text-pretty text-sand-50",
+                      "text-pretty text-white",
                       serif
                         ? cn(heroSerif.className, "text-[clamp(2.125rem,1.3rem+2.4vw,3.6rem)] leading-[1.14] tracking-[-0.01em]")
                         : "text-display-lg",
@@ -156,7 +154,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                     <SlideTitle slide={slide} />
                   </p>
                   {slide.subtitle ? (
-                    <p lang={lang} className="max-w-xl text-body-lg text-pretty text-sand-100">
+                    <p lang={lang} className="max-w-xl text-body-lg text-pretty text-white">
                       {slide.subtitle}
                     </p>
                   ) : null}
@@ -167,7 +165,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                           href={slide.primary.href}
                           external={slide.primary.external}
                           externalIcon={false}
-                          className={cn(buttonVariants({ variant: "accent", size: "lg" }), "group/cta rounded-full px-6 shadow-lg shadow-black/25")}
+                          className={cn(buttonVariants({ variant: "accent", size: "lg" }), "group/cta rounded-full bg-[#f5cd4b] px-6 text-forest-950 shadow-lg shadow-black/25 hover:bg-[#f8da70]")}
                         >
                           <GraduationCap aria-hidden />
                           {slide.primary.label}
@@ -183,7 +181,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                           external={slide.secondary.external}
                           className={cn(
                             buttonVariants({ variant: "ghost", size: "lg" }),
-                            "rounded-full px-6 text-sand-50 ring-1 ring-sand-100/70 ring-inset hover:bg-white/10 hover:text-white",
+                            "rounded-full bg-white/10 px-6 text-white ring-[1.5px] ring-white/85 ring-inset backdrop-blur-sm hover:bg-white/22 hover:text-white",
                           )}
                         >
                           {slide.secondary.label}
@@ -203,7 +201,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                 <div className="flex items-center gap-1">
                   {slides.map((slide, i) => (
                     <span key={slide.id} className="flex h-11 min-w-6 items-center justify-center">
-                      <span className={cn("block h-2.5 rounded-full", i === 0 ? "w-8 bg-gold-400" : "w-2.5 ring-[1.5px] ring-sand-100/70 ring-inset")} />
+                      <span className={cn("block h-2.5 rounded-full", i === 0 ? "w-8 bg-[#f5cd4b]" : "w-2.5 ring-[1.5px] ring-white/85 ring-inset")} />
                     </span>
                   ))}
                 </div>

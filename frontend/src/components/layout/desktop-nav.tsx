@@ -43,7 +43,7 @@ const pathOf = (href: string) => href.split(/[?#]/)[0] || "/";
  * Which top-level item the current page belongs to: only the item whose own URL contains the path
  * (/academics is active on /academics/physical-sciences/physics). A page that is merely linked from a
  * panel, such as /downloads under Academics or /tenders under News & Events, lives in its own section
- * and highlights nothing. Shown as a filled soft-green pill and aria-current.
+ * and highlights nothing. Shown as a solid brand-green pill and aria-current.
  */
 function activeGroupIndex(groups: NavGroup[], pathname: string): number {
   // "Home" (/) is active on the homepage only; it would otherwise prefix every path.
@@ -231,15 +231,16 @@ export function DesktopNav({ groups, label, overviewLabel, features, promo }: De
           const feature = group.href
             ? features.find((f) => pathOf(f.groupHref) === pathOf(group.href ?? ""))
             : undefined;
-          // A rounded pill: a soft green tint on hover and on the open item, a stronger tint with green
-          // text on the section the current page belongs to. The <li> keeps the full bar height, so the
-          // hover area for opening a panel is unchanged. Labels never wrap ("News & Events" stays on one line).
+          // A rounded pill in the brand green with white text: solid on the section the current page
+          // belongs to, 85% on hover, keyboard focus and the open item (focus also gets the ring). The same
+          // green in dark mode. The <li> keeps the full bar height, so the hover area for opening a panel
+          // is unchanged. Labels never wrap ("News & Events" stays on one line).
           const triggerClass = cn(
             "inline-flex h-10 items-center gap-1 rounded-full px-2.5 text-body-sm font-semibold whitespace-nowrap text-fg-muted 2xl:px-3",
-            "transition-[background-color,color] duration-150 ease-out hover:bg-primary/8 hover:text-fg",
-            "focus-visible:outline-2 focus-visible:outline-offset-2",
-            isOpen && "bg-primary/8 text-fg",
-            isActive && "bg-primary/12 text-primary-text hover:bg-primary/12 hover:text-primary-text",
+            "transition-[background-color,color] duration-150 ease-out hover:bg-forest-600/85 hover:text-white",
+            "focus-visible:bg-forest-600/85 focus-visible:text-white focus-visible:outline-2 focus-visible:outline-offset-2",
+            isOpen && "bg-forest-600/85 text-white",
+            isActive && "bg-forest-600 text-white hover:bg-forest-600 focus-visible:bg-forest-600",
           );
 
           if (!hasPanel) {

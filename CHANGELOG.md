@@ -1108,3 +1108,14 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   updated in the seed and the live data. Checked at 1920, 1440, 1280, 1024 and 375px, light and dark,
   English and Urdu: axe WCAG AA clean, no horizontal scroll, no layout shift from the hero; Lighthouse
   Accessibility 100 (desktop and mobile, EN and UR), desktop Performance 95.
+- **Hero: full-bleed photo.** The solid green panel is gone; the slide photo fills the whole hero and the
+  text sits on it over a soft dark-green gradient (`.hero-scrim`: from the reading side from 1024px, left
+  in English and right in Urdu, clear by ~64% of the width; from the bottom on phones, where the text
+  spans the width) plus a subtle text shadow. Highlighted words, the primary button and the active dot
+  use a brighter gold (`#f5cd4b`, dark green text on the button); "Our story" is outlined white with a
+  light translucent fill. A scripted check measured each text line against the brightest 5% of photo
+  pixels behind it on all 3 slides (1440/1024/375px, EN/UR): every line passes WCAG AA (worst 4.47:1
+  where 3:1 is needed, 4.71:1 where 4.5:1 is needed).
+- **Main nav: solid green pills.** The current section is a solid brand-green pill (`forest-600`) with
+  white text; hover, keyboard focus and the open menu use the same green at 85% with white text (150ms
+  transition), focus adds the ring. Same green in dark mode. axe clean, Lighthouse Accessibility 100.

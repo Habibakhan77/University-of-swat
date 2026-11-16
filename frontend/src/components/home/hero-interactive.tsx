@@ -135,7 +135,7 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
             <span
               className={cn(
                 "block h-2.5 rounded-full transition-[width,background-color,box-shadow] duration-300 ease-out-expo",
-                i === index ? "w-8 bg-gold-400" : "w-2.5 ring-[1.5px] ring-sand-100/70 ring-inset group-hover/dot:bg-sand-100/40",
+                i === index ? "w-8 bg-[#f5cd4b]" : "w-2.5 ring-[1.5px] ring-white/85 ring-inset group-hover/dot:bg-white/40",
               )}
             />
           </button>
