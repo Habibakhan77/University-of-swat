@@ -772,6 +772,21 @@
     "orcidProfile": "ORCID profile",
     "colleagues": "Colleagues in this department",
     "allColleagues": "All faculty members of the department",
-    "placeholderNotice": "This is a sample profile, not a real person. The department is replacing it with its own staff."
+    "placeholderNotice": "This is a sample profile, not a real person. The department is replacing it with its own staff.",
+    "emailAction": "Email",
+    "copyEmail": "Copy email",
+    "emailCopied": "Email address copied",
+    "scholarAction": "Google Scholar",
+    "share": "Share",
+    "linkCopied": "Profile link copied",
+    "newTab": "opens in a new tab",
+    "atAGlance": "At a glance",
+    "faculty": "Faculty",
+    "campus": "Campus",
+    "email": "Email",
+    "phone": "Phone",
+    "orcid": "ORCID",
+    "noQualifications": "No qualifications are listed on this profile yet.",
+    "roles": "Roles"
   }
 }

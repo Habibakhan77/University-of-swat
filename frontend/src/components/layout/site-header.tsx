@@ -23,7 +23,7 @@ interface SiteHeaderProps {
 
 /**
  * Two rows:
- * 1. Utility bar (forest green, scrolls away): daily portals from Strapi + language + theme. Hidden on
+ * 1. Utility bar (deep forest green, ~40px, scrolls away): daily portals from Strapi + language + theme. Hidden on
  *    phones, where the same links live in the menu sheet.
  * 2. Main bar (off-white, sticky): brand, mega menu, search, Apply, menu button. Once it sticks it turns
  *    translucent with a subtle backdrop blur, a soft shadow and a thin gold line along the bottom.
@@ -58,11 +58,11 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
 
   return (
     <>
-      {/* A slim, light top line (desktop): daily portals from Strapi, language and theme. A thin green-gold
-          rule keeps the crest colours at the very top without a heavy dark bar. */}
-      <div className="relative z-50 hidden border-b border-line/70 bg-canvas text-fg-muted lg:block">
-        <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-forest-700 via-forest-600 to-gold-400 rtl:bg-linear-to-l" />
-        <Container size="wide" className="flex h-9 items-center justify-between gap-6">
+      {/* Utility bar (desktop): a deep forest band, a shade darker than the footer, with cream text, gold
+          hover/focus and a faint gold hairline at the bottom. Near-black green in dark mode. */}
+      <div className="relative z-50 hidden bg-[#06231a] text-forest-50 lg:block dark:bg-[#020d08]">
+        <span aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-gold-400/25" />
+        <Container size="wide" className="flex h-10 items-center justify-between gap-6">
           <nav aria-label={t("utilityNavigation")} className="min-w-0">
             <ul className="flex items-center gap-0.5">
               {(chrome?.utilityLinks ?? []).map((link) => {
@@ -73,9 +73,9 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                       href={link.href}
                       external={link.external}
                       title={link.description ?? undefined}
-                      className="group/u inline-flex min-h-7 items-center gap-1.5 rounded-full px-2.5 text-caption font-medium text-fg-muted transition-colors hover:bg-primary-soft hover:text-primary-soft-fg"
+                      className="group/u inline-flex min-h-7 items-center gap-1.5 rounded-full px-2.5 text-caption font-medium text-forest-50 transition-colors hover:bg-white/10 hover:text-gold-300 focus-visible:text-gold-300 focus-visible:outline-gold-300"
                     >
-                      <Icon aria-hidden className="size-3.5 text-primary-text" strokeWidth={1.75} />
+                      <Icon aria-hidden className="size-3.5 text-gold-300" strokeWidth={1.75} />
                       {link.label}
                       {link.external ? (
                         <ArrowUpRight
@@ -90,9 +90,9 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
             </ul>
           </nav>
           <div className="flex shrink-0 items-center gap-1.5">
-            <LanguageSwitcher labels={languageLabels} />
-            <span aria-hidden className="h-4 w-px bg-line-strong" />
-            <ThemeToggle size="sm" labels={themeLabels} />
+            <LanguageSwitcher tone="inverted" labels={languageLabels} />
+            <span aria-hidden className="h-4 w-px bg-white/15" />
+            <ThemeToggle size="sm" tone="inverted" labels={themeLabels} />
           </div>
         </Container>
       </div>

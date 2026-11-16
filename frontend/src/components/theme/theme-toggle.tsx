@@ -49,7 +49,8 @@ export function ThemeToggle({
         "group/theme inline-flex items-center justify-center gap-2.5 rounded-full font-medium transition-colors duration-200",
         size === "sm" ? "size-8" : "size-11",
         tone === "surface" && "text-fg-muted hover:bg-canvas-subtle hover:text-fg",
-        tone === "inverted" && "text-forest-50 hover:bg-white/10 hover:text-white",
+        tone === "inverted" &&
+          "text-forest-50 hover:bg-white/10 hover:text-gold-300 focus-visible:text-gold-300 focus-visible:outline-gold-300",
         showLabel &&
           "h-12 w-full justify-between rounded-xl border border-line bg-surface px-4 text-body-sm text-fg shadow-xs hover:bg-surface",
         className,

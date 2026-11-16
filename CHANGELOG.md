@@ -1017,3 +1017,22 @@ load, and nothing moves with reduced motion.
 Mobile "Performance" is held down by Lighthouse's simulated LCP (about 5.9 s both before and after),
 the localhost artefact noted in Phase 11: scripts arrive instantly, so the simulation charges all
 JavaScript to LCP. In the actual trace the hero photo paints with the first paint.
+
+### Demo fixes
+
+- **Utility bar is dark green again.** It had been switched to a light cream line in `016e291` and never
+  changed back. Now: deep forest (`#06231a`, a shade darker than the footer), near-black green in dark mode,
+  cream text, gold icons, gold on hover and focus (including the focus ring), a faint gold line at the
+  bottom, 40px tall. Cream on the bar is about 15:1 and gold about 10:1.
+- **Faculty profile redesign** (`/faculty/[slug]`): one header card with a band in the department's
+  accent colour, the photo overlapping it (the silhouette shows only when there is no photo), name,
+  designation, role badges (Head of department plus the roles the department lists) and a department chip.
+  Actions: Email, Copy email, Google Scholar (only when linked) and Share (the system share sheet, or copy
+  link where there isn't one). The main column shows Qualifications as a newest-first timeline, then
+  Publications (a one-line note when there are none), then colleague cards with photos. The side column
+  has "At a glance" (designation, department, faculty, campus, email, plus phone/ORCID when present).
+- `src/lib/qualifications.ts` parses the published text into degree / institution / country / year
+  and falls back to the original text when a line doesn't fit (or when the text isn't English). Urdu pages
+  keep names, emails and English degrees left-to-right.
+- Checked Dr. Sana Ullah, a profile without a photo and one without qualifications at 1440 and 375px,
+  light and dark, English and Urdu: no horizontal overflow, and axe (WCAG 2 AA) found no violations.
