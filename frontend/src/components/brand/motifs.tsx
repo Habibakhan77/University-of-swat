@@ -126,3 +126,60 @@ export function WaveEdge({ className }: MotifProps) {
     </svg>
   );
 }
+
+/** One pine: three stacked tiers and a short trunk, standing on baseY. */
+function pinePath(x: number, baseY: number, h: number) {
+  const w = h * 0.42;
+  const tier = (top: number, bottom: number, half: number) => `M${x} ${top}L${x + half} ${bottom}H${x - half}Z`;
+  return [
+    tier(baseY - h, baseY - h * 0.5, w * 0.55),
+    tier(baseY - h * 0.72, baseY - h * 0.22, w * 0.78),
+    tier(baseY - h * 0.45, baseY - h * 0.06, w),
+    `M${x - w * 0.08} ${baseY - h * 0.07}h${w * 0.16}V${baseY}h${-w * 0.16}Z`,
+  ].join("");
+}
+
+// Fixed positions (x, height) so the silhouette is identical on the server and in every build.
+const PINES_END: [number, number][] = [
+  [1180, 70], [1205, 96], [1232, 78], [1258, 120], [1284, 92], [1306, 136], [1330, 104], [1352, 150], [1376, 118], [1398, 160], [1422, 128],
+];
+const PINES_START: [number, number][] = [[18, 84], [44, 112], [70, 76], [96, 98], [122, 64]];
+
+/**
+ * Layered Swat ridges with a snow-capped peak and pine trees, for the bottom of the footer. Drawn in
+ * currentColor at low opacity (decorative, aria-hidden); the pines stand at the end edge and mirror in RTL
+ * with the rest of the layout.
+ */
+export function ValleySilhouette({ className }: MotifProps) {
+  return (
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 1440 300"
+      preserveAspectRatio="xMidYMax slice"
+      className={cn("pointer-events-none block w-full rtl:-scale-x-100", className)}
+    >
+      {/* Far range with the snow peak. */}
+      <path fill="currentColor" fillOpacity="0.07" d="M0 210 140 150l90 30 120-70 90 40 130-110 70 60 60-30 110 80 90-40 140 70 120-50 110 40 70-20 100 40v140H0Z" />
+      <path fill="#fff" fillOpacity="0.05" d="m570 100 70 60-22-6-18 18-22-22-24 14-28 6 44-70Z" />
+      {/* Middle ridge. */}
+      <path fill="currentColor" fillOpacity="0.09" d="M0 240 120 205l110 25 140-55 120 45 150-60 130 50 120-30 150 45 140-40 160 35 100-20v200H0Z" />
+      {/* Near hills with the pines. */}
+      <path fill="currentColor" fillOpacity="0.11" d="M0 270c180-35 360-30 540-12s380 10 560-14 260-6 340 4v52H0Z" />
+      <path fill="currentColor" fillOpacity="0.12" d={PINES_END.map(([x, h]) => pinePath(x, 282, h)).join("")} />
+      <path fill="currentColor" fillOpacity="0.1" d={PINES_START.map(([x, h]) => pinePath(x, 286, h)).join("")} />
+    </svg>
+  );
+}
+
+/** Faint line-art peaks (a central snow peak and its neighbours), for the middle of the footer CTA card. */
+export function PeakLineArt({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 320 90" fill="none" strokeLinecap="round" strokeLinejoin="round" className={cn("pointer-events-none block", className)}>
+      <path d="M4 86 64 52l26 14 44-36 30 22 34-42 38 46 22-14 58 44" stroke="currentColor" strokeWidth="1.4" />
+      <path d="m176 10-14 22 10-4 6 8 8-12 10 6" stroke="currentColor" strokeWidth="1.2" />
+      <path d="M40 86c40-14 90-20 140-16s90 10 136 16" stroke="currentColor" strokeWidth="1" opacity="0.6" />
+      <path d="m96 66 18-14 14 10M220 62l16-10 18 14" stroke="currentColor" strokeWidth="1" opacity="0.7" />
+    </svg>
+  );
+}

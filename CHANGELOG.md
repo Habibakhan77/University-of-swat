@@ -1129,3 +1129,16 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
 - **Hero controls: dots only.** Pause/play, previous and next are visually hidden and appear when they
   get keyboard focus (always available to screen readers). Arrow keys (mirrored in Urdu), Home and End
   move between slides from the dots; choosing a slide stops auto-play, and hover/focus still pauses it.
+- **Footer redesign (reference image).** The "Ready to apply?" card (Site Settings → applyCta, English
+  and Urdu) now sits half on the page and half on the footer: cream card, gold-tint graduation-cap tile,
+  gold divider, Merriweather heading (English; Urdu keeps Nastaliq, font not preloaded), faint line-art
+  peaks, bright gold pill button to /admissions. Deep green footer with a low-opacity valley silhouette
+  (layered ridges, snow peak, pines; new `ValleySilhouette` and `PeakLineArt` motifs). Left: large
+  crest, gold divider, serif name and tagline, address (pin), webmaster email (mail), gold "Get
+  directions" (Google Maps, main campus), "Follow the University" with round brand-coloured Facebook,
+  LinkedIn, YouTube (Campus TV) and TikTok buttons. Then a divider and the Strapi columns Study,
+  University, Resources plus Online services (↗, new tab), with gold uppercase headings and icons.
+  Bottom bar: gold line, copyright, "Back to top" (smooth scroll unless reduced motion). 2-column link
+  grid on phones, 4 columns from 640px, side by side from 1280px; mirrored in Urdu; same design in dark
+  mode. All 30 footer links checked (internal ones return 200); axe clean at 1440/1024/375, EN/UR,
+  light/dark; Lighthouse Accessibility 100.

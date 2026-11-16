@@ -12,3 +12,16 @@ export const heroSerif = Merriweather({
   style: "italic",
   display: "swap",
 });
+
+/**
+ * Merriweather bold (upright): the footer's two display lines ("Ready to apply?" and the university name),
+ * English only. Not preloaded: the footer is below the fold on every page, and the metric-matched
+ * fallback keeps the late swap from shifting anything.
+ */
+export const displaySerif = Merriweather({
+  subsets: ["latin"],
+  weight: "700",
+  style: "normal",
+  display: "swap",
+  preload: false,
+});
