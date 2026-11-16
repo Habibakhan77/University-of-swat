@@ -11,15 +11,16 @@ interface QuickActionsProps {
 }
 
 /**
- * The five things most visitors come for (Apply, Merit Lists, Exam Portal, CMS, Fee), raised over
- * the bottom of the hero so they are visible without scrolling on every screen size. The first
- * action (Apply in the seed) is the gold one.
+ * The five things most visitors come for (Apply, Merit Lists, Exam Portal, CMS, Fee), as a card row
+ * directly under the hero on the cream page background. It never overlaps the hero, so the photo
+ * stays fully visible. Phones get a 2-column grid (Apply spans both); the first action (Apply in the
+ * seed) is the gold one.
  */
 export function QuickActions({ actions, label }: QuickActionsProps) {
   if (!actions.length) return null;
 
   return (
-    <nav aria-label={label} className="relative z-20 -mt-24 sm:-mt-28 lg:-mt-32">
+    <nav aria-label={label} className="relative z-20 bg-canvas pt-4 sm:pt-6">
       <Container size="wide">
         <ul
           className={cn(
@@ -35,6 +36,7 @@ export function QuickActions({ actions, label }: QuickActionsProps) {
                 <SmartLink
                   href={action.href}
                   external={action.external}
+                  externalIcon={false}
                   className={cn(
                     "group/qa relative flex w-full gap-3 p-4 transition-colors duration-200 sm:p-5 md:flex-col md:items-start md:gap-4 lg:p-6",
                     // Phones: Apply is a wide row; the others are compact tiles (icon above the label).

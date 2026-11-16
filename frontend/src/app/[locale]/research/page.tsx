@@ -127,7 +127,6 @@ export default async function ResearchPage() {
                         {j.url ? (
                           <SmartLink href={j.url} external className="inline-flex items-center gap-1.5 text-gold-200 hover:underline">
                             {t("visitJournal")}
-                            <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
                           </SmartLink>
                         ) : null}
                         {j.sourceUrl ? (

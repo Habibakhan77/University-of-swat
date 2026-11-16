@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarClock } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarClock } from "lucide-react";
 import type { AdmissionsBanner } from "@/lib/strapi/home";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
@@ -71,6 +71,7 @@ export function AdmissionsBand({ banner, links, labels }: AdmissionsBandProps) {
                     <SmartLink
                       href={link.href}
                       external={link.external}
+                      externalIcon={false}
                       className={cn(
                         "group/al flex items-center gap-4 rounded-2xl p-4 ring-1 ring-inset transition-colors",
                         featured
@@ -92,13 +93,20 @@ export function AdmissionsBand({ banner, links, labels }: AdmissionsBandProps) {
                           <span className={cn("text-caption", featured ? "text-ink-800" : "text-maroon-100")}>{link.description}</span>
                         ) : null}
                       </span>
-                      <ArrowRight
-                        aria-hidden
-                        className={cn(
-                          "size-4 shrink-0 transition-transform duration-300 group-hover/al:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/al:-translate-x-0.5",
-                          featured ? "text-maroon-800" : "text-gold-300",
-                        )}
-                      />
+                      {link.external ? (
+                        <ArrowUpRight
+                          aria-hidden
+                          className={cn("size-4 shrink-0 rtl:-scale-x-100", featured ? "text-maroon-800" : "text-gold-300")}
+                        />
+                      ) : (
+                        <ArrowRight
+                          aria-hidden
+                          className={cn(
+                            "size-4 shrink-0 transition-transform duration-300 group-hover/al:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/al:-translate-x-0.5",
+                            featured ? "text-maroon-800" : "text-gold-300",
+                          )}
+                        />
+                      )}
                     </SmartLink>
                   </li>
                 );

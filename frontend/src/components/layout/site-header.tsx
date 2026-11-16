@@ -72,6 +72,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                     <SmartLink
                       href={link.href}
                       external={link.external}
+                      externalIcon={false}
                       title={link.description ?? undefined}
                       className="group/u inline-flex min-h-7 items-center gap-1.5 rounded-full px-2.5 text-caption font-medium text-forest-50 transition-colors hover:bg-white/10 hover:text-gold-300 focus-visible:text-gold-300 focus-visible:outline-gold-300"
                     >
@@ -80,7 +81,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                       {link.external ? (
                         <ArrowUpRight
                           aria-hidden
-                          className="size-3 opacity-0 transition-opacity group-hover/u:opacity-70 rtl:-scale-x-100"
+                          className="size-3 opacity-60 transition-opacity group-hover/u:opacity-100 rtl:-scale-x-100"
                         />
                       ) : null}
                     </SmartLink>

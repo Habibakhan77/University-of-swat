@@ -1051,3 +1051,22 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   gentler (1.04 instead of 1.09, no drift) and only runs on photos at least 1920px wide, so smaller
   photos are never blown up. `npm run hero-photos` now also writes focal points and re-exports a photo
   when its size has changed.
+- **Dev overlay issue fixed (hydration mismatch).** The "1 Issue" badge was React's "A tree hydrated but
+  some attributes … didn't match": `RevealObserver` (layout) set `data-reveal="hidden"` on below-the-fold
+  `.reveal` blocks of the home page before React had hydrated those streamed sections. The scroll reveal
+  now runs on the Web Animations API (no attribute or class changes, so nothing for React to compare) and
+  picks up later-streamed blocks with a MutationObserver. Checked in headless Chrome on the dev server:
+  zero issues on home, a department page, a faculty profile and admissions, in English and Urdu.
+- **Quick actions no longer cover the hero.** The Apply / Merit Lists / Exam Portal / CMS / Fee row sits
+  directly under the hero on the cream background (no negative margin), so the photo is fully visible;
+  phones keep the 2-column grid with Apply across both columns.
+- **External links checked with real requests** (http and https, November 2026). The exam portal refuses
+  HTTPS connections, so it now links to `http://exam.uswat.edu.pk/` (seed and live data). The HEC Digital
+  Library page `/uniofswat.html` only redirects to the library home, so it links there directly. CMS,
+  merit lists, fee payment, Office 365, Campus TV and the social pages answer over HTTPS.
+- **University systems are labelled.** Links to the CMS portal, exam portal, merit lists, e-Office,
+  SUJRIS, Office 365, Digital Library and Campus TV are recognised from their URL
+  (`lib/university-systems.ts`), so links editors add in Strapi get the same treatment: they open in a
+  new tab (`rel="noopener noreferrer"`), show a ↗ icon (now always visible in the utility bar, not only on
+  hover), and have a tooltip and accessible name such as "Opens the official University of Swat CMS
+  portal" (Urdu too). The visible text stays first in the accessible name.

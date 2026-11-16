@@ -152,6 +152,7 @@ export default function MobileSheet({ groups, services, apply, brand, labels, op
                             <SmartLink
                               href={link.href}
                               external={link.external}
+                              externalIcon={false}
                               onNavigate={hide}
                               className="flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 text-body text-fg-muted hover:bg-canvas-subtle hover:text-fg"
                             >

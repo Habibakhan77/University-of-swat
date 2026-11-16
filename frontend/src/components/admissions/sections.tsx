@@ -22,7 +22,7 @@ export function ActionAnchor({ action, className, children }: { action: ActionLi
     );
   }
   return (
-    <SmartLink href={action.href} external={action.external} className={className}>
+    <SmartLink href={action.href} external={action.external} externalIcon={children === undefined} className={className}>
       {content}
     </SmartLink>
   );
@@ -91,6 +91,7 @@ export function OfficialNotice({
             <SmartLink
               href={advertisement.href}
               external={advertisement.external}
+              externalIcon={false}
               lang={advertisement.lang !== locale ? advertisement.lang : undefined}
               className={cn(buttonVariants({ variant: "outline", size: "md" }), "h-auto min-h-11 max-w-full shrink py-2 whitespace-normal text-start")}
             >
@@ -110,6 +111,7 @@ export function SourceTag({ link, locale }: { link: NavLink & { lang: string }; 
     <SmartLink
       href={link.href}
       external={link.external}
+      externalIcon={false}
       lang={link.lang !== locale ? link.lang : undefined}
       className="group inline-flex max-w-full flex-col gap-0.5 self-start rounded-xl border border-primary-text/20 bg-primary-soft px-4 py-2.5 transition-colors hover:border-primary-text/40"
     >
@@ -165,6 +167,7 @@ export function LinkCards({ links, lang }: { links: NavLink[]; lang?: string }) 
             <SmartLink
               href={link.href}
               external={link.external}
+              externalIcon={false}
               lang={lang}
               className="group flex h-full items-center gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs transition-colors hover:border-primary-text/40 hover:bg-primary-soft sm:p-5"
             >

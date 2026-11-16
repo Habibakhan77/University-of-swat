@@ -259,7 +259,7 @@ export const OFFICES: OfficeSeed[] = [
     phone: '0946-920831',
     address: 'Main Campus at Charbagh',
     hours: '08:30 AM – 04:30 PM, Monday – Friday',
-    websiteUrl: 'https://exam.uswat.edu.pk/',
+    websiteUrl: 'http://exam.uswat.edu.pk/',
     staff: [
       s('Fayyaz Ahmed Khan', 'Additional Controller of Examinations', 'Fayyaz@uswat.edu.pk'),
       s('Shah Hussain', 'Deputy Controller of Examinations', 'shahhussain@uswat.edu.pk'),
@@ -678,7 +678,7 @@ export const OFFICES: OfficeSeed[] = [
     headPhoto: '2025/10/wajid-Rashid-removebg-preview-e1759734976721.png',
     email: 'librarian@uswat.edu.pk',
     hours: '08:30 AM – 04:30 PM, Monday – Friday',
-    websiteUrl: 'https://www.digitallibrary.edu.pk/uniofswat.html',
+    websiteUrl: 'https://digitallibrary.edu.pk/',
     staff: [s('Mr. Muhammad Salman Raziq', 'Library Assistant'), s('Mr. Painda Mand', 'Library Assistant'), s('Mr. Fazal Rabbi', 'Senior Library Attendant')],
   },
   {

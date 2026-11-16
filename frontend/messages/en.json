@@ -8,7 +8,17 @@
     "breadcrumb": "Breadcrumb",
     "backTo": "Back to",
     "officialEnglish": "Official documents and notices are shown in their original language.",
-    "inEnglish": "In English"
+    "inEnglish": "In English",
+    "universitySystems": {
+      "cms": "Opens the official University of Swat CMS portal",
+      "exam": "Opens the official University of Swat exam portal",
+      "meritLists": "Opens the official University of Swat merit lists on the CMS portal",
+      "sujris": "Opens SUJRIS, the official University of Swat research journal",
+      "eOffice": "Opens the official University of Swat e-Office",
+      "office365": "Opens Microsoft Office 365 for University of Swat email",
+      "digitalLibrary": "Opens the HEC National Digital Library for University of Swat",
+      "campusTv": "Opens the official University of Swat Campus TV channel on YouTube"
+    }
   },
   "header": {
     "mainNavigation": "Main",

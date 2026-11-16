@@ -576,25 +576,11 @@
   }
 
   /*
-   * Scroll reveal (components/ui/reveal.tsx + reveal-observer.tsx): blocks below the fold at load are
-   * marked data-reveal="hidden" by a small IntersectionObserver script and fade and rise in once they
-   * enter the screen. Blocks on screen at load are never touched, so first paint, LCP and CLS are
-   * unaffected; without JavaScript or with reduced motion everything is simply visible.
+   * Scroll reveal (components/ui/reveal.tsx + reveal-observer.tsx): blocks below the fold at load fade
+   * and rise in once they enter the screen. It runs on the Web Animations API, so it needs no CSS here
+   * and never changes DOM attributes React hydrates. Blocks on screen at load are never touched (first
+   * paint, LCP and CLS unaffected); without JavaScript or with reduced motion everything is visible.
    */
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      transition:
-        opacity 0.7s var(--ease-out-expo),
-        translate 0.8s var(--ease-out-expo);
-      transition-delay: calc(var(--reveal-shift, 0) * 10ms);
-    }
-    .reveal[data-reveal="hidden"] {
-      opacity: 0;
-      translate: 0 1.25rem;
-      transition-duration: 0s;
-      transition-delay: 0s;
-    }
-  }
 
   /*
    * Hero: the active slide's photo drifts in slowly (Ken Burns). It restarts each time a slide becomes

@@ -227,7 +227,7 @@ export const FACILITIES: FacilitySeed[] = [
       ),
     },
     contact: { email: 'librarian@uswat.edu.pk', officeHours: '08:30 AM – 04:30 PM, Monday – Friday' },
-    links: [link('HEC National Digital Library', 'https://www.digitallibrary.edu.pk/uniofswat.html'), link('Seerat-ul-Nabi (PBUH) Corner (news)', SEERAT_CORNER)],
+    links: [link('HEC National Digital Library', 'https://digitallibrary.edu.pk/'), link('Seerat-ul-Nabi (PBUH) Corner (news)', SEERAT_CORNER)],
     source: `${SITE}/central-library-office/`,
     image: { photo: 'libraryHall' },
   },

@@ -90,6 +90,7 @@ export function AudiencePathways({ pathways, labels }: AudiencePathwaysProps) {
                         <SmartLink
                           href={link.href}
                           external={link.external}
+                          externalIcon={false}
                           lang={link.lang}
                           className="group/pl flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 py-2 text-body-sm font-medium text-fg transition-colors hover:bg-primary-soft hover:text-primary-soft-fg"
                         >

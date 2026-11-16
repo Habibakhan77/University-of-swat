@@ -1,4 +1,8 @@
-/** External systems the website links to (never rebuilt). All HTTPS. */
+/**
+ * External systems the website links to (never rebuilt). HTTPS wherever the system serves it; checked
+ * with real requests over both protocols, November 2026. The exam portal refuses HTTPS connections
+ * (only http:// answers), so it stays on HTTP until the university enables TLS there.
+ */
 export const EXTERNAL_LINKS = {
   cms: 'https://cms1.uswat.edu.pk/',
   meritList: 'https://cms1.uswat.edu.pk/admission/program/list/final',
@@ -15,11 +19,11 @@ export const EXTERNAL_LINKS = {
   financialAid: 'https://uswat.edu.pk/university-advancement-financial-aid-office/',
   kpefScholarship: 'https://uswat.edu.pk/2026/11/kpef-merit-cum-inaffordability-scholarship-scheme-2025-26/',
   studentLoans: 'https://uswat.edu.pk/2026/10/students-loan-shemes/',
-  exam: 'https://exam.uswat.edu.pk/',
+  exam: 'http://exam.uswat.edu.pk/',
   sujris: 'https://sujris.uswat.edu.pk/',
   eOffice: 'https://uswat.edu.pk/e-office/',
   office365: 'https://www.office.com/',
-  digitalLibrary: 'https://www.digitallibrary.edu.pk/uniofswat.html',
+  digitalLibrary: 'https://digitallibrary.edu.pk/',
   campusTv: 'https://www.youtube.com/@Campus_Tv_UoS',
   facebook: 'https://www.facebook.com/universityofswat/',
   linkedin: 'https://www.linkedin.com/company/university-of-swat1/',

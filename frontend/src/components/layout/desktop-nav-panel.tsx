@@ -71,6 +71,7 @@ export default function DesktopNavPanel({ group, overviewLabel, feature, promo, 
               <SmartLink
                 href={link.href}
                 external={link.external}
+                externalIcon={false}
                 onNavigate={onNavigate}
                 className="group/link flex items-center gap-3 rounded-xl p-2 transition-colors hover:bg-canvas-subtle"
               >

@@ -156,6 +156,7 @@ export function LinkList({ links, className }: { links: NavLink[]; className?: s
             <SmartLink
               href={link.href}
               external={link.external}
+              externalIcon={false}
               className="group/link flex h-full items-start gap-3 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-primary-text/40 hover:bg-primary-soft/40"
             >
               <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-text">

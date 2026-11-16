@@ -145,7 +145,7 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
                 <ul className="flex flex-col">
                   {chrome.externalSystems.map((link) => (
                     <li key={link.href}>
-                      <SmartLink href={link.href} external={link.external} className={`group/ext ${linkClass}`}>
+                      <SmartLink href={link.href} external={link.external} externalIcon={false} className={`group/ext ${linkClass}`}>
                         {link.label}
                         <ArrowUpRight
                           aria-hidden
