@@ -1079,3 +1079,15 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   name still fits. Checked at 1440 and 1280px, light and dark, English and Urdu: no overflow, axe WCAG AA
   clean, Lighthouse Accessibility 100. The scroll state (80 → 68px, blur, soft shadow) and the mobile
   menu are unchanged.
+- **Faculty profile redesign.** One centred column (max 60rem) instead of the half-empty two-column
+  layout. The header band uses the faculty's accent gradient with the lotus-rosette pattern and the
+  valley ridgeline, with the department name as an eyebrow; a larger soft-square portrait (white ring,
+  shadow) overlaps it, then the name in display type, the designation and coloured role pills (Head of
+  department gold, supervisors blue, other roles green). The "At a glance" card is gone: compact chips
+  under the name show faculty, campus, email (click to copy) and phone / Google Scholar / ORCID only when
+  the profile has them; the buttons are Email and Share. The qualifications timeline is the highlight:
+  highest degree first in gold, a thin connecting line, bold degree, institution · country and the year as
+  a pill. The colleague photo cards are replaced by one "View all faculty in <department> →" link with up
+  to six small round avatars. Checked with and without photo and qualifications, at 1440 and 375px, light
+  and dark, English and Urdu (names, emails and English degrees stay LTR): axe WCAG AA clean, no
+  horizontal scroll, no console errors.

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowRight, Award, BadgeCheck, Building2, GraduationCap, Layers, Mail, MapPin, Phone, UserRound } from "lucide-react";
+import { ArrowRight, GraduationCap, UserRound } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { cn } from "@/lib/cn";
 import { parseQualifications } from "@/lib/qualifications";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import {
@@ -19,11 +20,11 @@ import {
   type FacultyMember,
 } from "@/lib/strapi/academics";
 import { getMemberProfile } from "@/lib/strapi/department";
+import { GandharaPattern, MountainRidge, Rosette } from "@/components/brand/motifs";
 import { PublicationList } from "@/components/academics/department-sections";
 import { accentStyle } from "@/components/academics/faculty-art";
-import { EnglishOnlyNote, FactList, SectionTitle, SidePanel, type Fact } from "@/components/academics/panels";
-import { ProfileActions } from "@/components/academics/profile-actions";
-import { SmartLink } from "@/components/layout/smart-link";
+import { EnglishOnlyNote, SectionTitle } from "@/components/academics/panels";
+import { ProfileActions, ProfileChips } from "@/components/academics/profile-actions";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
@@ -81,10 +82,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /** `dir` for a fragment in another language: English names and degrees stay left-to-right on Urdu pages. */
 const dirFor = (lang: Locale | undefined) => (lang === "en" ? "ltr" : lang === "ur" ? "rtl" : undefined);
 
-/** The large portrait in the header card. The silhouette appears only when there is no photo. */
+/**
+ * Role pills, coloured by kind: leadership in gold (Head of department), supervision in blue
+ * (HEC Approved PhD Supervisor), coordination and everything else in the faculty's green family.
+ */
+function roleTone(role: string): "accent" | "info" | "primary" {
+  if (/\b(head|chair(man|person)?|dean|director|incharge|in-charge)\b/i.test(role) || /سربراہ|ڈین|ڈائریکٹر/.test(role)) return "accent";
+  if (/supervisor|نگران/i.test(role)) return "info";
+  return "primary";
+}
+
+/** The large portrait overlapping the band. The silhouette appears only when there is no photo. */
 function Portrait({ member }: { member: FacultyMember }) {
   return (
-    <div className="relative size-36 shrink-0 overflow-hidden rounded-3xl border-4 border-surface bg-fac-soft shadow-[0_18px_40px_-18px_rgb(10_30_20/0.55)] sm:size-44 dark:shadow-[0_18px_40px_-14px_rgb(0_0_0/0.85)]">
+    <div className="relative size-36 shrink-0 overflow-hidden rounded-[2rem] bg-fac-soft shadow-[0_24px_48px_-20px_rgb(10_30_20/0.6)] ring-[6px] ring-surface sm:size-48 sm:rounded-[2.5rem] dark:shadow-[0_24px_48px_-16px_rgb(0_0_0/0.9)]">
       {member.photo ? (
         <Image
           src={member.photo.src}
@@ -92,13 +103,26 @@ function Portrait({ member }: { member: FacultyMember }) {
           fill
           priority
           fetchPriority="high"
-          sizes="(min-width: 640px) 176px, 144px"
+          sizes="(min-width: 640px) 192px, 144px"
           className="object-cover"
         />
       ) : (
-        <UserRound aria-hidden strokeWidth={1} className="absolute inset-x-0 -bottom-2 mx-auto size-[88%] text-fac opacity-45" />
+        <UserRound aria-hidden strokeWidth={1} className="absolute inset-x-0 -bottom-3 mx-auto size-[88%] text-fac opacity-45" />
       )}
     </div>
+  );
+}
+
+/** Small round face for the "all faculty" row; decorative, the link text names the department. */
+function Avatar({ member }: { member: FacultyMember }) {
+  return (
+    <span className="relative inline-block size-9 shrink-0 overflow-hidden rounded-full bg-fac-soft ring-2 ring-surface">
+      {member.photo ? (
+        <Image src={member.photo.src} alt="" fill sizes="36px" className="object-cover" />
+      ) : (
+        <UserRound aria-hidden strokeWidth={1.25} className="absolute inset-x-0 -bottom-1 mx-auto size-[85%] text-fac opacity-50" />
+      )}
+    </span>
   );
 }
 
@@ -115,7 +139,7 @@ export default async function FacultyProfilePage({ params }: Props) {
   const nameLang = langAttr(member.name, locale);
   const deptLang = department ? langAttr(department.name, locale) : undefined;
 
-  // Role badges after "Head of department": the roles the department lists ("MS Coordinator", ...).
+  // Role pills after "Head of department": the roles the department lists ("MS Coordinator", ...).
   const roles = (member.additionalRole?.value ?? "")
     .split(/\s*·\s*/)
     .map((r) => r.trim())
@@ -123,67 +147,11 @@ export default async function FacultyProfilePage({ params }: Props) {
   const roleLang = langAttr(member.additionalRole, locale);
 
   const qualificationLang = langAttr(member.qualification, locale);
-  // Only English text is parsed; when parsing is unsafe the original text is shown as written.
+  // Only English text is parsed (highest degree first); when parsing is unsafe the original text is shown as written.
   const timeline = member.qualification?.lang === "en" ? parseQualifications(member.qualification.value) : null;
 
-  const glance: Fact[] = [
-    { icon: BadgeCheck, label: t("designation"), value: designation },
-    ...(department
-      ? [
-          {
-            icon: Layers,
-            label: t("department"),
-            value: (
-              <Link href={department.href} className="text-primary-text hover:underline">
-                {department.name.value}
-              </Link>
-            ),
-            lang: deptLang,
-          },
-        ]
-      : []),
-    ...(faculty ? [{ icon: Building2, label: t("faculty"), value: faculty.name.value, lang: langAttr(faculty.name, locale) }] : []),
-    ...(detail?.campus ? [{ icon: MapPin, label: t("campus"), value: detail.campus.name.value, lang: langAttr(detail.campus.name, locale) }] : []),
-    ...(member.email
-      ? [
-          {
-            icon: Mail,
-            label: t("email"),
-            value: (
-              <a href={`mailto:${member.email}`} lang="en" dir="ltr" className="break-all text-primary-text hover:underline">
-                {member.email}
-              </a>
-            ),
-          },
-        ]
-      : []),
-    ...(member.phone
-      ? [
-          {
-            icon: Phone,
-            label: t("phone"),
-            value: (
-              <a href={`tel:${member.phone.replace(/[^\d+]/g, "")}`} lang="en" dir="ltr" className="text-primary-text hover:underline">
-                {member.phone}
-              </a>
-            ),
-          },
-        ]
-      : []),
-    ...(member.orcidUrl
-      ? [
-          {
-            icon: Award,
-            label: t("orcid"),
-            value: (
-              <SmartLink href={member.orcidUrl} external className="text-primary-text hover:underline">
-                {t("orcidProfile")}
-              </SmartLink>
-            ),
-          },
-        ]
-      : []),
-  ];
+  // Up to six faces for the "all faculty" link, people with a photo first.
+  const faces = [...colleagues].sort((a, b) => Number(Boolean(b.photo)) - Number(Boolean(a.photo))).slice(0, 6);
 
   // Structured data only for real people; placeholders are sample entries.
   const structured = member.isPlaceholder
@@ -222,206 +190,202 @@ export default async function FacultyProfilePage({ params }: Props) {
         />
       </Container>
 
-      <Container size="wide" className="pt-5 pb-section">
-        {/* Profile header card: accent band, portrait overlapping it, name, roles and actions. */}
-        <header className="overflow-hidden rounded-3xl border border-line bg-surface shadow-sm">
-          <div aria-hidden className="relative h-28 bg-fac-gradient sm:h-36">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_0%,rgb(255_255_255/0.18),transparent_60%)] rtl:bg-[radial-gradient(circle_at_15%_0%,rgb(255_255_255/0.18),transparent_60%)]" />
-            <div className="absolute inset-x-0 bottom-0 h-px bg-gold-400/40" />
+      {/* One centred column (max 60rem): the person first, then their qualifications and work. */}
+      <div className="mx-auto w-full max-w-[60rem] px-gutter pt-5 pb-section">
+        <header className="overflow-hidden rounded-3xl border border-line bg-surface shadow-[0_20px_50px_-30px_rgb(10_30_20/0.35)] dark:shadow-[0_20px_50px_-24px_rgb(0_0_0/0.8)]">
+          {/* Department band: its faculty's accent, the lotus-rosette pattern and the valley ridgeline. */}
+          <div className="relative isolate h-36 overflow-hidden bg-fac-gradient sm:h-48">
+            <GandharaPattern className="-z-10 text-white/[0.08]" />
+            <div
+              aria-hidden
+              className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_0%,rgb(255_255_255/0.2),transparent_60%)] rtl:bg-[radial-gradient(circle_at_15%_0%,rgb(255_255_255/0.2),transparent_60%)]"
+            />
+            <MountainRidge className="absolute inset-x-0 bottom-0 -z-10 h-12 text-black/20 sm:h-16" />
+            {department ? (
+              <p className="flex items-center justify-center gap-2 px-5 pt-5 text-overline text-gold-200 uppercase sm:justify-start sm:px-8 sm:pt-6">
+                <Rosette className="size-4 shrink-0 text-gold-300" />
+                <Link href={department.href} lang={deptLang} className="line-clamp-2 text-center hover:text-white hover:underline sm:truncate sm:text-start">
+                  {department.name.value}
+                </Link>
+              </p>
+            ) : null}
           </div>
-          <div className="flex flex-col items-center gap-5 px-5 pb-6 text-center sm:flex-row sm:items-start sm:gap-7 sm:px-8 sm:pb-8 sm:text-start">
-            <div className="-mt-18 sm:-mt-20">
+
+          <div className="flex flex-col items-center gap-6 px-5 pb-8 text-center sm:px-10 sm:pb-10">
+            <div className="-mt-18 sm:-mt-24">
               <Portrait member={member} />
             </div>
-            <div className="flex w-full min-w-0 flex-1 flex-col items-center gap-4 sm:items-start sm:pt-5">
-              <div className="flex flex-col gap-1.5">
-                <h1 lang={nameLang} dir={dirFor(nameLang)} className="text-heading-xl text-balance text-fg">
-                  {member.name.value}
-                </h1>
-                <p className="text-body-lg text-fg-muted">{designation}</p>
-              </div>
 
-              {member.isPlaceholder || member.isHead || roles.length || department ? (
-                <ul className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                  {member.isPlaceholder ? (
-                    <li>
-                      <Badge tone="warning" uppercase title={ta("placeholderHint")}>
-                        {ta("placeholder")}
-                        <span className="sr-only">: {ta("placeholderHint")}</span>
-                      </Badge>
-                    </li>
-                  ) : null}
-                  {member.isHead ? (
-                    <li>
-                      <Badge tone="accent">{ta("head")}</Badge>
-                    </li>
-                  ) : null}
-                  {roles.map((r) => (
-                    <li key={r}>
-                      <Badge tone="primary" lang={roleLang} dir={dirFor(roleLang)}>
-                        {r}
-                      </Badge>
-                    </li>
-                  ))}
-                  {department ? (
-                    <li className="max-w-full">
-                      <Link
-                        href={department.href}
-                        className="inline-flex h-6.5 max-w-full items-center gap-1.5 rounded-full border border-fac px-2.5 text-caption font-semibold text-fac transition-colors hover:bg-fac-soft"
-                      >
-                        <Layers aria-hidden className="size-3.5 shrink-0" />
-                        <span lang={deptLang} className="truncate">
-                          {department.name.value}
-                        </span>
-                        <ArrowRight aria-hidden className="size-3.5 shrink-0 rtl:-scale-x-100" />
-                      </Link>
-                    </li>
-                  ) : null}
-                </ul>
-              ) : null}
-
-              <div className="w-full">
-                <ProfileActions
-                  email={member.email}
-                  scholarUrl={member.scholarUrl}
-                  url={url}
-                  title={member.name.value}
-                  labels={{
-                    email: t("emailAction"),
-                    copyEmail: t("copyEmail"),
-                    emailCopied: t("emailCopied"),
-                    scholar: t("scholarAction"),
-                    share: t("share"),
-                    linkCopied: t("linkCopied"),
-                    newTab: t("newTab"),
-                  }}
-                />
-              </div>
+            <div className="flex max-w-full flex-col items-center gap-2">
+              <h1 lang={nameLang} dir={dirFor(nameLang)} className="text-heading-xl text-balance text-fg sm:text-display-lg">
+                {member.name.value}
+              </h1>
+              <p className="text-body-lg text-fg-muted">{designation}</p>
             </div>
+
+            {member.isPlaceholder || member.isHead || roles.length ? (
+              <ul aria-label={t("roles")} className="flex max-w-full flex-wrap items-center justify-center gap-2">
+                {member.isPlaceholder ? (
+                  <li>
+                    <Badge tone="warning" uppercase title={ta("placeholderHint")}>
+                      {ta("placeholder")}
+                      <span className="sr-only">: {ta("placeholderHint")}</span>
+                    </Badge>
+                  </li>
+                ) : null}
+                {member.isHead ? (
+                  <li>
+                    <Badge tone="accent" className="h-7 px-3 text-body-sm">
+                      {ta("head")}
+                    </Badge>
+                  </li>
+                ) : null}
+                {roles.map((r) => (
+                  <li key={r} className="max-w-full">
+                    <Badge tone={roleTone(r)} lang={roleLang} dir={dirFor(roleLang)} className="h-7 px-3 text-body-sm">
+                      {r}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            <ProfileChips
+              faculty={faculty ? { value: faculty.name.value, lang: langAttr(faculty.name, locale) } : null}
+              campus={detail?.campus ? { value: detail.campus.name.value, lang: langAttr(detail.campus.name, locale) } : null}
+              email={member.email}
+              phone={member.phone}
+              scholarUrl={member.scholarUrl}
+              orcidUrl={member.orcidUrl}
+              labels={{
+                faculty: t("faculty"),
+                campus: t("campus"),
+                email: t("email"),
+                copyEmail: t("copyEmail"),
+                emailCopied: t("emailCopied"),
+                phone: t("phone"),
+                scholar: t("scholarAction"),
+                orcid: t("orcid"),
+                newTab: t("newTab"),
+              }}
+            />
+
+            <ProfileActions
+              email={member.email}
+              url={url}
+              title={member.name.value}
+              labels={{ email: t("emailAction"), share: t("share"), linkCopied: t("linkCopied") }}
+            />
           </div>
         </header>
 
-        <div className="mt-10 grid gap-10 lg:mt-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
-          <div className="flex min-w-0 flex-col gap-section-sm">
-            {member.isPlaceholder ? (
-              <p className="rounded-lg border border-accent-text/20 bg-warning-soft px-4 py-3 text-body-sm text-warning-soft-fg">{t("placeholderNotice")}</p>
-            ) : null}
+        <div className="mt-section-sm flex flex-col gap-section-sm">
+          {member.isPlaceholder ? (
+            <p className="rounded-2xl border border-accent-text/20 bg-warning-soft px-5 py-4 text-body-sm text-warning-soft-fg">{t("placeholderNotice")}</p>
+          ) : null}
 
-            <section aria-labelledby="qualifications">
-              <SectionTitle id="qualifications">{t("qualifications")}</SectionTitle>
-              {timeline?.length ? (
-                // English degrees: always a left-to-right timeline, also on Urdu pages.
-                <ol lang={qualificationLang} dir="ltr" className="flex flex-col gap-4 text-left">
-                  {timeline.map((q, i) => (
-                    <li key={`${q.degree}-${i}`} className="relative pl-11">
-                      {i < timeline.length - 1 ? <span aria-hidden className="absolute top-9 -bottom-4 left-4 w-px bg-line-strong" /> : null}
-                      <span aria-hidden className="absolute top-1 left-0 flex size-8 items-center justify-center rounded-full bg-fac-soft text-fac ring-4 ring-canvas">
-                        <GraduationCap className="size-4" />
+          <section aria-labelledby="qualifications">
+            <SectionTitle id="qualifications">{t("qualifications")}</SectionTitle>
+            {timeline?.length ? (
+              // English degrees: always a left-to-right timeline, also on Urdu pages. Highest degree first, in gold.
+              <ol lang={qualificationLang} dir="ltr" className="relative flex flex-col gap-4 text-left">
+                {timeline.length > 1 ? <span aria-hidden className="absolute top-6 bottom-6 left-[1.1875rem] w-px bg-line-strong" /> : null}
+                {timeline.map((q, i) => {
+                  const top = i === 0;
+                  return (
+                    <li key={`${q.degree}-${i}`} className="relative pl-14">
+                      <span
+                        aria-hidden
+                        className={cn(
+                          "absolute top-4 left-0 flex size-10 items-center justify-center rounded-full ring-4 ring-canvas",
+                          top ? "bg-accent text-accent-fg shadow-sm" : "bg-fac-soft text-fac",
+                        )}
+                      >
+                        <GraduationCap className={top ? "size-5" : "size-4"} />
                       </span>
-                      <div className="rounded-2xl border border-line bg-surface p-4 shadow-xs sm:p-5">
-                        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                          <h3 className="text-heading-sm text-fg">{q.degree}</h3>
-                          {q.year ? <span className="tabular text-body-sm font-semibold text-fac">{q.year}</span> : null}
+                      <div
+                        className={cn(
+                          "rounded-2xl border bg-surface p-5 shadow-xs sm:p-6",
+                          top ? "border-accent/70 shadow-[0_12px_30px_-20px_rgb(150_110_10/0.55)] ring-1 ring-accent/25" : "border-line",
+                        )}
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+                          <h3 className={cn("font-bold text-fg", top ? "text-heading-md" : "text-heading-sm")}>{q.degree}</h3>
+                          {q.year ? (
+                            <span
+                              className={cn(
+                                "tabular inline-flex h-7 shrink-0 items-center rounded-full px-3 text-caption font-semibold",
+                                top ? "bg-accent-soft text-accent-soft-fg" : "bg-fac-soft text-fac",
+                              )}
+                            >
+                              {q.year}
+                            </span>
+                          ) : null}
                         </div>
                         {q.institution || q.country ? (
-                          <p className="mt-1 text-body-sm text-fg-muted">{[q.institution, q.country].filter(Boolean).join(" · ")}</p>
+                          <p className="mt-1.5 text-body text-fg-muted">{[q.institution, q.country].filter(Boolean).join(" · ")}</p>
                         ) : null}
                       </div>
                     </li>
+                  );
+                })}
+              </ol>
+            ) : member.qualification ? (
+              <p
+                lang={qualificationLang}
+                dir={dirFor(qualificationLang)}
+                className="rounded-2xl border border-line bg-surface p-5 text-body text-fg shadow-xs sm:p-6"
+              >
+                {member.qualification.value}
+              </p>
+            ) : (
+              <p className="text-body-sm text-fg-subtle">{t("noQualifications")}</p>
+            )}
+            {member.specialization ? (
+              <p className="mt-5 text-body-sm text-fg-muted">
+                <span className="font-semibold text-fg">{t("specialization")}:</span>{" "}
+                <span lang={langAttr(member.specialization, locale)}>{member.specialization.value}</span>
+              </p>
+            ) : null}
+          </section>
+
+          {profile.bio ? (
+            <section aria-labelledby="biography">
+              <SectionTitle id="biography">{t("biography")}</SectionTitle>
+              <EnglishOnlyNote content={profile.bio} />
+              <RichText blocks={profile.bio.value} lang={langAttr(profile.bio, locale)} className="max-w-prose text-body-lg" />
+            </section>
+          ) : null}
+
+          <section aria-labelledby="publications">
+            <SectionTitle id="publications">{t("publications")}</SectionTitle>
+            {profile.publications.length ? (
+              <PublicationList publications={profile.publications} locale={locale} />
+            ) : (
+              <p className="text-body-sm text-fg-subtle">{t("noPublications")}</p>
+            )}
+          </section>
+
+          {department ? (
+            <Link
+              href={`${department.href}#members`}
+              className="group flex flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-5 py-4 text-center shadow-xs transition-colors duration-150 hover:border-fac sm:flex-row sm:justify-between sm:text-start"
+            >
+              <span className="inline-flex items-center gap-2 text-body font-semibold text-fac">
+                <span>{t.rich("viewAllIn", { department: department.name.value, dept: (chunks) => <span lang={deptLang}>{chunks}</span> })}</span>
+                <ArrowRight aria-hidden className="size-4 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" />
+              </span>
+              {faces.length ? (
+                <span aria-hidden className="flex -space-x-2 rtl:space-x-reverse">
+                  {faces.map((c) => (
+                    <Avatar key={c.id} member={c} />
                   ))}
-                </ol>
-              ) : member.qualification ? (
-                <p
-                  lang={qualificationLang}
-                  dir={dirFor(qualificationLang)}
-                  className="rounded-2xl border border-line bg-surface p-4 text-body text-fg shadow-xs sm:p-5"
-                >
-                  {member.qualification.value}
-                </p>
-              ) : (
-                <p className="text-body-sm text-fg-subtle">{t("noQualifications")}</p>
-              )}
-              {member.specialization ? (
-                <p className="mt-4 text-body-sm text-fg-muted">
-                  <span className="font-semibold text-fg">{t("specialization")}:</span>{" "}
-                  <span lang={langAttr(member.specialization, locale)}>{member.specialization.value}</span>
-                </p>
+                </span>
               ) : null}
-            </section>
-
-            {profile.bio ? (
-              <section aria-labelledby="biography">
-                <SectionTitle id="biography">{t("biography")}</SectionTitle>
-                <EnglishOnlyNote content={profile.bio} />
-                <RichText blocks={profile.bio.value} lang={langAttr(profile.bio, locale)} className="max-w-prose text-body-lg" />
-              </section>
-            ) : null}
-
-            <section aria-labelledby="publications">
-              <SectionTitle id="publications">{t("publications")}</SectionTitle>
-              {profile.publications.length ? (
-                <PublicationList publications={profile.publications} locale={locale} />
-              ) : (
-                <p className="text-body-sm text-fg-subtle">{t("noPublications")}</p>
-              )}
-            </section>
-
-            {department && colleagues.length ? (
-              <section aria-labelledby="colleagues">
-                <SectionTitle
-                  id="colleagues"
-                  action={
-                    <Link href={`${department.href}#members`} className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-fac hover:underline">
-                      {t("allColleagues")}
-                      <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
-                    </Link>
-                  }
-                >
-                  {t("colleagues")}
-                </SectionTitle>
-                <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {colleagues.slice(0, 6).map((c) => (
-                    <li key={c.id}>
-                      <Link
-                        href={memberHref(c.slug)}
-                        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xs transition-[border-color,box-shadow,translate] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-fac hover:shadow-md motion-reduce:hover:translate-y-0"
-                      >
-                        <span className="relative aspect-square w-full overflow-hidden bg-fac-soft">
-                          {c.photo ? (
-                            <Image
-                              src={c.photo.src}
-                              alt=""
-                              fill
-                              sizes="(min-width: 1024px) 14rem, (min-width: 640px) 30vw, 45vw"
-                              className="object-cover transition-transform duration-500 ease-out-expo group-hover:scale-[1.03] motion-reduce:group-hover:scale-100"
-                            />
-                          ) : (
-                            <UserRound aria-hidden strokeWidth={1} className="absolute inset-x-0 -bottom-2 mx-auto size-[80%] text-fac opacity-40" />
-                          )}
-                        </span>
-                        <span className="flex flex-col gap-0.5 p-3 sm:p-4">
-                          <span lang={langAttr(c.name, locale)} className="text-body-sm font-semibold text-fg group-hover:text-fac">
-                            {c.name.value}
-                          </span>
-                          <span className="text-caption text-fg-subtle">
-                            {locale === "en" && c.designationTitle ? c.designationTitle : ta(`designations.${c.designation}`)}
-                          </span>
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-          </div>
-
-          <aside className="flex flex-col gap-5 lg:sticky lg:top-28 lg:self-start">
-            <SidePanel title={t("atAGlance")} id="at-a-glance">
-              <FactList facts={glance} />
-            </SidePanel>
-          </aside>
+            </Link>
+          ) : null}
         </div>
-      </Container>
+      </div>
     </div>
   );
 }

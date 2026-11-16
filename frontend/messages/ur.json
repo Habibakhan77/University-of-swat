@@ -778,10 +778,7 @@
     "publications": "تحقیقی اشاعتیں",
     "noPublications": "اس پروفائل پر ابھی کوئی اشاعت درج نہیں۔",
     "contact": "رابطہ اور تحقیقی پروفائلز",
-    "scholarProfile": "گوگل اسکالر پروفائل",
     "orcidProfile": "ORCID پروفائل",
-    "colleagues": "اس شعبے کے دیگر اساتذہ",
-    "allColleagues": "شعبے کے تمام اساتذہ",
     "placeholderNotice": "یہ نمونے کی پروفائل ہے، کوئی حقیقی شخص نہیں۔ شعبہ اسے اپنے عملے کی معلومات سے بدل رہا ہے۔",
     "emailAction": "ای میل",
     "copyEmail": "ای میل کاپی کریں",
@@ -790,13 +787,13 @@
     "share": "شیئر کریں",
     "linkCopied": "پروفائل کا لنک کاپی ہو گیا",
     "newTab": "نئے ٹیب میں کھلتا ہے",
-    "atAGlance": "ایک نظر میں",
     "faculty": "فیکلٹی",
     "campus": "کیمپس",
     "email": "ای میل",
     "phone": "فون",
     "orcid": "ORCID",
     "noQualifications": "اس پروفائل پر ابھی تعلیمی قابلیت درج نہیں۔",
-    "roles": "ذمہ داریاں"
+    "roles": "ذمہ داریاں",
+    "viewAllIn": "<dept>{department}</dept> کے تمام اساتذہ دیکھیں"
   }
 }
