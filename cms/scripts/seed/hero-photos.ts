@@ -1,25 +1,30 @@
 /**
- * Apply the hero photos in HERO_PHOTOS (index.ts) to the existing hero slides without a full reseed
- * (run with `npm run hero-photos`, see scripts/hero-photos.js).
+ * Apply the hero photos and focal points in HERO_PHOTOS (index.ts) to the existing hero slides without a
+ * full reseed (run with `npm run hero-photos`, see scripts/hero-photos.js).
  *
  * Slides are matched by their order (slide 1 = the first entry of HERO_SLIDES). A photo already in the
- * Media Library under its seed name is reused; otherwise it is uploaded from assets/photos. Only the
- * image field is written, on every row of the slide (draft and published, each locale; the image is a
- * shared field). Safe to run again.
+ * Media Library under its seed name is reused when it has the current export size (the photo's own width,
+ * at most HERO_MAX_WIDTH); otherwise it is exported again from assets/photos. Only the image and focal
+ * point are written, on every row of the slide (draft and published, each locale; both are shared
+ * fields). Safe to run again.
  */
+import path from 'node:path';
+import sharp from 'sharp';
 import type { Core, UID } from '@strapi/strapi';
 import { HERO_SLIDES } from './data/site';
+import { PHOTOS } from './data/photos';
 import { HERO_PHOTOS } from './index';
-import { MediaFactory, PHOTO_PREFIX } from './lib/media';
+import { HERO_MAX_WIDTH, MediaFactory, PHOTO_PREFIX } from './lib/media';
 
 const HERO = 'api::hero-slide.hero-slide' satisfies UID.ContentType;
 const FILE = 'plugin::upload.file' satisfies UID.Schema;
+const PHOTO_DIR = path.join('scripts', 'seed', 'assets', 'photos');
 
 const log = (msg: string): void => console.log(`[hero] ${msg}`);
 
 interface SlideRow {
   id: number;
-  locale: string | null;
+  focalPoint: string | null;
   image: { id: number } | null;
 }
 
@@ -29,14 +34,19 @@ export async function runHeroPhotos(strapi: Core.Strapi): Promise<void> {
   let changed = 0;
   try {
     for (const [i, slide] of HERO_SLIDES.entries()) {
-      const key = HERO_PHOTOS[slide.key];
-      const existing = (await strapi.db.query(FILE).findOne({ where: { name: `${PHOTO_PREFIX}${key}.webp` }, select: ['id'] })) as
-        | { id: number }
-        | null;
-      const imageId = existing?.id ?? (await media.photo(key));
+      const { photo, focalPoint } = HERO_PHOTOS[slide.key];
+      const { width = 0 } = await sharp(path.join(strapi.dirs.app.root, PHOTO_DIR, PHOTOS[photo].file)).metadata();
+      const expected = Math.min(width, HERO_MAX_WIDTH);
+      const existing = (await strapi.db.query(FILE).findMany({
+        where: { name: `${PHOTO_PREFIX}${photo}.webp`, width: expected },
+        select: ['id'],
+        orderBy: { id: 'desc' },
+        limit: 1,
+      })) as { id: number }[];
+      const imageId = existing[0]?.id ?? (await media.photo(photo));
       const rows = (await strapi.db.query(HERO).findMany({
         where: { order: i + 1 },
-        select: ['id', 'locale'],
+        select: ['id', 'focalPoint'],
         populate: { image: { select: ['id'] } },
       })) as SlideRow[];
       if (!rows.length) {
@@ -44,11 +54,11 @@ export async function runHeroPhotos(strapi: Core.Strapi): Promise<void> {
         continue;
       }
       for (const row of rows) {
-        if (row.image?.id === imageId) continue;
-        await strapi.db.query(HERO).update({ where: { id: row.id }, data: { image: imageId } });
+        if (row.image?.id === imageId && row.focalPoint === focalPoint) continue;
+        await strapi.db.query(HERO).update({ where: { id: row.id }, data: { image: imageId, focalPoint } });
         changed += 1;
       }
-      log(`Slide ${i + 1} (${slide.key}): ${key}${existing ? ' (already in the Media Library)' : ' (uploaded)'}`);
+      log(`Slide ${i + 1} (${slide.key}): ${photo} ${expected}px wide, focal point ${focalPoint}${existing[0] ? '' : ' (exported)'}`);
     }
   } finally {
     await media.dispose();

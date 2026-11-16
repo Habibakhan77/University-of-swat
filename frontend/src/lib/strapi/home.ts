@@ -28,6 +28,8 @@ export interface HeroSlide {
   title: string;
   subtitle: string | null;
   image: SiteImage | null;
+  /** CSS object-position ("x% y%") that keeps the photo's subject in frame. */
+  focalPoint: string;
   primary: Cta | null;
   secondary: Cta | null;
   lang: Locale;
@@ -167,6 +169,7 @@ interface StrapiHeroSlide extends Doc {
   title: string;
   subtitle: string | null;
   image: StrapiMedia | null;
+  focalPoint?: string | null;
   ctaLabel: string | null;
   ctaUrl: string | null;
   secondaryCtaLabel: string | null;
@@ -230,6 +233,11 @@ const isMidnightInPakistan = (date: Date) => (date.getTime() + 5 * 3_600_000) % 
 
 const calendarDay = (iso: string) => new Date(iso.length === 10 ? `${iso}T12:00:00+05:00` : iso);
 
+
+/** Only "x% y%" with both values 0–100 (Strapi validates the same pattern); anything else is centred. */
+function toFocalPoint(value: string | null | undefined): string {
+  return value && /^(100|[1-9]?\d)% (100|[1-9]?\d)%$/.test(value) ? value : "50% 50%";
+}
 
 function toCta(label: string | null, url: string | null): Cta | null {
   if (!label || !url) return null;
@@ -344,6 +352,7 @@ async function loadHeroSlides(locale: Locale): Promise<HeroSlide[]> {
       title: s.title,
       subtitle: s.subtitle,
       image: toImage(s.image),
+      focalPoint: toFocalPoint(s.focalPoint),
       primary: toCta(s.ctaLabel, s.ctaUrl),
       secondary: toCta(s.secondaryCtaLabel, s.secondaryCtaUrl),
       lang: s.lang,

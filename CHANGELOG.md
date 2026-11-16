@@ -1042,3 +1042,12 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   credited "Photo: University of Swat" with no link until its source page is known. Applied to the live
   data with the new `npm run hero-photos` (cms), which repoints the slides without a reseed and can be run
   again safely. The seed uses the same mapping (`HERO_PHOTOS`).
+- **Sharper hero photos with focal points.** The upscaled front view was replaced by the 1600×900 JPEG
+  originals of the main gate and Main Campus from the Facebook page. Hero photos are no longer cropped or
+  enlarged by the seed: they are uploaded at their own size (max 2400px wide, WebP quality 85) and served
+  through next/image at quality 85. A new non-localised `focalPoint` field on hero slides ("x% y%",
+  validated in Strapi and in the frontend) sets `object-position` and the zoom origin, so editors can keep
+  the subject in frame (the gate is `50% 72%`: the whole arch and its lettering). The Ken Burns zoom is
+  gentler (1.04 instead of 1.09, no drift) and only runs on photos at least 1920px wide, so smaller
+  photos are never blown up. `npm run hero-photos` now also writes focal points and re-exports a photo
+  when its size has changed.

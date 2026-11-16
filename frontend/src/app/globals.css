@@ -198,8 +198,10 @@
   }
   /* Ken Burns: the active slide drifts in very slowly for longer than it is shown (7 s), so it never stops. */
   @keyframes ken-burns {
-    from { transform: scale(1) translate3d(0, 0, 0); }
-    to { transform: scale(1.09) translate3d(-1.5%, -1%, 0); }
+    from { transform: scale(1); }
+    /* Very subtle, and only on photos at least 1920px wide (see heroFraming): a stronger zoom made
+       smaller photos look soft and cropped the subject. The origin is the slide's focal point. */
+    to { transform: scale(1.04); }
   }
 }
 

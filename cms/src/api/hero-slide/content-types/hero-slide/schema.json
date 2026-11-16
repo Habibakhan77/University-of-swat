@@ -46,6 +46,16 @@
         }
       }
     },
+    "focalPoint": {
+      "type": "string",
+      "default": "50% 50%",
+      "regex": "^(100|[1-9]?[0-9])% (100|[1-9]?[0-9])%$",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "ctaLabel": {
       "type": "string",
       "pluginOptions": {

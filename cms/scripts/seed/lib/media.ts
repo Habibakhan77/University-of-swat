@@ -19,6 +19,8 @@ import { LOGO, PHOTOS, photoCaption, type PhotoKey } from '../data/photos';
 export const PLACEHOLDER_PREFIX = 'placeholder-';
 /** Real photos uploaded by the seed; removed and re-uploaded by `--reset` like placeholders. */
 export const PHOTO_PREFIX = 'seed-photo-';
+/** Hero photos are uploaded at their own size up to this width (never enlarged). */
+export const HERO_MAX_WIDTH = 2400;
 /** Official documents and notice images copied from uswat.edu.pk; also replaced by `--reset`. */
 export const FILE_PREFIX = 'seed-file-';
 
@@ -251,7 +253,9 @@ export class MediaFactory {
 
   /**
    * Uploads a real photo from assets/photos as WebP with its credit as the caption.
-   * - `hero` / `og` / `portrait`: cropped (saliency-aware) to exactly that size, enlarging if needed.
+   * - `hero`: the full photo at its own resolution (max HERO_MAX_WIDTH = 2400px wide), never cropped or enlarged,
+   *   WebP quality 85. The website frames it with the slide's focal point.
+   * - `og` / `portrait`: cropped (saliency-aware) to exactly that size, enlarging if needed.
    * - `cover`: cropped to 16:9, never enlarged (max 1600×900).
    * - `original`: the photo's own aspect ratio, max 1600px wide (e.g. campus cards, which crop to
    *   3:2 or 4:5 depending on the screen).
@@ -263,7 +267,11 @@ export class MediaFactory {
     const photo = PHOTOS[key];
     const source = sharp(await readFile(path.join(this.strapi.dirs.app.root, PHOTO_DIR, photo.file))).rotate();
     let resized: ReturnType<typeof sharp>;
-    if (ratio === 'hero' || ratio === 'og' || ratio === 'portrait') {
+    let quality = 80;
+    if (ratio === 'hero') {
+      resized = source.resize({ width: HERO_MAX_WIDTH, withoutEnlargement: true, kernel: 'lanczos3' });
+      quality = 85;
+    } else if (ratio === 'og' || ratio === 'portrait') {
       const { width, height } = RATIOS[ratio];
       resized = source.resize(width, height, { fit: 'cover', position: 'attention', kernel: 'lanczos3' });
     } else if (ratio === 'cover') {
@@ -273,7 +281,7 @@ export class MediaFactory {
     } else {
       resized = source.resize({ width: 1600, withoutEnlargement: true });
     }
-    const buffer = await resized.webp({ quality: 80 }).toBuffer();
+    const buffer = await resized.webp({ quality }).toBuffer();
     const name = `${PHOTO_PREFIX}${ratio === 'hero' ? '' : `${ratio}-`}${key}.webp`;
     const file = await this.push(name, buffer, 'image/webp', photo.alt, photoCaption(photo));
     this.photos += 1;

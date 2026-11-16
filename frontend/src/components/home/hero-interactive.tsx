@@ -7,9 +7,26 @@ import { useCallback, useEffect, useLayoutEffect, useState, useSyncExternalStore
 import { cn } from "@/lib/cn";
 import type { HeroSlide } from "@/lib/strapi/home";
 import { ImageCredit } from "@/components/ui/image-credit";
-import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, type HeroLabels } from "./hero-shared";
+import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, HERO_IMAGE_QUALITY, heroFraming, type HeroLabels } from "./hero-shared";
 
 const INTERVAL = 7000;
+
+/** A later slide's photo: framed on its focal point, zoomed only while current and only when large enough. */
+function SlideImage({ image, focalPoint, zoom }: { image: NonNullable<HeroSlide["image"]>; focalPoint: string; zoom: boolean }) {
+  const { style, kenBurns } = heroFraming(image, focalPoint);
+  return (
+    <Image
+      src={image.src}
+      alt=""
+      fill
+      sizes="100vw"
+      quality={HERO_IMAGE_QUALITY}
+      loading="lazy"
+      style={style}
+      className={cn("object-cover", zoom && kenBurns && "hero-kenburns")}
+    />
+  );
+}
 
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 function subscribeReducedMotion(onChange: () => void) {
@@ -165,14 +182,7 @@ export default function HeroInteractive({ slides, labels }: { slides: HeroSlide[
             )}
           >
             {slide.image ? (
-              <Image
-                src={slide.image.src}
-                alt=""
-                fill
-                sizes="100vw"
-                loading="lazy"
-                className={cn("object-cover", i === index && "hero-kenburns")}
-              />
+              <SlideImage image={slide.image} focalPoint={slide.focalPoint} zoom={i === index} />
             ) : null}
           </div>
         );

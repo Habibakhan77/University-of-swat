@@ -3,7 +3,7 @@
 All photos here are the University of Swat's own, from its website [uswat.edu.pk](https://uswat.edu.pk) or its
 official [Facebook page](https://www.facebook.com/universityofswat/), and are credited on the site as
 **"Photo: University of Swat"**, linked to where each was published (see `../../data/photos.ts`). Copies are
-at most 1920px wide without metadata (the Facebook photos are WebP, 1600px, quality 90); the seed converts every
+at most 1920px wide without metadata (the Facebook photos are 1600px: WebP at quality 90, or the JPEG original for the main gate and Main Campus); the seed converts every
 photo to WebP for upload.
 
 Picked for sharpness and light, at least 800px wide. Posters, notices and text-heavy images were skipped: the
@@ -12,9 +12,8 @@ Those posts, and HEC DLSEI 3.0 Cohort 4 (only a flow-chart graphic), get a text-
 
 | File | Used for | Source page |
 | --- | --- | --- |
-| `main-campus.webp` | Hero (research), Main Campus card | Facebook page |
-| `main-gate-front.webp` | Hero (first slide) | Supplied by the project team (front view of the main gate; original 1000×600, upscaled to 1920px with a light colour lift). Credited without a link until the source page is known |
-| `main-gate.webp` | Not used at the moment (was the admissions hero) | Facebook page |
+| `main-campus.jpg` | Hero (research slide), Main Campus card | Facebook page |
+| `main-gate.jpg` | Hero (first slide) | Facebook page |
 | `women-campus.webp` | Women Campus card, About page hero (panorama, uploaded at its own size) | Facebook page |
 | `faculty-pncs-geology-field-work.webp` | Physical, Numerical and Computational Sciences card and header | `/2022/09/5-days-geological-field-excursion-in-north-pakistan/` |
 | `faculty-bcs-remote-sensing-training.webp` | Biological and Chemical Sciences card and header | `/2026/07/seven-day-training-program-on-climate-resilient-agriculture/` |

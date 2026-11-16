@@ -38,22 +38,15 @@ export const PHOTOS = {
     '/maincampus/',
   ),
   mainCampus: photo(
-    'main-campus.webp',
+    'main-campus.jpg',
     'The University of Swat Main Campus at Charbagh from above after rain: lawns, academic blocks and misty green hills',
     FACEBOOK,
   ),
   mainGate: photo(
-    'main-gate.webp',
+    'main-gate.jpg',
     'The white castellated main gate of the University of Swat, with the campus road winding into green hills behind it',
     FACEBOOK,
   ),
-  /** Front view of the main gate, supplied by the project team (no public source page yet). */
-  mainGateFront: {
-    file: 'main-gate-front.webp',
-    alt: 'The castellated white main gate of the University of Swat, its two arches opening onto the green hills of the campus',
-    credit: CREDIT,
-    source: null,
-  },
   womenCampus: photo(
     'women-campus.webp',
     'The University of Swat Women Campus: white and pink buildings behind a stone wall, below pine-covered hills',

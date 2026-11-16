@@ -21,11 +21,14 @@ import { FACULTY_LISTS, photoCandidates } from './data/faculty-members';
 import { DOWNLOADS, FAQS, JOBS, TENDERS, uploadMonth, uploadUrl, type SeedDocument } from './data/notices';
 import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE_SETTINGS, STATS, VC_MESSAGE } from './data/site';
 
-/** Real photo for each hero slide (see data/photos.ts). */
-export const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], PhotoKey> = {
-  campus: 'mainGateFront', // the main gate, front view: the first thing visitors see
-  admissions: 'campusMountains', // main building with snow-capped mountains
-  research: 'mainCampus', // Main Campus from above, lawns and misty hills
+/**
+ * Real photo for each hero slide (see data/photos.ts) and its focal point (CSS object-position, "x% y%"):
+ * the part of the photo that must stay in view when the hero crops it to a wide or tall frame.
+ */
+export const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], { photo: PhotoKey; focalPoint: string }> = {
+  campus: { photo: 'mainGate', focalPoint: '50% 72%' }, // the whole arch and its "UNIVERSITY OF SWAT" lettering
+  admissions: { photo: 'campusMountains', focalPoint: '55% 60%' }, // the academic block and the snowy peak
+  research: { photo: 'mainCampus', focalPoint: '50% 50%' }, // academic blocks, lawns and misty hills
 };
 
 export interface SeedOptions {
@@ -568,9 +571,10 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     // ---------- Homepage pieces ----------
     log('Hero slides, stats and single types…');
     for (const [i, s] of HERO_SLIDES.entries()) {
-      const image = await media.photo(HERO_PHOTOS[s.key]);
+      const { photo, focalPoint } = HERO_PHOTOS[s.key];
+      const image = await media.photo(photo);
       const { key: _key, ur, ...en } = s;
-      await w.create('api::hero-slide.hero-slide', { ...en, image, order: i + 1 }, { ctaUrl: en.ctaUrl, secondaryCtaUrl: en.secondaryCtaUrl, ...ur });
+      await w.create('api::hero-slide.hero-slide', { ...en, image, focalPoint, order: i + 1 }, { ctaUrl: en.ctaUrl, secondaryCtaUrl: en.secondaryCtaUrl, ...ur });
     }
     for (const s of STATS) {
       await w.create(

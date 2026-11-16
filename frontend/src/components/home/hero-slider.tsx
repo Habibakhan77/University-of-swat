@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { MountainRidge, Rosette } from "@/components/brand/motifs";
 import { SmartLink } from "@/components/layout/smart-link";
 import { ImageCredit } from "@/components/ui/image-credit";
-import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, type HeroLabels } from "./hero-shared";
+import { fillTemplate, HERO_BUTTON_CLASS, HERO_ID, HERO_IMAGE_QUALITY, heroFraming, type HeroLabels } from "./hero-shared";
 import { HeroEnhancer } from "./hero-enhancer";
 
 export type { HeroLabels } from "./hero-shared";
@@ -35,6 +35,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
   const count = slides.length;
   if (!count) return null;
   const first = slides[0];
+  const firstFraming = first.image ? heroFraming(first.image, first.focalPoint) : null;
 
   return (
     <section
@@ -55,9 +56,11 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
             alt=""
             fill
             sizes="100vw"
+            quality={HERO_IMAGE_QUALITY}
             preload
             fetchPriority="high"
-            className="hero-kenburns object-cover"
+            style={firstFraming?.style}
+            className={cn("object-cover", firstFraming?.kenBurns && "hero-kenburns")}
           />
         ) : null}
       </div>
