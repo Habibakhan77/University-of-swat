@@ -1270,3 +1270,38 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
     one card alone); two per row on tablets with an odd last card spanning the row; one per row on phones.
   - Urdu: the English partner names keep `lang="en"` on an inline `<bdi>` only, so the card text stays
     right-aligned.
+
+## Pro polish (branch `pro-polish`)
+
+Goal: a calmer, more professional homepage in the manner of top university sites (restraint, whitespace,
+consistency). Content, data and colours unchanged.
+
+- **Decoration budget**: the mountain line-art, gold swooshes and green-gold corner curves now appear only in
+  the hero, the Admissions banner (the one feature banner, which keeps its gold wave) and the footer. Removed
+  from every other section header and card (peaks and pines, gate line-art, corner sweeps, photo curve edges,
+  card swooshes, the VC portrait frame); the unused motifs were deleted from `brand/motifs.tsx`. The small
+  gold eyebrow line stays.
+- **Homepage order** (seven sections): Hero → *Start here* (quick actions and "I am a…" merged into one
+  section) → Latest news → Events & announcements → Faculties → Vice Chancellor → Campuses, with the green
+  Admissions banner (the only big green block) between News and Events. *Partners & MoUs* moved to the About
+  page (new "Partners & MoUs" section and On-this-page entry; still edited on the Homepage entry in Strapi).
+  "The University at a glance" is now a slim, hairline-ruled row of the four live figures inside the Faculties
+  section instead of a green banner.
+- **One design system** (`components/home/home-ui.tsx`): every section uses the same vertical rhythm
+  (`py-section`) and alternates between the page colour and the subtle sand band; one section header (gold
+  eyebrow + `text-display-lg` title, serif in English) for every section; one card surface (2xl radius,
+  hairline border, the single new `shadow-card` elevation, border-only hover, no lift); two button styles,
+  gold filled and green outline (white outline on the dark hero and banner).
+- **Hero**: slide 1 is the real main gate photo (`photos/gate.jpeg`, credited "Photo: University of Swat"),
+  focal point centred on the gate. The drawn gate illustration stays in the Media Library for an optional
+  later slide. The Admissions banner photo is now a real one too (students in the Central Library hall), so
+  the illustration is used nowhere else. Applied live with `npm run hero-photos` and `npm run home-photos`.
+- **Icons and sharing**: `favicon.ico` (16/32/48) and a web app manifest with 192, 512 and maskable icons, all
+  from the crest; the homepage's own Open Graph card (`/api/og?variant=home`: the gate photo with the crest and
+  name on a green band) unless an editor uploads one in Strapi.
+- **Loading states**: Latest news and Events & announcements are fetched separately and stream in behind
+  skeletons with the same footprint (announced to screen readers as "Loading news…/events…"); new
+  `news/loading.tsx` skeleton for the News, Events & Announcements listing.
+- **Mobile (375px)**: every section checked; quick-action tiles become a single column on phones (they
+  wrapped one word per line in two columns). No horizontal scroll in English or Urdu.
+- Before/after homepage screenshots (desktop 1440px, mobile 375px @2x): `docs/screenshots/pro-polish/`.
