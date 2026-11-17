@@ -61,7 +61,7 @@ const ratioClass: Record<MediaRatio, string> = {
 /** Same footprint as a news/department Card, so content doesn't shift when it loads. */
 export function SkeletonCard({ ratio = "16/9", className }: { ratio?: MediaRatio; className?: string }) {
   return (
-    <div aria-hidden className={cn("flex flex-col overflow-hidden rounded-xl border border-line bg-surface", className)}>
+    <div aria-hidden className={cn("flex flex-col overflow-hidden rounded-2xl border border-line bg-surface", className)}>
       <Skeleton className={cn("rounded-none", ratioClass[ratio])} />
       <div className="flex flex-col gap-4 p-6">
         <div className="flex items-center gap-3">

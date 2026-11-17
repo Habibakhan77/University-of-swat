@@ -4,13 +4,12 @@ import { ArrowRight, ArrowUpRight, CalendarClock } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import type { AdmissionsBanner } from "@/lib/strapi/home";
 import { cn } from "@/lib/cn";
-import { displaySerif } from "@/lib/hero-font";
 import { iconFor } from "@/lib/icons";
 import type { NavLink, SiteImage } from "@/lib/strapi/site";
 import { GoldWave } from "@/components/brand/motifs";
-import { Container } from "@/components/ui/container";
 import { ImageCredit } from "@/components/ui/image-credit";
 import { SmartLink } from "@/components/layout/smart-link";
+import { HomeSection, homeButton, SectionHeader } from "./home-ui";
 
 interface AdmissionsBandProps {
   banner: AdmissionsBanner;
@@ -31,15 +30,11 @@ interface AdmissionsBandProps {
  * Hidden when an editor switches the banner off.
  */
 export function AdmissionsBand({ banner, links, image, locale, labels }: AdmissionsBandProps) {
-  // The serif display face is Latin only; Urdu keeps Nastaliq.
-  const serif = locale === "en" ? displaySerif.className : undefined;
-
   return (
-    <section aria-labelledby="home-admissions">
-      <Container size="wide">
+    <HomeSection labelledBy="home-admissions">
         <div
           className={cn(
-            "relative isolate grid overflow-hidden rounded-3xl bg-forest-900 text-white shadow-xl shadow-forest-950/20 [--ring:var(--color-gold-300)] dark:ring-1 dark:ring-white/10",
+            "relative isolate grid overflow-hidden rounded-2xl bg-forest-900 text-white shadow-card [--ring:var(--color-gold-300)] dark:ring-1 dark:ring-white/10",
             links.length
               ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,24rem)]"
               : "xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.8fr)]",
@@ -49,23 +44,16 @@ export function AdmissionsBand({ banner, links, image, locale, labels }: Admissi
           <div aria-hidden className="absolute -start-24 -top-32 -z-10 size-96 rounded-full bg-forest-600/40 blur-3xl" />
 
           <div className="flex flex-col items-start gap-4 px-6 pt-8 pb-6 sm:px-10 sm:pt-10 lg:col-start-1 lg:row-start-1 lg:pb-8 xl:py-12 xl:pe-4">
-            <p className="inline-flex items-center gap-3 text-overline tracking-[0.18em] text-gold-bright uppercase">
-              <span aria-hidden className="h-0.5 w-9 rounded-full bg-current" />
-              {labels.eyebrow}
-            </p>
-            <h2 id="home-admissions" className={cn("text-display-lg text-balance text-white", serif)}>
-              {banner.title}
-            </h2>
-            {banner.text ? <p className="max-w-xl text-body-lg text-pretty text-forest-50">{banner.text}</p> : null}
+            <SectionHeader id="home-admissions" locale={locale} eyebrow={labels.eyebrow} title={banner.title} intro={banner.text} inverted />
             <div className="mt-2 flex flex-wrap items-center gap-4">
               {banner.cta ? (
                 <SmartLink
                   href={banner.cta.href}
                   external={banner.cta.external}
-                  className="group/cta inline-flex items-center gap-2.5 rounded-full bg-gold-bright px-7 py-3.5 text-body font-bold text-forest-950 shadow-lg shadow-black/20 transition-colors hover:bg-gold-bright-hover"
+                  className={cn(homeButton("gold"), "group/cta")}
                 >
                   {banner.cta.label}
-                  <ArrowRight aria-hidden className="size-5 transition-transform duration-200 group-hover/cta:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/cta:-translate-x-0.5" />
+                  <ArrowRight aria-hidden className="transition-transform duration-200 group-hover/cta:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/cta:-translate-x-0.5" />
                 </SmartLink>
               ) : null}
               {banner.deadline && banner.deadlineLabel ? (
@@ -111,7 +99,7 @@ export function AdmissionsBand({ banner, links, image, locale, labels }: Admissi
           ) : null}
 
           {links.length ? (
-            <ul className="flex flex-col justify-center gap-3 px-6 pt-6 pb-8 sm:px-10 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:bg-forest-950/35 lg:px-6 lg:py-8 xl:relative xl:z-20 xl:col-start-3 xl:row-span-1 xl:-ms-8 xl:rounded-s-3xl xl:bg-[color-mix(in_oklab,var(--color-forest-950)_45%,var(--color-forest-900))] xl:shadow-[0_0_40px_rgb(0_0_0/0.25)]">
+            <ul className="flex flex-col justify-center gap-3 px-6 pt-6 pb-8 sm:px-10 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:bg-forest-950/35 lg:px-6 lg:py-8 xl:relative xl:z-20 xl:col-start-3 xl:row-span-1 xl:-ms-8 xl:rounded-s-2xl xl:bg-[color-mix(in_oklab,var(--color-forest-950)_45%,var(--color-forest-900))] xl:shadow-[0_0_40px_rgb(0_0_0/0.25)]">
               {links.map((link, i) => (
                 <li key={link.href}>
                   <AdmissionsLink link={link} highlighted={i === 0} />
@@ -120,8 +108,7 @@ export function AdmissionsBand({ banner, links, image, locale, labels }: Admissi
             </ul>
           ) : null}
         </div>
-      </Container>
-    </section>
+    </HomeSection>
   );
 }
 
@@ -148,7 +135,7 @@ function AdmissionsLink({ link, highlighted }: { link: NavLink; highlighted: boo
       external={link.external}
       externalIcon={false}
       className={cn(
-        "group/al flex items-center gap-4 rounded-2xl p-3.5 pe-5 shadow-md shadow-black/15 transition-[translate,background-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg motion-reduce:transition-colors motion-reduce:hover:translate-y-0",
+        "group/al flex items-center gap-4 rounded-xl p-3.5 pe-5 transition-colors duration-200",
         highlighted
           ? "bg-gold-bright text-forest-950 hover:bg-gold-bright-hover"
           : "bg-white text-forest-950 hover:bg-forest-50 dark:bg-forest-800 dark:text-white dark:ring-1 dark:ring-white/10 dark:hover:bg-forest-700",

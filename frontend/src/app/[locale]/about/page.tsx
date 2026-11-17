@@ -7,10 +7,12 @@ import { Link } from "@/i18n/navigation";
 import { iconFor } from "@/lib/icons";
 import { jsonLd, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr } from "@/lib/strapi/academics-model";
+import { getPartners } from "@/lib/strapi/home";
 import { aboutHref, administrationHref, contactHref, getAbout, getCampuses, getOffices } from "@/lib/strapi/organisation";
 import { AcademicHero } from "@/components/academics/academic-hero";
 import { SectionTitle } from "@/components/academics/panels";
 import { OfficeCard, OnThisPage, Statement } from "@/components/organisation/parts";
+import { PartnersList } from "@/components/organisation/partners-list";
 import { SourceNote } from "@/components/notices/shared";
 import { SmartLink } from "@/components/layout/smart-link";
 import { MountainRidge } from "@/components/brand/motifs";
@@ -34,13 +36,17 @@ export async function generateMetadata(): Promise<Metadata> {
 /** History, milestones, vision and mission, principal officers, campuses and recognition. All from Strapi. */
 export default async function AboutPage() {
   const locale = await resolveLocale();
-  const [about, campuses, offices, t, tCommon] = await Promise.all([
+  const [about, campuses, offices, partners, t, tCommon, tHome] = await Promise.all([
     getAbout(locale),
     getCampuses(locale),
     getOffices(locale),
+    getPartners(locale),
     getTranslations({ locale, namespace: "organisation" }),
     getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "home" }),
   ]);
+  // Partners and MoUs moved here from the homepage (edited on the Homepage entry in Strapi).
+  const partnersTitle = partners.title ?? tHome("partnersEyebrow");
   const lang = about && about.lang !== locale ? about.lang : undefined;
   const principal = offices.filter((o) => o.isPrincipal);
   const vcOffice = principal[0];
@@ -51,6 +57,7 @@ export default async function AboutPage() {
     { id: "leadership", label: t("principalOfficers"), show: principal.length > 0 },
     { id: "campuses", label: t("campuses"), show: campuses.length > 0 },
     { id: "recognition", label: t("recognition"), show: Boolean(about?.recognition.length) },
+    { id: "partners", label: partnersTitle, show: partners.partners.length > 0 },
   ].filter((s) => s.show);
 
   const structured = {
@@ -275,6 +282,14 @@ export default async function AboutPage() {
                   </li>
                 ))}
               </ul>
+            </Container>
+          ) : null}
+
+          {/* Partners and MoUs */}
+          {partners.partners.length ? (
+            <Container as="section" size="wide" aria-labelledby="partners">
+              <SectionTitle id="partners">{partnersTitle}</SectionTitle>
+              <PartnersList partners={partners.partners} locale={locale} labels={{ mou: (year) => tHome("mou", { year: String(year) }) }} />
             </Container>
           ) : null}
 

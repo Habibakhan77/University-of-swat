@@ -628,18 +628,26 @@ async function loadCampuses(locale: Locale): Promise<CampusCard[]> {
 /* ---------- Public API ---------- */
 
 export async function getHomepageData(locale: Locale) {
-  const [home, slides, stats, news, ticker, eventsAndNotices, vc, faculties, campuses] = await Promise.all([
+  const [home, slides, stats, ticker, vc, faculties, campuses] = await Promise.all([
     safely("homepage", null, () => loadHome(locale)),
     safely("hero slides", [], () => loadHeroSlides(locale)),
     safely("stats", [], () => loadStats(locale)),
-    safely("news", [], () => loadNews(locale)),
     safely("notices ticker", [], () => loadTicker(locale)),
-    safely("events", { events: [], announcements: [] }, () => loadEventsAndNotices(locale)),
     safely("VC message", null, () => getVcMessage(locale)),
     safely("faculties", [], () => loadFaculties(locale)),
     safely("campuses", [], () => loadCampuses(locale)),
   ]);
-  return { home, slides, stats, news, ticker, ...eventsAndNotices, vc, faculties, campuses };
+  return { home, slides, stats, ticker, vc, faculties, campuses };
+}
+
+/** Latest news for the homepage; loaded on its own so the section can stream in behind a skeleton. */
+export function getHomeNews(locale: Locale): Promise<NewsItem[]> {
+  return safely("news", [], () => loadNews(locale));
+}
+
+/** Events and announcements for the homepage; streamed like the news. */
+export function getHomeEvents(locale: Locale): Promise<EventsAndNotices> {
+  return safely("events", { events: [], announcements: [] }, () => loadEventsAndNotices(locale));
 }
 
 export type HomepageData = Awaited<ReturnType<typeof getHomepageData>>;
@@ -647,4 +655,10 @@ export type HomepageData = Awaited<ReturnType<typeof getHomepageData>>;
 /** Metadata only (title, description, Open Graph image); shares the homepage cache entry. */
 export async function getHomepageSeo(locale: Locale) {
   return (await safely("homepage", null, () => loadHome(locale)))?.seo ?? null;
+}
+
+/** Partners and MoUs (edited on the Homepage entry), shown on the About page. */
+export async function getPartners(locale: Locale): Promise<{ title: string | null; partners: Partner[] }> {
+  const home = await safely("homepage", null, () => loadHome(locale));
+  return { title: home?.headings.partners ?? null, partners: home?.partners ?? [] };
 }

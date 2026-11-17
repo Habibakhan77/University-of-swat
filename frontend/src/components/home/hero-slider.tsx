@@ -4,12 +4,12 @@ import { cn } from "@/lib/cn";
 import { heroSerif } from "@/lib/hero-font";
 import type { Locale } from "@/i18n/routing";
 import type { HeroSlide } from "@/lib/strapi/home";
-import { buttonVariants } from "@/components/ui/button";
 import { MountainMark, Swoosh, WaveEdge } from "@/components/brand/motifs";
 import { SmartLink } from "@/components/layout/smart-link";
 import { ImageCredit } from "@/components/ui/image-credit";
 import { fillTemplate, HERO_ID, HERO_IMAGE_QUALITY, HERO_IMAGE_SIZES, heroFraming, type HeroLabels } from "./hero-shared";
 import { HeroEnhancer } from "./hero-enhancer";
+import { homeButton } from "./home-ui";
 
 export type { HeroLabels } from "./hero-shared";
 
@@ -167,7 +167,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                           href={slide.primary.href}
                           external={slide.primary.external}
                           externalIcon={false}
-                          className={cn(buttonVariants({ variant: "accent", size: "lg" }), "group/cta rounded-full bg-gold-bright px-6 text-forest-950 shadow-lg shadow-black/25 hover:bg-gold-bright-hover")}
+                          className={cn(homeButton("gold"), "group/cta min-h-12 text-body shadow-lg shadow-black/25")}
                         >
                           <GraduationCap aria-hidden />
                           {slide.primary.label}
@@ -181,10 +181,7 @@ export function HeroSlider({ slides, locale, heading, labels }: HeroSliderProps)
                         <SmartLink
                           href={slide.secondary.href}
                           external={slide.secondary.external}
-                          className={cn(
-                            buttonVariants({ variant: "ghost", size: "lg" }),
-                            "rounded-full bg-white/10 px-6 text-white ring-[1.5px] ring-white/85 ring-inset backdrop-blur-sm hover:bg-white/22 hover:text-white",
-                          )}
+                          className={cn(homeButton("outline", { onDark: true }), "min-h-12 text-body backdrop-blur-sm")}
                         >
                           {slide.secondary.label}
                         </SmartLink>
