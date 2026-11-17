@@ -61,6 +61,8 @@ export interface NewsItem {
   dateLabel: string;
   image: SiteImage | null;
   lang: Locale;
+  /** Marked "Featured" in Strapi (Post → isFeatured). */
+  featured: boolean;
 }
 
 export interface Notice {
@@ -213,6 +215,7 @@ interface StrapiPost extends Doc {
   eventStart: string | null;
   eventLocation: string | null;
   coverImage: StrapiMedia | null;
+  isFeatured?: boolean | null;
 }
 
 interface StrapiFaculty extends Doc {
@@ -430,22 +433,30 @@ async function loadNews(locale: Locale): Promise<NewsItem[]> {
   cacheLife("max");
 
   return guarded(`news (${locale})`, [], async () => {
-    const posts = await localizedList<StrapiPost>(
-      "/posts",
-      {
-        "filters[category][$eq]": "news",
-        "sort[0]": "date:desc",
-        "sort[1]": "publishedAt:desc",
-        ...postFields,
-        ...populateImage("coverImage"),
-      },
-      locale,
-      4,
-    );
+    const query = {
+      "filters[category][$eq]": "news",
+      "sort[0]": "date:desc",
+      "sort[1]": "publishedAt:desc",
+      ...postFields,
+      "fields[7]": "isFeatured",
+      ...populateImage("coverImage"),
+    };
+    const [latest, flagged] = await Promise.all([
+      localizedList<StrapiPost>("/posts", query, locale, 4),
+      localizedList<StrapiPost>("/posts", { ...query, "filters[isFeatured][$eq]": true }, locale, 1),
+    ]);
+    const toItem = (p: (typeof latest)[number]): NewsItem => ({
+      ...toNotice(p, locale),
+      excerpt: p.excerpt,
+      image: toImage(p.coverImage),
+      featured: p.isFeatured === true,
+    });
     // Topped-up English items can arrive after newer Urdu ones; keep the list newest first.
-    return posts
-      .map((p) => ({ ...toNotice(p, locale), excerpt: p.excerpt, image: toImage(p.coverImage) }))
-      .sort((a, b) => b.date.localeCompare(a.date));
+    const items = latest.map(toItem).sort((a, b) => b.date.localeCompare(a.date));
+    // Lead story: the newest post marked Featured in Strapi, else the newest with a photo, else the newest.
+    const lead = (flagged[0] ? toItem(flagged[0]) : undefined) ?? items.find((i) => i.image) ?? items[0];
+    if (!lead) return [];
+    return [lead, ...items.filter((i) => i.id !== lead.id).slice(0, 3)];
   });
 }
 

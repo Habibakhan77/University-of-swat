@@ -169,7 +169,13 @@ export default async function HomePage() {
         <NewsSection
           news={news}
           locale={locale}
-          labels={{ eyebrow: t("newsEyebrow"), title: home?.headings.news ?? t("newsEyebrow"), all: t("allNews") }}
+          labels={{
+            eyebrow: t("newsEyebrow"),
+            title: home?.headings.news ?? t("newsEyebrow"),
+            all: t("allNews"),
+            featured: t("featured"),
+            readMore: t("readMore"),
+          }}
         />
 
         {home?.banner ? (

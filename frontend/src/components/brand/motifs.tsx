@@ -196,3 +196,38 @@ export function PeaksAndPines({ className }: MotifProps) {
     </svg>
   );
 }
+
+/**
+ * Faint line art of a campus gateway (a tall central arch between two smaller ones, flanking towers with
+ * small domed kiosks, low walls running off to each side), for a card corner. Decorative; mirrors in RTL.
+ */
+export function GateLineArt({ className }: MotifProps) {
+  return (
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 280 110"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={cn("pointer-events-none block rtl:-scale-x-100", className)}
+    >
+      {/* Ground and the low walls. */}
+      <path d="M2 108h276" strokeWidth="1.4" />
+      <path d="M2 108V88h46M232 88h46v20M14 88v-4h10v4M254 88v-4h10v4" strokeWidth="1.2" />
+      {/* Towers with domed kiosks. */}
+      <path d="M48 108V42h24v66M208 108V42h24v66" strokeWidth="1.4" />
+      <path d="M46 42h28M206 42h28M52 42V32h16v10M212 42V32h16v10" strokeWidth="1.2" />
+      <path d="M50 32c0-8 6-12 10-14 4 2 10 6 10 14M210 32c0-8 6-12 10-14 4 2 10 6 10 14M60 18v-6M220 18v-6" strokeWidth="1.2" />
+      <path d="M54 60h12v14H54zM214 60h12v14h-12z" strokeWidth="1" opacity="0.7" />
+      {/* Gate block with the central arch and two side arches. */}
+      <path d="M72 108V50h136v58" strokeWidth="1.4" />
+      <path d="M68 50h144M76 44h128v6" strokeWidth="1.2" />
+      <path d="M118 108V76c0-14 10-22 22-22s22 8 22 22v32" strokeWidth="1.4" />
+      <path d="M124 108V78c0-10 7-17 16-17s16 7 16 17v30" strokeWidth="1" opacity="0.6" />
+      <path d="M84 108V84c0-8 5-13 11-13s11 5 11 13v24M174 108V84c0-8 5-13 11-13s11 5 11 13v24" strokeWidth="1.2" />
+      <path d="M128 44v-8h24v8M134 36c0-5 3-8 6-9 3 1 6 4 6 9" strokeWidth="1.1" />
+    </svg>
+  );
+}

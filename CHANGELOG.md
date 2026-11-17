@@ -1162,3 +1162,16 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
     `npm run home-photos`.
   - Checked at 1440/1024/375, EN/UR, light/dark: axe clean, no horizontal scroll; Lighthouse
     Accessibility 100.
+- **Homepage: Latest News redesigned (reference image).**
+  - Header: gold line + "From campus", serif "Latest news" (Merriweather in English, Nastaliq in Urdu),
+    faint line-art peaks in the middle and an outlined gold "All news →" pill.
+  - Lead story: the newest news post marked **Featured** in Strapi (existing Post field `isFeatured`;
+    the seed already flags the Olivieri/IAMP meeting), else the newest post with a photo. Wide photo,
+    dark-green "★ Featured" pill (only when it really is featured), the photo credit (still clickable),
+    date, serif title with a thick gold bar on the reading side, 2-line summary, gold "Read more" pill
+    and a faint main-gate line art (`GateLineArt`) in the corner.
+  - Next three posts as horizontal cards: fixed-ratio photo, date, serif title (max 3 lines) and a round
+    light-green arrow. One link per card (the title link covers the card); lift + slight photo zoom on
+    hover, off for reduced motion. Posts without a photo get the branded gradient.
+  - Phones: lead card full width, then the three stacked. Urdu mirrors (gold bar on the right) and keeps
+    Nastaliq line height. Checked at 1440/1024/375, EN/UR, light/dark: axe clean, no horizontal scroll.
