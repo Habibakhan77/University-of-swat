@@ -37,7 +37,8 @@ function FeaturedCard({ item, locale, labels }: { item: NewsItem; locale: Locale
   const lang = langOf(item, locale);
   return (
     <article className={cn("group/news relative flex h-full flex-col overflow-hidden", card, cardHover)}>
-      <div className={cn("relative aspect-video overflow-hidden bg-surface-sunken", zoom)}>
+      {/* shrink-0: the photo keeps its full 16:9 height however tall the text gets, so it never slides under it. */}
+      <div className={cn("relative aspect-video shrink-0 overflow-hidden bg-surface-sunken", zoom)}>
         <PostCover id={item.id} category="news" image={item.image} sizes="(min-width: 1024px) 56vw, 100vw" />
         {item.featured ? (
           <span className="absolute start-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-forest-800 px-3 py-1 text-caption font-semibold text-white">
@@ -53,7 +54,7 @@ function FeaturedCard({ item, locale, labels }: { item: NewsItem; locale: Locale
         ) : null}
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-6 sm:p-8">
+      <div className="relative z-10 flex flex-1 flex-col gap-3 bg-surface px-6 pt-7 pb-6 sm:px-8 sm:pt-8 sm:pb-8">
         <DateLine item={item} />
         <h3 lang={lang} className={cn("text-heading-lg text-pretty text-forest-900 [&:lang(ur)]:leading-[1.9] dark:text-sand-50", serifFor(locale))}>
           <Link href={item.href} className={cn(stretchedLink, "decoration-current/30 underline-offset-4 group-hover/news:underline")}>

@@ -87,7 +87,7 @@ export function EventsGrid({ events, announcements, locale, labels }: EventsGrid
 function EventRow({ event, locale, labels }: { event: EventItem; locale: Locale; labels: EventsLabels }) {
   const lang = langOf(event.lang, locale);
   return (
-    <article className={cn("group/ev relative flex items-center gap-4 p-3 pe-5 sm:gap-5", card, cardHover)}>
+    <article className={cn("group/ev relative flex items-center gap-4 p-3 pe-5 sm:gap-5 sm:py-4", card, cardHover)}>
       <time
         dateTime={event.start}
         className={cn(
@@ -99,8 +99,14 @@ function EventRow({ event, locale, labels }: { event: EventItem; locale: Locale;
         <span className="mt-1 text-caption font-semibold uppercase">{event.month}</span>
       </time>
 
-      <div className="flex min-w-0 flex-1 flex-col items-start gap-1">
-        <span className={cn("text-overline uppercase", event.upcoming ? "text-accent-text" : "text-fg-subtle")}>
+      <div className="flex min-w-0 flex-1 flex-col items-start gap-1.5 py-1">
+        {/* In the text flow (never positioned over the card edge), with room for Nastaliq in Urdu. */}
+        <span
+          className={cn(
+            "inline-flex shrink-0 items-center rounded-full px-2.5 py-0.5 text-caption leading-5 font-semibold tracking-wide uppercase [&:lang(ur)]:leading-7",
+            event.upcoming ? "bg-gold-bright text-forest-950" : "bg-canvas-subtle text-fg-muted dark:bg-white/8",
+          )}
+        >
           {event.upcoming ? labels.upcoming : labels.past}
         </span>
         <h3 lang={lang} className="text-body-lg leading-snug font-semibold text-pretty text-fg [&:lang(ur)]:leading-[1.9]">

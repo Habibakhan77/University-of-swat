@@ -69,8 +69,9 @@ export function StartHere({ locale, actions, pathways, photos, labels }: StartHe
       ) : null}
 
       {shown.length ? (
-        <div className="flex flex-col gap-5">
-          <h3 className="text-heading-lg text-fg">{labels.pathways}</h3>
+        // Its own block under a hairline: clear space above (section gap + rule + padding) and below the sub-heading.
+        <div className="flex flex-col gap-6 border-t border-line pt-10 lg:gap-8 lg:pt-12">
+          <h3 className="text-heading-xl text-forest-900 dark:text-sand-50">{labels.pathways}</h3>
           <ul className="grid items-start gap-3 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
             {shown.map((p) => (
               <li key={p.id}>
