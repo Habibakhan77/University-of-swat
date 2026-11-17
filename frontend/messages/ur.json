@@ -167,6 +167,7 @@
     "allFaculties": "تمام فیکلٹیز و شعبہ جات",
     "departments": "{count, plural, =0 {شعبہ جات جلد} one {# شعبہ} other {# شعبہ جات}}",
     "centre": "مرکز",
+    "centreChip": "فن و ثقافت کا مرکز",
     "campusesEyebrow": "دو کیمپس، ایک جامعہ",
     "established": "قیام {year}",
     "aboutCampus": "کیمپس کے بارے میں",

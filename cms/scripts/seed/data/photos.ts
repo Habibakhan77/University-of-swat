@@ -18,6 +18,8 @@ export interface SeedPhoto {
    * university supplied the photo directly; the credit is then shown without a link.
    */
   source: string | null;
+  /** Upload a `cover` at the file's own 16:9 size instead of capping it at 1600×900. */
+  fullSize?: boolean;
 }
 
 const CREDIT = 'Photo: University of Swat';
@@ -189,6 +191,24 @@ export const PHOTOS = {
     'Students at a World Heritage Day seminar, with photographs of heritage sites projected on the wall',
     '/2024/04/world-heritage-day/',
   ),
+  /**
+   * Drawn illustrations supplied by the team for the two faculties with no usable published photo: credited
+   * "Illustration" (never "Photo"), no source link, alt text says so. Uploaded at full size (1672×941).
+   */
+  facultyHealthIllustration: {
+    file: 'faculty-ahs-illustration.webp',
+    alt: 'Illustration: a stethoscope resting on a green medical textbook on a desk, with a clinician in a white coat behind',
+    credit: 'Illustration',
+    source: null,
+    fullSize: true,
+  },
+  facultyHunerkadaIllustration: {
+    file: 'faculty-hunerkada-illustration.webp',
+    alt: 'Illustration: paintbrushes in a carved clay pot, a carved wooden rosette, a palette of oil paints and a painting of snow-capped Swat mountains on an easel',
+    credit: 'Illustration',
+    source: null,
+    fullSize: true,
+  },
 } satisfies Record<string, SeedPhoto>;
 
 export type PhotoKey = keyof typeof PHOTOS;
@@ -218,14 +238,16 @@ export const POST_PHOTOS: Record<string, PhotoKey> = {
 
 /**
  * Faculty photo per faculty slug (card image and faculty page header). Allied Health Sciences and Hunerkada
- * have no usable published photo yet (only posters, other institutions' facilities or meetings), so the
- * website draws the faculty's pattern for them. Add a photo here when one is published.
+ * have no usable published photo yet (only posters, other institutions' facilities or meetings), so they use
+ * the team's illustrations, credited "Illustration". Replace them when a real photo is published.
  */
 export const FACULTY_PHOTOS: Record<string, PhotoKey> = {
   'religious-languages-humanities-legal-studies': 'facultyLaw',
   'physical-numerical-computational-sciences': 'facultyGeology',
   'management-art-social-sciences': 'facultyHeritage',
   'biological-chemical-sciences': 'facultyEnvironment',
+  'allied-health-sciences': 'facultyHealthIllustration',
+  hunerkada: 'facultyHunerkadaIllustration',
 };
 
 /** Campus photo per campus slug. */

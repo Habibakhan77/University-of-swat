@@ -228,6 +228,7 @@ export default async function HomePage() {
             intro: home?.facultiesIntro ?? null,
             all: t("allFaculties"),
             centre: t("centre"),
+            centreChip: t("centreChip"),
             departments: (count) => t("departments", { count }),
           }}
         />

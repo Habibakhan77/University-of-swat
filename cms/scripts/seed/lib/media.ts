@@ -14,7 +14,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 import type { Core } from '@strapi/strapi';
-import { LOGO, PHOTOS, photoCaption, type PhotoKey } from '../data/photos';
+import { LOGO, PHOTOS, photoCaption, type PhotoKey, type SeedPhoto } from '../data/photos';
 
 export const PLACEHOLDER_PREFIX = 'placeholder-';
 /** Real photos uploaded by the seed; removed and re-uploaded by `--reset` like placeholders. */
@@ -264,7 +264,7 @@ export class MediaFactory {
     const cacheKey = `photo:${ratio}:${key}`;
     const hit = this.cache.get(cacheKey);
     if (hit) return hit.id;
-    const photo = PHOTOS[key];
+    const photo: SeedPhoto = PHOTOS[key];
     const source = sharp(await readFile(path.join(this.strapi.dirs.app.root, PHOTO_DIR, photo.file))).rotate();
     let resized: ReturnType<typeof sharp>;
     let quality = 80;
@@ -276,8 +276,9 @@ export class MediaFactory {
       resized = source.resize(width, height, { fit: 'cover', position: 'attention', kernel: 'lanczos3' });
     } else if (ratio === 'cover') {
       const { width = 0, height = 0 } = await source.metadata();
-      const w = Math.round(Math.min(RATIOS.cover.width, width, (height * 16) / 9));
+      const w = Math.round(Math.min(photo.fullSize ? width : RATIOS.cover.width, width, (height * 16) / 9));
       resized = source.resize(w, Math.round((w * 9) / 16), { fit: 'cover', position: 'attention' });
+      if (photo.fullSize) quality = 90;
     } else {
       resized = source.resize({ width: 1600, withoutEnlargement: true });
     }

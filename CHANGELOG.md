@@ -1222,3 +1222,18 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
   - Phones: photo on top, centred, then the text. Urdu mirrors the layout; dark mode supported. axe: no
     violations (en/ur, light/dark). Checked at 1440, 1024 and 375px.
   - Heading set in Title Case ("A University for the Valley and Beyond") in the seed and the live Strapi entry.
+- **Faculties section redesign** (homepage): gold-rule "Study with us" eyebrow, Merriweather "Faculties"
+  heading and the Strapi intro, faint filled peaks and pines between them, an outlined gold "All Faculties &
+  Departments" pill, and a green-and-gold `CornerSweep` in the section's top-end corner. Six cards (3 / 2 / 1
+  columns): untinted photo with rounded top corners and a gold curved bottom edge (new `PhotoCurveEdge`), a
+  deep-green icon tile overlapping it, bold green name, one-line Strapi summary, a light-green chip with the
+  live count of active departments ("N Departments"), and a round outlined arrow. The whole card is one link
+  (stretched title link, focus ring on the card) and lifts on hover (no motion with reduced motion).
+  Hunerkada gets a gold "Centre" badge; with no departments its chip reads "Centre for art & culture".
+  - Allied Health Sciences and Hunerkada now use the team's illustrations (`faculty-ahs-illustration.webp`,
+    `faculty-hunerkada-illustration.webp`, full 1672×941, WebP q90), credited "Illustration" with no link, on
+    the card and the faculty page header. In the seed (`FACULTY_PHOTOS`, new `fullSize` photo flag) and applied
+    to the live Strapi with the new `npm run faculty-covers` (sets missing faculty covers, publishes en + ur,
+    refreshes the website).
+  - Urdu mirrors the layout; dark mode supported. axe: no violations (en/ur, light/dark). Checked at 1440,
+    1024 and 375px.

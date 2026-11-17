@@ -19,6 +19,7 @@
     "faculty-photos": "node scripts/faculty-photos.js",
     "hero-photos": "node scripts/hero-photos.js",
     "home-photos": "node scripts/home-photos.js",
+    "faculty-covers": "node scripts/faculty-covers.js",
     "event-facts": "node scripts/event-facts.js"
   },
   "dependencies": {

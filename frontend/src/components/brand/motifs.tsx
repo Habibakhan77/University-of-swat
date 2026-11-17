@@ -332,3 +332,25 @@ export function GoldWave({ className }: MotifProps) {
     </svg>
   );
 }
+
+/**
+ * Curved bottom edge for a card photo: a green sliver and a gold band rising toward the end side, cut by
+ * the card surface below (fill-surface, so it follows the theme). Stretches to the photo's width; mirrors
+ * in RTL. Decorative.
+ */
+export function PhotoCurveEdge({ className }: MotifProps) {
+  const id = useId();
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 400 44" preserveAspectRatio="none" className={cn("pointer-events-none block w-full rtl:-scale-x-100", className)}>
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0.35" className="[stop-color:var(--color-forest-700)]" stopOpacity="0" />
+          <stop offset="1" className="[stop-color:var(--color-forest-700)]" />
+        </linearGradient>
+      </defs>
+      <path fill={`url(#${id})`} d="M0 30C130 27 270 16 400 0v44H0Z" />
+      <path className="fill-gold-400" d="M0 34C130 31 270 22 400 8v36H0Z" />
+      <path className="fill-surface" d="M0 39C130 37 270 30 400 17v27H0Z" />
+    </svg>
+  );
+}

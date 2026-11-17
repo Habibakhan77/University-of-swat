@@ -20,6 +20,8 @@ Those posts, and HEC DLSEI 3.0 Cohort 4 (only a flow-chart graphic), get a text-
 | `faculty-bcs-remote-sensing-training.webp` | Biological and Chemical Sciences card and header | `/2026/07/seven-day-training-program-on-climate-resilient-agriculture/` |
 | `faculty-rlhls-law-supreme-court.webp` | Religious, Languages, Humanities and Legal Studies card and header | `/2025/05/8th-semester-department-of-law-and-sharia-…/` |
 | `faculty-mass-heritage-seminar.webp` | Management, Art and Social Sciences card and header | `/2024/04/world-heritage-day/` |
+| `faculty-ahs-illustration.webp` | Allied Health Sciences card and header. A drawn illustration supplied by the team (1672×941, WebP quality 90, uploaded full size), credited **"Illustration"** (never "Photo") with no link | Supplied by the team |
+| `faculty-hunerkada-illustration.webp` | Hunerkada card and header. A drawn illustration supplied by the team (1672×941, WebP quality 90, uploaded full size), credited **"Illustration"** with no link | Supplied by the team |
 | `hero-campus-mountains.jpg` | Hero (admissions slide), Admissions page hero, Open Graph image | `/maincampus/` |
 | `vc-husnul-amin.jpg` | Vice Chancellor (homepage VC message, About leadership) | Homepage VC message |
 | `campus-library-hall.webp` | Central Library card and page (Campus Life). Right half of a two-photo collage, cropped to the library hall (714×496, below the usual 800px minimum: no larger library photo is published) | `/2023/09/chiragh-project/` |
