@@ -1258,3 +1258,15 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
     partners). In the seed (`PARTNERS`) and applied live with the new `npm run home-partners`.
   - Heading "Our Campuses" in Title Case (seed and live Strapi). Urdu mirrors both sections (English partner
     names and countries keep `lang="en"` in `<bdi>`); dark mode; axe clean.
+- **Partners & MoUs, sourced and evened out** (homepage):
+  - Eight partners, each with a signed MoU or a collaboration published on uswat.edu.pk, under the exact name
+    in the post, linking to it (our copy for NIIBS and SCCI): NIIBS (Sri Lanka, MoU 2026), NCHD (MoU 2026),
+    SCCI (collaboration, MoU only proposed: no year), NOVA CSS Academy Islamabad (MoU 2026), Emerson
+    University, Multan (EUM) (MoU 2025), District Police Swat (MoU 2025), Regional Blood Center Swat (MoU
+    2025), Regional Forensic Science Laboratory Counter Terrorism Department (CTD) Swat (MoU 2025). The year
+    is that of the post reporting the signing. Seed and live Strapi (`npm run home-partners`). HEC and KPEF
+    stay out (regulator and scholarship body).
+  - Grid fills the content width evenly: 1–4 partners share a row, more use 4 per row (3 when 4 would leave
+    one card alone); two per row on tablets with an odd last card spanning the row; one per row on phones.
+  - Urdu: the English partner names keep `lang="en"` on an inline `<bdi>` only, so the card text stays
+    right-aligned.

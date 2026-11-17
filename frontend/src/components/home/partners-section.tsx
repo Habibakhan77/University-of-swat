@@ -7,6 +7,23 @@ import { Container } from "@/components/ui/container";
 import { SmartLink } from "@/components/layout/smart-link";
 import { PeaksAndPines } from "@/components/brand/motifs";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { cn } from "@/lib/cn";
+
+const LG_COLS = { 1: "lg:grid-cols-1", 2: "lg:grid-cols-2", 3: "lg:grid-cols-3", 4: "lg:grid-cols-4" } as const;
+
+/**
+ * Columns from 1024px, so the cards always fill the content width and no card sits alone on a row:
+ * 1–4 partners share one row; more use 4 per row, or 3 when 4 would leave a single card (5, 9, 13…).
+ */
+function desktopColumns(count: number): keyof typeof LG_COLS {
+  if (count <= 4) return count as keyof typeof LG_COLS;
+  return count % 4 === 1 ? 3 : 4;
+}
+
+/** Two columns from 640px: with an odd count the last card spans both instead of standing alone. */
+function tabletSpan(count: number, index: number): string | undefined {
+  return count > 1 && count % 2 === 1 && index === count - 1 ? "sm:col-span-2 lg:col-span-1" : undefined;
+}
 
 interface PartnersSectionProps {
   partners: Partner[];
@@ -38,8 +55,8 @@ export function PartnersSection({ partners, locale, labels }: PartnersSectionPro
             </>
           }
         />
-        <ul className="flex flex-wrap gap-5">
-          {partners.map((partner) => {
+        <ul className={cn("grid gap-5 sm:grid-cols-2", LG_COLS[desktopColumns(partners.length)])}>
+          {partners.map((partner, i) => {
             const body = (
               <>
                 {partner.logo ? (
@@ -54,8 +71,8 @@ export function PartnersSection({ partners, locale, labels }: PartnersSectionPro
                 <span aria-hidden className="w-0.5 self-stretch rounded-full bg-gold-400" />
                 <span className="flex min-w-0 flex-col gap-1">
                   {/* Names and countries are entered in English for both languages. */}
-                  <span className="text-body font-bold text-pretty text-forest-900 dark:text-sand-50" lang={nameLang}>
-                    <bdi>{partner.name}</bdi>
+                  <span className="text-body font-bold text-pretty text-forest-900 dark:text-sand-50">
+                    <bdi lang={nameLang}>{partner.name}</bdi>
                   </span>
                   {partner.country || partner.year ? (
                     <span className="text-body-sm text-fg-muted">
@@ -70,7 +87,7 @@ export function PartnersSection({ partners, locale, labels }: PartnersSectionPro
             const card =
               "flex h-full w-full items-center gap-4 rounded-2xl border border-line/70 bg-surface p-5 shadow-md dark:border-line";
             return (
-              <li key={partner.name} className="w-full sm:w-[calc(50%-0.625rem)] lg:w-[25rem]">
+              <li key={partner.name} className={cn("flex", tabletSpan(partners.length, i))}>
                 {partner.href ? (
                   <SmartLink
                     href={partner.href}

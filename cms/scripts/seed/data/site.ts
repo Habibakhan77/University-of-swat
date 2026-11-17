@@ -185,10 +185,14 @@ export const HOMEPAGE = {
 
 /**
  * Partners and MoUs on the homepage: only organisations with an MoU or collaboration published on
- * uswat.edu.pk, under the exact name used there, each linking to our copy of that news post. Regulators and
- * funding or scholarship bodies (HEC, KPEF) are not partners. `mouYear` only when an MoU was signed:
- * - NIIBS: MoU signed through ORIC (uswat.edu.pk post of 6 November 2026).
+ * uswat.edu.pk, under the exact name used there, each linking to that news post (our copy when the seed has
+ * one, else the uswat.edu.pk post). Regulators and funding or scholarship bodies (HEC, KPEF) are not
+ * partners. `mouYear` only when the post reports a signed MoU; it is the year of that post:
+ * - NIIBS: MoU signed through ORIC (post of 6 November 2026).
  * - SCCI: collaboration explored and an MoU only proposed (post of 28 October 2026), so no MoU year.
+ * - The other six: the eight most recent published MoUs, newest first (checked 17 November 2026). Older MoUs
+ *   on uswat.edu.pk (e.g. Foundation University Islamabad, SBBWU Peshawar, SPADO, Northern Technical
+ *   University Iraq) can be added in Strapi with their post as the link.
  */
 export const PARTNERS = [
   {
@@ -199,10 +203,52 @@ export const PARTNERS = [
     url: '/news/uswat-niibs-mou-gandhara-civilization',
   },
   {
+    key: 'nchd',
+    name: 'National Commission for Human Development (NCHD)',
+    country: 'Pakistan',
+    mouYear: 2026,
+    url: 'https://uswat.edu.pk/2026/11/university-of-swat-joins-hands-with-nchd-for-each-one-teach-one/',
+  },
+  {
     key: 'scci',
     name: 'Swat Chamber of Commerce and Industry (SCCI)',
     country: 'Pakistan',
     url: '/news/uswat-scci-strategic-collaboration',
+  },
+  {
+    key: 'nova-css',
+    name: 'NOVA CSS Academy Islamabad',
+    country: 'Pakistan',
+    mouYear: 2026,
+    url: 'https://uswat.edu.pk/2026/08/university-of-swat-and-nova-css-academy-islamabad-sign-a-two-year-mou/',
+  },
+  {
+    key: 'eum',
+    name: 'Emerson University, Multan (EUM)',
+    country: 'Pakistan',
+    mouYear: 2025,
+    url: 'https://uswat.edu.pk/2025/09/emerson-university-multan-eum-have-signed-a-memorandum-of-understanding-mou/',
+  },
+  {
+    key: 'district-police-swat',
+    name: 'District Police Swat',
+    country: 'Pakistan',
+    mouYear: 2025,
+    url: 'https://uswat.edu.pk/2025/09/mou-to-foster-collaboration-in-forensic-sciences-and-law-enforcement/',
+  },
+  {
+    key: 'regional-blood-center-swat',
+    name: 'Regional Blood Center Swat',
+    country: 'Pakistan',
+    mouYear: 2025,
+    url: 'https://uswat.edu.pk/2025/02/mou-signed-with-regional-blood-center-swat/',
+  },
+  {
+    key: 'rfsl-ctd-swat',
+    name: 'Regional Forensic Science Laboratory Counter Terrorism Department (CTD) Swat',
+    country: 'Pakistan',
+    mouYear: 2025,
+    url: 'https://uswat.edu.pk/2025/02/mou-signed-with-regional-forensic-science-laboratory-counter-terrorism-department-ctd-swat/',
   },
 ];
 
