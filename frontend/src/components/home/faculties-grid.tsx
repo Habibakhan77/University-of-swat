@@ -2,8 +2,6 @@ import Image from "next/image";
 import { ArrowRight, Layers, type LucideIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { cn } from "@/lib/cn";
-import { displaySerif } from "@/lib/hero-font";
 import { iconFor } from "@/lib/icons";
 import type { FacultyCard } from "@/lib/strapi/home";
 import { Container } from "@/components/ui/container";
@@ -11,6 +9,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { ImageCredit } from "@/components/ui/image-credit";
 import { FacultyArt } from "@/components/academics/faculty-art";
 import { CornerSweep, PeaksAndPines, PhotoCurveEdge } from "@/components/brand/motifs";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
 
 interface FacultiesGridProps {
   faculties: FacultyCard[];
@@ -33,32 +32,28 @@ interface FacultiesGridProps {
  */
 export function FacultiesGrid({ faculties, locale, labels }: FacultiesGridProps) {
   if (!faculties.length) return null;
-  const serif = locale === "en" ? displaySerif.className : undefined;
 
   return (
     <section aria-labelledby="home-faculties" className="relative isolate overflow-hidden bg-canvas-subtle py-section">
       <CornerSweep className="absolute end-0 top-0 -z-10 w-40 sm:w-64 lg:w-96" />
       <Container size="wide" className="flex flex-col gap-10 lg:gap-12">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:gap-8">
-          <div className="flex max-w-2xl flex-col gap-3">
-            <p className="inline-flex items-center gap-3 text-overline text-forest-900 uppercase dark:text-sand-100">
-              <span aria-hidden className="h-0.5 w-10 rounded-full bg-gold-400" />
-              {labels.eyebrow}
-            </p>
-            <h2 id="home-faculties" className={cn("text-display-lg text-forest-900 dark:text-sand-50", serif)}>
-              {labels.title}
-            </h2>
-            {labels.intro ? <p className="text-body-lg text-pretty text-fg-muted">{labels.intro}</p> : null}
-          </div>
-          <PeaksAndPines className="mx-auto hidden h-24 w-auto shrink text-forest-300 opacity-60 lg:block dark:text-forest-700" />
-          <Link
-            href="/academics"
-            className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full border-2 border-gold-400 bg-surface px-5 py-2.5 text-body-sm font-semibold text-forest-900 shadow-sm transition-colors hover:bg-gold-50 lg:ms-auto dark:text-sand-50 dark:hover:bg-gold-950"
-          >
-            {labels.all}
-            <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:rtl:group-hover:-translate-x-0.5" />
-          </Link>
-        </div>
+        <HomeSectionHeader
+          id="home-faculties"
+          locale={locale}
+          eyebrow={labels.eyebrow}
+          title={labels.title}
+          intro={labels.intro}
+          art={<PeaksAndPines className="h-24 w-auto text-forest-300 opacity-60 dark:text-forest-700" />}
+          action={
+            <Link
+              href="/academics"
+              className="group inline-flex w-fit items-center gap-2 rounded-full border-2 border-gold-400 bg-surface px-5 py-2.5 text-body-sm font-semibold text-forest-900 shadow-sm transition-colors hover:bg-gold-50 dark:text-sand-50 dark:hover:bg-gold-950"
+            >
+              {labels.all}
+              <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:rtl:group-hover:-translate-x-0.5" />
+            </Link>
+          }
+        />
 
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
           {faculties.map((faculty, i) => (

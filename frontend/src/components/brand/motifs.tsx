@@ -354,3 +354,16 @@ export function PhotoCurveEdge({ className }: MotifProps) {
     </svg>
   );
 }
+
+/**
+ * A gold swoosh with a deep-green band under it, rising toward the bottom-end corner of a photo card
+ * (decorative; mirrors in RTL). Stretches to the box it is given.
+ */
+export function CardCornerSwoosh({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 400 80" preserveAspectRatio="none" className={cn("pointer-events-none block rtl:-scale-x-100", className)}>
+      <path className="fill-forest-800" d="M0 80C170 76 310 52 400 6v74Z" />
+      <path className="fill-gold-400" d="M0 80C170 74 300 46 400 0v14C310 58 170 78 0 80Z" />
+    </svg>
+  );
+}

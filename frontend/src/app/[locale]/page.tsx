@@ -246,6 +246,7 @@ export default async function HomePage() {
 
         <PartnersSection
           partners={home?.partners ?? []}
+          locale={locale}
           labels={{
             eyebrow: t("partnersEyebrow"),
             title: home?.headings.partners ?? t("partnersEyebrow"),

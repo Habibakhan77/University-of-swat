@@ -20,6 +20,7 @@
     "hero-photos": "node scripts/hero-photos.js",
     "home-photos": "node scripts/home-photos.js",
     "faculty-covers": "node scripts/faculty-covers.js",
+    "home-partners": "node scripts/home-partners.js",
     "event-facts": "node scripts/event-facts.js"
   },
   "dependencies": {

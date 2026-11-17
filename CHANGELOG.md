@@ -1237,3 +1237,24 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
     refreshes the website).
   - Urdu mirrors the layout; dark mode supported. axe: no violations (en/ur, light/dark). Checked at 1440,
     1024 and 375px.
+- **Campuses and Partners redesign** (homepage), sharing a new `HomeSectionHeader` (gold-rule eyebrow,
+  Merriweather heading, faint art in the middle, optional action) that Faculties now uses too.
+  - *Campuses*: "Our Campuses" with peaks and pines and a green-and-gold `CornerSweep`. Two large cards with
+    the real Strapi photos (Main Campus and Women Campus, from the university's Facebook page): pin + serif
+    name, one-line summary, gold "About this Campus" pill, gold `CardCornerSwoosh` at the bottom-end. The
+    deep-green wash belongs to the text block (>= 90% green behind every line, measured >= 11:1 for white text
+    over both photos at 1440/1024/768/375); the photo shape is a spacer in the same grid cell, so longer text
+    makes the card taller instead of overflowing. Stacked below 1024px.
+  - Facts, checked on uswat.edu.pk on 17 Nov 2026: "Since 2017" and "inaugurated on 25 July 2017, with six
+    departments" from `/women-campus/` ("Women sub campus … inaugurated on 25th July, 2017", six departments
+    listed). The Main Campus summary from `/maincampus/` (administrative offices and teaching departments in
+    Academic Blocks A–C and the Allied Health Sciences Building); it publishes no founding year, so no badge.
+  - *Partners & MoUs*: gold-rule "Collaboration" eyebrow, serif heading, peaks and a line-art handshake. White
+    cards: gold-tint round icon, gold bar, name, "Country · MoU year". Only organisations with a published
+    MoU or collaboration, under their names on uswat.edu.pk, each linking to our copy of its news post:
+    Nagananda International Institute for Buddhist Studies (NIIBS), Sri Lanka, MoU signed (post of 6 Nov
+    2026); Swat Chamber of Commerce and Industry (SCCI), Pakistan, collaboration with an MoU only proposed
+    (post of 28 Oct 2026), so no MoU year. HEC and KPEF are removed (regulator and scholarship body, not
+    partners). In the seed (`PARTNERS`) and applied live with the new `npm run home-partners`.
+  - Heading "Our Campuses" in Title Case (seed and live Strapi). Urdu mirrors both sections (English partner
+    names and countries keep `lang="en"` in `<bdi>`); dark mode; axe clean.

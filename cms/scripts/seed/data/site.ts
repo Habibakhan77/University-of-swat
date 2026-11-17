@@ -155,7 +155,7 @@ export const HOMEPAGE = {
     eventsHeading: 'Events',
     facultiesHeading: 'Faculties',
     facultiesIntro: 'Five faculties and the Hunerkada centre for art and culture, from languages and law to computing, life sciences and health.',
-    campusesHeading: 'Our campuses',
+    campusesHeading: 'Our Campuses',
     partnersHeading: 'Partners & MoUs',
     seo: { metaTitle: 'University of Swat — Official Website', metaDescription: 'Admissions, programs, news and services of the University of Swat, Charbagh, Swat.' },
   },
@@ -183,11 +183,27 @@ export const HOMEPAGE = {
   },
 };
 
+/**
+ * Partners and MoUs on the homepage: only organisations with an MoU or collaboration published on
+ * uswat.edu.pk, under the exact name used there, each linking to our copy of that news post. Regulators and
+ * funding or scholarship bodies (HEC, KPEF) are not partners. `mouYear` only when an MoU was signed:
+ * - NIIBS: MoU signed through ORIC (uswat.edu.pk post of 6 November 2026).
+ * - SCCI: collaboration explored and an MoU only proposed (post of 28 October 2026), so no MoU year.
+ */
 export const PARTNERS = [
-  { key: 'niibs', name: 'Nagananda International Institute for Buddhist Studies (NIIBS)', country: 'Sri Lanka', mouYear: 2026 },
-  { key: 'scci', name: 'Swat Chamber of Commerce and Industry (SCCI)', country: 'Pakistan' },
-  { key: 'hec', name: 'Higher Education Commission (HEC)', country: 'Pakistan', url: 'https://www.hec.gov.pk/' },
-  { key: 'kpef', name: 'Khyber Pakhtunkhwa Education Foundation (KPEF)', country: 'Pakistan' },
+  {
+    key: 'niibs',
+    name: 'Nagananda International Institute for Buddhist Studies (NIIBS)',
+    country: 'Sri Lanka',
+    mouYear: 2026,
+    url: '/news/uswat-niibs-mou-gandhara-civilization',
+  },
+  {
+    key: 'scci',
+    name: 'Swat Chamber of Commerce and Industry (SCCI)',
+    country: 'Pakistan',
+    url: '/news/uswat-scci-strategic-collaboration',
+  },
 ];
 
 /**
