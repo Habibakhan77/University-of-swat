@@ -182,6 +182,8 @@ export default async function HomePage() {
           <AdmissionsBand
             banner={home.banner}
             links={home.admissionsLinks}
+            image={home.admissionsImage}
+            locale={locale}
             labels={{ eyebrow: t("admissionsEyebrow"), applyBy: t.raw("applyBy") as string }}
           />
         ) : null}

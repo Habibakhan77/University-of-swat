@@ -47,6 +47,18 @@
         }
       }
     },
+    "admissionsImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
     "admissionsLinks": {
       "type": "component",
       "component": "shared.link",

@@ -39,6 +39,8 @@ export const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], { photo: P
 export const HOME_PHOTOS = {
   /** Faint texture on the green "Apply now" quick-action card. */
   applyCard: 'womenCampus',
+  /** Middle of the Admissions banner (blends into the green). */
+  admissions: 'mainGateIllustration',
   /** Right side of "The University at a Glance". */
   stats: 'mainGate',
   /** The "I am a…" cards. */
@@ -48,12 +50,13 @@ export const HOME_PHOTOS = {
     staff: 'campusMountains', // an academic block below the snow peaks
     visitor: 'bookFair', // the Swat Book Fair, open to the public
   },
-} as const satisfies { applyCard: PhotoKey; stats: PhotoKey; pathways: Record<'prospective' | 'current' | 'staff' | 'visitor', PhotoKey> };
+} as const satisfies { applyCard: PhotoKey; admissions: PhotoKey; stats: PhotoKey; pathways: Record<'prospective' | 'current' | 'staff' | 'visitor', PhotoKey> };
 
 /** Uploads the HOME_PHOTOS and returns the Homepage fields that point at them. */
 export async function homePhotoFields(media: MediaFactory) {
   return {
     applyCardImage: await media.photo(HOME_PHOTOS.applyCard, 'cover'),
+    admissionsImage: await media.photo(HOME_PHOTOS.admissions, 'original'),
     statsImage: await media.photo(HOME_PHOTOS.stats, 'original'),
     pathwayPhotos: await Promise.all(
       Object.entries(HOME_PHOTOS.pathways).map(async ([audience, key]) => ({ audience, image: await media.photo(key, 'cover') })),

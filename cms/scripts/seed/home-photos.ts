@@ -1,6 +1,6 @@
 /**
  * Apply the homepage photos in HOME_PHOTOS (index.ts) to the existing Homepage without a full reseed
- * (run with `npm run home-photos`, see scripts/home-photos.js): the Apply card texture, the stats photo
+ * (run with `npm run home-photos`, see scripts/home-photos.js): the Apply card texture, the Admissions banner image, the stats photo
  * and one photo per "I am a…" card. These fields are shared by all locales.
  *
  * A photo already in the Media Library under its seed name is reused; otherwise it is exported from
@@ -34,6 +34,7 @@ export async function runHomePhotos(strapi: Core.Strapi): Promise<void> {
     };
     const data = {
       applyCardImage: await find(HOME_PHOTOS.applyCard, 'cover'),
+      admissionsImage: await find(HOME_PHOTOS.admissions, 'original'),
       statsImage: await find(HOME_PHOTOS.stats, 'original'),
       pathwayPhotos: await Promise.all(
         Object.entries(HOME_PHOTOS.pathways).map(async ([audience, key]) => ({

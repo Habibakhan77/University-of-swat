@@ -1175,3 +1175,22 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
     hover, off for reduced motion. Posts without a photo get the branded gradient.
   - Phones: lead card full width, then the three stacked. Urdu mirrors (gold bar on the right) and keeps
     Nastaliq line height. Checked at 1440/1024/375, EN/UR, light/dark: axe clean, no horizontal scroll.
+- **Homepage: Admissions banner, Events and Announcements redesigned (reference image)** — branch
+  `home-sections-2`.
+  - *Admissions banner*: rounded deep-green banner (was maroon). Gold line + eyebrow, serif heading, one
+    line of text and a bright gold "Go to Admissions" pill (Homepage → Admissions banner); the main gate
+    blending into the green with its credit and a gold sweep along the bottom; the Homepage → Admissions
+    links as stacked cards with round icon badges (the first in gold, ↗ and a new tab when external) on a
+    darker panel. 1280px+: text | image | cards; 1024px: text above the image, cards beside; phones: text,
+    image, cards.
+  - *Strapi*: new non-localized Homepage field `admissionsImage`; seed `HOME_PHOTOS.admissions` uses the
+    main gate illustration (credited "Illustration"). Live data filled with `npm run home-photos`.
+  - *Events*: gold line + "What's on", serif heading, faint peaks, outlined "All events". Up to three rows
+    (the soonest upcoming first, then the most recent past ones) with a date block (deep green upcoming,
+    cream past), an Upcoming/Recent badge from the event date, and time and place only when Strapi has
+    them. Homepage event times now use a 12-hour clock ("9:00 am").
+  - *Announcements*: card with a deep-green header (megaphone, faint peaks) and a gold curved edge, the four
+    latest announcements (calendar icon, green date, title; whole row clickable) and an outlined
+    "All announcements" pill.
+  - `GoldWave` moved to `components/brand/motifs.tsx` (shared by the stats band and the banner).
+  - Checked at 1440/1024/375, EN/UR, light/dark: axe clean, no horizontal scroll.

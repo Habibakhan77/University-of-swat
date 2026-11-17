@@ -134,6 +134,8 @@ export interface HomeContent {
   quickActions: NavLink[];
   /** Faint photo texture on the green Apply card (Homepage → Apply card image). */
   applyCardImage: SiteImage | null;
+  /** Image in the middle of the Admissions banner (Homepage → Admissions image), e.g. the main gate. */
+  admissionsImage: SiteImage | null;
   /** Photo beside the stats (Homepage → Stats image). */
   statsImage: SiteImage | null;
   /** One real photo per "I am a…" card (Homepage → Pathway photos). */
@@ -166,6 +168,7 @@ export interface EventsAndNotices {
 interface StrapiHomepage extends Doc {
   quickActions: StrapiLink[];
   applyCardImage: StrapiMedia | null;
+  admissionsImage: StrapiMedia | null;
   statsImage: StrapiMedia | null;
   pathwayPhotos: { audience: PathwayAudience; image: StrapiMedia | null }[] | null;
   admissionsLinks: StrapiLink[] | null;
@@ -247,7 +250,7 @@ const formatters = (locale: Locale) => ({
   date: new Intl.DateTimeFormat(intlLocale[locale], { day: "numeric", month: "short", year: "numeric", timeZone: TIME_ZONE }),
   day: new Intl.DateTimeFormat(intlLocale[locale], { day: "numeric", timeZone: TIME_ZONE }),
   month: new Intl.DateTimeFormat(intlLocale[locale], { month: "short", timeZone: TIME_ZONE }),
-  time: new Intl.DateTimeFormat(intlLocale[locale], { hour: "numeric", minute: "2-digit", timeZone: TIME_ZONE }),
+  time: new Intl.DateTimeFormat(intlLocale[locale], { hour: "numeric", minute: "2-digit", hour12: true, timeZone: TIME_ZONE }),
   long: new Intl.DateTimeFormat(intlLocale[locale], { day: "numeric", month: "long", year: "numeric", timeZone: TIME_ZONE }),
 });
 
@@ -306,6 +309,7 @@ async function loadHome(locale: Locale): Promise<HomeContent | null> {
       {
         "populate[quickActions]": true,
         ...populateImage("applyCardImage"),
+        ...populateImage("admissionsImage"),
         ...populateImage("statsImage"),
         ...Object.fromEntries(Object.entries(populateImage("image")).map(([k, v]) => [k.replace("populate[image]", "populate[pathwayPhotos][populate][image]"), v])),
         "populate[admissionsBanner]": true,
@@ -326,6 +330,7 @@ async function loadHome(locale: Locale): Promise<HomeContent | null> {
     return {
       quickActions: (data.quickActions ?? []).map(toNavLink),
       applyCardImage: toRealImage(data.applyCardImage),
+      admissionsImage: toRealImage(data.admissionsImage),
       statsImage: toRealImage(data.statsImage),
       pathwayPhotos: Object.fromEntries(
         (data.pathwayPhotos ?? []).flatMap((p) => {
@@ -507,7 +512,8 @@ async function loadEventsAndNotices(locale: Locale): Promise<EventsAndNotices> {
     const withStart = events.filter((e): e is typeof e & { eventStart: string } => Boolean(e.eventStart));
     const upcoming = withStart.filter((e) => Date.parse(e.eventStart) >= now).reverse();
     const past = withStart.filter((e) => Date.parse(e.eventStart) < now);
-    const chosen = [...upcoming.slice(0, 4), ...past.slice(0, Math.max(0, 3 - upcoming.length))];
+    // Up to three rows: the soonest upcoming first, then the most recent past ones.
+    const chosen = [...upcoming, ...past].slice(0, 3);
 
     return {
       events: chosen.map((e) => {

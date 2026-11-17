@@ -231,3 +231,13 @@ export function GateLineArt({ className }: MotifProps) {
     </svg>
   );
 }
+
+/** A gold brush wave along the bottom edge of a photo on a green banner (decorative; mirrors in RTL). */
+export function GoldWave({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 600 40" preserveAspectRatio="none" className={cn("pointer-events-none block w-full rtl:-scale-x-100", className)}>
+      <path fill="currentColor" d="M0 34C120 30 220 22 330 22s190 6 270-14v32H0Z" />
+      <path fill="none" stroke="currentColor" strokeOpacity="0.55" strokeWidth="2" d="M0 26C140 20 250 12 350 13s170 2 250-13" />
+    </svg>
+  );
+}

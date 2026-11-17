@@ -147,7 +147,7 @@ export const HOMEPAGE = {
     // The first link is highlighted on the homepage: keep the latest published merit list there.
     admissionsLinks: [
       link('Final Merit List Fall 2026 (Self Finance)', EXTERNAL.meritList, 'On the university CMS admissions portal', 'list-checks', true),
-      link('Programs & eligibility', '/academics/programs', 'Undergraduate and postgraduate programs', 'graduation-cap'),
+      link('Programs & Eligibility', '/academics/programs', 'Undergraduate and postgraduate programs', 'graduation-cap'),
       link('Fee Structure', '/admissions#fees', 'Fees, refunds and online payment', 'wallet'),
     ],
     statsHeading: 'The University at a glance',
