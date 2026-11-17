@@ -1,25 +1,25 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { routing, type Locale } from "@/i18n/routing";
 import { searchHref } from "@/lib/search/model";
-import { localePath, pageMetadata, SITE_URL } from "@/lib/seo";
+import { homeSocialImage, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { buildPathways } from "@/lib/pathways";
 import { getAdmissionsPage } from "@/lib/strapi/admissions";
-import { getHomepageData, getHomepageSeo } from "@/lib/strapi/home";
+import { getHomeEvents, getHomeNews, getHomepageData, getHomepageSeo } from "@/lib/strapi/home";
 import { getDownloads } from "@/lib/strapi/notices";
 import { getSiteChrome, type SiteChrome } from "@/lib/strapi/site";
+import { LoadingRegion } from "@/components/ui/skeleton";
 import { AdmissionsBand } from "@/components/home/admissions-band";
-import { AudiencePathways } from "@/components/home/audience-pathways";
 import { CampusesSection } from "@/components/home/campuses-section";
-import { EventsSection } from "@/components/home/events-section";
+import { EventsGrid, EventsSkeleton, type EventsLabels } from "@/components/home/events-section";
 import { FacultiesGrid } from "@/components/home/faculties-grid";
 import { HeroSlider } from "@/components/home/hero-slider";
-import { NewsSection } from "@/components/home/news-section";
+import { HomeSection, SectionHeader, ViewAllLink } from "@/components/home/home-ui";
+import { NewsGrid, NewsSkeleton, type NewsLabels } from "@/components/home/news-section";
 import { NoticeTicker } from "@/components/home/notice-ticker";
-import { PartnersSection } from "@/components/home/partners-section";
-import { QuickActions } from "@/components/home/quick-actions";
-import { StatsBand } from "@/components/home/stats-band";
+import { StartHere } from "@/components/home/start-here";
 import { VcMessage } from "@/components/home/vc-message";
 
 /*
@@ -38,7 +38,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = seo?.title ?? siteName;
   const description = seo?.description ?? chrome?.tagline ?? undefined;
 
-  return pageMetadata({ locale, path: "/", title, description, image: seo?.image, absoluteTitle: true });
+  // The homepage's own social card (the main gate photo) unless an editor uploads one in Strapi.
+  return pageMetadata({ locale, path: "/", title, description, image: seo?.image ?? homeSocialImage(locale), absoluteTitle: true });
 }
 
 /**
@@ -84,6 +85,26 @@ function structuredData(chrome: SiteChrome | null, locale: Locale) {
   };
 }
 
+/**
+ * Latest news, fetched on its own so the section can stream in behind a skeleton (the header around it
+ * is part of the page shell).
+ */
+async function LatestNews({ locale, labels }: { locale: Locale; labels: NewsLabels }) {
+  const news = await getHomeNews(locale);
+  return <NewsGrid news={news} locale={locale} labels={labels} />;
+}
+
+async function WhatsOn({ locale, labels }: { locale: Locale; labels: EventsLabels }) {
+  const { events, announcements } = await getHomeEvents(locale);
+  return <EventsGrid events={events} announcements={announcements} locale={locale} labels={labels} />;
+}
+
+/*
+ * Homepage order (seven sections, one green banner): Hero → Start here (quick actions + "I am a…") →
+ * Latest news → [Admissions banner] → Events & announcements → Faculties (with the figures row) →
+ * Vice Chancellor → Campuses. Sections alternate between the page colour and the subtle sand band, and all
+ * share one vertical rhythm (py-section), so the spacing is the same everywhere.
+ */
 export default async function HomePage() {
   const locale = await resolveLocale();
   const [data, chrome, admissions, downloads, t, tCommon, tPaths] = await Promise.all([
@@ -95,7 +116,7 @@ export default async function HomePage() {
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "home.pathways" }),
   ]);
-  const { home, slides, stats, news, ticker, events, announcements, vc, faculties, campuses } = data;
+  const { home, slides, stats, ticker, vc, faculties, campuses } = data;
   const siteName = chrome?.siteName ?? tCommon("siteName");
   const quickActions = home?.quickActions ?? [];
   const jsonLd = structuredData(chrome, locale);
@@ -146,37 +167,34 @@ export default async function HomePage() {
         <h1 className="sr-only">{siteName}</h1>
       )}
 
-      <QuickActions actions={quickActions} label={t("quickActions")} applyImage={home?.applyCardImage ?? null} />
-
-      <AudiencePathways
+      <StartHere
+        locale={locale}
+        actions={quickActions}
         pathways={pathways}
         photos={home?.pathwayPhotos ?? {}}
-        labels={{ eyebrow: t("pathways.eyebrow"), title: t("pathways.title") }}
+        labels={{ eyebrow: t("pathways.eyebrow"), title: t("startTitle"), quickActions: t("quickActions"), pathways: t("pathways.title") }}
       />
-
-      <div className={slides.length ? "mt-section-sm" : undefined}>
-        <StatsBand
-          stats={stats}
-          eyebrow={t("statsEyebrow")}
-          title={home?.headings.stats ?? null}
-          intlLocale={intlLocale[locale]}
-          image={home?.statsImage ?? null}
-        />
-      </div>
 
       {/* Below the fold: rendered when scrolled near (content-visibility), see .home-below in globals.css. */}
       <div className="home-below">
-        <NewsSection
-          news={news}
-          locale={locale}
-          labels={{
-            eyebrow: t("newsEyebrow"),
-            title: home?.headings.news ?? t("newsEyebrow"),
-            all: t("allNews"),
-            featured: t("featured"),
-            readMore: t("readMore"),
-          }}
-        />
+        <HomeSection labelledBy="home-news" tone="subtle">
+          <SectionHeader
+            id="home-news"
+            locale={locale}
+            eyebrow={t("newsEyebrow")}
+            title={home?.headings.news ?? t("newsEyebrow")}
+            action={<ViewAllLink href="/news">{t("allNews")}</ViewAllLink>}
+          />
+          <Suspense
+            fallback={
+              <LoadingRegion label={t("loadingNews")}>
+                <NewsSkeleton />
+              </LoadingRegion>
+            }
+          >
+            <LatestNews locale={locale} labels={{ featured: t("featured"), readMore: t("readMore") }} />
+          </Suspense>
+        </HomeSection>
 
         {home?.banner ? (
           <AdmissionsBand
@@ -188,27 +206,50 @@ export default async function HomePage() {
           />
         ) : null}
 
-        <div className="mt-section">
-          <EventsSection
-            events={events}
-            announcements={announcements}
+        <HomeSection labelledBy="home-events" tone="subtle">
+          <SectionHeader
+            id="home-events"
             locale={locale}
-            labels={{
-              eyebrow: t("eventsEyebrow"),
-              title: home?.headings.events ?? t("eventsEyebrow"),
-              upcoming: t("upcoming"),
-              past: t("past"),
-              allEvents: t("allEvents"),
-              announcements: t("announcements"),
-              allAnnouncements: t("allAnnouncements"),
-            }}
+            eyebrow={t("eventsEyebrow")}
+            title={home?.headings.events ?? t("eventsEyebrow")}
+            action={<ViewAllLink href="/news?category=event">{t("allEvents")}</ViewAllLink>}
           />
-        </div>
+          <Suspense
+            fallback={
+              <LoadingRegion label={t("loadingEvents")}>
+                <EventsSkeleton />
+              </LoadingRegion>
+            }
+          >
+            <WhatsOn
+              locale={locale}
+              labels={{ upcoming: t("upcoming"), past: t("past"), announcements: t("announcements"), allAnnouncements: t("allAnnouncements") }}
+            />
+          </Suspense>
+        </HomeSection>
+
+        <FacultiesGrid
+          faculties={faculties}
+          stats={stats}
+          locale={locale}
+          intlLocale={intlLocale[locale]}
+          labels={{
+            eyebrow: t("facultiesEyebrow"),
+            title: home?.headings.faculties ?? t("facultiesEyebrow"),
+            intro: home?.facultiesIntro ?? null,
+            all: t("allFaculties"),
+            glance: home?.headings.stats ?? t("statsEyebrow"),
+            centre: t("centre"),
+            centreChip: t("centreChip"),
+            departments: (count) => t("departments", { count }),
+          }}
+        />
 
         {vc ? (
           <VcMessage
             vc={vc}
             locale={locale}
+            tone="subtle"
             labels={{
               eyebrow: t("vcEyebrow"),
               read: t("readMessage"),
@@ -219,20 +260,6 @@ export default async function HomePage() {
           />
         ) : null}
 
-        <FacultiesGrid
-          faculties={faculties}
-          locale={locale}
-          labels={{
-            eyebrow: t("facultiesEyebrow"),
-            title: home?.headings.faculties ?? t("facultiesEyebrow"),
-            intro: home?.facultiesIntro ?? null,
-            all: t("allFaculties"),
-            centre: t("centre"),
-            centreChip: t("centreChip"),
-            departments: (count) => t("departments", { count }),
-          }}
-        />
-
         <CampusesSection
           campuses={campuses}
           locale={locale}
@@ -241,16 +268,6 @@ export default async function HomePage() {
             title: home?.headings.campuses ?? t("campusesEyebrow"),
             established: (year) => t("established", { year: String(year) }),
             about: t("aboutCampus"),
-          }}
-        />
-
-        <PartnersSection
-          partners={home?.partners ?? []}
-          locale={locale}
-          labels={{
-            eyebrow: t("partnersEyebrow"),
-            title: home?.headings.partners ?? t("partnersEyebrow"),
-            mou: (year) => t("mou", { year: String(year) }),
           }}
         />
       </div>

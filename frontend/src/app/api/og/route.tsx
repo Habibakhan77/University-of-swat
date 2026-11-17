@@ -21,8 +21,61 @@ function crestDataUrl(): Promise<string> {
 
 const clip = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1).replace(/\s+\S*$/, "")}…` : text);
 
+let gate: Promise<string> | null = null;
+/** The real main gate photo (photos/gate.jpeg, "Photo: University of Swat"), pre-cropped to 1200×630. */
+function gateDataUrl(): Promise<string> {
+  gate ??= readFile(path.join(process.cwd(), "public", "brand", "og-gate.jpg")).then(
+    (file) => `data:image/jpeg;base64,${file.toString("base64")}`,
+  );
+  return gate;
+}
+
+const cacheHeaders = "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800";
+
+/**
+ * GET /api/og?variant=home  The homepage card: the main gate photo with a green band along the bottom
+ * carrying the crest and the university's name (Latin text only, so the same card serves both languages).
+ */
+async function homeCard(): Promise<Response> {
+  const [logo, photo] = await Promise.all([crestDataUrl(), gateDataUrl()]);
+  const image = new ImageResponse(
+    (
+      <div style={{ width: "100%", height: "100%", display: "flex", position: "relative", fontFamily: "sans-serif" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain <img>. */}
+        <img src={photo} width={1200} height={630} alt="" style={{ position: "absolute", inset: 0 }} />
+        <div
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            alignItems: "center",
+            gap: 28,
+            padding: "28px 56px",
+            background: "rgba(12, 59, 38, 0.92)",
+            borderTop: "6px solid #c9a227",
+            color: "#faf8f2",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element -- ImageResponse renders plain <img>. */}
+          <img src={logo} width={104} height={104} alt="" style={{ borderRadius: 999, background: "#faf8f2" }} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ fontSize: 50, fontWeight: 700, letterSpacing: -0.5 }}>University of Swat</div>
+            <div style={{ fontSize: 26, color: "#e9d9a6" }}>Charbagh, Swat · Khyber Pakhtunkhwa · uswat.edu.pk</div>
+          </div>
+        </div>
+      </div>
+    ),
+    size,
+  );
+  image.headers.set("Cache-Control", cacheHeaders);
+  return image;
+}
+
 export async function GET(request: Request): Promise<Response> {
   const params = new URL(request.url).searchParams;
+  if (params.get("variant") === "home") return homeCard();
   const title = clip((params.get("title") ?? "").trim(), 110);
   const section = clip((params.get("section") ?? "").trim(), 40);
   const logo = await crestDataUrl();
@@ -76,6 +129,6 @@ export async function GET(request: Request): Promise<Response> {
     ),
     size,
   );
-  image.headers.set("Cache-Control", "public, max-age=86400, s-maxage=604800, stale-while-revalidate=604800");
+  image.headers.set("Cache-Control", cacheHeaders);
   return image;
 }

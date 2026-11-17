@@ -165,6 +165,8 @@
   --shadow-md: 0 2px 4px -1px rgb(var(--shadow-rgb) / 0.06), 0 8px 20px -6px rgb(var(--shadow-rgb) / 0.12);
   --shadow-lg: 0 4px 8px -2px rgb(var(--shadow-rgb) / 0.06), 0 20px 40px -12px rgb(var(--shadow-rgb) / 0.18);
   --shadow-xl: 0 8px 16px -4px rgb(var(--shadow-rgb) / 0.08), 0 32px 64px -16px rgb(var(--shadow-rgb) / 0.24);
+  /* The one card elevation on the homepage: a hairline lift, no hover jump. */
+  --shadow-card: 0 1px 2px rgb(var(--shadow-rgb) / 0.04), 0 4px 14px -6px rgb(var(--shadow-rgb) / 0.1);
 
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -626,12 +628,6 @@
     }
   }
   /* "I am a…" card photos: a diagonal cut on the side facing the text (mirrored in Urdu). */
-  .pathway-cut {
-    clip-path: polygon(34% 0, 100% 0, 100% 100%, 0 100%);
-  }
-  [dir="rtl"] .pathway-cut {
-    clip-path: polygon(0 0, 66% 0, 100% 100%, 0 100%);
-  }
 
   .hero-text-shadow {
     text-shadow:

@@ -96,3 +96,8 @@ function truncate(text: string, max: number): string {
 export function jsonLd(data: unknown) {
   return { __html: JSON.stringify(data).replace(/</g, "\\u003c") };
 }
+
+/** The homepage's social card: the real main gate photo with the crest and the university's name. */
+export function homeSocialImage(locale: Locale): SiteImage {
+  return { src: "/api/og?variant=home", alt: SITE_NAME[locale], width: 1200, height: 630, credit: null };
+}

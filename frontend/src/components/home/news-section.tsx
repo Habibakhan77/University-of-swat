@@ -1,48 +1,46 @@
-import { ArrowRight, CalendarDays, Star } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import type { NewsItem } from "@/lib/strapi/home";
 import { cn } from "@/lib/cn";
-import { displaySerif } from "@/lib/hero-font";
-import { GateLineArt, PeakLineArt } from "@/components/brand/motifs";
-import { Container } from "@/components/ui/container";
 import { ImageCredit } from "@/components/ui/image-credit";
-import { Reveal } from "@/components/ui/reveal";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PostCover } from "@/components/notices/shared";
+import { card, cardHover, serifFor, stretchedLink } from "./home-ui";
 
-interface NewsSectionProps {
+export interface NewsLabels {
+  featured: string;
+  readMore: string;
+}
+
+interface NewsGridProps {
   news: NewsItem[];
   locale: Locale;
-  labels: { eyebrow: string; title: string; all: string; featured: string; readMore: string };
+  labels: NewsLabels;
 }
 
 const langOf = (item: NewsItem, locale: Locale) => (item.lang !== locale ? item.lang : undefined);
 
-/** Lift and shadow on hover; the photo zooms a little. Both off for reduced motion. */
-const cardShell =
-  "group/news relative isolate flex overflow-hidden bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.04),0_8px_24px_-12px_rgb(11_58_38/0.18)] ring-1 ring-line/70 transition-[translate,box-shadow] duration-300 ease-out-expo hover:-translate-y-1 hover:shadow-[0_2px_4px_rgb(0_0_0/0.05),0_18px_40px_-16px_rgb(11_58_38/0.3)] focus-within:ring-2 focus-within:ring-ring motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:shadow-black/40";
+/** The photo zooms a little on hover (off for reduced motion). */
 const zoom =
-  "[&_img]:transition-transform [&_img]:duration-700 [&_img]:ease-out-expo group-hover/news:[&_img]:scale-[1.04] motion-reduce:[&_img]:transition-none motion-reduce:group-hover/news:[&_img]:scale-100";
-/** The title link's hit area covers the whole card (one link per card for keyboard and screen readers). */
-const stretched = "outline-none after:absolute after:inset-0 after:z-10 after:content-['']";
+  "[&_img]:transition-transform [&_img]:duration-700 [&_img]:ease-out-expo group-hover/news:[&_img]:scale-[1.03] motion-reduce:[&_img]:transition-none motion-reduce:group-hover/news:[&_img]:scale-100";
 
 function DateLine({ item }: { item: NewsItem }) {
   return (
-    <time dateTime={item.date} className="inline-flex items-center gap-2 text-body-sm text-fg-muted">
-      <CalendarDays aria-hidden className="size-4 text-primary-text" />
+    <time dateTime={item.date} className="text-body-sm font-medium text-fg-subtle">
       {item.dateLabel}
     </time>
   );
 }
 
-function FeaturedCard({ item, locale, labels, serif }: { item: NewsItem; locale: Locale; labels: NewsSectionProps["labels"]; serif?: string }) {
+function FeaturedCard({ item, locale, labels }: { item: NewsItem; locale: Locale; labels: NewsLabels }) {
   const lang = langOf(item, locale);
   return (
-    <article className={cn(cardShell, "h-full flex-col rounded-3xl")}>
-      <div className={cn("relative aspect-video overflow-hidden rounded-t-3xl lg:aspect-[2/1] bg-surface-sunken", zoom)}>
+    <article className={cn("group/news relative flex h-full flex-col overflow-hidden", card, cardHover)}>
+      <div className={cn("relative aspect-video overflow-hidden bg-surface-sunken", zoom)}>
         <PostCover id={item.id} category="news" image={item.image} sizes="(min-width: 1024px) 56vw, 100vw" />
         {item.featured ? (
-          <span className="absolute start-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-forest-800 px-3.5 py-1.5 text-caption font-semibold tracking-wide text-white uppercase shadow-md ring-1 ring-white/15">
+          <span className="absolute start-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-forest-800 px-3 py-1 text-caption font-semibold text-white">
             <Star aria-hidden className="size-3.5 fill-gold-bright text-gold-bright" />
             {labels.featured}
           </span>
@@ -55,18 +53,10 @@ function FeaturedCard({ item, locale, labels, serif }: { item: NewsItem; locale:
         ) : null}
       </div>
 
-      <div className="relative flex flex-1 flex-col gap-4 p-6 sm:p-8">
-        <GateLineArt className="absolute end-0 bottom-0 -z-10 w-48 text-primary-text opacity-[0.12] sm:w-64 dark:opacity-[0.16]" />
+      <div className="flex flex-1 flex-col gap-3 p-6 sm:p-8">
         <DateLine item={item} />
-        <h3
-          lang={lang}
-          className={cn(
-            "relative ps-5 text-heading-md leading-snug sm:text-heading-lg [&:lang(ur)]:leading-[1.9] text-forest-900 dark:text-sand-50",
-            "before:absolute before:inset-y-1 before:start-0 before:w-1.5 before:rounded-full before:bg-gold-bright",
-            serif,
-          )}
-        >
-          <Link href={item.href} className={cn(stretched, "decoration-current/30 underline-offset-4 group-hover/news:underline")}>
+        <h3 lang={lang} className={cn("text-heading-lg text-pretty text-forest-900 [&:lang(ur)]:leading-[1.9] dark:text-sand-50", serifFor(locale))}>
+          <Link href={item.href} className={cn(stretchedLink, "decoration-current/30 underline-offset-4 group-hover/news:underline")}>
             {item.title}
           </Link>
         </h3>
@@ -76,10 +66,7 @@ function FeaturedCard({ item, locale, labels, serif }: { item: NewsItem; locale:
           </p>
         ) : null}
         {/* Visual only: the whole card is already the link. */}
-        <span
-          aria-hidden
-          className="mt-auto inline-flex w-fit items-center gap-2 rounded-full bg-gold-bright px-5 py-2.5 text-body-sm font-semibold text-forest-950 shadow-sm transition-colors group-hover/news:bg-gold-bright-hover"
-        >
+        <span aria-hidden className="mt-auto inline-flex items-center gap-1.5 pt-2 text-body-sm font-semibold text-primary-text">
           {labels.readMore}
           <ArrowRight className="size-4 transition-transform duration-200 group-hover/news:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover/news:-translate-x-0.5" />
         </span>
@@ -88,32 +75,21 @@ function FeaturedCard({ item, locale, labels, serif }: { item: NewsItem; locale:
   );
 }
 
-function CompactCard({ item, locale, serif }: { item: NewsItem; locale: Locale; serif?: string }) {
+function CompactCard({ item, locale }: { item: NewsItem; locale: Locale }) {
   const lang = langOf(item, locale);
   return (
-    <article className={cn(cardShell, "h-full items-stretch rounded-2xl")}>
+    <article className={cn("group/news relative flex h-full items-stretch overflow-hidden", card, cardHover)}>
       {/* Fixed width and ratio; stretches only when the text runs taller. */}
-      <div className={cn("relative aspect-[10/9] w-24 shrink-0 self-stretch overflow-hidden rounded-2xl bg-surface-sunken sm:w-44 lg:w-36 xl:w-48", zoom)}>
-        <PostCover id={item.id} category="news" image={item.image} sizes="(min-width: 1280px) 192px, (min-width: 640px) 176px, 96px" />
+      <div className={cn("relative aspect-square w-24 shrink-0 self-stretch overflow-hidden bg-surface-sunken sm:aspect-[4/3] sm:w-44 lg:w-36 xl:w-44", zoom)}>
+        <PostCover id={item.id} category="news" image={item.image} sizes="(min-width: 640px) 176px, 96px" />
       </div>
-      <div className="flex min-w-0 flex-1 items-center gap-2 p-3.5 sm:gap-3 sm:p-5 xl:ps-6">
-        <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <DateLine item={item} />
-          <h3
-            lang={lang}
-            className={cn("line-clamp-3 text-body-lg font-semibold leading-snug sm:text-heading-sm [&:lang(ur)]:leading-[1.9] text-forest-900 dark:text-sand-50", serif)}
-          >
-            <Link href={item.href} className={cn(stretched, "decoration-current/30 underline-offset-4 group-hover/news:underline")}>
-              {item.title}
-            </Link>
-          </h3>
-        </div>
-        <span
-          aria-hidden
-          className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary-soft sm:size-9 text-primary-soft-fg transition-colors group-hover/news:bg-forest-700 group-hover/news:text-white"
-        >
-          <ArrowRight className="size-4 rtl:-scale-x-100" />
-        </span>
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 p-4 sm:p-5">
+        <DateLine item={item} />
+        <h3 lang={lang} className={cn("line-clamp-3 text-body-lg leading-snug font-semibold text-forest-900 [&:lang(ur)]:leading-[1.9] dark:text-sand-50", serifFor(locale))}>
+          <Link href={item.href} className={cn(stretchedLink, "decoration-current/30 underline-offset-4 group-hover/news:underline")}>
+            {item.title}
+          </Link>
+        </h3>
       </div>
     </article>
   );
@@ -123,57 +99,54 @@ function CompactCard({ item, locale, serif }: { item: NewsItem; locale: Locale; 
  * Latest stories: the post marked Featured in Strapi (else the newest with a photo) as a large card, and
  * the next three as horizontal cards. Every card uses the story's own photo, or the branded gradient when it
  * has none (never the logo on every item, as on the old site). Mirrors in Urdu, where titles stay in Nastaliq.
+ * The page puts it inside the News section, behind a <Suspense> with <NewsSkeleton>.
  */
-export function NewsSection({ news, locale, labels }: NewsSectionProps) {
+export function NewsGrid({ news, locale, labels }: NewsGridProps) {
   if (!news.length) return null;
   const [lead, ...rest] = news;
-  // The serif display face is Latin only; Urdu keeps Nastaliq.
-  const serif = locale === "en" ? displaySerif.className : undefined;
 
   return (
-    <section aria-labelledby="home-news" className="py-section">
-      <Container size="wide" className="flex flex-col gap-10 lg:gap-12">
-        <div className="relative isolate flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <PeakLineArt className="absolute start-1/2 top-0 -z-10 hidden w-[min(28rem,36vw)] -translate-x-1/2 -translate-y-4 text-primary-text opacity-[0.14] md:block dark:opacity-20 rtl:translate-x-1/2" />
-          <div className="flex flex-col gap-3">
-            <p className="inline-flex items-center gap-3 text-overline text-primary-text uppercase">
-              <span aria-hidden className="flex items-center">
-                <span className="h-0.5 w-10 rounded-full bg-gold-400" />
-                <span className="size-1.5 rounded-full bg-gold-400" />
-              </span>
-              {labels.eyebrow}
-            </p>
-            <h2 id="home-news" className={cn("text-display-lg text-forest-900 dark:text-sand-50", serif)}>
-              {labels.title}
-            </h2>
+    <div className="grid gap-4 lg:grid-cols-12 lg:gap-6">
+      <div className="lg:col-span-7">
+        <FeaturedCard item={lead} locale={locale} labels={labels} />
+      </div>
+      {rest.length ? (
+        <ul className="flex flex-col gap-4 lg:col-span-5">
+          {rest.map((item) => (
+            <li key={item.id} className="flex-1">
+              <CompactCard item={item} locale={locale} />
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </div>
+  );
+}
+
+/** Same footprint as the news grid while it streams in, so nothing shifts when it arrives. */
+export function NewsSkeleton() {
+  return (
+    <div aria-hidden className="grid gap-4 lg:grid-cols-12 lg:gap-6">
+      <div className={cn("flex flex-col overflow-hidden lg:col-span-7", card)}>
+        <Skeleton className="aspect-video rounded-none" />
+        <div className="flex flex-col gap-3 p-6 sm:p-8">
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-7 w-11/12" />
+          <Skeleton className="h-4 w-4/5" />
+        </div>
+      </div>
+      <div className="flex flex-col gap-4 lg:col-span-5">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={cn("flex flex-1 overflow-hidden", card)}>
+            <Skeleton className="aspect-square w-24 shrink-0 rounded-none sm:aspect-[4/3] sm:w-44 lg:w-36 xl:w-44" />
+            <div className="flex flex-1 flex-col justify-center gap-2.5 p-4 sm:p-5">
+              <Skeleton className="h-3.5 w-24" />
+              <Skeleton className="h-4.5 w-full" />
+              <Skeleton className="h-4.5 w-3/4" />
+            </div>
           </div>
-          <Link
-            href="/news"
-            className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border-2 border-gold-400 bg-surface/70 px-6 py-2.5 text-body-sm font-semibold text-forest-800 transition-colors hover:bg-gold-50 dark:text-gold-200 dark:hover:bg-gold-950/40"
-          >
-            {labels.all}
-            <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
-          </Link>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
-          <Reveal className="lg:col-span-7">
-            <FeaturedCard item={lead} locale={locale} labels={labels} serif={serif} />
-          </Reveal>
-
-          {rest.length ? (
-            <ul className="flex flex-col gap-4 lg:col-span-5 lg:gap-5">
-              {rest.map((item, i) => (
-                <li key={item.id} className="flex-1">
-                  <Reveal delay={0.08 * (i + 1)} className="h-full">
-                    <CompactCard item={item} locale={locale} serif={serif} />
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-        </div>
-      </Container>
-    </section>
+        ))}
+      </div>
+    </div>
   );
 }
