@@ -1210,3 +1210,15 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
     through the 5th), and their schema.org Event `startDate`/`endDate` are plain dates, not midnight.
   - `home-photos` and `event-facts` now send the content-type `uid` to `/api/revalidate`; with only
     `model` the route matched no cache tags, so the website was never actually refreshed.
+- **VC message redesign** (homepage): one wide white card. The real portrait from Strapi sits in a
+  gold-framed deep-green mat, with gold sweeps around its top-end and bottom-start corners (the photo's own
+  brown backdrop fades into the green at the edges; the photo itself is unchanged). Beside it: a gold-rule
+  eyebrow, a Merriweather heading with a gold swoosh under its last two words, a large gold quote mark and
+  a gold bar beside his verbatim published words (still English, `dir="ltr"`, with the source link), his name
+  in bold green, "Vice Chancellor, University of Swat", and a deep-green "Read the Full Message" pill.
+  - New motifs: `CornerSweep` (green and gold top-end corner), `FrameSweeps`, and `ValleyGateStrip` (line-art
+    peaks, pines and the gateway; the gateway paths are now shared with `GateLineArt`). The strip has its own
+    grid cell beside the name and button (1024px and up), so it never sits behind text.
+  - Phones: photo on top, centred, then the text. Urdu mirrors the layout; dark mode supported. axe: no
+    violations (en/ur, light/dark). Checked at 1440, 1024 and 375px.
+  - Heading set in Title Case ("A University for the Valley and Beyond") in the seed and the live Strapi entry.

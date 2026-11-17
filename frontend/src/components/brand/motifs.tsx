@@ -213,6 +213,15 @@ export function GateLineArt({ className }: MotifProps) {
       strokeLinejoin="round"
       className={cn("pointer-events-none block rtl:-scale-x-100", className)}
     >
+      <GatePaths />
+    </svg>
+  );
+}
+
+/** The gateway of GateLineArt as bare paths (stroke inherited), in its 280×110 drawing space. */
+function GatePaths() {
+  return (
+    <>
       {/* Ground and the low walls. */}
       <path d="M2 108h276" strokeWidth="1.4" />
       <path d="M2 108V88h46M232 88h46v20M14 88v-4h10v4M254 88v-4h10v4" strokeWidth="1.2" />
@@ -228,6 +237,88 @@ export function GateLineArt({ className }: MotifProps) {
       <path d="M124 108V78c0-10 7-17 16-17s16 7 16 17v30" strokeWidth="1" opacity="0.6" />
       <path d="M84 108V84c0-8 5-13 11-13s11 5 11 13v24M174 108V84c0-8 5-13 11-13s11 5 11 13v24" strokeWidth="1.2" />
       <path d="M128 44v-8h24v8M134 36c0-5 3-8 6-9 3 1 6 4 6 9" strokeWidth="1.1" />
+    </>
+  );
+}
+
+// Pines of the valley strip (x, height), standing on the ground line at y 146.
+const STRIP_PINES: [number, number][] = [
+  [136, 28], [166, 42], [196, 32], [228, 50], [260, 36], [292, 44], [324, 30], [572, 30], [600, 42],
+];
+
+/**
+ * Faint line art for the bottom corner of a card: Swat peaks with snow lines, a row of pines and the
+ * campus gateway at the end, standing on one ground line. Stroked in currentColor; anchored to the
+ * bottom-end corner and mirrored in RTL. Decorative.
+ */
+export function ValleyGateStrip({ className }: MotifProps) {
+  return (
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 620 150"
+      preserveAspectRatio="xMaxYMax meet"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={cn("pointer-events-none block rtl:-scale-x-100", className)}
+    >
+      {/* Far ridges and the snow peaks. */}
+      <path d="M0 132 70 104l46 18 70-58 40 30 64-62 52 46 34-22 66 52 50-26 58 34 66-40 40 22" strokeWidth="1.4" />
+      <path d="m280 32-16 18 10-3 8 7 8-11 10 5M432 82l-12 12 8-2 6 6 6-8" strokeWidth="1.1" opacity="0.8" />
+      <path d="M40 136c90-16 180-20 270-12s170 6 240-6" strokeWidth="1" opacity="0.55" />
+      {/* Pines. */}
+      <path d={STRIP_PINES.map(([x, h]) => pinePath(x, 146, h)).join("")} strokeWidth="1.1" />
+      {/* Ground line and the gateway. */}
+      <path d="M20 146h600" strokeWidth="1.4" />
+      <svg x="350" y="36" width="250" height="111" viewBox="0 0 280 110" overflow="visible">
+        <GatePaths />
+      </svg>
+    </svg>
+  );
+}
+
+/**
+ * A green wedge with gold sweeps for the top-end corner of a white card (decorative; mirrors in RTL).
+ * Sits at the card's top-end corner and is clipped by its rounded edge.
+ */
+export function CornerSweep({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 320 120" fill="none" className={cn("pointer-events-none block rtl:-scale-x-100", className)}>
+      <path className="fill-forest-700 dark:fill-forest-800" d="M128 0h192v120C296 66 226 20 128 0Z" />
+      <path className="stroke-gold-400" d="M66 0c124 8 214 52 254 118" strokeWidth="5" strokeLinecap="round" />
+      <path className="stroke-gold-300" d="M176 0c66 14 116 40 144 72" strokeWidth="1.5" strokeLinecap="round" opacity="0.75" />
+    </svg>
+  );
+}
+
+/**
+ * Two gold sweeps that hug a portrait frame from just outside it: one round the top-end corner, one round
+ * the bottom-start corner, each fading out at both ends. Stretched over the frame (aspect 4:5 plus a
+ * small gap), with non-scaling strokes so the line weight stays even. Decorative; mirrors in RTL.
+ */
+export function FrameSweeps({ className }: MotifProps) {
+  const id = useId();
+  return (
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 100 124"
+      preserveAspectRatio="none"
+      fill="none"
+      className={cn("pointer-events-none block rtl:-scale-x-100", className)}
+    >
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="currentColor" stopOpacity="0" />
+          <stop offset="0.45" stopColor="currentColor" />
+          <stop offset="0.6" stopColor="currentColor" />
+          <stop offset="1" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M36 1H85Q99 1 99 15V72" stroke={`url(#${id})`} strokeWidth="3.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
+      <path d="M64 123H15Q1 123 1 109V52" stroke={`url(#${id})`} strokeWidth="3.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
     </svg>
   );
 }

@@ -209,7 +209,13 @@ export default async function HomePage() {
           <VcMessage
             vc={vc}
             locale={locale}
-            labels={{ eyebrow: t("vcEyebrow"), read: t("readMessage"), source: t("vcSource"), originalLanguage: t("vcOriginalLanguage") }}
+            labels={{
+              eyebrow: t("vcEyebrow"),
+              read: t("readMessage"),
+              source: t("vcSource"),
+              originalLanguage: t("vcOriginalLanguage"),
+              role: vc.designation ? t("vcRole", { designation: vc.designation }) : null,
+            }}
           />
         ) : null}
 

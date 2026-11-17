@@ -269,7 +269,7 @@ export const VC_MESSAGE = {
   en: {
     name: 'Prof. Dr. Husnul Amin',
     designation: 'Vice Chancellor',
-    title: 'A university for the valley and beyond',
+    title: 'A University for the Valley and Beyond',
     teaser:
       '…to establish the University of Swat as a nationally recognized and internationally connected center of academic excellence, research innovation, and societal engagement.',
     // Five of the eleven paragraphs, unedited; the page links to the full message.
