@@ -9,7 +9,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr, OFFLINE_SLUG } from "@/lib/strapi/academics-model";
 import { blocksToText } from "@/lib/strapi/blocks";
-import { formatDateTime, formatDay, getPosts, newsHref } from "@/lib/strapi/notices";
+import { formatDateTime, formatDay, getPosts, newsHref, schemaDateTime } from "@/lib/strapi/notices";
 import { EnglishOnlyNote } from "@/components/academics/panels";
 import { CategoryBadge, Documents, PostCover, SourceNote } from "@/components/notices/shared";
 import { PostCard } from "@/components/notices/post-card";
@@ -71,8 +71,8 @@ export default async function PostPage({ params }: Props) {
           "@type": "Event",
           name: post.title.value,
           description: post.excerpt?.value,
-          startDate: post.eventStart,
-          endDate: post.eventEnd ?? undefined,
+          startDate: schemaDateTime(post.eventStart),
+          endDate: post.eventEnd ? schemaDateTime(post.eventEnd) : undefined,
           eventStatus: "https://schema.org/EventScheduled",
           eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
           inLanguage: post.title.lang === "ur" ? "ur-PK" : "en-PK",

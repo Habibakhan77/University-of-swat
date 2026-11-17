@@ -18,7 +18,8 @@
     "demo-accounts": "node scripts/demo-accounts.js",
     "faculty-photos": "node scripts/faculty-photos.js",
     "hero-photos": "node scripts/hero-photos.js",
-    "home-photos": "node scripts/home-photos.js"
+    "home-photos": "node scripts/home-photos.js",
+    "event-facts": "node scripts/event-facts.js"
   },
   "dependencies": {
     "@strapi/database": "5.61.1",

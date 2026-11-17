@@ -45,9 +45,10 @@ export const POSTS: PostSeed[] = [
     title: 'International Conference: One Planet One Health; Nature, Climate & Humanity',
     category: 'event',
     date: '2026-11-08',
-    eventStart: '2027-02-03T09:00:00+05:00',
-    eventEnd: '2027-02-05T17:00:00+05:00',
-    eventLocation: 'University of Swat, Charbagh',
+    // From the official poster (attached): 03–05 February 2027, venue 'University of Swat, Pakistan'. No time is published.
+    eventStart: '2027-02-03T00:00:00+05:00',
+    eventEnd: '2027-02-05T00:00:00+05:00',
+    eventLocation: 'University of Swat, Pakistan',
     excerpt: 'An international conference on biodiversity, climate resilience and the health of all life, organized by the Department of Zoology. Abstracts are due by 31 December 2026.',
     content: blocks(
       'The Department of Zoology, University of Swat, with the university’s Office of Research, Innovation and Commercialization (ORIC), will host the international conference “One Planet, One Health: Nature, Climate & Humanity” from 3 to 5 February 2027. Its theme is connecting biodiversity, climate resilience and the health of all life.',
@@ -59,7 +60,7 @@ export const POSTS: PostSeed[] = [
     isFeatured: true,
     ur: {
       title: 'بین الاقوامی کانفرنس: ون پلینٹ ون ہیلتھ؛ فطرت، موسم اور انسانیت',
-      eventLocation: 'جامعہ سوات، چارباغ',
+      eventLocation: 'جامعہ سوات، پاکستان',
       excerpt: 'شعبۂ حیوانیات کے زیرِ اہتمام حیاتیاتی تنوع، موسمیاتی لچک اور تمام جانداروں کی صحت پر بین الاقوامی کانفرنس، 3 تا 5 فروری 2027۔ خلاصے 31 دسمبر 2026 تک جمع کرائیں۔',
     },
   },
@@ -145,13 +146,13 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'awareness-drive-cervical-cancer-prevention',
-    ur: { title: 'سروائیکل کینسر سے بچاؤ کی آگاہی مہم', excerpt: 'طبی ماہرین نے طالبات کو بروقت اسکریننگ، ویکسینیشن اور سروائیکل کینسر سے بچاؤ کے بارے میں آگاہ کیا۔', eventLocation: 'ویمن کیمپس' },
+    ur: { title: 'سروائیکل کینسر سے بچاؤ کی آگاہی مہم', excerpt: 'طبی ماہرین نے طالبات کو بروقت اسکریننگ، ویکسینیشن اور سروائیکل کینسر سے بچاؤ کے بارے میں آگاہ کیا۔' },
     source: '/2026/11/awareness-drive-on-cervical-cancer-preventions/',
     title: 'Awareness Drive on Cervical Cancer Preventions',
     category: 'event',
     date: '2026-11-05',
-    eventStart: '2026-11-05T10:00:00+05:00',
-    eventLocation: 'Women Campus',
+    // Day only: the source post publishes no time or venue.
+    eventStart: '2026-11-05T00:00:00+05:00',
     excerpt: 'Health experts spoke to students about early screening, vaccination and the prevention of cervical cancer.',
     content: blocks(
       'The School of Nursing and Public Health organised an awareness session on cervical cancer prevention. Speakers explained risk factors, the importance of regular screening and the HPV vaccine, and answered students’ questions.',
@@ -225,13 +226,13 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'inaugural-lecture-swat-lectures',
-    ur: { title: 'خطباتِ سوات کا افتتاحی خطبہ', excerpt: 'خطباتِ سوات کے نئے سلسلے کا آغاز پانینی، سنسکرت اور گندھارا کے فکری ورثے پر ایک خطبے سے ہوا۔', eventLocation: 'مرکزی کیمپس، چارباغ' },
+    ur: { title: 'خطباتِ سوات کا افتتاحی خطبہ', excerpt: 'خطباتِ سوات کے نئے سلسلے کا آغاز پانینی، سنسکرت اور گندھارا کے فکری ورثے پر ایک خطبے سے ہوا۔' },
     source: '/2026/10/inaugural-lecture-of-swat-lectures-%d8%ae%d8%b7%d8%a8%d8%a7%d8%aa%d9%90-%d8%b3%d9%88%d8%a7%d8%aa/',
     title: 'Inaugural lecture of Swat Lectures (خطباتِ سوات)',
     category: 'event',
     date: '2026-10-27',
-    eventStart: '2026-10-27T11:00:00+05:00',
-    eventLocation: 'Main Campus, Charbagh',
+    // Day only: the source post publishes no time or venue.
+    eventStart: '2026-10-27T00:00:00+05:00',
     excerpt: 'The new Swat Lectures series opened with a talk by Dr Shahid Rasheed on Panini, Sanskrit and the intellectual heritage of Gandhara.',
     content: blocks(
       'The inaugural lecture of Swat Lectures (خطباتِ سوات), organized by the Department of English and Foreign Languages, brought Panini, Sanskrit and the intellectual heritage of Gandhara into conversation with modern scholarship.',
@@ -242,13 +243,13 @@ export const POSTS: PostSeed[] = [
   },
   {
     slug: 'kashmir-black-day-2026',
-    ur: { title: 'یومِ سیاہ کشمیر', excerpt: 'جامعہ نے کشمیری عوام سے اظہارِ یکجہتی کے لیے یومِ سیاہ منایا۔', eventLocation: 'مرکزی کیمپس، چارباغ' },
+    ur: { title: 'یومِ سیاہ کشمیر', excerpt: 'جامعہ نے کشمیری عوام سے اظہارِ یکجہتی کے لیے یومِ سیاہ منایا۔' },
     source: '/2026/10/kashmir-black-day-youm-e-siah/',
     title: 'Kashmir Black Day (Youm-e-Siah)',
     category: 'event',
     date: '2026-10-27',
-    eventStart: '2026-10-27T10:00:00+05:00',
-    eventLocation: 'Main Campus, Charbagh',
+    // Day only: the source post publishes no time or venue.
+    eventStart: '2026-10-27T00:00:00+05:00',
     excerpt: 'The university observed Youm-e-Siah in solidarity with the people of Kashmir.',
     content: blocks('Students and staff held a walk and a gathering to observe Kashmir Black Day and express solidarity with the people of Kashmir.'),
   },

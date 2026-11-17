@@ -73,7 +73,7 @@ async function revalidate(): Promise<void> {
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-revalidate-secret': secret },
-      body: JSON.stringify({ event: 'entry.publish', model: 'homepage' }),
+      body: JSON.stringify({ event: 'entry.publish', uid: HOME, model: 'homepage' }),
       signal: AbortSignal.timeout(15_000),
     });
     log(res.ok ? 'Website asked to refresh.' : `Website refresh failed (${res.status}); it updates within the hour.`);

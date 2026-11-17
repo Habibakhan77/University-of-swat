@@ -125,6 +125,21 @@ export function AdmissionsBand({ banner, links, image, locale, labels }: Admissi
   );
 }
 
+/**
+ * "Final Merit List Fall 2026 (Self Finance)" as two clean lines: the trailing "(…)" moves to its own line,
+ * so the wrap never splits it. A label without one is shown as is.
+ */
+function HighlightedLabel({ label }: { label: string }) {
+  const match = /^(.+?)\s*(\([^()]+\))$/.exec(label.trim());
+  if (!match) return <span className="text-body leading-snug font-bold">{label}</span>;
+  return (
+    <span className="flex flex-col text-body leading-snug font-bold">
+      <span>{match[1]}</span>
+      <span className="text-body-sm font-bold">{match[2]}</span>
+    </span>
+  );
+}
+
 function AdmissionsLink({ link, highlighted }: { link: NavLink; highlighted: boolean }) {
   const Arrow = link.external ? ArrowUpRight : ArrowRight;
   return (
@@ -149,8 +164,13 @@ function AdmissionsLink({ link, highlighted }: { link: NavLink; highlighted: boo
         {createElement(iconFor(link.icon), { className: "size-5.5", strokeWidth: 1.75 })}
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <span className="text-body leading-snug font-bold">{link.label}</span>
-        {link.description ? (
+        {highlighted ? (
+          <HighlightedLabel label={link.label} />
+        ) : (
+          <span className="text-body leading-snug font-bold">{link.label}</span>
+        )}
+        {/* The gold card is the headline only (its description stays in Strapi for other uses). */}
+        {link.description && !highlighted ? (
           <span className={cn("text-body-sm", highlighted ? "text-forest-900" : "text-ink-600 dark:text-forest-100")}>
             {link.description}
           </span>

@@ -216,6 +216,7 @@ interface StrapiPost extends Doc {
   date: string | null;
   publishedAt: string;
   eventStart: string | null;
+  eventEnd?: string | null;
   eventLocation: string | null;
   coverImage: StrapiMedia | null;
   isFeatured?: boolean | null;
@@ -495,7 +496,13 @@ async function loadEventsAndNotices(locale: Locale): Promise<EventsAndNotices> {
     const [events, announcements] = await Promise.all([
       localizedList<StrapiPost>(
         "/posts",
-        { "filters[category][$eq]": "event", "filters[eventStart][$notNull]": true, "sort[0]": "eventStart:desc", ...postFields },
+        {
+          "filters[category][$eq]": "event",
+          "filters[eventStart][$notNull]": true,
+          "sort[0]": "eventStart:desc",
+          ...postFields,
+          "fields[7]": "eventEnd",
+        },
         locale,
         12,
       ),
@@ -510,8 +517,17 @@ async function loadEventsAndNotices(locale: Locale): Promise<EventsAndNotices> {
     const now = Date.now();
     const fmt = formatters(locale);
     const withStart = events.filter((e): e is typeof e & { eventStart: string } => Boolean(e.eventStart));
-    const upcoming = withStart.filter((e) => Date.parse(e.eventStart) >= now).reverse();
-    const past = withStart.filter((e) => Date.parse(e.eventStart) < now);
+    /**
+     * Upcoming until the event is over: its end time, or the end of its last day when only the day is known
+     * (a day-only event is "Upcoming" on the day itself, and 3–5 February stays upcoming until the 5th ends).
+     */
+    const isUpcoming = (e: (typeof withStart)[number]) => {
+      const last = e.eventEnd ?? e.eventStart;
+      const dayOnly = isMidnightInPakistan(new Date(last));
+      return Date.parse(last) + (dayOnly ? 86_400_000 : 0) > now;
+    };
+    const upcoming = withStart.filter(isUpcoming).reverse();
+    const past = withStart.filter((e) => !isUpcoming(e));
     // Up to three rows: the soonest upcoming first, then the most recent past ones.
     const chosen = [...upcoming, ...past].slice(0, 3);
 
@@ -527,7 +543,7 @@ async function loadEventsAndNotices(locale: Locale): Promise<EventsAndNotices> {
           month: fmt.month.format(start),
           time: isMidnightInPakistan(start) ? null : fmt.time.format(start),
           location: e.eventLocation,
-          upcoming: Date.parse(e.eventStart) >= now,
+          upcoming: isUpcoming(e),
           lang: e.lang,
         };
       }),

@@ -151,6 +151,15 @@ export function isDayOnly(iso: string): boolean {
   return parts === "00:00";
 }
 
+/**
+ * A date-time for schema.org: just the day ("2026-11-05", Pakistan calendar) when only the day is known,
+ * so search engines never show a made-up midnight start; otherwise the full ISO date-time.
+ */
+export function schemaDateTime(iso: string): string {
+  if (!isDayOnly(iso)) return iso;
+  return new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: PAKISTAN }).format(new Date(iso));
+}
+
 /** Date and, when known, time in Pakistan: "10 Sept 2026, 10:30". */
 export function formatDateTime(iso: string, locale: Locale): string {
   const date = new Date(iso);

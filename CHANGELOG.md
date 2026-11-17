@@ -1194,3 +1194,19 @@ JavaScript to LCP. In the actual trace the hero photo paints with the first pain
     "All announcements" pill.
   - `GoldWave` moved to `components/brand/motifs.tsx` (shared by the stats band and the banner).
   - Checked at 1440/1024/375, EN/UR, light/dark: axe clean, no horizontal scroll.
+- **Fixes on `home-sections-2`.**
+  - Merit-list card (gold): the title breaks before its "(…)" part, e.g. "Final Merit List Fall 2026" /
+    "(Self Finance)", and the card shows no subtitle (the description stays in Strapi).
+  - **Event facts checked against the official sources.** uswat.edu.pk was unreachable (connections
+    refused or timed out, no Internet Archive copy), so only facts in a source we hold are kept:
+    - One Planet One Health conference: the official poster (attached to the post) gives 03–05 February
+      2027 and "University of Swat, Pakistan" and no time, so the 09:00–17:00 time is removed and the venue
+      corrected (was "University of Swat, Charbagh").
+    - Cervical cancer awareness drive, Swat Lectures inaugural lecture and Kashmir Black Day: no published
+      time or venue on record, so both are removed (date only).
+    - Applied to the live Strapi with the new `npm run event-facts -- <slug> …` (copies an event's start,
+      end and venue from the seed, en and ur, and republishes).
+  - Day-only events count as upcoming until the end of their last day (3–5 February stays "Upcoming"
+    through the 5th), and their schema.org Event `startDate`/`endDate` are plain dates, not midnight.
+  - `home-photos` and `event-facts` now send the content-type `uid` to `/api/revalidate`; with only
+    `model` the route matched no cache tags, so the website was never actually refreshed.
