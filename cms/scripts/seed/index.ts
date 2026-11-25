@@ -26,9 +26,7 @@ import { ABOUT, ADMISSIONS, HERO_SLIDES, HOMEPAGE, PARTNERS, QUICK_ACTIONS, SITE
  * the part of the photo that must stay in view when the hero crops it to a wide or tall frame.
  */
 export const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], { photo: PhotoKey; focalPoint: string }> = {
-  // The real main gate photo (photos/gate.jpeg, credited "Photo: University of Swat"): the first thing visitors see.
-  // The drawn gate illustration stays in the Media Library (mainGateIllustration) for an optional later slide.
-  campus: { photo: 'mainGate', focalPoint: '50% 58%' }, // the gate's centre (it stays in frame on phones)
+  campus: { photo: 'mainGateIllustration', focalPoint: '70% 60%' }, // the whole gate in the right half, flowers in front, mountains behind
   admissions: { photo: 'campusMountains', focalPoint: '55% 60%' }, // the academic block and the snowy peak
   research: { photo: 'mainCampus', focalPoint: '50% 50%' }, // academic blocks, lawns and misty hills
 };
@@ -39,11 +37,11 @@ export const HERO_PHOTOS: Record<(typeof HERO_SLIDES)[number]['key'], { photo: P
  * locales. Applied to existing data with `npm run home-photos`.
  */
 export const HOME_PHOTOS = {
-  /** Apply card image: kept in Strapi, no longer shown (the homepage tiles are plain since the pro-polish pass). */
+  /** Faint texture on the green "Apply now" quick-action card. */
   applyCard: 'womenCampus',
-  /** Middle of the Admissions banner (blends into the green). A real photo: the illustration is only an optional hero slide. */
-  admissions: 'libraryHall',
-  /** Stats image: kept in Strapi, no longer shown (the figures are a slim row in the Faculties section). */
+  /** Middle of the Admissions banner (blends into the green). */
+  admissions: 'mainGateIllustration',
+  /** Right side of "The University at a Glance". */
   stats: 'mainGate',
   /** The "I am a…" cards. */
   pathways: {

@@ -184,6 +184,145 @@ export function PeakLineArt({ className }: MotifProps) {
   );
 }
 
+/** Faint filled peaks with a cluster of pines, for the end of a section heading (decorative). */
+export function PeaksAndPines({ className }: MotifProps) {
+  const pines: [number, number][] = [[452, 34], [468, 46], [484, 38], [500, 52], [516, 40], [532, 30]];
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 560 120" className={cn("pointer-events-none block rtl:-scale-x-100", className)}>
+      <path fill="currentColor" fillOpacity="0.35" d="M0 116 70 92l50 10 70-44 46 26 64-62 40 34 30-14 60 46 54-22 76 50H0Z" />
+      <path fill="#fff" fillOpacity="0.7" className="dark:opacity-40" d="m300 22 28 24-10-2-8 8-10-10-12 6-14 2 26-28Z" />
+      <path fill="currentColor" fillOpacity="0.55" d="M60 116c90-18 180-22 270-12s150 6 230-6v18Z" />
+      <path fill="currentColor" fillOpacity="0.6" d={pines.map(([x, h]) => pinePath(x, 116, h)).join("")} />
+    </svg>
+  );
+}
+
+/**
+ * Faint line art of a campus gateway (a tall central arch between two smaller ones, flanking towers with
+ * small domed kiosks, low walls running off to each side), for a card corner. Decorative; mirrors in RTL.
+ */
+export function GateLineArt({ className }: MotifProps) {
+  return (
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 280 110"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={cn("pointer-events-none block rtl:-scale-x-100", className)}
+    >
+      <GatePaths />
+    </svg>
+  );
+}
+
+/** The gateway of GateLineArt as bare paths (stroke inherited), in its 280×110 drawing space. */
+function GatePaths() {
+  return (
+    <>
+      {/* Ground and the low walls. */}
+      <path d="M2 108h276" strokeWidth="1.4" />
+      <path d="M2 108V88h46M232 88h46v20M14 88v-4h10v4M254 88v-4h10v4" strokeWidth="1.2" />
+      {/* Towers with domed kiosks. */}
+      <path d="M48 108V42h24v66M208 108V42h24v66" strokeWidth="1.4" />
+      <path d="M46 42h28M206 42h28M52 42V32h16v10M212 42V32h16v10" strokeWidth="1.2" />
+      <path d="M50 32c0-8 6-12 10-14 4 2 10 6 10 14M210 32c0-8 6-12 10-14 4 2 10 6 10 14M60 18v-6M220 18v-6" strokeWidth="1.2" />
+      <path d="M54 60h12v14H54zM214 60h12v14h-12z" strokeWidth="1" opacity="0.7" />
+      {/* Gate block with the central arch and two side arches. */}
+      <path d="M72 108V50h136v58" strokeWidth="1.4" />
+      <path d="M68 50h144M76 44h128v6" strokeWidth="1.2" />
+      <path d="M118 108V76c0-14 10-22 22-22s22 8 22 22v32" strokeWidth="1.4" />
+      <path d="M124 108V78c0-10 7-17 16-17s16 7 16 17v30" strokeWidth="1" opacity="0.6" />
+      <path d="M84 108V84c0-8 5-13 11-13s11 5 11 13v24M174 108V84c0-8 5-13 11-13s11 5 11 13v24" strokeWidth="1.2" />
+      <path d="M128 44v-8h24v8M134 36c0-5 3-8 6-9 3 1 6 4 6 9" strokeWidth="1.1" />
+    </>
+  );
+}
+
+// Pines of the valley strip (x, height), standing on the ground line at y 146.
+const STRIP_PINES: [number, number][] = [
+  [136, 28], [166, 42], [196, 32], [228, 50], [260, 36], [292, 44], [324, 30], [572, 30], [600, 42],
+];
+
+/**
+ * Faint line art for the bottom corner of a card: Swat peaks with snow lines, a row of pines and the
+ * campus gateway at the end, standing on one ground line. Stroked in currentColor; anchored to the
+ * bottom-end corner and mirrored in RTL. Decorative.
+ */
+export function ValleyGateStrip({ className }: MotifProps) {
+  return (
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 620 150"
+      preserveAspectRatio="xMaxYMax meet"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={cn("pointer-events-none block rtl:-scale-x-100", className)}
+    >
+      {/* Far ridges and the snow peaks. */}
+      <path d="M0 132 70 104l46 18 70-58 40 30 64-62 52 46 34-22 66 52 50-26 58 34 66-40 40 22" strokeWidth="1.4" />
+      <path d="m280 32-16 18 10-3 8 7 8-11 10 5M432 82l-12 12 8-2 6 6 6-8" strokeWidth="1.1" opacity="0.8" />
+      <path d="M40 136c90-16 180-20 270-12s170 6 240-6" strokeWidth="1" opacity="0.55" />
+      {/* Pines. */}
+      <path d={STRIP_PINES.map(([x, h]) => pinePath(x, 146, h)).join("")} strokeWidth="1.1" />
+      {/* Ground line and the gateway. */}
+      <path d="M20 146h600" strokeWidth="1.4" />
+      <svg x="350" y="36" width="250" height="111" viewBox="0 0 280 110" overflow="visible">
+        <GatePaths />
+      </svg>
+    </svg>
+  );
+}
+
+/**
+ * A green wedge with gold sweeps for the top-end corner of a white card (decorative; mirrors in RTL).
+ * Sits at the card's top-end corner and is clipped by its rounded edge.
+ */
+export function CornerSweep({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 320 120" fill="none" className={cn("pointer-events-none block rtl:-scale-x-100", className)}>
+      <path className="fill-forest-700 dark:fill-forest-800" d="M128 0h192v120C296 66 226 20 128 0Z" />
+      <path className="stroke-gold-400" d="M66 0c124 8 214 52 254 118" strokeWidth="5" strokeLinecap="round" />
+      <path className="stroke-gold-300" d="M176 0c66 14 116 40 144 72" strokeWidth="1.5" strokeLinecap="round" opacity="0.75" />
+    </svg>
+  );
+}
+
+/**
+ * Two gold sweeps that hug a portrait frame from just outside it: one round the top-end corner, one round
+ * the bottom-start corner, each fading out at both ends. Stretched over the frame (aspect 4:5 plus a
+ * small gap), with non-scaling strokes so the line weight stays even. Decorative; mirrors in RTL.
+ */
+export function FrameSweeps({ className }: MotifProps) {
+  const id = useId();
+  return (
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 100 124"
+      preserveAspectRatio="none"
+      fill="none"
+      className={cn("pointer-events-none block rtl:-scale-x-100", className)}
+    >
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="currentColor" stopOpacity="0" />
+          <stop offset="0.45" stopColor="currentColor" />
+          <stop offset="0.6" stopColor="currentColor" />
+          <stop offset="1" stopColor="currentColor" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d="M36 1H85Q99 1 99 15V72" stroke={`url(#${id})`} strokeWidth="3.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
+      <path d="M64 123H15Q1 123 1 109V52" stroke={`url(#${id})`} strokeWidth="3.5" vectorEffect="non-scaling-stroke" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /** A gold brush wave along the bottom edge of a photo on a green banner (decorative; mirrors in RTL). */
 export function GoldWave({ className }: MotifProps) {
   return (
@@ -194,3 +333,37 @@ export function GoldWave({ className }: MotifProps) {
   );
 }
 
+/**
+ * Curved bottom edge for a card photo: a green sliver and a gold band rising toward the end side, cut by
+ * the card surface below (fill-surface, so it follows the theme). Stretches to the photo's width; mirrors
+ * in RTL. Decorative.
+ */
+export function PhotoCurveEdge({ className }: MotifProps) {
+  const id = useId();
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 400 44" preserveAspectRatio="none" className={cn("pointer-events-none block w-full rtl:-scale-x-100", className)}>
+      <defs>
+        <linearGradient id={id} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0.35" className="[stop-color:var(--color-forest-700)]" stopOpacity="0" />
+          <stop offset="1" className="[stop-color:var(--color-forest-700)]" />
+        </linearGradient>
+      </defs>
+      <path fill={`url(#${id})`} d="M0 30C130 27 270 16 400 0v44H0Z" />
+      <path className="fill-gold-400" d="M0 34C130 31 270 22 400 8v36H0Z" />
+      <path className="fill-surface" d="M0 39C130 37 270 30 400 17v27H0Z" />
+    </svg>
+  );
+}
+
+/**
+ * A gold swoosh with a deep-green band under it, rising toward the bottom-end corner of a photo card
+ * (decorative; mirrors in RTL). Stretches to the box it is given.
+ */
+export function CardCornerSwoosh({ className }: MotifProps) {
+  return (
+    <svg aria-hidden focusable="false" viewBox="0 0 400 80" preserveAspectRatio="none" className={cn("pointer-events-none block rtl:-scale-x-100", className)}>
+      <path className="fill-forest-800" d="M0 80C170 76 310 52 400 6v74Z" />
+      <path className="fill-gold-400" d="M0 80C170 74 300 46 400 0v14C310 58 170 78 0 80Z" />
+    </svg>
+  );
+}

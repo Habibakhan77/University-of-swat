@@ -1305,3 +1305,16 @@ consistency). Content, data and colours unchanged.
 - **Mobile (375px)**: every section checked; quick-action tiles become a single column on phones (they
   wrapped one word per line in two columns). No horizontal scroll in English or Urdu.
 - Before/after homepage screenshots (desktop 1440px, mobile 375px @2x): `docs/screenshots/pro-polish/`.
+
+## Restore full homepage (branch `restore-full-home`)
+
+- Homepage sections and designs restored from c73c775 (the last main commit before the pro-polish merge): hero with
+  the drawn main gate illustration as slide 1 ("Illustration" credit), quick actions row, "I am a…" pathways, green
+  "University at a glance" stats banner, Latest News, Admissions banner, Events + Announcements, VC message,
+  Faculties, Our Campuses, and Partners & MoUs, with their mountain line-art, gold swooshes and curved corners
+- Kept from pro-polish: one plain page background on every section (Faculties lost its sand band), the
+  homepage Open Graph card, favicon/manifest icons, the news loading skeleton, and Partners on the About page
+- Layout fixes carried over: the featured news photo never shrinks under its title, the Upcoming/Recent badge
+  sits in the text flow with Nastaliq line height, and more space above "I am a…"
+- Strapi: hero slide 1 and the Admissions banner use the illustration again (`npm run hero-photos`, `home-photos`)
+- Checked at 1440, 1024 and 375px, English and Urdu, light and dark: no horizontal overflow
