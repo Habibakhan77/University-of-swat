@@ -24,7 +24,7 @@ import {
 } from "@/lib/strapi/academics";
 import { getDepartmentSections } from "@/lib/strapi/department";
 import { getPosts, newsHref } from "@/lib/strapi/notices";
-import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import { HeroChip } from "@/components/academics/academic-hero";
 import {
   AboutStatements,
   AchievementList,
@@ -36,8 +36,10 @@ import {
 } from "@/components/academics/department-sections";
 import { PostCard } from "@/components/notices/post-card";
 import { PersonCard, ProgramCard } from "@/components/academics/cards";
-import { accentStyle } from "@/components/academics/faculty-art";
-import { ContactDetails, EnglishOnlyNote, FactList, SectionTitle, SidePanel, type Fact } from "@/components/academics/panels";
+import { accentStyle, FacultyArt } from "@/components/academics/faculty-art";
+import { ContactDetails, EnglishOnlyNote, FactList, SidePanel, type Fact } from "@/components/academics/panels";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
@@ -169,12 +171,10 @@ export default async function DepartmentPage({ params }: Props) {
   return (
     <div style={accentStyle(faculty.accent)}>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
-      <AcademicHero
-        compact
-        id={`department-${department.slug}`}
-        accent={faculty.accent}
-        icon={iconFor(faculty.icon)}
+      <PageHero
+        locale={locale}
         image={department.image}
+        art={<FacultyArt id={`department-${department.slug}`} accent={faculty.accent} icon={iconFor(faculty.icon)} />}
         breadcrumbs={[
           { label: tCommon("home"), href: "/" },
           { label: t("breadcrumb"), href: academicsHref },
@@ -184,8 +184,8 @@ export default async function DepartmentPage({ params }: Props) {
         eyebrow={<span lang={langAttr(facultyLabel, locale)}>{facultyLabel.value}</span>}
         title={name}
         titleLang={langAttr(department.name, locale)}
-        summary={department.summary?.value}
-        summaryLang={langAttr(department.summary, locale)}
+        intro={department.summary?.value}
+        introLang={langAttr(department.summary, locale)}
         meta={
           <>
             <HeroChip icon={GraduationCap}>{t("programsCount", { count: programs.length })}</HeroChip>
@@ -200,12 +200,13 @@ export default async function DepartmentPage({ params }: Props) {
       />
 
       {/* Sticky tab bar under the header; it marks the section being read. */}
-      <SectionNav label={td("sectionsLabel")} items={nav} />
+      <SectionNav label={td("sectionsLabel")} items={nav} className="mt-6" />
 
-      <Container size="wide" className="grid gap-10 pt-8 pb-section lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-14">
-        <div className="flex min-w-0 flex-col gap-section-sm">
+      {/* One even gap between sections; small bottom padding because the footer's apply card adds its own space. */}
+      <Container size="wide" className="grid gap-10 pt-section-sm pb-6 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:gap-14">
+        <div className="flex min-w-0 flex-col gap-section">
           <section aria-labelledby="overview" className="flex flex-col gap-6">
-            <SectionTitle id="overview">{td("about")}</SectionTitle>
+            <HomeSectionHeader id="overview" locale={locale} size="md" eyebrow={td("eyebrows.overview")} title={td("about")} />
             {detail.overview && overview ? (
               <div>
                 <EnglishOnlyNote content={detail.overview} />
@@ -218,8 +219,8 @@ export default async function DepartmentPage({ params }: Props) {
             ) : null}
           </section>
 
-          <section aria-labelledby="programs">
-            <SectionTitle id="programs">{t("programs")}</SectionTitle>
+          <section aria-labelledby="programs" className="flex flex-col gap-6">
+            <HomeSectionHeader id="programs" locale={locale} size="md" eyebrow={td("eyebrows.programs")} title={t("programs")} />
             {groups.length ? (
               <div className="flex flex-col gap-8">
                 {groups.map(({ group, items }) => (
@@ -240,9 +241,13 @@ export default async function DepartmentPage({ params }: Props) {
             )}
           </section>
 
-          <section aria-labelledby="members">
-            <SectionTitle
+          <section aria-labelledby="members" className="flex flex-col gap-6">
+            <HomeSectionHeader
               id="members"
+              locale={locale}
+              size="md"
+              eyebrow={td("eyebrows.members")}
+              title={t("members")}
               action={
                 members.length ? (
                   <Link
@@ -254,11 +259,9 @@ export default async function DepartmentPage({ params }: Props) {
                   </Link>
                 ) : null
               }
-            >
-              {t("members")}
-            </SectionTitle>
+            />
             {hasPlaceholders ? (
-              <p className="mb-5 rounded-lg border border-accent-text/20 bg-warning-soft px-4 py-3 text-body-sm text-warning-soft-fg">
+              <p className="rounded-lg border border-accent-text/20 bg-warning-soft px-4 py-3 text-body-sm text-warning-soft-fg">
                 {t("placeholderNotice")}
               </p>
             ) : null}
@@ -275,28 +278,30 @@ export default async function DepartmentPage({ params }: Props) {
             )}
           </section>
 
-          <section aria-labelledby="publications">
-            <SectionTitle id="publications">{td("publications")}</SectionTitle>
+          <section aria-labelledby="publications" className="flex flex-col gap-6">
+            <HomeSectionHeader id="publications" locale={locale} size="md" eyebrow={td("eyebrows.publications")} title={td("publications")} />
             <PublicationList publications={sections.publications} locale={locale} />
           </section>
 
-          <section aria-labelledby="labs">
-            <SectionTitle id="labs">{td("labs")}</SectionTitle>
+          <section aria-labelledby="labs" className="flex flex-col gap-6">
+            <HomeSectionHeader id="labs" locale={locale} size="md" eyebrow={td("eyebrows.labs")} title={td("labs")} />
             <LabGrid labs={sections.labs} locale={locale} />
           </section>
 
-          <section aria-labelledby="news">
-            <SectionTitle
+          <section aria-labelledby="news" className="flex flex-col gap-6">
+            <HomeSectionHeader
               id="news"
+              locale={locale}
+              size="md"
+              eyebrow={td("eyebrows.news")}
+              title={td("news")}
               action={
                 <Link href={newsHref} className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-fac hover:underline">
                   {td("allNews")}
                   <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100" />
                 </Link>
               }
-            >
-              {td("news")}
-            </SectionTitle>
+            />
             {news.length ? (
               <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {news.map((p) => (
@@ -312,8 +317,8 @@ export default async function DepartmentPage({ params }: Props) {
             )}
           </section>
 
-          <section aria-labelledby="events">
-            <SectionTitle id="events">{td("events")}</SectionTitle>
+          <section aria-labelledby="events" className="flex flex-col gap-6">
+            <HomeSectionHeader id="events" locale={locale} size="md" eyebrow={td("eyebrows.events")} title={td("events")} />
             {events.length ? (
               <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 {events.map((p) => (
@@ -329,24 +334,24 @@ export default async function DepartmentPage({ params }: Props) {
             )}
           </section>
 
-          <section aria-labelledby="achievements">
-            <SectionTitle id="achievements">{td("achievements")}</SectionTitle>
+          <section aria-labelledby="achievements" className="flex flex-col gap-6">
+            <HomeSectionHeader id="achievements" locale={locale} size="md" eyebrow={td("eyebrows.achievements")} title={td("achievements")} />
             <AchievementList achievements={sections.achievements} locale={locale} />
           </section>
 
-          <section aria-labelledby="alumni">
-            <SectionTitle id="alumni">{td("alumni")}</SectionTitle>
+          <section aria-labelledby="alumni" className="flex flex-col gap-6">
+            <HomeSectionHeader id="alumni" locale={locale} size="md" eyebrow={td("eyebrows.alumni")} title={td("alumni")} />
             <AlumniList alumni={sections.alumni} locale={locale} />
           </section>
 
-          <section aria-labelledby="gallery">
-            <SectionTitle id="gallery">{td("gallery")}</SectionTitle>
+          <section aria-labelledby="gallery" className="flex flex-col gap-6">
+            <HomeSectionHeader id="gallery" locale={locale} size="md" eyebrow={td("eyebrows.gallery")} title={td("gallery")} />
             <GalleryGrid photos={sections.gallery} locale={locale} />
           </section>
 
           {detail.contact ? (
-            <section aria-labelledby="contact">
-              <SectionTitle id="contact">{t("contact")}</SectionTitle>
+            <section aria-labelledby="contact" className="flex flex-col gap-6">
+              <HomeSectionHeader id="contact" locale={locale} size="md" eyebrow={td("eyebrows.contact")} title={t("contact")} />
               <div className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
                 <ContactDetails contact={detail.contact} />
               </div>
