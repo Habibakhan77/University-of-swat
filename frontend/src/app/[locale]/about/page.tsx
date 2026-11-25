@@ -9,7 +9,7 @@ import { langAttr } from "@/lib/strapi/academics-model";
 import { getPartners, getStats } from "@/lib/strapi/home";
 import { aboutHref, administrationHref, contactHref, getAbout, getCampuses, getOffices } from "@/lib/strapi/organisation";
 import { accentStyle } from "@/components/academics/faculty-art";
-import { AboutHero } from "@/components/about/about-hero";
+import { PageHero } from "@/components/layout/page-hero";
 import { AtAGlance, CoreValues, FoundingFact, type GlanceItem, MilestoneTimeline, Motto, OfficerCard, StatementCard } from "@/components/about/about-parts";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
 import { PartnersList } from "@/components/organisation/partners-list";
@@ -102,7 +102,7 @@ export default async function AboutPage() {
     // The green accent drives the tab bar's current tab. The bar is a direct child, so it stays stuck.
     <div style={accentStyle("green")}>
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
-      <AboutHero
+      <PageHero
         locale={locale}
         breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("aboutTitle") }]}
         eyebrow={t("aboutEyebrow")}

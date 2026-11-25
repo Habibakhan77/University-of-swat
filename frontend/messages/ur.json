@@ -349,7 +349,11 @@
     },
     "scholar": "گوگل اسکالر",
     "orcid": "ORCID",
-    "institute": "انسٹی ٹیوٹ"
+    "institute": "انسٹی ٹیوٹ",
+    "eyebrows": {
+      "about": "ہمارا تعارف",
+      "departments": "ہمارے ساتھ پڑھیں"
+    }
   },
   "vcMessage": {
     "breadcrumb": "وائس چانسلر کا پیغام",
@@ -545,7 +549,10 @@
     "original": "اصل",
     "englishOnly": "صرف انگریزی میں دستیاب",
     "sourcePageText": "تفصیلات جامعہ کی سرکاری ویب سائٹ uswat.edu.pk کے مطابق۔",
-    "viewOfficialPage": "سرکاری صفحہ دیکھیں"
+    "viewOfficialPage": "سرکاری صفحہ دیکھیں",
+    "eyebrows": {
+      "related": "مزید پڑھیں"
+    }
   },
   "organisation": {
     "eyebrow": "جامعہ سوات",
@@ -782,6 +789,19 @@
       "competition": "مقابلہ",
       "accreditation": "منظوری",
       "other": "کامیابی"
+    },
+    "eyebrows": {
+      "overview": "ہمارا تعارف",
+      "programs": "ہمارے ساتھ پڑھیں",
+      "members": "ہمارے اساتذہ",
+      "publications": "تحقیقی کام",
+      "labs": "سہولیات",
+      "news": "تازہ خبریں",
+      "events": "تقریبات",
+      "achievements": "اعزازات",
+      "alumni": "ہمارے سابق طلبہ",
+      "gallery": "شعبے کی جھلکیاں",
+      "contact": "رابطہ کریں"
     }
   },
   "profile": {
@@ -812,6 +832,11 @@
     "orcid": "ORCID",
     "noQualifications": "اس پروفائل پر ابھی تعلیمی قابلیت درج نہیں۔",
     "roles": "ذمہ داریاں",
-    "viewAllIn": "<dept>{department}</dept> کے تمام اساتذہ دیکھیں"
+    "viewAllIn": "<dept>{department}</dept> کے تمام اساتذہ دیکھیں",
+    "eyebrows": {
+      "qualifications": "تعلیم",
+      "biography": "تعارف",
+      "publications": "تحقیقی کام"
+    }
   }
 }

@@ -349,7 +349,11 @@
     },
     "scholar": "Google Scholar",
     "orcid": "ORCID",
-    "institute": "Institute"
+    "institute": "Institute",
+    "eyebrows": {
+      "about": "Who we are",
+      "departments": "Study with us"
+    }
   },
   "vcMessage": {
     "breadcrumb": "Vice Chancellor’s message",
@@ -545,7 +549,10 @@
     "original": "Original",
     "englishOnly": "Available in English only",
     "sourcePageText": "Details as published on the official website, uswat.edu.pk.",
-    "viewOfficialPage": "View the official page"
+    "viewOfficialPage": "View the official page",
+    "eyebrows": {
+      "related": "Keep reading"
+    }
   },
   "organisation": {
     "eyebrow": "University of Swat",
@@ -782,6 +789,19 @@
       "competition": "Competition",
       "accreditation": "Accreditation",
       "other": "Achievement"
+    },
+    "eyebrows": {
+      "overview": "Who we are",
+      "programs": "Study with us",
+      "members": "Our people",
+      "publications": "Research output",
+      "labs": "Facilities",
+      "news": "Latest news",
+      "events": "What’s on",
+      "achievements": "Recognition",
+      "alumni": "Where they are now",
+      "gallery": "Life in the department",
+      "contact": "Get in touch"
     }
   },
   "profile": {
@@ -812,6 +832,11 @@
     "orcid": "ORCID",
     "noQualifications": "No qualifications are listed on this profile yet.",
     "roles": "Roles",
-    "viewAllIn": "View all faculty in <dept>{department}</dept>"
+    "viewAllIn": "View all faculty in <dept>{department}</dept>",
+    "eyebrows": {
+      "qualifications": "Education",
+      "biography": "About",
+      "publications": "Research output"
+    }
   }
 }

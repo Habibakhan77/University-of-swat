@@ -19,10 +19,12 @@ import {
   OFFLINE_SLUG,
   programsHref,
 } from "@/lib/strapi/academics";
-import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import { HeroChip } from "@/components/academics/academic-hero";
 import { DepartmentCard } from "@/components/academics/cards";
-import { accentStyle } from "@/components/academics/faculty-art";
-import { ContactDetails, EnglishOnlyNote, SectionTitle, SidePanel } from "@/components/academics/panels";
+import { accentStyle, FacultyArt } from "@/components/academics/faculty-art";
+import { ContactDetails, EnglishOnlyNote, SidePanel } from "@/components/academics/panels";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
 import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
@@ -76,11 +78,10 @@ export default async function FacultyPage({ params }: PageProps<"/[locale]/acade
 
   return (
     <div style={accentStyle(faculty.accent)}>
-      <AcademicHero
-        id={`faculty-${faculty.slug}`}
-        accent={faculty.accent}
-        icon={Icon}
+      <PageHero
+        locale={locale}
         image={faculty.image}
+        art={<FacultyArt id={`faculty-${faculty.slug}`} accent={faculty.accent} icon={Icon} />}
         breadcrumbs={[
           { label: tCommon("home"), href: "/" },
           { label: t("breadcrumb"), href: academicsHref },
@@ -89,8 +90,8 @@ export default async function FacultyPage({ params }: PageProps<"/[locale]/acade
         eyebrow={typeLabel}
         title={faculty.name.value}
         titleLang={langAttr(faculty.name, locale)}
-        summary={faculty.summary?.value}
-        summaryLang={langAttr(faculty.summary, locale)}
+        intro={faculty.summary?.value}
+        introLang={langAttr(faculty.summary, locale)}
         meta={
           faculty.departments.length ? (
             <>
@@ -102,19 +103,24 @@ export default async function FacultyPage({ params }: PageProps<"/[locale]/acade
         }
       />
 
-      <Container size="wide" className="grid gap-10 py-section lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14">
-        <div className="flex min-w-0 flex-col gap-section-sm">
+      {/* One even gap between sections; small bottom padding because the footer's apply card adds its own space. */}
+      <Container size="wide" className="grid gap-10 pt-section-sm pb-6 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-14">
+        <div className="flex min-w-0 flex-col gap-section">
           {detail.description ? (
-            <section aria-labelledby="about">
-              <SectionTitle id="about">{t("about")}</SectionTitle>
+            <section aria-labelledby="about" className="flex flex-col gap-6">
+              <HomeSectionHeader id="about" locale={locale} size="md" eyebrow={t("eyebrows.about")} title={t("about")} />
               <EnglishOnlyNote content={detail.description} />
               <RichText blocks={detail.description.value} lang={langAttr(detail.description, locale)} className="max-w-prose text-body-lg" />
             </section>
           ) : null}
 
-          <section aria-labelledby="departments">
-            <SectionTitle
+          <section aria-labelledby="departments" className="flex flex-col gap-6">
+            <HomeSectionHeader
               id="departments"
+              locale={locale}
+              size="md"
+              eyebrow={t("eyebrows.departments")}
+              title={t("departments")}
               action={
                 programs.length ? (
                   <Link
@@ -126,9 +132,7 @@ export default async function FacultyPage({ params }: PageProps<"/[locale]/acade
                   </Link>
                 ) : null
               }
-            >
-              {t("departments")}
-            </SectionTitle>
+            />
             {faculty.departments.length ? (
               <ul className="grid gap-5 sm:grid-cols-2">
                 {faculty.departments.map((d) => (
@@ -143,7 +147,7 @@ export default async function FacultyPage({ params }: PageProps<"/[locale]/acade
           </section>
         </div>
 
-        <aside className="flex flex-col gap-5 lg:sticky lg:top-28 lg:self-start">
+        <aside className="flex flex-col gap-5 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
           {detail.deanName ? (
             <SidePanel title={isFaculty ? t("dean") : t("director")} id="dean">
               <div className="flex items-center gap-3">
