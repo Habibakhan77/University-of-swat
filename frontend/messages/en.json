@@ -686,7 +686,15 @@
     "learnMore": "Learn more",
     "overview": "Overview",
     "gallery": "Photos",
-    "moreCampusLife": "More campus life"
+    "moreCampusLife": "More campus life",
+    "researchEyebrow": "Research at Swat",
+    "researchEyebrows": {
+      "offices": "Offices",
+      "journal": "Journal",
+      "projects": "Funding",
+      "conferences": "Events",
+      "resources": "Documents"
+    }
   },
   "contact": {
     "title": "Contact us",

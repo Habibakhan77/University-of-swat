@@ -686,7 +686,15 @@
     "learnMore": "مزید جانیں",
     "overview": "تعارف",
     "gallery": "تصاویر",
-    "moreCampusLife": "کیمپس لائف کے مزید صفحات"
+    "moreCampusLife": "کیمپس لائف کے مزید صفحات",
+    "researchEyebrow": "سوات میں تحقیق",
+    "researchEyebrows": {
+      "offices": "دفاتر",
+      "journal": "جریدہ",
+      "projects": "فنڈنگ",
+      "conferences": "تقریبات",
+      "resources": "دستاویزات"
+    }
   },
   "contact": {
     "title": "رابطہ کریں",

@@ -1400,3 +1400,19 @@ consistency). Content, data and colours unchanged.
 - Fee structure: the refund policy list in the fee note shows as a 3-row table (refund share | the policy
   line exactly as entered); text before and after it unchanged; fee PDF and online payment stay as two cards
 - Scholarships: the schemes list shows as a grid of small cards; intro and closing text unchanged
+
+## Research page polish (branch `research-polish`)
+
+- Dev overlay "1 Issue" on /research: not caused by this page. The dev log shows a single hydration mismatch
+  on /admissions (browser still on the previous build of `dates-timeline.tsx` while the server had the new
+  table classes, right after an edit); the overlay keeps its count across client-side navigation, so it
+  showed on /research too. Fresh loads of /admissions and /research (en, ur) hydrate with no errors
+- Hero is the shared `PageHero`: "Research at Swat" eyebrow, serif title with swoosh, intro, projects chip, and
+  a real credited photo: Research Page → heroImage when set, otherwise the latest research event's photo
+- Sticky `SectionNav` tab bar marking the current section; homepage-style section headers (Offices, Journal,
+  Funding, Events, Documents; en/ur); one `gap-section` between sections; small bottom padding before the footer
+- Offices in centred rows (3 + 2 at 1280px+, 2 + 2 + 1 centred below); policies and resources and conferences in
+  2 columns where an odd last item centres
+- Funded projects as compact cards: agency badge, duration chip, title clamped to 2 lines (full title in the
+  tooltip and to screen readers), principal investigator, amount highlighted. Search, agency filter and
+  "Show more" unchanged

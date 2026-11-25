@@ -1,6 +1,7 @@
 "use client";
 
 import { useDeferredValue, useState } from "react";
+import { Clock, Landmark, UserRound } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
 import { langAttr } from "@/lib/strapi/academics-model";
@@ -71,42 +72,47 @@ export function ProjectsExplorer({ projects }: { projects: ResearchProject[] }) 
 
       <OfficialLanguageNote show={results.some((p) => p.title.lang !== locale)} />
       {results.length ? (
-        <ol className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
+        <ol className="grid gap-4 md:grid-cols-2">
           {results.slice(0, limit).map((p) => (
-            <li key={p.slug} className="flex flex-col gap-2 p-4 sm:p-5">
-              <p className="text-body font-semibold text-pretty text-fg" lang={langAttr(p.title, locale)}>
-                {p.title.value}
-              </p>
-              <dl className="flex flex-wrap gap-x-6 gap-y-1 text-body-sm">
-                {p.principalInvestigator ? (
-                  <div className="flex gap-1.5">
-                    <dt className="text-fg-subtle">{t("investigator")}</dt>
-                    <dd className="font-medium text-fg" lang={locale === "en" ? undefined : "en"}>
-                      {p.principalInvestigator}
-                    </dd>
-                  </div>
-                ) : null}
+            <li key={p.slug} className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 shadow-xs transition-colors hover:border-primary-text/30">
+              <div className="flex flex-wrap items-center gap-2">
                 {p.fundingAgency ? (
-                  <div className="flex gap-1.5">
-                    <dt className="text-fg-subtle">{t("fundingAgency")}</dt>
-                    <dd className="font-medium text-fg">{p.fundingAgency}</dd>
-                  </div>
-                ) : null}
-                {p.fundingAmount ? (
-                  <div className="flex gap-1.5">
-                    <dt className="text-fg-subtle">{t("amount")}</dt>
-                    <dd className="tabular font-medium text-fg">
-                      {p.currency} {money.format(p.fundingAmount)}
-                    </dd>
-                  </div>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-2.5 py-1 text-caption font-semibold text-primary-soft-fg">
+                    <Landmark aria-hidden className="size-3.5" />
+                    <span className="sr-only">{t("fundingAgency")}: </span>
+                    <span lang={locale === "en" ? undefined : "en"}>{p.fundingAgency}</span>
+                  </span>
                 ) : null}
                 {p.durationMonths ? (
-                  <div className="flex gap-1.5">
-                    <dt className="text-fg-subtle">{t("duration")}</dt>
-                    <dd className="font-medium text-fg">{t("months", { count: p.durationMonths })}</dd>
-                  </div>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-canvas-subtle px-2.5 py-1 text-caption font-medium text-fg-muted ring-1 ring-line ring-inset">
+                    <Clock aria-hidden className="size-3.5" />
+                    <span className="sr-only">{t("duration")}: </span>
+                    {t("months", { count: p.durationMonths })}
+                  </span>
                 ) : null}
-              </dl>
+              </div>
+              <p className="line-clamp-2 text-body font-semibold text-pretty text-fg" lang={langAttr(p.title, locale)} title={p.title.value}>
+                {p.title.value}
+              </p>
+              <div className="mt-auto flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-t border-line pt-3">
+                {p.principalInvestigator ? (
+                  <p className="flex min-w-0 items-center gap-2 text-body-sm text-fg-muted">
+                    <UserRound aria-hidden className="size-4 shrink-0 text-fg-subtle" />
+                    <span className="sr-only">{t("investigator")}: </span>
+                    <span className="font-medium text-fg" lang={locale === "en" ? undefined : "en"}>
+                      {p.principalInvestigator}
+                    </span>
+                  </p>
+                ) : null}
+                {p.fundingAmount ? (
+                  <p className="ms-auto text-heading-sm font-bold text-primary-text tabular" dir="ltr">
+                    <span className="sr-only">{t("amount")}: </span>
+                    <span lang={locale === "en" ? undefined : "en"}>
+                      {p.currency} {money.format(p.fundingAmount)}
+                    </span>
+                  </p>
+                ) : null}
+              </div>
             </li>
           ))}
         </ol>
