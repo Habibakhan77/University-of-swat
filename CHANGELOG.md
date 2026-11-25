@@ -1351,3 +1351,15 @@ consistency). Content, data and colours unchanged.
   (`GET /api/stats`, picked by their `source`; new `getStats` in `lib/strapi/home.ts`)
 - History to Vision and mission is the standard section gap (82px at 1440, 48px at 375). Checked at 1440 and
   375px, English and Urdu
+
+## Inner pages redesign (branch `inner-pages-redesign`)
+
+- Shared `components/layout/page-hero.tsx` (`PageHero`, generalised from the About hero): green band, gold
+  eyebrow rule, serif title with the gold swoosh on the last word, intro, chips, actions; the photo melts
+  into the green, or the end side shows icon art; `art={null}` gives a full-width band for long headlines
+- `HomeSectionHeader` gains a compact `size="md"` for dense pages; small-caps section labels in en/ur
+- Faculty pages, department pages (all eleven sections), faculty profiles (deep-green band, gold-ringed
+  portrait, serif name with swoosh), /news (with a matching loading skeleton) and news detail (headline in
+  the band, uncropped photo, "Keep reading") now share that language, with one even gap between sections
+  and normal space before the footer's apply card. Content unchanged
+- Screenshots at 1440 and 375px, English and Urdu: `docs/screenshots/inner-pages/`
