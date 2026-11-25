@@ -653,6 +653,12 @@ export async function getHomepageSeo(locale: Locale) {
   return (await safely("homepage", null, () => loadHome(locale)))?.seo ?? null;
 }
 
+/** One of the homepage's pathway photos (Homepage → Pathway photos in Strapi), reused as a page photo. */
+export async function getPathwayPhoto(locale: Locale, audience: PathwayAudience): Promise<SiteImage | null> {
+  const home = await safely("homepage", null, () => loadHome(locale));
+  return home?.pathwayPhotos[audience] ?? null;
+}
+
 /** The live counters (campuses, faculties, departments, programs); shares the homepage cache entry. */
 export async function getStats(locale: Locale): Promise<StatItem[]> {
   return safely("stats", [], () => loadStats(locale));

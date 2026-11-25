@@ -1363,3 +1363,18 @@ consistency). Content, data and colours unchanged.
   the band, uncropped photo, "Keep reading") now share that language, with one even gap between sections
   and normal space before the footer's apply card. Content unchanged
 - Screenshots at 1440 and 375px, English and Urdu: `docs/screenshots/inner-pages/`
+
+## Academics page polish (branch `academics-polish`)
+
+- Hero in the About style (`PageHero`): "Study at Swat" eyebrow, serif title with swoosh, intro, the three stat
+  chips and both buttons; on the end side the students-in-the-Central-Library photo (Homepage → Pathway photos →
+  current students, credited "Photo: University of Swat"; new `getPathwayPhoto`)
+- Section header "Our faculties" / "Five faculties and a centre" (counted from Strapi, en/ur)
+- Departments as clear card rows: name in body size, semibold; program count below; the same arrow in a
+  tinted circle on every row; the whole row highlights on hover. Zero programs reads "Programs to be announced"
+  (muted). Faculty panel beside the list from 1280px, stacked above it below that
+- Hunerkada: its description from Strapi (rewritten from its official page), a "Visit Hunerkada" link and its
+  illustration on the right; its panel uses the icon art so the illustration isn't shown twice
+- Space before the footer's apply card is about one section gap. Checked at 1440, 1024 and 375px, en and ur
+- Allied Health Sciences: departments not changed. uswat.edu.pk could not be reached to re-check (connection
+  refused / timed out); the seed records all four from https://uswat.edu.pk/faculty/ (checked Nov 2026)
