@@ -10,11 +10,13 @@ import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr, OFFLINE_SLUG } from "@/lib/strapi/academics-model";
 import { blocksToText } from "@/lib/strapi/blocks";
 import { formatDateTime, formatDay, getPosts, newsHref, schemaDateTime } from "@/lib/strapi/notices";
+import { HeroChip } from "@/components/academics/academic-hero";
 import { EnglishOnlyNote } from "@/components/academics/panels";
-import { CategoryBadge, Documents, PostCover, SourceNote } from "@/components/notices/shared";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
+import { Documents, PostCover, SourceNote } from "@/components/notices/shared";
 import { PostCard } from "@/components/notices/post-card";
 import { ShareButtons } from "@/components/notices/share-buttons";
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
@@ -163,39 +165,39 @@ export default async function PostPage({ params }: Props) {
     <ClientMessages namespaces={["notices"]}>
       <>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
-        <Container size="wide" className="pt-5 sm:pt-6">
-          <Breadcrumbs
-            items={[
-              { label: tCommon("home"), href: "/" },
-              { label: t("newsTitle"), href: newsHref },
-              {
-                label: t(`categories.${post.category}`),
-                href: `${newsHref}?category=${post.category}`,
-              },
-              { label: post.title.value },
-            ]}
-            siteUrl={SITE_URL}
-            label={tCommon("breadcrumb")}
-            backLabel={tCommon("backTo")}
-          />
-        </Container>
-
-        <Container size="wide" className="grid gap-10 pt-6 pb-section lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
-          <article className="flex min-w-0 flex-col gap-8">
-            <header className="flex max-w-3xl flex-col items-start gap-4">
-              <CategoryBadge category={post.category} />
-              <h1 lang={langAttr(post.title, locale)} className="text-heading-xl text-balance sm:text-display-lg text-fg">
-                {post.title.value}
-              </h1>
-              {post.excerpt ? (
-                <p lang={langAttr(post.excerpt, locale)} className="text-body-lg text-pretty text-fg-muted">
-                  {post.excerpt.value}
-                </p>
+        {/* The headline spans the green band; the article's own photo follows uncropped. */}
+        <PageHero
+          locale={locale}
+          art={null}
+          breadcrumbs={[
+            { label: tCommon("home"), href: "/" },
+            { label: t("newsTitle"), href: newsHref },
+            { label: t(`categories.${post.category}`), href: `${newsHref}?category=${post.category}` },
+            { label: post.title.value },
+          ]}
+          eyebrow={t(`categories.${post.category}`)}
+          title={post.title.value}
+          titleLang={langAttr(post.title, locale)}
+          intro={post.excerpt?.value}
+          introLang={langAttr(post.excerpt, locale)}
+          meta={
+            <>
+              <HeroChip icon={Clock}>
+                <time dateTime={post.date}>{formatDay(post.date, locale, "long")}</time>
+              </HeroChip>
+              {isEvent && post.eventLocation ? (
+                <HeroChip icon={MapPin}>
+                  <span lang={langAttr(post.eventLocation, locale)}>{post.eventLocation.value}</span>
+                </HeroChip>
               ) : null}
-            </header>
+            </>
+          }
+        />
 
+        <Container size="wide" className="grid gap-10 pt-section-sm lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
+          <article className="flex min-w-0 flex-col gap-8">
             {post.image ? (
-              <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface-sunken shadow-sm">
+              <div className="relative aspect-video overflow-hidden rounded-3xl bg-surface-sunken shadow-lg ring-1 ring-line/60">
                 <PostCover id={post.id} category={post.category} image={post.image} priority showCredit sizes="(min-width: 1024px) 860px, 100vw" />
               </div>
             ) : null}
@@ -216,7 +218,7 @@ export default async function PostPage({ params }: Props) {
             </div>
           </article>
 
-          <aside className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
+          <aside className="flex flex-col gap-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
             <dl className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:p-6">
               {facts.map(({ icon: Icon, label, value }) => (
                 <div key={label} className="relative min-h-9 min-w-0 ps-12">
@@ -235,30 +237,30 @@ export default async function PostPage({ params }: Props) {
         </Container>
 
         {related.length ? (
-          <section aria-labelledby="related" className="border-t border-line bg-canvas-subtle py-section-sm">
-            <Container size="wide" className="flex flex-col gap-6">
-              <div className="flex flex-wrap items-end justify-between gap-4">
-                <h2 id="related" className="text-heading-xl text-fg">
-                  {t("more")}
-                </h2>
-                <ButtonLink
-                  href={`${newsHref}?category=${post.category}`}
-                  variant="outline"
-                  trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}
-                >
+          <Container as="section" size="wide" aria-labelledby="related" className="mt-section flex flex-col gap-6">
+            <HomeSectionHeader
+              id="related"
+              locale={locale}
+              size="md"
+              eyebrow={t("eyebrows.related")}
+              title={t("more")}
+              action={
+                <ButtonLink href={`${newsHref}?category=${post.category}`} variant="outline" trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}>
                   {t(`categories.${post.category}`)}
                 </ButtonLink>
-              </div>
-              <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {related.map((p) => (
-                  <li key={p.id}>
-                    <PostCard post={p} headingLevel="h3" />
-                  </li>
-                ))}
-              </ul>
-            </Container>
-          </section>
+              }
+            />
+            <ul className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {related.map((p) => (
+                <li key={p.id}>
+                  <PostCard post={p} headingLevel="h3" />
+                </li>
+              ))}
+            </ul>
+          </Container>
         ) : null}
+        {/* Small bottom padding: the footer's apply card adds its own space above it. */}
+        <div aria-hidden className="h-6 sm:h-8" />
       </>
     </ClientMessages>
   );
