@@ -1322,3 +1322,24 @@ consistency). Content, data and colours unchanged.
   (82px at 1440, 48px at 375), which removes the double gaps around the VC message. Partners lost its top rule
 - Removed the green-and-gold corner sweeps that sat loose at the edge of Faculties and Our Campuses; the one
   in the VC card stays, clipped inside its rounded card. Checked at 1440 and 375px, English and Urdu
+
+## About page redesign (branch `about-redesign`)
+
+- Same content and sources, now in the homepage's design language. New `components/about/` (hero and section parts)
+- Compact green hero: breadcrumb above, gold eyebrow "About the university", serif title with a gold swoosh under
+  the last word, the one-line intro, and the Main Campus photo (Strapi) melting into the green
+- Sticky tab bar (History, Vision and mission, Principal officers, Campuses, Accreditation, Partners) using the
+  shared `SectionNav`: it marks the section being read and keeps the current tab in view on phones
+- Every section header is the homepage pattern (gold rule + small-caps eyebrow + serif heading); new eyebrow
+  labels in en/ur messages
+- History: first paragraphs beside a campus photo, then a highlight of the founding year built from that year's
+  published milestones (verbatim from Strapi, no new content), then the rest; milestones timeline with gold dots
+  and green year pills
+- Vision (deep green, cream text) and Mission (cream, green text) cards with icon and serif quote mark; six core
+  values with large icons in light-green tiles; motto in a centred gold-bordered pill right below
+- Principal officers: centred rows (5 in one row from 1280px, 3 + 2 below), round portraits with a thin gold ring;
+  the Vice Chancellor's message bar is unchanged
+- One even gap between all sections (no tinted band, no extra space before the motto); the source note sits
+  close under Partners and the space before the footer's apply card is about one section gap
+- Checked at 1440, 1024 and 375px, English and Urdu, light and dark: even gaps, tab highlight follows the
+  scroll, no horizontal overflow
