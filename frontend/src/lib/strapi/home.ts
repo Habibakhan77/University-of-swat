@@ -47,6 +47,8 @@ export interface HeroSlide {
 export interface StatItem {
   id: string;
   label: string;
+  /** What the number counts (campuses, faculties, departments, programs), for picking stats by meaning. */
+  source: string | null;
   value: number;
   suffix: string | null;
   icon: string | null;
@@ -204,6 +206,8 @@ interface StrapiHeroSlide extends Doc {
 
 interface StrapiStat extends Doc {
   label: string;
+  /** What Strapi counts for this stat: campuses, faculties, departments or programs. */
+  source: string | null;
   value: number | null;
   suffix: string | null;
   icon: string | null;
@@ -429,7 +433,7 @@ async function loadStats(locale: Locale): Promise<StatItem[]> {
     const stats = await localizedList<StrapiStat>("/stats", { "sort[0]": "order:asc" }, locale, 8);
     return stats
       .filter((s) => typeof s.value === "number")
-      .map((s) => ({ id: s.documentId, label: s.label, value: s.value ?? 0, suffix: s.suffix, icon: s.icon }));
+      .map((s) => ({ id: s.documentId, label: s.label, source: s.source, value: s.value ?? 0, suffix: s.suffix, icon: s.icon }));
   });
 }
 
@@ -647,6 +651,11 @@ export type HomepageData = Awaited<ReturnType<typeof getHomepageData>>;
 /** Metadata only (title, description, Open Graph image); shares the homepage cache entry. */
 export async function getHomepageSeo(locale: Locale) {
   return (await safely("homepage", null, () => loadHome(locale)))?.seo ?? null;
+}
+
+/** The live counters (campuses, faculties, departments, programs); shares the homepage cache entry. */
+export async function getStats(locale: Locale): Promise<StatItem[]> {
+  return safely("stats", [], () => loadStats(locale));
 }
 
 /** Partners and MoUs (edited on the Homepage entry), also listed on the About page. */

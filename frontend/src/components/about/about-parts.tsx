@@ -8,6 +8,7 @@ import { displaySerif } from "@/lib/hero-font";
 import { iconFor } from "@/lib/icons";
 import { langAttr } from "@/lib/strapi/academics-model";
 import type { Office } from "@/lib/strapi/organisation-model";
+import { StatCounter } from "@/components/home/stat-counter";
 
 /** Merriweather for English text only; Urdu stays in Nastaliq. */
 function useSerif(lang?: string) {
@@ -50,29 +51,95 @@ export function FoundingFact({ year, milestones, label, lang }: { year: number; 
 }
 
 /** The milestones timeline: a gold rule with gold dots and the year in a green pill. */
+/*
+ * Desktop (1024px+): the outer cell takes no height of its own (h-0) but stretches to the row, so the
+ * history column alone sets the section's height. The card sticks under the header and tab bar, is never
+ * taller than that column or the viewport, and scrolls its list inside, fading out at the bottom (extra
+ * bottom padding lets the last milestone scroll clear of the fade). Phones and tablets: the full list.
+ */
+const STICKY_TOP = "lg:top-[calc(var(--header-h)+var(--subnav-h)+1rem)]";
+const STICKY_MAX_H = "lg:max-h-[min(100%,calc(100dvh-var(--header-h)-var(--subnav-h)-2rem))]";
+
 export function MilestoneTimeline({ title, milestones, lang }: { title: string; milestones: Milestone[]; lang?: string }) {
   return (
-    <div className="rounded-3xl border border-line/70 bg-surface p-6 shadow-sm sm:p-7">
-      <h3 className="mb-6 inline-flex items-center gap-3 text-overline text-forest-900 uppercase dark:text-sand-100">
+    <div className="lg:h-0 lg:min-h-full">
+      <div className={cn("flex flex-col rounded-3xl border border-line/70 bg-surface shadow-sm lg:sticky", STICKY_TOP, STICKY_MAX_H)}>
+        <h3 className="inline-flex items-center gap-3 px-6 pt-6 pb-6 text-overline text-forest-900 uppercase sm:px-7 sm:pt-7 dark:text-sand-100">
+          <span aria-hidden className="h-0.5 w-8 rounded-full bg-gold-400" />
+          {title}
+        </h3>
+        {/* Focusable, so the list can be scrolled from the keyboard where it scrolls. */}
+        <div
+          role="region"
+          aria-label={title}
+          tabIndex={0}
+          className="rounded-b-3xl px-6 pb-6 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset sm:px-7 sm:pb-7 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pt-1 lg:pb-14 lg:[mask-image:linear-gradient(to_bottom,#000_calc(100%-3.5rem),transparent)] lg:[scrollbar-width:thin]"
+        >
+          <ol className="relative flex flex-col gap-6 border-s-2 border-gold-200 ps-6 dark:border-gold-400/35">
+            {milestones.map((m) => (
+              <li key={`${m.year}-${m.title}`} className="relative flex flex-col items-start gap-1.5">
+                <span aria-hidden className="absolute -start-[2.05rem] top-1 size-4 rounded-full border-[3px] border-surface bg-gold-400 ring-2 ring-gold-400/40" />
+                <span className="tabular rounded-full bg-forest-800 px-2.5 py-0.5 text-body-sm leading-6 font-bold text-gold-200 dark:bg-forest-700">{m.year}</span>
+                <p className="text-body font-semibold text-fg" lang={lang}>
+                  {m.title}
+                </p>
+                {m.description ? (
+                  <p className="text-body-sm text-fg-muted" lang={lang}>
+                    {m.description}
+                  </p>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export interface GlanceItem {
+  key: string;
+  label: string;
+  icon: string | null;
+  /** A year is shown as written (no grouping, no count-up); counts use the homepage counter. */
+  year?: number;
+  value?: number;
+  suffix?: string | null;
+}
+
+/** "At a glance": compact deep-green stat cards in the homepage stats style (gold icon, white number). */
+export function AtAGlance({ title, items, intlLocale }: { title: string; items: GlanceItem[]; intlLocale: string }) {
+  if (!items.length) return null;
+  return (
+    <div className="flex flex-col gap-5">
+      <h3 className="inline-flex items-center gap-3 text-overline text-forest-900 uppercase dark:text-sand-100">
         <span aria-hidden className="h-0.5 w-8 rounded-full bg-gold-400" />
         {title}
       </h3>
-      <ol className="relative flex flex-col gap-6 border-s-2 border-gold-200 ps-6 dark:border-gold-400/35">
-        {milestones.map((m) => (
-          <li key={`${m.year}-${m.title}`} className="relative flex flex-col items-start gap-1.5">
-            <span aria-hidden className="absolute -start-[2.05rem] top-1 size-4 rounded-full border-[3px] border-surface bg-gold-400 ring-2 ring-gold-400/40" />
-            <span className="tabular rounded-full bg-forest-800 px-2.5 py-0.5 text-body-sm leading-6 font-bold text-gold-200 dark:bg-forest-700">{m.year}</span>
-            <p className="text-body font-semibold text-fg" lang={lang}>
-              {m.title}
-            </p>
-            {m.description ? (
-              <p className="text-body-sm text-fg-muted" lang={lang}>
-                {m.description}
-              </p>
-            ) : null}
-          </li>
-        ))}
-      </ol>
+      <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        {items.map((item) => {
+          const Icon = iconFor(item.icon);
+          return (
+            <div
+              key={item.key}
+              className="relative isolate flex flex-col items-center gap-2 overflow-hidden rounded-2xl bg-forest-900 px-3 py-5 text-center shadow-lg shadow-forest-950/15 dark:ring-1 dark:ring-white/10"
+            >
+              {/* Label first in the markup (read as "Campuses: 2"), shown under the number. */}
+              <dt className="order-3 text-body-sm font-medium text-forest-50">{item.label}</dt>
+              <dd className="order-2 flex flex-col items-center gap-2">
+                <Icon aria-hidden className="size-7 text-gold-bright" strokeWidth={1.5} />
+                <span className="text-heading-xl leading-none font-bold text-white sm:text-[2rem]">
+                  {item.year !== undefined ? (
+                    <span className="tabular">{item.year}</span>
+                  ) : item.value !== undefined ? (
+                    <StatCounter value={item.value} suffix={item.suffix} intlLocale={intlLocale} />
+                  ) : null}
+                </span>
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
     </div>
   );
 }

@@ -6,11 +6,11 @@ import { resolveLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { jsonLd, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr } from "@/lib/strapi/academics-model";
-import { getPartners } from "@/lib/strapi/home";
+import { getPartners, getStats } from "@/lib/strapi/home";
 import { aboutHref, administrationHref, contactHref, getAbout, getCampuses, getOffices } from "@/lib/strapi/organisation";
 import { accentStyle } from "@/components/academics/faculty-art";
 import { AboutHero } from "@/components/about/about-hero";
-import { CoreValues, FoundingFact, MilestoneTimeline, Motto, OfficerCard, StatementCard } from "@/components/about/about-parts";
+import { AtAGlance, CoreValues, FoundingFact, type GlanceItem, MilestoneTimeline, Motto, OfficerCard, StatementCard } from "@/components/about/about-parts";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
 import { PartnersList } from "@/components/organisation/partners-list";
 import { SourceNote } from "@/components/notices/shared";
@@ -44,11 +44,12 @@ const HISTORY_LEAD = 2;
  */
 export default async function AboutPage() {
   const locale = await resolveLocale();
-  const [about, campuses, offices, partners, t, tCommon, tHome] = await Promise.all([
+  const [about, campuses, offices, partners, stats, t, tCommon, tHome] = await Promise.all([
     getAbout(locale),
     getCampuses(locale),
     getOffices(locale),
     getPartners(locale),
+    getStats(locale),
     getTranslations({ locale, namespace: "organisation" }),
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "home" }),
@@ -64,6 +65,15 @@ export default async function AboutPage() {
   const foundingMilestones = about?.milestones.filter((m) => m.year === foundingYear) ?? [];
   // A campus photo for History (Main Campus first), unless it is the hero's own photo.
   const historyPhoto = campuses.map((c) => c.image).find((img) => img && img.src !== about?.heroImage?.src) ?? null;
+  // "At a glance" under the history: the founding year, then the live counts Strapi keeps (by what they count).
+  const glance: GlanceItem[] = [
+    ...(foundingYear !== null ? [{ key: "established", label: t("establishedLabel"), icon: "calendar", year: foundingYear }] : []),
+    ...(["campuses", "departments", "programs"] as const).flatMap((source) =>
+      stats
+        .filter((s) => s.source === source)
+        .map((s) => ({ key: s.id, label: s.label, icon: s.icon, value: s.value, suffix: s.suffix })),
+    ),
+  ];
 
   const sections = [
     { id: "history", label: t("history"), show: Boolean(about && (about.history.length || about.milestones.length)) },
@@ -117,7 +127,7 @@ export default async function AboutPage() {
             {about.history.length || about.milestones.length ? (
               <Container as="section" size="wide" aria-labelledby="history" className="flex flex-col gap-10">
                 <HomeSectionHeader id="history" locale={locale} eyebrow={t("historyEyebrow")} title={t("history")} />
-                <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12 xl:grid-cols-[minmax(0,1fr)_25rem]">
+                <div className="grid items-start gap-10 lg:items-stretch lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12 xl:grid-cols-[minmax(0,1fr)_25rem]">
                   <div className="flex min-w-0 flex-col gap-8">
                     {lead.length ? (
                       <div className={historyPhoto ? "grid items-start gap-8 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]" : undefined}>
@@ -140,6 +150,7 @@ export default async function AboutPage() {
                       <FoundingFact year={foundingYear} milestones={foundingMilestones} label={t("founded")} lang={lang} />
                     ) : null}
                     {rest.length ? <RichText blocks={rest} lang={lang} className="max-w-prose text-body-lg" /> : null}
+                    <AtAGlance title={t("atAGlance")} items={glance} intlLocale={locale === "ur" ? "ur-PK" : "en-GB"} />
                   </div>
                   {about.milestones.length ? <MilestoneTimeline title={t("milestones")} milestones={about.milestones} lang={lang} /> : null}
                 </div>

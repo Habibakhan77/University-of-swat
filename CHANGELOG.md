@@ -1343,3 +1343,11 @@ consistency). Content, data and colours unchanged.
   close under Partners and the space before the footer's apply card is about one section gap
 - Checked at 1440, 1024 and 375px, English and Urdu, light and dark: even gaps, tab highlight follows the
   scroll, no horizontal overflow
+- History, no empty area under the text: from 1024px the Milestones card sticks under the tab bar, is never
+  taller than the history column (or the screen) and scrolls its list inside with a soft fade at the bottom,
+  so the section ends where the history ends. Phones and tablets show the full timeline below, no inner scroll
+- "At a glance" under the history: four green stat cards in the homepage stats style. Established is the
+  founding year from the milestones; Campuses, Departments and Degree programs are the live Strapi counts
+  (`GET /api/stats`, picked by their `source`; new `getStats` in `lib/strapi/home.ts`)
+- History to Vision and mission is the standard section gap (82px at 1440, 48px at 375). Checked at 1440 and
+  375px, English and Urdu
