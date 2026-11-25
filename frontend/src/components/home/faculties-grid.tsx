@@ -1,28 +1,24 @@
 import Image from "next/image";
-import { type LucideIcon } from "lucide-react";
+import { ArrowRight, Layers, type LucideIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
-import type { FacultyCard, StatItem } from "@/lib/strapi/home";
+import type { FacultyCard } from "@/lib/strapi/home";
+import { Container } from "@/components/ui/container";
+import { Reveal } from "@/components/ui/reveal";
 import { ImageCredit } from "@/components/ui/image-credit";
 import { FacultyArt } from "@/components/academics/faculty-art";
-import { card, cardHover, HomeSection, SectionHeader, stretchedLink, ViewAllLink, type SectionTone } from "./home-ui";
-import { StatCounter } from "./stat-counter";
+import { PeaksAndPines, PhotoCurveEdge } from "@/components/brand/motifs";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
 
 interface FacultiesGridProps {
   faculties: FacultyCard[];
-  stats: StatItem[];
   locale: Locale;
-  intlLocale: string;
-  tone?: SectionTone;
   labels: {
     eyebrow: string;
     title: string;
     intro: string | null;
     all: string;
-    /** Accessible name of the figures row, e.g. "The University at a Glance". */
-    glance: string;
     centre: string;
     /** Chip of a centre with no departments of its own. */
     centreChip: string;
@@ -32,60 +28,43 @@ interface FacultiesGridProps {
 
 /**
  * One card per faculty (and Hunerkada), each linking straight to its page: one click, not a mega menu.
- * Names, summaries, photos and the live count of active departments all come from Strapi. The University
- * at a glance (campuses, faculties, departments, programs: counted by Strapi from the database, so never 0
- * or out of date) sits as a slim row between the header and the cards.
+ * Names, summaries, photos and the live count of active departments all come from Strapi.
  */
-export function FacultiesGrid({ faculties, stats, locale, intlLocale, tone, labels }: FacultiesGridProps) {
+export function FacultiesGrid({ faculties, locale, labels }: FacultiesGridProps) {
   if (!faculties.length) return null;
 
   return (
-    <HomeSection labelledBy="home-faculties" tone={tone}>
-      <SectionHeader
-        id="home-faculties"
-        locale={locale}
-        eyebrow={labels.eyebrow}
-        title={labels.title}
-        intro={labels.intro}
-        action={<ViewAllLink href="/academics">{labels.all}</ViewAllLink>}
-      />
+    <section aria-labelledby="home-faculties">
+      <Container size="wide" className="flex flex-col gap-10 lg:gap-12">
+        <HomeSectionHeader
+          id="home-faculties"
+          locale={locale}
+          eyebrow={labels.eyebrow}
+          title={labels.title}
+          intro={labels.intro}
+          art={<PeaksAndPines className="h-24 w-auto text-forest-300 opacity-60 dark:text-forest-700" />}
+          action={
+            <Link
+              href="/academics"
+              className="group inline-flex w-fit items-center gap-2 rounded-full border-2 border-gold-400 bg-surface px-5 py-2.5 text-body-sm font-semibold text-forest-900 shadow-sm transition-colors hover:bg-gold-50 dark:text-sand-50 dark:hover:bg-gold-950"
+            >
+              {labels.all}
+              <ArrowRight aria-hidden className="size-4 rtl:-scale-x-100 motion-safe:transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:rtl:group-hover:-translate-x-0.5" />
+            </Link>
+          }
+        />
 
-      {stats.length ? <GlanceRow stats={stats} intlLocale={intlLocale} label={labels.glance} /> : null}
-
-      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-        {faculties.map((faculty) => (
-          <li key={faculty.id}>
-            <FacultyCardView faculty={faculty} icon={iconFor(faculty.icon)} locale={locale} labels={labels} />
-          </li>
-        ))}
-      </ul>
-    </HomeSection>
-  );
-}
-
-/** Four figures in one hairline-ruled row; the number counts up once as it scrolls into view (CSS only). */
-function GlanceRow({ stats, intlLocale, label }: { stats: StatItem[]; intlLocale: string; label: string }) {
-  return (
-    <dl aria-label={label} className="grid grid-cols-2 border-y border-line sm:grid-cols-4">
-      {stats.map((stat, i) => (
-        <div
-          key={stat.id}
-          className={cn(
-            "flex flex-col gap-1 px-4 py-5 sm:px-6",
-            i % 2 === 1 && "border-s border-line",
-            i >= 2 && "border-t border-line sm:border-t-0",
-            i === 2 && "ps-0 sm:border-s sm:ps-6",
-            i === 0 && "ps-0 sm:ps-0",
-          )}
-        >
-          {/* Label first in the markup (read as "Campuses: 2"), shown under the number. */}
-          <dt className="order-2 text-body-sm text-fg-muted">{stat.label}</dt>
-          <dd className="order-1 text-display-lg leading-none text-forest-800 dark:text-forest-100">
-            <StatCounter value={stat.value} suffix={stat.suffix} intlLocale={intlLocale} />
-          </dd>
-        </div>
-      ))}
-    </dl>
+        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+          {faculties.map((faculty, i) => (
+            <li key={faculty.id}>
+              <Reveal delay={0.05 * (i % 3)} className="h-full">
+                <FacultyCardView faculty={faculty} icon={iconFor(faculty.icon)} locale={locale} labels={labels} />
+              </Reveal>
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </section>
   );
 }
 
@@ -101,30 +80,37 @@ function FacultyCardView({ faculty, icon: Icon, locale, labels }: FacultyCardVie
   const chip = faculty.isCenter && faculty.departments === 0 ? labels.centreChip : labels.departments(faculty.departments);
 
   return (
-    <article className={cn("group/card relative flex h-full flex-col overflow-hidden", card, cardHover)}>
-      <div className="relative aspect-video overflow-hidden bg-surface-sunken">
-        {faculty.image ? (
-          <Image
-            src={faculty.image.src}
-            alt=""
-            fill
-            sizes="(min-width: 1440px) 440px, (min-width: 1024px) 31vw, (min-width: 640px) 48vw, 100vw"
-            className="object-cover motion-safe:transition-transform motion-safe:duration-700 motion-safe:group-hover/card:scale-[1.03]"
-          />
-        ) : (
-          <FacultyArt id={faculty.id} accent={faculty.accent} icon={Icon} />
-        )}
-        {faculty.image?.credit ? <ImageCredit credit={faculty.image.credit} className="absolute start-3 top-3 z-20 max-w-[calc(100%-7rem)]" /> : null}
-        {faculty.isCenter ? (
-          <span className="absolute end-3 top-3 rounded-full bg-surface px-3 py-1 text-overline text-forest-900 uppercase dark:text-sand-50">
-            {labels.centre}
-          </span>
-        ) : null}
+    <article className="group/card relative flex h-full flex-col rounded-2xl border border-line/70 bg-surface shadow-md transition-[translate,box-shadow] duration-300 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-canvas-subtle hover:shadow-xl motion-safe:hover:-translate-y-1 dark:border-line">
+      {/* Photo with a gold curved edge; the icon tile overlaps its bottom-start corner. */}
+      <div className="relative">
+        <div className="relative aspect-video overflow-hidden rounded-t-2xl bg-surface-sunken">
+          {faculty.image ? (
+            <Image
+              src={faculty.image.src}
+              alt=""
+              fill
+              sizes="(min-width: 1440px) 440px, (min-width: 1024px) 31vw, (min-width: 640px) 48vw, 100vw"
+              className="object-cover motion-safe:transition-transform motion-safe:duration-500 motion-safe:group-hover/card:scale-[1.03]"
+            />
+          ) : (
+            <FacultyArt id={faculty.id} accent={faculty.accent} icon={Icon} />
+          )}
+          <PhotoCurveEdge className="absolute inset-x-0 -bottom-px h-8 sm:h-9" />
+          {faculty.image?.credit ? <ImageCredit credit={faculty.image.credit} className="absolute start-3 top-3 z-20 max-w-[calc(100%-7rem)]" /> : null}
+          {faculty.isCenter ? (
+            <span className="absolute end-3 top-3 rounded-full bg-gold-400 px-3 py-1 text-overline text-forest-950 uppercase shadow-sm">
+              {labels.centre}
+            </span>
+          ) : null}
+        </div>
+        <span aria-hidden className="absolute start-5 -bottom-5 flex size-14 items-center justify-center rounded-xl bg-forest-700 text-white shadow-lg ring-4 ring-surface">
+          <Icon className="size-7" strokeWidth={1.75} />
+        </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-5 sm:p-6">
-        <h3 className="text-heading-sm text-balance text-forest-900 dark:text-sand-50" lang={lang}>
-          <Link href={faculty.href} className={cn(stretchedLink, "decoration-current/30 underline-offset-4 group-hover/card:underline")}>
+      <div className="flex flex-1 flex-col gap-2 px-6 pt-9 pb-6">
+        <h3 className="text-heading-sm font-bold text-balance text-forest-800 dark:text-forest-100" lang={lang}>
+          <Link href={faculty.href} className="outline-none after:absolute after:inset-0 after:z-10 after:rounded-2xl after:content-['']">
             {faculty.name}
           </Link>
         </h3>
@@ -133,7 +119,18 @@ function FacultyCardView({ faculty, icon: Icon, locale, labels }: FacultyCardVie
             {faculty.summary}
           </p>
         ) : null}
-        <p className="mt-auto pt-3 text-body-sm font-semibold text-primary-text">{chip}</p>
+        <div className="mt-auto flex items-center justify-between gap-3 pt-4">
+          <span className="inline-flex items-center gap-2 rounded-full bg-forest-50 px-3 py-1.5 text-body-sm font-semibold text-forest-800 dark:bg-forest-900 dark:text-forest-100">
+            <Layers aria-hidden className="size-4" strokeWidth={2} />
+            {chip}
+          </span>
+          <span
+            aria-hidden
+            className="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-forest-700 text-forest-700 transition-colors group-hover/card:bg-forest-700 group-hover/card:text-white dark:border-forest-300 dark:text-forest-200 dark:group-hover/card:bg-forest-300 dark:group-hover/card:text-forest-950"
+          >
+            <ArrowRight className="size-5 rtl:-scale-x-100" />
+          </span>
+        </div>
       </div>
     </article>
   );

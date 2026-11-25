@@ -1,7 +1,7 @@
 import "server-only";
 import type { DownloadItem } from "@/lib/strapi/notices-model";
 import type { NavLink } from "@/lib/strapi/site";
-import type { Pathway, PathwayLink } from "@/components/home/start-here";
+import type { Pathway, PathwayLink } from "@/components/home/audience-pathways";
 
 /*
  * Links for the homepage "I am a…" cards. Nothing is invented:
