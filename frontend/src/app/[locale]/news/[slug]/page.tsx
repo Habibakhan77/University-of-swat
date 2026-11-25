@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
+import { cn } from "@/lib/cn";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr, OFFLINE_SLUG } from "@/lib/strapi/academics-model";
 import { blocksToText } from "@/lib/strapi/blocks";
@@ -14,7 +15,7 @@ import { HeroChip } from "@/components/academics/academic-hero";
 import { EnglishOnlyNote } from "@/components/academics/panels";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
 import { PageHero } from "@/components/layout/page-hero";
-import { Documents, PostCover, SourceNote } from "@/components/notices/shared";
+import { CategoryBadge, Documents, PostCover, SourceNote } from "@/components/notices/shared";
 import { PostCard } from "@/components/notices/post-card";
 import { ShareButtons } from "@/components/notices/share-buttons";
 import { ButtonLink } from "@/components/ui/button";
@@ -61,7 +62,9 @@ export default async function PostPage({ params }: Props) {
   const [t, tCommon] = await Promise.all([getTranslations({ locale, namespace: "notices" }), getTranslations({ locale, namespace: "common" })]);
   const url = `${SITE_URL}${localePath(post.href, locale)}`;
   const isEvent = post.category === "event";
-  const related = posts.filter((p) => p.id !== post.id && p.category === post.category).slice(0, 3);
+  // Same category first, then the newest of the others, so there are always three when the site has them.
+  const others = posts.filter((p) => p.id !== post.id);
+  const related = [...others.filter((p) => p.category === post.category), ...others.filter((p) => p.category !== post.category)].slice(0, 3);
   // The body is left out when it only repeats the excerpt (short notices).
   const body = post.content && blocksToText(post.content.value).trim() !== post.excerpt?.value.trim() ? post.content : null;
   const image = post.image ?? post.attachments.find((a) => a.image)?.image ?? null;
@@ -168,6 +171,7 @@ export default async function PostPage({ params }: Props) {
         {/* The headline spans the green band; the article's own photo follows uncropped. */}
         <PageHero
           locale={locale}
+          size="compact"
           art={null}
           breadcrumbs={[
             { label: tCommon("home"), href: "/" },
@@ -175,13 +179,14 @@ export default async function PostPage({ params }: Props) {
             { label: t(`categories.${post.category}`), href: `${newsHref}?category=${post.category}` },
             { label: post.title.value },
           ]}
-          eyebrow={t(`categories.${post.category}`)}
+          eyebrow={t("newsTitle")}
           title={post.title.value}
           titleLang={langAttr(post.title, locale)}
           intro={post.excerpt?.value}
           introLang={langAttr(post.excerpt, locale)}
           meta={
             <>
+              <CategoryBadge category={post.category} className="h-8 px-3 shadow-sm" />
               <HeroChip icon={Clock}>
                 <time dateTime={post.date}>{formatDay(post.date, locale, "long")}</time>
               </HeroChip>
@@ -194,56 +199,53 @@ export default async function PostPage({ params }: Props) {
           }
         />
 
-        <Container size="wide" className="grid gap-10 pt-section-sm lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
-          <article className="flex min-w-0 flex-col gap-8">
-            {post.image ? (
-              <div className="relative aspect-video overflow-hidden rounded-3xl bg-surface-sunken shadow-lg ring-1 ring-line/60">
-                <PostCover id={post.id} category={post.category} image={post.image} priority showCredit sizes="(min-width: 1024px) 860px, 100vw" />
-              </div>
-            ) : null}
+        <Container size="wide" className="flex flex-col items-center gap-8 pt-section-sm">
+          {post.image ? (
+            <figure className="relative aspect-video w-full max-w-5xl overflow-hidden rounded-3xl bg-surface-sunken shadow-lg ring-1 ring-line/60">
+              <PostCover id={post.id} category={post.category} image={post.image} priority showCredit sizes="(min-width: 1100px) 1024px, 100vw" />
+            </figure>
+          ) : null}
+
+          {/* One readable column (~720px): facts, the story, documents, then share and source. */}
+          <article className="flex w-full max-w-[45rem] min-w-0 flex-col gap-8">
+            <dl className={cn("grid gap-4 rounded-2xl border border-line bg-surface p-5", facts.length > 1 && "sm:grid-cols-2")}>
+              {facts.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="relative min-h-9 min-w-0 ps-12">
+                  <dt className="text-caption text-fg-subtle">
+                    <span aria-hidden className="absolute start-0 top-0 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
+                      <Icon aria-hidden className="size-4.5" />
+                    </span>
+                    {label}
+                  </dt>
+                  <dd className="text-body-sm font-semibold text-fg">{value}</dd>
+                </div>
+              ))}
+            </dl>
 
             {body ? (
               <div className="flex flex-col gap-4">
                 <EnglishOnlyNote content={body} />
-                <RichText blocks={body.value} lang={langAttr(body, locale)} className="max-w-prose text-body-lg" />
+                <RichText blocks={body.value} lang={langAttr(body, locale)} className="text-body-lg" />
               </div>
             ) : null}
 
-            <div className="max-w-3xl">
-              <Documents files={post.attachments} headingId="post-documents" />
-            </div>
+            <Documents files={post.attachments} headingId="post-documents" />
 
-            <div className="max-w-prose">
+            <div className="flex flex-col gap-4 border-t border-line pt-6">
+              <ShareButtons url={url} title={post.title.value} />
               <SourceNote url={post.sourceUrl} />
             </div>
           </article>
-
-          <aside className="flex flex-col gap-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
-            <dl className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:p-6">
-              {facts.map(({ icon: Icon, label, value }) => (
-                <div key={label} className="relative min-h-9 min-w-0 ps-12">
-            <dt className="text-caption text-fg-subtle">
-              <span aria-hidden className="absolute start-0 top-0 flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
-                <Icon aria-hidden className="size-4.5" />
-              </span>
-              {label}
-            </dt>
-            <dd className="text-body-sm font-semibold text-fg">{value}</dd>
-          </div>
-              ))}
-            </dl>
-            <ShareButtons url={url} title={post.title.value} className="rounded-2xl border border-line bg-surface p-5 sm:p-6" />
-          </aside>
         </Container>
 
         {related.length ? (
-          <Container as="section" size="wide" aria-labelledby="related" className="mt-section flex flex-col gap-6">
+          <Container as="section" size="wide" aria-labelledby="related" className="mt-section flex flex-col gap-8">
             <HomeSectionHeader
               id="related"
               locale={locale}
               size="md"
               eyebrow={t("eyebrows.related")}
-              title={t("more")}
+              title={t("relatedTitle")}
               action={
                 <ButtonLink href={`${newsHref}?category=${post.category}`} variant="outline" trailingIcon={<ArrowRight aria-hidden className="rtl:-scale-x-100" />}>
                   {t(`categories.${post.category}`)}

@@ -63,6 +63,7 @@ interface StrapiPost extends Doc {
   eventEnd: string | null;
   eventLocation: string | null;
   sourceUrl: string | null;
+  isFeatured: boolean | null;
   coverImage: StrapiMedia | null;
   attachments: StrapiFile[] | null;
   department: { slug: string } | null;
@@ -182,6 +183,7 @@ async function loadPosts(locale: Locale): Promise<Post[]> {
             "eventEnd",
             "eventLocation",
             "sourceUrl",
+            "isFeatured",
           ]),
           ...populateImage("coverImage"),
           ...populateFiles("attachments"),
@@ -212,6 +214,7 @@ async function loadPosts(locale: Locale): Promise<Post[]> {
           department: department(p.en.department?.slug),
           attachments: (p.en.attachments ?? []).map(toFile),
           sourceUrl: httpsUrl(p.en.sourceUrl),
+          featured: p.en.isFeatured === true,
           seo: seoOf(p),
         };
       })

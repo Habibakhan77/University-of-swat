@@ -29,6 +29,8 @@ interface PageHeroProps {
   /** Translucent chips under the intro (counts, dates…). */
   meta?: ReactNode;
   actions?: ReactNode;
+  /** "compact" for long titles such as news headlines: a smaller heading and a tighter band. */
+  size?: "default" | "compact";
 }
 
 /** Splits a title so its last word can carry the gold swoosh. */
@@ -45,7 +47,8 @@ function splitLast(title: string): [string, string] {
  * photo (from Strapi) on the end side that melts into the green. Without a photo the end side shows `art`
  * or a faint Gandhara pattern.
  */
-export function PageHero({ locale, breadcrumbs, eyebrow, title, titleLang, intro, introLang, image, art, meta, actions }: PageHeroProps) {
+export function PageHero({ locale, breadcrumbs, eyebrow, title, titleLang, intro, introLang, image, art, meta, actions, size = "default" }: PageHeroProps) {
+  const compact = size === "compact";
   const t = useTranslations("common");
   // Merriweather for English titles only; Urdu (and Urdu fallbacks) stay in Nastaliq.
   const serif = (titleLang ?? locale) === "en" ? displaySerif.className : undefined;
@@ -87,12 +90,15 @@ export function PageHero({ locale, breadcrumbs, eyebrow, title, titleLang, intro
 
           <PeakLineArt className="pointer-events-none absolute start-0 bottom-0 -z-10 w-72 text-white opacity-[0.07] rtl:-scale-x-100" />
 
-          <div className={cn("relative flex flex-col items-start justify-center gap-4 px-6 pb-8 sm:px-10 sm:pb-10 md:order-1 md:py-10 lg:px-14", image ? "pt-2" : "pt-8 sm:pt-10", !side && "max-w-5xl")}>
+          <div className={cn("relative flex flex-col items-start justify-center gap-4 px-6 pb-8 sm:px-10 sm:pb-10 md:order-1 md:py-10 lg:px-14", image ? "pt-2" : "pt-8 sm:pt-10", !side && "max-w-5xl", compact && "pb-7 sm:pb-8 md:py-8")}>
             <p className="inline-flex items-center gap-3 text-overline text-gold-200 uppercase">
               <span aria-hidden className="h-0.5 w-10 shrink-0 rounded-full bg-gold-400" />
               {eyebrow}
             </p>
-            <h1 lang={titleLang} className={cn("text-display-lg text-balance text-sand-50", serif)}>
+            <h1
+              lang={titleLang}
+              className={cn(compact ? "text-heading-xl sm:text-[2.25rem] sm:leading-tight" : "text-display-lg", "text-balance text-sand-50", serif)}
+            >
               {lead}
               <span className="relative inline-block whitespace-nowrap">
                 {last}

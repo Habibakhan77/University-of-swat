@@ -585,7 +585,20 @@
     "viewOfficialPage": "سرکاری صفحہ دیکھیں",
     "eyebrows": {
       "related": "مزید پڑھیں"
-    }
+    },
+    "newsEyebrow": "کیمپس سے",
+    "featuredLabel": "نمایاں",
+    "readStory": "پوری خبر پڑھیں",
+    "searchNews": "خبریں اور تقریبات تلاش کریں",
+    "searchNewsPlaceholder": "عنوان اور خلاصے میں تلاش کریں",
+    "sortLabel": "ترتیب",
+    "sortNewest": "تازہ ترین پہلے",
+    "sortOldest": "پرانی پہلے",
+    "noResults": "آپ کی تلاش سے کچھ نہیں ملا۔",
+    "noResultsHint": "دوسرے الفاظ یا کوئی اور زمرہ آزمائیں۔",
+    "clearFilters": "تلاش صاف کریں",
+    "relatedTitle": "متعلقہ خبریں",
+    "searchSubmit": "تلاش"
   },
   "organisation": {
     "eyebrow": "جامعہ سوات",

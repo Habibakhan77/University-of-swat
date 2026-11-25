@@ -57,6 +57,8 @@ export interface Post {
   department: RelatedUnit | null;
   attachments: FileItem[];
   sourceUrl: string | null;
+  /** Marked "Featured" in Strapi (Post → isFeatured): leads the News & Events page. */
+  featured: boolean;
   seo: Seo;
 }
 

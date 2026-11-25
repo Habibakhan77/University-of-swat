@@ -1416,3 +1416,21 @@ consistency). Content, data and colours unchanged.
 - Funded projects as compact cards: agency badge, duration chip, title clamped to 2 lines (full title in the
   tooltip and to screen readers), principal investigator, amount highlighted. Search, agency filter and
   "Show more" unchanged
+
+## News & Events polish (branch `news-polish`)
+
+- /news hero: "From the campus" eyebrow, serif title with swoosh, intro, item count, and the latest event's real
+  photo (credited) melting into the green
+- Featured story on top as one large horizontal card (like the homepage): the newest post marked Featured in
+  Strapi (Post → isFeatured, now loaded), else the newest post with a photo. Shown on the unfiltered
+  newest-first list and left out of its grid
+- Toolbar: category chips (crawlable links) plus search (title and summary, Urdu letter forms and digits
+  unified) and sort (newest / oldest). Both live in the URL (?q=…&sort=oldest) and are kept by the chips and
+  pagination; typing is debounced
+- Cards: posts without a photo are compact text cards (category colour bar, small icon tile, date, title,
+  summary) instead of a large drawn placeholder; photo cards unchanged in content. 3 columns from 1280px,
+  equal heights, titles and summaries capped at 3 lines
+- News detail: `PageHero size="compact"` (smaller headline) with breadcrumb, category badge and date; the photo
+  large with its credit; one ~720px reading column with the facts (when/where/published/department), the story,
+  documents, share buttons and "Originally published on uswat.edu.pk"; "Related news": 3 cards, same
+  category first, filled from the newest others

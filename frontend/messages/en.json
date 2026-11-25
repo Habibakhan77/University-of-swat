@@ -585,7 +585,20 @@
     "viewOfficialPage": "View the official page",
     "eyebrows": {
       "related": "Keep reading"
-    }
+    },
+    "newsEyebrow": "From the campus",
+    "featuredLabel": "Featured",
+    "readStory": "Read the story",
+    "searchNews": "Search news and events",
+    "searchNewsPlaceholder": "Search titles and summaries",
+    "sortLabel": "Sort",
+    "sortNewest": "Newest first",
+    "sortOldest": "Oldest first",
+    "noResults": "Nothing matches your search.",
+    "noResultsHint": "Try other words or another category.",
+    "clearFilters": "Clear search",
+    "relatedTitle": "Related news",
+    "searchSubmit": "Search"
   },
   "organisation": {
     "eyebrow": "University of Swat",
