@@ -13,14 +13,20 @@ export default async function NewsLoading() {
 
   return (
     <LoadingRegion label={t("loadingNews")}>
-      <div aria-hidden className="bg-canvas-subtle py-section-sm">
-        <Container size="wide" className="flex flex-col gap-4">
-          <Skeleton className="h-3.5 w-40" />
-          <Skeleton className="h-10 w-2/3 max-w-xl" />
-          <Skeleton className="h-4 w-full max-w-2xl" />
+      {/* Same footprint as PageHero: breadcrumb line, then the compact green band. */}
+      <div aria-hidden>
+        <Container size="wide" className="pt-5 sm:pt-6">
+          <Skeleton className="h-4 w-48" />
+        </Container>
+        <Container size="wide" className="mt-4 sm:mt-5">
+          <div className="flex min-h-56 flex-col justify-center gap-4 rounded-3xl bg-forest-900 px-6 py-8 sm:px-10 md:min-h-72 lg:px-14">
+            <div className="h-3 w-40 rounded-full bg-white/15" />
+            <div className="h-10 w-2/3 max-w-md rounded-xl bg-white/15" />
+            <div className="h-4 w-full max-w-lg rounded-full bg-white/10" />
+          </div>
         </Container>
       </div>
-      <Container size="wide" className="flex flex-col gap-8 pt-6 pb-section sm:pt-8">
+      <Container size="wide" className="flex flex-col gap-8 pt-section-sm pb-6 sm:pb-8">
         <div aria-hidden className="flex flex-wrap gap-2">
           {[0, 1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-10 w-28 rounded-full" />

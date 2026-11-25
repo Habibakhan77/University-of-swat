@@ -6,7 +6,9 @@ import { resolveLocale } from "@/i18n/locale";
 import type { Locale } from "@/i18n/routing";
 import { pageMetadata } from "@/lib/seo";
 import { POST_CATEGORIES, getPosts, newsHref, type Post, type PostCategory } from "@/lib/strapi/notices";
-import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import { HeroChip } from "@/components/academics/academic-hero";
+import { FacultyArt } from "@/components/academics/faculty-art";
+import { PageHero } from "@/components/layout/page-hero";
 import { EmptyState } from "@/components/academics/program-explorer";
 import { FilterLinks } from "@/components/notices/shared";
 import { PostCard } from "@/components/notices/post-card";
@@ -41,18 +43,17 @@ export default async function NewsPage({ searchParams }: PageProps<"/[locale]/ne
 
   return (
     <>
-      <AcademicHero
-        compact
-        id="news"
-        accent="green"
-        icon={Newspaper}
+      <PageHero
+        locale={locale}
+        art={<FacultyArt id="news" accent="green" icon={Newspaper} />}
         breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("newsTitle") }]}
         eyebrow={t("eyebrow")}
         title={t("newsTitle")}
-        summary={t("newsIntro")}
+        intro={t("newsIntro")}
         meta={posts.length ? <HeroChip icon={Newspaper}>{t("itemsCount", { count: posts.length })}</HeroChip> : null}
       />
-      <Container size="wide" className="pt-6 pb-section sm:pt-8">
+      {/* Small bottom padding: the footer's apply card adds its own space above it. */}
+      <Container size="wide" className="pt-section-sm pb-6 sm:pb-8">
         <Suspense fallback={<NewsList posts={posts} category="" page={1} locale={locale} />}>
           <NewsFromUrl posts={posts} searchParams={searchParams} locale={locale} />
         </Suspense>
