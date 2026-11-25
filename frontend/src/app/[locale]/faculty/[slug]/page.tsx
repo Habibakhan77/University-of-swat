@@ -7,6 +7,7 @@ import { resolveLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
+import { displaySerif } from "@/lib/hero-font";
 import { parseQualifications } from "@/lib/qualifications";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import {
@@ -20,10 +21,11 @@ import {
   type FacultyMember,
 } from "@/lib/strapi/academics";
 import { getMemberProfile } from "@/lib/strapi/department";
-import { GandharaPattern, MountainRidge, Rosette } from "@/components/brand/motifs";
+import { GandharaPattern, GoldWave, MountainRidge, Swoosh } from "@/components/brand/motifs";
 import { PublicationList } from "@/components/academics/department-sections";
 import { accentStyle } from "@/components/academics/faculty-art";
-import { EnglishOnlyNote, SectionTitle } from "@/components/academics/panels";
+import { EnglishOnlyNote } from "@/components/academics/panels";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
 import { ProfileActions, ProfileChips } from "@/components/academics/profile-actions";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -95,7 +97,7 @@ function roleTone(role: string): "accent" | "info" | "primary" {
 /** The large portrait overlapping the band. The silhouette appears only when there is no photo. */
 function Portrait({ member }: { member: FacultyMember }) {
   return (
-    <div className="relative size-36 shrink-0 overflow-hidden rounded-[2rem] bg-fac-soft shadow-[0_24px_48px_-20px_rgb(10_30_20/0.6)] ring-[6px] ring-surface sm:size-48 sm:rounded-[2.5rem] dark:shadow-[0_24px_48px_-16px_rgb(0_0_0/0.9)]">
+    <div className="relative size-36 shrink-0 overflow-hidden rounded-[2rem] bg-fac-soft shadow-[0_24px_48px_-20px_rgb(10_30_20/0.6)] ring-2 ring-gold-400 ring-offset-4 ring-offset-surface sm:size-48 sm:rounded-[2.5rem] dark:shadow-[0_24px_48px_-16px_rgb(0_0_0/0.9)]">
       {member.photo ? (
         <Image
           src={member.photo.src}
@@ -138,6 +140,10 @@ export default async function FacultyProfilePage({ params }: Props) {
   const url = `${SITE_URL}${localePath(href, locale)}`;
   const nameLang = langAttr(member.name, locale);
   const deptLang = department ? langAttr(department.name, locale) : undefined;
+  // The last word of the name carries the gold swoosh, as in the page heroes.
+  const nameWords = member.name.value.trim().split(/\s+/);
+  const nameLast = nameWords.pop() ?? "";
+  const nameLead = nameWords.length ? `${nameWords.join(" ")} ` : "";
 
   // Role pills after "Head of department": the roles the department lists ("MS Coordinator", ...).
   const roles = (member.additionalRole?.value ?? "")
@@ -191,19 +197,20 @@ export default async function FacultyProfilePage({ params }: Props) {
       </Container>
 
       {/* One centred column (max 60rem): the person first, then their qualifications and work. */}
-      <div className="mx-auto w-full max-w-[60rem] px-gutter pt-5 pb-section">
+      <div className="mx-auto w-full max-w-[60rem] px-gutter pt-5 pb-6 sm:pb-8">
         <header className="overflow-hidden rounded-3xl border border-line bg-surface shadow-[0_20px_50px_-30px_rgb(10_30_20/0.35)] dark:shadow-[0_20px_50px_-24px_rgb(0_0_0/0.8)]">
-          {/* Department band: its faculty's accent, the lotus-rosette pattern and the valley ridgeline. */}
-          <div className="relative isolate h-36 overflow-hidden bg-fac-gradient sm:h-48">
+          {/* Department band: deep green with the lotus-rosette pattern, the valley ridgeline and a gold wave. */}
+          <div className="relative isolate h-36 overflow-hidden bg-forest-900 sm:h-48">
             <GandharaPattern className="-z-10 text-white/[0.08]" />
             <div
               aria-hidden
               className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_85%_0%,rgb(255_255_255/0.2),transparent_60%)] rtl:bg-[radial-gradient(circle_at_15%_0%,rgb(255_255_255/0.2),transparent_60%)]"
             />
             <MountainRidge className="absolute inset-x-0 bottom-0 -z-10 h-12 text-black/20 sm:h-16" />
+            <GoldWave className="absolute inset-x-0 -bottom-px h-5 text-gold-bright sm:h-6" />
             {department ? (
               <p className="flex items-center justify-center gap-2 px-5 pt-5 text-overline text-gold-200 uppercase sm:justify-start sm:px-8 sm:pt-6">
-                <Rosette className="size-4 shrink-0 text-gold-300" />
+                <span aria-hidden className="h-0.5 w-10 shrink-0 rounded-full bg-gold-400" />
                 <Link href={department.href} lang={deptLang} className="line-clamp-2 text-center hover:text-white hover:underline sm:truncate sm:text-start">
                   {department.name.value}
                 </Link>
@@ -217,8 +224,16 @@ export default async function FacultyProfilePage({ params }: Props) {
             </div>
 
             <div className="flex max-w-full flex-col items-center gap-2">
-              <h1 lang={nameLang} dir={dirFor(nameLang)} className="text-heading-xl text-balance text-fg sm:text-display-lg">
-                {member.name.value}
+              <h1
+                lang={nameLang}
+                dir={dirFor(nameLang)}
+                className={cn("text-heading-xl text-balance text-forest-900 sm:text-display-lg dark:text-sand-50", (nameLang ?? locale) === "en" && displaySerif.className)}
+              >
+                {nameLead}
+                <span className="relative inline-block whitespace-nowrap">
+                  {nameLast}
+                  <Swoosh className="absolute -bottom-2.5 start-0 h-3 w-full text-gold-400" />
+                </span>
               </h1>
               <p className="text-body-lg text-fg-muted">{designation}</p>
             </div>
@@ -279,13 +294,14 @@ export default async function FacultyProfilePage({ params }: Props) {
           </div>
         </header>
 
-        <div className="mt-section-sm flex flex-col gap-section-sm">
+        {/* One even gap between sections, as on the other redesigned pages. */}
+        <div className="mt-section flex flex-col gap-section">
           {member.isPlaceholder ? (
             <p className="rounded-2xl border border-accent-text/20 bg-warning-soft px-5 py-4 text-body-sm text-warning-soft-fg">{t("placeholderNotice")}</p>
           ) : null}
 
-          <section aria-labelledby="qualifications">
-            <SectionTitle id="qualifications">{t("qualifications")}</SectionTitle>
+          <section aria-labelledby="qualifications" className="flex flex-col gap-6">
+            <HomeSectionHeader id="qualifications" locale={locale} size="md" eyebrow={t("eyebrows.qualifications")} title={t("qualifications")} />
             {timeline?.length ? (
               // English degrees: always a left-to-right timeline, also on Urdu pages. Highest degree first, in gold.
               <ol lang={qualificationLang} dir="ltr" className="relative flex flex-col gap-4 text-left">
@@ -342,7 +358,7 @@ export default async function FacultyProfilePage({ params }: Props) {
               <p className="text-body-sm text-fg-subtle">{t("noQualifications")}</p>
             )}
             {member.specialization ? (
-              <p className="mt-5 text-body-sm text-fg-muted">
+              <p className="text-body-sm text-fg-muted">
                 <span className="font-semibold text-fg">{t("specialization")}:</span>{" "}
                 <span lang={langAttr(member.specialization, locale)}>{member.specialization.value}</span>
               </p>
@@ -350,23 +366,26 @@ export default async function FacultyProfilePage({ params }: Props) {
           </section>
 
           {profile.bio ? (
-            <section aria-labelledby="biography">
-              <SectionTitle id="biography">{t("biography")}</SectionTitle>
+            <section aria-labelledby="biography" className="flex flex-col gap-6">
+              <HomeSectionHeader id="biography" locale={locale} size="md" eyebrow={t("eyebrows.biography")} title={t("biography")} />
               <EnglishOnlyNote content={profile.bio} />
               <RichText blocks={profile.bio.value} lang={langAttr(profile.bio, locale)} className="max-w-prose text-body-lg" />
             </section>
           ) : null}
 
-          <section aria-labelledby="publications">
-            <SectionTitle id="publications">{t("publications")}</SectionTitle>
+          <section aria-labelledby="publications" className="flex flex-col gap-6">
+            <HomeSectionHeader id="publications" locale={locale} size="md" eyebrow={t("eyebrows.publications")} title={t("publications")} />
             {profile.publications.length ? (
               <PublicationList publications={profile.publications} locale={locale} />
             ) : (
               <p className="text-body-sm text-fg-subtle">{t("noPublications")}</p>
             )}
           </section>
+        </div>
 
-          {department ? (
+        {/* Not a section: close under the last one. */}
+        {department ? (
+          <div className="mt-10">
             <Link
               href={`${department.href}#members`}
               className="group flex flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-5 py-4 text-center shadow-xs transition-colors duration-150 hover:border-fac sm:flex-row sm:justify-between sm:text-start"
@@ -383,8 +402,8 @@ export default async function FacultyProfilePage({ params }: Props) {
                 </span>
               ) : null}
             </Link>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
