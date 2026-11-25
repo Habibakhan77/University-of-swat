@@ -44,7 +44,7 @@ export function EventsSection({ events, announcements, locale, labels }: EventsS
   const serif = locale === "en" ? displaySerif.className : undefined;
 
   return (
-    <section aria-labelledby={events.length ? "home-events" : "home-announcements"} className="pb-section">
+    <section aria-labelledby={events.length ? "home-events" : "home-announcements"}>
       <Container size="wide" className="grid gap-12 lg:grid-cols-12 lg:gap-10">
         {events.length ? (
           <div className="flex flex-col gap-8 lg:col-span-7 xl:col-span-8">

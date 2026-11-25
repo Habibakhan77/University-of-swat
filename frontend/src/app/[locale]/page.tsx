@@ -155,7 +155,7 @@ export default async function HomePage() {
         labels={{ eyebrow: t("pathways.eyebrow"), title: t("pathways.title") }}
       />
 
-      <div className={slides.length ? "mt-section-sm" : undefined}>
+      <div className="mt-section">
         <StatsBand
           stats={stats}
           eyebrow={t("statsEyebrow")}
@@ -165,8 +165,9 @@ export default async function HomePage() {
         />
       </div>
 
-      {/* Below the fold: rendered when scrolled near (content-visibility), see .home-below in globals.css. */}
-      <div className="home-below">
+      {/* Below the fold: rendered when scrolled near (content-visibility), see .home-below in globals.css.
+          Sections carry no vertical padding of their own: the one gap-section here spaces them all evenly. */}
+      <div className="home-below flex flex-col gap-section py-section">
         <NewsSection
           news={news}
           locale={locale}
@@ -189,22 +190,20 @@ export default async function HomePage() {
           />
         ) : null}
 
-        <div className="mt-section">
-          <EventsSection
-            events={events}
-            announcements={announcements}
-            locale={locale}
-            labels={{
-              eyebrow: t("eventsEyebrow"),
-              title: home?.headings.events ?? t("eventsEyebrow"),
-              upcoming: t("upcoming"),
-              past: t("past"),
-              allEvents: t("allEvents"),
-              announcements: t("announcements"),
-              allAnnouncements: t("allAnnouncements"),
-            }}
-          />
-        </div>
+        <EventsSection
+          events={events}
+          announcements={announcements}
+          locale={locale}
+          labels={{
+            eyebrow: t("eventsEyebrow"),
+            title: home?.headings.events ?? t("eventsEyebrow"),
+            upcoming: t("upcoming"),
+            past: t("past"),
+            allEvents: t("allEvents"),
+            announcements: t("announcements"),
+            allAnnouncements: t("allAnnouncements"),
+          }}
+        />
 
         {vc ? (
           <VcMessage

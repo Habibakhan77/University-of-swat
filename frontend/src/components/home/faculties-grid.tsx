@@ -8,7 +8,7 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { ImageCredit } from "@/components/ui/image-credit";
 import { FacultyArt } from "@/components/academics/faculty-art";
-import { CornerSweep, PeaksAndPines, PhotoCurveEdge } from "@/components/brand/motifs";
+import { PeaksAndPines, PhotoCurveEdge } from "@/components/brand/motifs";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
 
 interface FacultiesGridProps {
@@ -34,8 +34,7 @@ export function FacultiesGrid({ faculties, locale, labels }: FacultiesGridProps)
   if (!faculties.length) return null;
 
   return (
-    <section aria-labelledby="home-faculties" className="relative isolate overflow-hidden py-section">
-      <CornerSweep className="absolute end-0 top-0 -z-10 w-40 sm:w-64 lg:w-96" />
+    <section aria-labelledby="home-faculties">
       <Container size="wide" className="flex flex-col gap-10 lg:gap-12">
         <HomeSectionHeader
           id="home-faculties"

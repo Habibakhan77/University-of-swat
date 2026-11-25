@@ -45,7 +45,7 @@ export function VcMessage({ vc, locale, labels }: VcMessageProps) {
   const [titleLead, titleTail] = vc.title ? splitTitle(vc.title) : ["", ""];
 
   return (
-    <section aria-labelledby="home-vc" className="py-section">
+    <section aria-labelledby="home-vc">
       <Container size="wide">
         <div className="relative isolate grid items-center gap-10 overflow-hidden rounded-3xl border border-line/70 bg-surface p-6 shadow-lg sm:p-10 md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] md:gap-12 lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:gap-16 lg:p-14 dark:border-line">
           <CornerSweep className="absolute end-0 top-0 -z-10 w-44 sm:w-60 lg:w-80" />

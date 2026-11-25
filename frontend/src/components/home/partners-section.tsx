@@ -41,8 +41,8 @@ export function PartnersSection({ partners, locale, labels }: PartnersSectionPro
   const nameLang = locale === "en" ? undefined : "en";
 
   return (
-    <section aria-labelledby="home-partners" className="pb-section">
-      <Container size="wide" className="flex flex-col gap-8 border-t border-line pt-section-sm lg:gap-10">
+    <section aria-labelledby="home-partners">
+      <Container size="wide" className="flex flex-col gap-8 lg:gap-10">
         <HomeSectionHeader
           id="home-partners"
           locale={locale}

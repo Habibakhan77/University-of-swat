@@ -1318,3 +1318,7 @@ consistency). Content, data and colours unchanged.
   sits in the text flow with Nastaliq line height, and more space above "I am a…"
 - Strapi: hero slide 1 and the Admissions banner use the illustration again (`npm run hero-photos`, `home-photos`)
 - Checked at 1440, 1024 and 375px, English and Urdu, light and dark: no horizontal overflow
+- Even spacing: homepage sections no longer pad themselves; one `gap-section` on the wrapper spaces them all
+  (82px at 1440, 48px at 375), which removes the double gaps around the VC message. Partners lost its top rule
+- Removed the green-and-gold corner sweeps that sat loose at the edge of Faculties and Our Campuses; the one
+  in the VC card stays, clipped inside its rounded card. Checked at 1440 and 375px, English and Urdu

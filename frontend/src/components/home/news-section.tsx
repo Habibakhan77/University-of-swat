@@ -132,7 +132,7 @@ export function NewsSection({ news, locale, labels }: NewsSectionProps) {
   const serif = locale === "en" ? displaySerif.className : undefined;
 
   return (
-    <section aria-labelledby="home-news" className="py-section">
+    <section aria-labelledby="home-news">
       <Container size="wide" className="flex flex-col gap-10 lg:gap-12">
         <div className="relative isolate flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <PeakLineArt className="absolute start-1/2 top-0 -z-10 hidden w-[min(28rem,36vw)] -translate-x-1/2 -translate-y-4 text-primary-text opacity-[0.14] md:block dark:opacity-20 rtl:translate-x-1/2" />

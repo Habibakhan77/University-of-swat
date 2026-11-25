@@ -8,7 +8,7 @@ import type { CampusCard } from "@/lib/strapi/home";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { ImageCredit } from "@/components/ui/image-credit";
-import { CardCornerSwoosh, CornerSweep, MountainRidge, PeaksAndPines, Rosette } from "@/components/brand/motifs";
+import { CardCornerSwoosh, MountainRidge, PeaksAndPines, Rosette } from "@/components/brand/motifs";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
 
 interface CampusesSectionProps {
@@ -28,8 +28,7 @@ export function CampusesSection({ campuses, locale, labels }: CampusesSectionPro
   const serif = locale === "en" ? displaySerif.className : undefined;
 
   return (
-    <section aria-labelledby="home-campuses" className="relative isolate overflow-hidden py-section">
-      <CornerSweep className="absolute end-0 top-0 -z-10 w-40 sm:w-64 lg:w-96" />
+    <section aria-labelledby="home-campuses">
       <Container size="wide" className="flex flex-col gap-10 lg:gap-12">
         <HomeSectionHeader
           id="home-campuses"
