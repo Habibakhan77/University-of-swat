@@ -1,55 +1,43 @@
 import type { ReactNode } from "react";
-import { ArrowRight, BadgeCheck, CalendarCheck, ChevronDown, ExternalLink, Globe, Mail, MapPin, Megaphone, Phone, UserRound } from "lucide-react";
+import { ArrowRight, Award, BadgeCheck, CalendarCheck, ChevronDown, ExternalLink, Globe, Mail, MapPin, Megaphone, Phone, UserRound } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
+import type { Locale } from "@/i18n/routing";
+import { ActionAnchor } from "./action-anchor";
 import { HubNavList } from "./hub-nav-list";
 import { langAttr } from "@/lib/strapi/academics-model";
-import type { ActionLink, AdmissionsCallout, ApplicationStep, Faq, FaqCategory, OfficeContact } from "@/lib/strapi/admissions";
+import type { Block, InlineNode } from "@/lib/strapi/blocks";
+import type { AdmissionsCallout, ApplicationStep, Faq, FaqCategory, OfficeContact } from "@/lib/strapi/admissions";
 import type { NavLink } from "@/lib/strapi/site";
 import { SmartLink } from "@/components/layout/smart-link";
 import { buttonVariants } from "@/components/ui/button";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
 import { RichText } from "@/components/ui/rich-text";
 
-/** In-page anchors ("#programs") are plain links; everything else goes through SmartLink (locale, new tab). */
-export function ActionAnchor({ action, className, children }: { action: ActionLink; className?: string; children?: ReactNode }) {
-  const content = children ?? action.label;
-  if (action.href.startsWith("#")) {
-    return (
-      <a href={action.href} className={className}>
-        {content}
-      </a>
-    );
-  }
-  return (
-    <SmartLink href={action.href} external={action.external} externalIcon={children === undefined} className={className}>
-      {content}
-    </SmartLink>
-  );
-}
+export { ActionAnchor };
 
-/** A section of the hub: heading with the gold rule, optional intro, then content. */
+/** A section of the hub in the homepage pattern: gold rule + small-caps eyebrow + serif heading, then content. */
 export function HubSection({
   id,
+  eyebrow,
   title,
   intro,
   children,
   className,
 }: {
   id: string;
+  eyebrow: string;
   title: string;
-  intro?: ReactNode;
+  intro?: string;
   children: ReactNode;
   className?: string;
 }) {
+  const locale = useLocale() as Locale;
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className={cn("scroll-mt-28 xl:scroll-mt-32", className)}>
-      <h2 id={`${id}-title`} className="text-heading-xl text-fg">
-        <span aria-hidden className="mb-3 block h-1 w-10 rounded-full bg-accent" />
-        {title}
-      </h2>
-      {intro ? <div className="mt-3 max-w-prose text-body text-fg-muted">{intro}</div> : null}
-      <div className="mt-6">{children}</div>
+    <section id={id} aria-labelledby={`${id}-title`} className={cn("flex scroll-mt-[calc(var(--header-h)+1.5rem)] flex-col gap-6", className)}>
+      <HomeSectionHeader id={`${id}-title`} locale={locale} eyebrow={eyebrow} title={title} intro={intro} size="md" />
+      {children}
     </section>
   );
 }
@@ -150,6 +138,130 @@ export function EligibilityRules({ rules, lang }: { rules: { programs: string[];
               </li>
             ))}
           </ul>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+type EligibilityGroup = "undergraduate" | "associate" | "graduate";
+
+/**
+ * Which intake a rule belongs to, read from its requirement (the advertisement has no group column):
+ * an Associate Degree means lateral entry, 16 years of education a graduate-entry program, anything
+ * else (F.A / F.Sc / ICS) the undergraduate intake. English and Urdu wording both match.
+ */
+function groupOf(requirement: string): EligibilityGroup {
+  if (/associate degree|ایسوسی ایٹ/i.test(requirement)) return "associate";
+  if (/16[- ]year|۱۶ سالہ/i.test(requirement)) return "graduate";
+  return "undergraduate";
+}
+
+/**
+ * The advertised eligibility table grouped by intake, each group a native disclosure (keyboard and
+ * no-JS friendly); the first group starts open. Inside, the requirement cards with their program chips.
+ */
+export function EligibilityGroups({ rules, lang }: { rules: { programs: string[]; requirement: string }[]; lang?: string }) {
+  const t = useTranslations("admissions.eligibilityGroups");
+  const order: EligibilityGroup[] = ["undergraduate", "associate", "graduate"];
+  const groups = order.map((g) => ({ g, list: rules.filter((r) => groupOf(r.requirement) === g) })).filter((x) => x.list.length);
+  return (
+    <div className="flex flex-col gap-3">
+      {groups.map(({ g, list }, i) => (
+        <details key={g} open={i === 0} className="group rounded-2xl border border-line bg-surface open:shadow-xs">
+          <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 py-3 transition-colors hover:bg-canvas-subtle sm:px-6 [&::-webkit-details-marker]:hidden">
+            <span className="flex min-w-0 flex-col gap-0.5">
+              <span className="text-heading-sm text-fg">{t(g)}</span>
+              <span className="text-body-sm text-fg-muted">
+                {t("count", { rules: list.length, programs: list.reduce((n, r) => n + r.programs.length, 0) })}
+              </span>
+            </span>
+            <ChevronDown aria-hidden className="size-5 shrink-0 text-fg-subtle transition-transform duration-200 group-open:rotate-180" />
+          </summary>
+          <div className="border-t border-line p-3 sm:p-4">
+            <EligibilityRules rules={list} lang={lang} />
+          </div>
+        </details>
+      ))}
+    </div>
+  );
+}
+
+const inlineText = (nodes: InlineNode[]): string => nodes.map((n) => (n.type === "text" ? n.text : inlineText(n.children))).join("");
+
+/**
+ * Splits a rich-text field around its first list: the text before it, the heading right above the list
+ * (if any), the list items as plain text, and the text after it. Lets the fee note's refund policy and
+ * the scholarship schemes be shown as a table and cards while the wording stays exactly as entered.
+ */
+export function splitAroundList(blocks: Block[]): { before: Block[]; heading: string | null; items: string[]; after: Block[] } | null {
+  const at = blocks.findIndex((b) => b.type === "list");
+  const list = blocks[at];
+  if (!list || list.type !== "list") return null;
+  const prev = blocks[at - 1];
+  const heading = prev?.type === "heading" ? inlineText(prev.children) : null;
+  const items = list.children.flatMap((c) => (c.type === "list-item" ? [inlineText(c.children).trim()] : [])).filter(Boolean);
+  return { before: blocks.slice(0, heading ? at - 1 : at), heading, items, after: blocks.slice(at + 1) };
+}
+
+/** The refund share an item states ("100%", "۱۰۰ فیصد"); none stated ("No refund …") reads as 0. */
+function refundShare(item: string, locale: string): string {
+  const m = /([0-9۰-۹]+)\s*(?:%|فیصد)/.exec(item);
+  const pct = locale === "ur" ? "٪" : "%";
+  return m ? `${m[1]}${pct}` : `${locale === "ur" ? "۰" : "0"}${pct}`;
+}
+
+/** The fee refund policy as a small table: the share refunded, then the policy line exactly as published. */
+export function RefundTable({ title, items, lang }: { title: string; items: string[]; lang?: string }) {
+  const t = useTranslations("admissions.refund");
+  const locale = useLocale();
+  return (
+    <div lang={lang} className="flex flex-col gap-3">
+      <h3 className="text-heading-sm text-fg">{title}</h3>
+      <div className="overflow-hidden rounded-2xl border border-line">
+        <table className="w-full text-body-sm">
+          <caption className="sr-only">{title}</caption>
+          <thead className="bg-surface-sunken text-fg-muted">
+            <tr>
+              <th scope="col" className="w-24 px-4 py-2.5 text-start font-semibold sm:w-28">
+                {t("refund")}
+              </th>
+              <th scope="col" className="px-4 py-2.5 text-start font-semibold">
+                {t("when")}
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line bg-surface">
+            {items.map((item) => (
+              <tr key={item} className="align-top">
+                <th scope="row" className="px-4 py-3 text-start text-heading-sm font-semibold text-primary-text tabular">
+                  {refundShare(item, locale)}
+                </th>
+                <td className="px-4 py-3 text-fg">{item}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/** Scholarship schemes as a grid of small cards (names as published; English names marked on Urdu pages). */
+export function SchemeGrid({ items, lang }: { items: string[]; lang?: string }) {
+  const locale = useLocale();
+  return (
+    <ul lang={lang} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {items.map((name) => (
+        <li
+          key={name}
+          lang={locale === "en" ? undefined : latinLang(name)}
+          className="flex min-h-16 items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3 text-body-sm font-semibold text-fg shadow-xs"
+        >
+          <span aria-hidden className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-text">
+            <Award className="size-4.5" />
+          </span>
+          {name}
         </li>
       ))}
     </ul>

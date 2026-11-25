@@ -1378,3 +1378,25 @@ consistency). Content, data and colours unchanged.
 - Space before the footer's apply card is about one section gap. Checked at 1440, 1024 and 375px, en and ur
 - Allied Health Sciences: departments not changed. uswat.edu.pk could not be reached to re-check (connection
   refused / timed out); the seed records all four from https://uswat.edu.pk/faculty/ (checked Nov 2026)
+
+## Admissions page polish (branch `admissions-polish`)
+
+- Hero is the shared `PageHero` (eyebrow, serif title with swoosh, intro, chips, Apply and Merit lists buttons,
+  the credited campus photo melting into the green)
+- Every section uses the homepage header (gold rule, small-caps eyebrow, serif heading): Start here, Who can
+  apply, Costs, Key dates, Step by step, Results, Support, Help, Get in touch (en/ur). One `gap-section`
+  between all sections (82 / 68 / 48px at 1440 / 1024 / 375)
+- Sidebar (Apply online card + "On this page") sticks under the header for the whole page and marks the
+  section being read
+- Important dates: when every date of a schedule has passed, a notice says the intake is closed ("Fall 2026
+  admissions are closed. Dates for the next intake will be announced.") and the past schedules fold into one
+  "Show Fall 2026 schedule" disclosure, each as a compact date | step | status table with its note and
+  source. Schedules with dates to come still show as the timeline. Worked out in the browser on today's date
+  in Pakistan; before hydration everything renders folded, so the HTML never shows a stale timeline
+- Eligibility: the advertised rules grouped by intake (Undergraduate; Associate degree holders = lateral
+  entry; After 16 years of education = B.Ed 1.5 years), read from each requirement's wording; native
+  disclosures, first one open; requirement cards and program chips unchanged. No postgraduate rules are
+  published, so there is no postgraduate group
+- Fee structure: the refund policy list in the fee note shows as a 3-row table (refund share | the policy
+  line exactly as entered); text before and after it unchanged; fee PDF and online payment stay as two cards
+- Scholarships: the schemes list shows as a grid of small cards; intro and closing text unchanged

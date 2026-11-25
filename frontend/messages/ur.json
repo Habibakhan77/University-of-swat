@@ -445,7 +445,36 @@
       "text": "درخواستیں سی ایم ایس داخلہ پورٹل پر آن لائن دی جاتی ہیں۔"
     },
     "englishOnly": "یہ حصہ فی الحال صرف انگریزی میں دستیاب ہے۔",
-    "source": "ماخذ: {label}"
+    "source": "ماخذ: {label}",
+    "eyebrows": {
+      "programs": "یہاں سے آغاز کریں",
+      "eligibility": "کون درخواست دے سکتا ہے",
+      "fees": "اخراجات",
+      "dates": "اہم تاریخیں",
+      "howToApply": "مرحلہ وار",
+      "meritLists": "نتائج",
+      "scholarships": "معاونت",
+      "faqs": "مدد",
+      "contact": "رابطہ"
+    },
+    "eligibilityGroups": {
+      "undergraduate": "انڈرگریجویٹ (بی ایس اور مساوی)",
+      "associate": "ایسوسی ایٹ ڈگری کے حامل",
+      "graduate": "۱۶ سالہ تعلیم کے بعد",
+      "count": "{rules, plural, one {# شرط} other {# شرائط}} · {programs, plural, one {# پروگرام} other {# پروگرام}}"
+    },
+    "refund": {
+      "caption": "فیس کی واپسی کی پالیسی",
+      "refund": "واپسی",
+      "when": "پالیسی"
+    },
+    "schedule": {
+      "closed": "{term, select, none {یہ داخلے بند ہو چکے ہیں۔} other {{term} کے داخلے بند ہو چکے ہیں۔}} اگلے داخلوں کی تاریخوں کا اعلان کیا جائے گا۔",
+      "show": "{term, select, none {گزشتہ شیڈول دیکھیں} other {{term} کا شیڈول دیکھیں}}",
+      "date": "تاریخ",
+      "step": "مرحلہ",
+      "status": "صورتحال"
+    }
   },
   "notices": {
     "eyebrow": "جامعہ سوات",

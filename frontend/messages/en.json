@@ -445,7 +445,36 @@
       "text": "Applications are made online on the CMS admission portal."
     },
     "englishOnly": "This section is available in English only for now.",
-    "source": "Source: {label}"
+    "source": "Source: {label}",
+    "eyebrows": {
+      "programs": "Start here",
+      "eligibility": "Who can apply",
+      "fees": "Costs",
+      "dates": "Key dates",
+      "howToApply": "Step by step",
+      "meritLists": "Results",
+      "scholarships": "Support",
+      "faqs": "Help",
+      "contact": "Get in touch"
+    },
+    "eligibilityGroups": {
+      "undergraduate": "Undergraduate (BS and equivalent)",
+      "associate": "Associate degree holders",
+      "graduate": "After 16 years of education",
+      "count": "{rules, plural, one {# requirement} other {# requirements}} · {programs, plural, one {# program} other {# programs}}"
+    },
+    "refund": {
+      "caption": "Fee refund policy",
+      "refund": "Refund",
+      "when": "Policy"
+    },
+    "schedule": {
+      "closed": "{term, select, none {These admissions are closed.} other {{term} admissions are closed.}} Dates for the next intake will be announced.",
+      "show": "{term, select, none {Show past schedules} other {Show {term} schedule}}",
+      "date": "Date",
+      "step": "Step",
+      "status": "Status"
+    }
   },
   "notices": {
     "eyebrow": "University of Swat",

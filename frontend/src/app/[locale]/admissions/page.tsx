@@ -9,23 +9,27 @@ import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { blocksToText } from "@/lib/strapi/blocks";
 import { getExplorerOptions, langAttr, type ProgramSummary } from "@/lib/strapi/academics";
 import { CMS_PORTAL_FALLBACK, FAQ_CATEGORIES, getAdmissionsPage, type AdmissionsPage } from "@/lib/strapi/admissions";
-import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import { HeroChip } from "@/components/academics/academic-hero";
 import { EnglishOnlyNote } from "@/components/academics/panels";
-import { DatesTimeline } from "@/components/admissions/dates-timeline";
+import { AdmissionDates } from "@/components/admissions/dates-timeline";
 import { ProgramFinder, ProgramFinderFromUrl } from "@/components/admissions/program-finder";
 import {
   ActionAnchor,
   ApplySteps,
+  EligibilityGroups,
   FaqAccordion,
   HubNav,
   HubSection,
   LinkCards,
-  EligibilityRules,
   OfficeCard,
   OfficialNotice,
+  RefundTable,
+  SchemeGrid,
   SourceTag,
+  splitAroundList,
   type HubNavItem,
 } from "@/components/admissions/sections";
+import { PageHero } from "@/components/layout/page-hero";
 import { SmartLink } from "@/components/layout/smart-link";
 import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -81,6 +85,11 @@ export default async function AdmissionsHubPage() {
     fallback: { title: t("notice.title"), text: t("notice.text"), portal: t("notice.portal"), portalHref: page?.apply?.action?.href ?? CMS_PORTAL_FALLBACK },
   };
   const finderProps = { programs: index.programs, faculties, departments };
+  // The refund policy (fee note) and the scholarship schemes are lists inside rich text: shown as a table
+  // and a card grid, with the text around them unchanged.
+  const fee = page?.feeNote ? splitAroundList(page.feeNote.value) : null;
+  const schemes = page?.scholarships ? splitAroundList(page.scholarships.value) : null;
+  const e = (key: "programs" | "eligibility" | "fees" | "dates" | "howToApply" | "meritLists" | "scholarships" | "faqs" | "contact") => t(`eyebrows.${key}`);
   const facultyCount = index.faculties.length;
 
   const faqLd = page?.faqs.length
@@ -100,22 +109,22 @@ export default async function AdmissionsHubPage() {
     <ClientMessages namespaces={["academics", "admissions"]}>
       <>
         {faqLd ? <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(faqLd)} /> : null}
-        <AcademicHero
-          id="admissions"
-          accent="green"
-          icon={GraduationCap}
+        <PageHero
+          locale={locale}
           image={page?.heroImage}
           breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb") }]}
           eyebrow={t("eyebrow")}
           title={page?.title.value ?? t("breadcrumb")}
           titleLang={langAttr(page?.title, locale)}
-          summary={page?.intro?.value}
-          summaryLang={langAttr(page?.intro, locale)}
+          intro={page?.intro?.value}
+          introLang={langAttr(page?.intro, locale)}
           meta={
-            <>
-              {index.programs.length ? <HeroChip icon={GraduationCap}>{t("programsCount", { count: index.programs.length })}</HeroChip> : null}
-              {facultyCount ? <HeroChip icon={Building2}>{t("facultiesCount", { count: facultyCount })}</HeroChip> : null}
-            </>
+            index.programs.length || facultyCount ? (
+              <>
+                {index.programs.length ? <HeroChip icon={GraduationCap}>{t("programsCount", { count: index.programs.length })}</HeroChip> : null}
+                {facultyCount ? <HeroChip icon={Building2}>{t("facultiesCount", { count: facultyCount })}</HeroChip> : null}
+              </>
+            ) : null
           }
           actions={
             <>
@@ -141,25 +150,27 @@ export default async function AdmissionsHubPage() {
           }
         />
 
-        <Container size="wide" className="grid gap-10 py-section-sm lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-12 lg:py-section xl:grid-cols-[minmax(0,1fr)_21rem]">
-          <div className="flex min-w-0 flex-col gap-section-sm">
-            <HubNav items={nav} label={t("onThisPage")} variant="chips" />
-
-            <HubSection id="programs" title={t("sections.programs")} intro={t("programsIntro")}>
-              <Suspense fallback={<ProgramFinder {...finderProps} />}>
-                <ProgramFinderFromUrl {...finderProps} />
-              </Suspense>
-            </HubSection>
+        {/* Small bottom padding: with the footer's apply card above it, about one section gap. */}
+        <Container size="wide" className="grid gap-10 pt-section-sm pb-6 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-12 xl:grid-cols-[minmax(0,1fr)_21rem]">
+          <div className="flex min-w-0 flex-col gap-section">
+            <div className="flex flex-col gap-6">
+              <HubNav items={nav} label={t("onThisPage")} variant="chips" />
+              <HubSection id="programs" eyebrow={e("programs")} title={t("sections.programs")} intro={t("programsIntro")}>
+                <Suspense fallback={<ProgramFinder {...finderProps} />}>
+                  <ProgramFinderFromUrl {...finderProps} />
+                </Suspense>
+              </HubSection>
+            </div>
 
             {/* One notice for eligibility, fees and dates: the advertisement always takes precedence. */}
             <OfficialNotice {...noticeProps} />
 
             {hasEligibility ? (
-              <HubSection id="eligibility" title={t("sections.eligibility")}>
+              <HubSection id="eligibility" eyebrow={e("eligibility")} title={t("sections.eligibility")}>
                 <div className="flex flex-col gap-5">
                   {page?.eligibilitySource ? <SourceTag link={page.eligibilitySource} locale={locale} /> : null}
                   {page?.eligibilityRules.value.length ? (
-                    <EligibilityRules rules={page.eligibilityRules.value} lang={langAttr(page.eligibilityRules, locale)} />
+                    <EligibilityGroups rules={page.eligibilityRules.value} lang={langAttr(page.eligibilityRules, locale)} />
                   ) : null}
                   {page?.eligibility ? (
                     <div>
@@ -171,7 +182,7 @@ export default async function AdmissionsHubPage() {
               </HubSection>
             ) : null}
 
-            <HubSection id="fees" title={t("sections.fees")}>
+            <HubSection id="fees" eyebrow={e("fees")} title={t("sections.fees")}>
               <div className="flex flex-col gap-6">
                 {page?.programFees.length ? (
                   <FeeTable
@@ -187,9 +198,21 @@ export default async function AdmissionsHubPage() {
                   />
                 ) : null}
                 {page?.feeNote ? (
-                  <div>
+                  <div className="flex flex-col gap-6">
                     <EnglishOnlyNote content={page.feeNote} />
-                    <RichText blocks={page.feeNote.value} lang={langAttr(page.feeNote, locale)} className="max-w-prose text-body text-fg-muted" />
+                    {fee ? (
+                      <>
+                        {fee.before.length ? (
+                          <RichText blocks={fee.before} lang={langAttr(page.feeNote, locale)} className="max-w-prose text-body text-fg-muted" />
+                        ) : null}
+                        <RefundTable title={fee.heading ?? t("refund.caption")} items={fee.items} lang={langAttr(page.feeNote, locale)} />
+                        {fee.after.length ? (
+                          <RichText blocks={fee.after} lang={langAttr(page.feeNote, locale)} className="max-w-prose text-body text-fg-muted" />
+                        ) : null}
+                      </>
+                    ) : (
+                      <RichText blocks={page.feeNote.value} lang={langAttr(page.feeNote, locale)} className="max-w-prose text-body text-fg-muted" />
+                    )}
                   </div>
                 ) : null}
                 {page?.feeLinks.value.length ? (
@@ -202,32 +225,13 @@ export default async function AdmissionsHubPage() {
             </HubSection>
 
             {page?.schedules.value.length ? (
-              <HubSection id="dates" title={t("sections.dates")}>
-                <div lang={langAttr(page.schedules, locale)} className="flex flex-col gap-10">
-                  {page.schedules.value.map((schedule) => (
-                    <div key={schedule.title} className="flex flex-col gap-4">
-                      <div className="flex flex-col gap-1.5">
-                        <h3 className="text-heading-md text-fg">{schedule.title}</h3>
-                        {schedule.note ? <p className="max-w-prose text-body-sm text-fg-muted">{schedule.note}</p> : null}
-                        {schedule.source ? (
-                          <ActionAnchor
-                            action={schedule.source}
-                            className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary-text hover:underline"
-                          >
-                            {t("source", { label: schedule.source.label })}
-                            <ExternalLink aria-hidden className="size-3.5 shrink-0" />
-                          </ActionAnchor>
-                        ) : null}
-                      </div>
-                      <DatesTimeline dates={schedule.dates} />
-                    </div>
-                  ))}
-                </div>
+              <HubSection id="dates" eyebrow={e("dates")} title={t("sections.dates")}>
+                <AdmissionDates schedules={page.schedules.value} lang={langAttr(page.schedules, locale)} />
               </HubSection>
             ) : null}
 
             {page?.steps.value.length ? (
-              <HubSection id="how-to-apply" title={t("sections.howToApply")}>
+              <HubSection id="how-to-apply" eyebrow={e("howToApply")} title={t("sections.howToApply")}>
                 <div className="flex flex-col gap-5">
                   {page.stepsSource ? <SourceTag link={page.stepsSource} locale={locale} /> : null}
                   <ApplySteps steps={page.steps.value} lang={langAttr(page.steps, locale)} />
@@ -236,26 +240,40 @@ export default async function AdmissionsHubPage() {
             ) : null}
 
             {page?.meritLists.value.length ? (
-              <HubSection id="merit-lists" title={t("sections.meritLists")}>
+              <HubSection id="merit-lists" eyebrow={e("meritLists")} title={t("sections.meritLists")}>
                 <LinkCards links={page.meritLists.value} lang={langAttr(page.meritLists, locale)} />
               </HubSection>
             ) : null}
 
             {page?.scholarships ? (
-              <HubSection id="scholarships" title={t("sections.scholarships")}>
-                <EnglishOnlyNote content={page.scholarships} />
-                <RichText blocks={page.scholarships.value} lang={langAttr(page.scholarships, locale)} className="max-w-prose text-body text-fg-muted" />
+              <HubSection id="scholarships" eyebrow={e("scholarships")} title={t("sections.scholarships")}>
+                <div className="flex flex-col gap-5">
+                  <EnglishOnlyNote content={page.scholarships} />
+                  {schemes ? (
+                    <>
+                      {schemes.before.length ? (
+                        <RichText blocks={schemes.before} lang={langAttr(page.scholarships, locale)} className="max-w-prose text-body text-fg-muted" />
+                      ) : null}
+                      <SchemeGrid items={schemes.items} lang={langAttr(page.scholarships, locale)} />
+                      {schemes.after.length ? (
+                        <RichText blocks={schemes.after} lang={langAttr(page.scholarships, locale)} className="max-w-prose text-body text-fg-muted" />
+                      ) : null}
+                    </>
+                  ) : (
+                    <RichText blocks={page.scholarships.value} lang={langAttr(page.scholarships, locale)} className="max-w-prose text-body text-fg-muted" />
+                  )}
+                </div>
               </HubSection>
             ) : null}
 
             {page?.faqs.length ? (
-              <HubSection id="faqs" title={t("sections.faqs")}>
+              <HubSection id="faqs" eyebrow={e("faqs")} title={t("sections.faqs")}>
                 <FaqAccordion faqs={page.faqs} categories={FAQ_CATEGORIES} />
               </HubSection>
             ) : null}
 
             {page?.offices.length ? (
-              <HubSection id="contact" title={t("sections.contact")}>
+              <HubSection id="contact" eyebrow={e("contact")} title={t("sections.contact")}>
                 <ul className="grid gap-4 md:grid-cols-2">
                   {page.offices.map((o) => (
                     <li key={o.slug}>
@@ -267,9 +285,12 @@ export default async function AdmissionsHubPage() {
             ) : null}
           </div>
 
-          <aside className="hidden flex-col gap-5 lg:sticky lg:top-28 lg:flex lg:self-start xl:top-32">
-            {page?.apply ? <ApplyCard page={page} /> : null}
-            <HubNav items={nav} label={t("onThisPage")} variant="list" />
+          {/* Stays in view for the whole page: the aside spans the full grid row and its inner column sticks. */}
+          <aside className="hidden lg:block">
+            <div className="flex flex-col gap-5 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]">
+              {page?.apply ? <ApplyCard page={page} /> : null}
+              <HubNav items={nav} label={t("onThisPage")} variant="list" />
+            </div>
           </aside>
         </Container>
       </>
