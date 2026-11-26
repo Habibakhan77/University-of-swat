@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
-import { StrapiError, buildTimeFallback, strapiGet, strapiMediaUrl, type QueryValue } from "./client";
+import { StrapiError, strapiFallback, strapiGet, strapiMediaUrl, type QueryValue } from "./client";
 import { parseImageCredit, type SiteImage } from "./site";
 import type { StrapiMedia } from "./types";
 import type { Localized } from "./academics-model";
@@ -129,12 +129,12 @@ export function pick<T, K extends keyof T>(pair: Pair<T>, key: K, locale: Locale
   return isEmpty(english) ? null : { value: english as NonNullable<T[K]>, lang: routing.defaultLocale };
 }
 
-/** Inside a "use cache" loader: empty data while building without Strapi (see buildTimeFallback). */
+/** Inside a "use cache" loader: empty data when Strapi is down or failing (see strapiFallback). */
 export async function guarded<T>(what: string, fallback: T, load: () => Promise<T>): Promise<T> {
   try {
     return await load();
   } catch (error) {
-    return buildTimeFallback(error, what, fallback, () => cacheLife("minutes"));
+    return strapiFallback(error, what, fallback, () => cacheLife("minutes"));
   }
 }
 

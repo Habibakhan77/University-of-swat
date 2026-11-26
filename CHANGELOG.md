@@ -1440,3 +1440,21 @@ consistency). Content, data and colours unchanged.
 - Program cards (department pages, All programs, Admissions program finder) show duration and credit hours in
   the footer when Strapi has them, with an arrow; without them the footer is gone and a small
   "View program →" cue (en/ur) sits at the bottom instead. The title link still covers the whole card
+
+## Stability: pages survive a Strapi outage
+
+- Every cached Strapi loader now falls back to empty data at request time too, not only during `next build`:
+  `strapiGet` turns connection errors and timeouts into a `StrapiError` with status 0 (the real reason,
+  e.g. `ECONNREFUSED`, is logged), and `strapiFallback` (was `buildTimeFallback`) logs it and returns the
+  section's empty data with a short cache life. Pages show their empty states instead of the error page, and
+  real content returns on the first request after Strapi is back (stale-while-revalidate)
+- Content already cached keeps being served during an outage
+- "Content is temporarily unavailable" note (en/ur, `role="status"`) under the header while Strapi is down.
+  It streams in its own Suspense boundary, so pages stay prerendered. Strapi health is shared process-wide:
+  any failed request marks it down at once; a 2.5 s `/_health` ping, at most every 15 s, decides when it is back
+- A department or profile page that can't be loaded during an outage says "This page couldn't be loaded right
+  now" instead of the "page not found" text
+- `loadMembers` (department and faculty pages): checked for module-level state; it has none and builds without
+  "use cache" warnings. Department pages return 200 with Strapi up and down
+- Tested on a production build: homepage, Computer and Software Technology department, a faculty profile and
+  /admissions in English and Urdu, with Strapi running, stopped (warm cache and a fresh build), and restarted

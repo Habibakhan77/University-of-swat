@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
-import { buildTimeFallback, strapiGet, strapiMediaUrl } from "./client";
+import { strapiFallback, strapiGet, strapiMediaUrl } from "./client";
 import type { StrapiMedia } from "./types";
 
 interface StrapiPostSummary {
@@ -59,7 +59,7 @@ async function fetchLatest(locale: Locale, category: StrapiPostSummary["category
       "populate[coverImage][fields][4]": "name",
     });
   } catch (error) {
-    return buildTimeFallback(error, `latest ${category} (${locale})`, null, () => cacheLife("minutes"));
+    return strapiFallback(error, `latest ${category} (${locale})`, null, () => cacheLife("minutes"));
   }
   return response.data[0] ?? null;
 }

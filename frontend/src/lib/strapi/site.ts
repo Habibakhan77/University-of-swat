@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
-import { StrapiError, buildTimeFallback, strapiGet, strapiMediaUrl } from "./client";
+import { StrapiError, strapiFallback, strapiGet, strapiMediaUrl } from "./client";
 import type { StrapiCta, StrapiLink, StrapiMedia, StrapiSingleResponse, StrapiSiteSettings, StrapiSocialPlatform } from "./types";
 
 /* ---------- View models used by the header and footer ---------- */
@@ -189,7 +189,7 @@ async function fetchSiteSettings(locale: Locale): Promise<StrapiSiteSettings | n
     return response.data;
   } catch (error) {
     if (error instanceof StrapiError && error.status === 404) return null;
-    return buildTimeFallback(error, `site settings (${locale})`, null, () => cacheLife("minutes"));
+    return strapiFallback(error, `site settings (${locale})`, null, () => cacheLife("minutes"));
   }
 }
 

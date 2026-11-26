@@ -18,6 +18,10 @@
       "office365": "Opens Microsoft Office 365 for University of Swat email",
       "digitalLibrary": "Opens the HEC National Digital Library for University of Swat",
       "campusTv": "Opens the official University of Swat Campus TV channel on YouTube"
+    },
+    "contentUnavailable": {
+      "title": "Content is temporarily unavailable.",
+      "text": "We can’t reach the content server right now, so parts of this page may be empty or missing. Please try again in a few minutes."
     }
   },
   "header": {
@@ -130,6 +134,11 @@
         "label": "Contact",
         "text": "Phone directory and contact form"
       }
+    },
+    "outage": {
+      "eyebrow": "Temporarily unavailable",
+      "title": "This page couldn’t be loaded right now",
+      "text": "The content server isn’t responding, so we can’t show this page at the moment. Please try again in a few minutes, or start from one of these:"
     }
   },
   "home": {

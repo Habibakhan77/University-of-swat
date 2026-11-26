@@ -1,6 +1,8 @@
 import { ArrowRight, BookOpen, GraduationCap, Landmark, Newspaper, Phone } from "lucide-react";
+import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { Rosette } from "@/components/brand/motifs";
+import { NotFoundIntro, NotFoundIntroView } from "@/components/layout/not-found-intro";
 import { Container } from "@/components/ui/container";
 import { Link } from "@/i18n/navigation";
 import { buttonVariants } from "@/components/ui/button";
@@ -16,13 +18,14 @@ const SUGGESTIONS = [
 /** Localized 404 inside the normal header and footer, with the sections people look for most. */
 export default function NotFound() {
   const t = useTranslations("notFound");
+  const missing = { eyebrow: t("eyebrow"), title: t("title"), text: t("text") };
   return (
     <Container size="content" className="flex flex-col gap-8 py-section">
       <div className="flex flex-col items-start gap-5">
         <Rosette className="size-10 text-accent-text" />
-        <p className="text-overline text-accent-text uppercase">{t("eyebrow")}</p>
-        <h1 className="text-display-lg text-balance">{t("title")}</h1>
-        <p className="max-w-xl text-body-lg text-fg-muted">{t("text")}</p>
+        <Suspense fallback={<NotFoundIntroView {...missing} />}>
+          <NotFoundIntro missing={missing} />
+        </Suspense>
         <p className="text-body-sm text-fg-subtle">
           {t("searchHint")} <kbd className="rounded-md border border-line-strong bg-surface px-1.5 py-0.5 font-sans text-caption">Ctrl K</kbd>
         </p>
