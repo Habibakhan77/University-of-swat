@@ -4,7 +4,7 @@ import { Building2, Landmark } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
-import { administrationHref, getOffices } from "@/lib/strapi/organisation";
+import { administrationHref, getOffices, officesLoaded } from "@/lib/strapi/organisation";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
@@ -13,6 +13,7 @@ import { OfficeCard } from "@/components/organisation/parts";
 import { OfficeExplorer, OfficeExplorerFromUrl, type ExplorerOffice } from "@/components/organisation/office-explorer";
 import { Container } from "@/components/ui/container";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -38,6 +39,7 @@ export default async function AdministrationPage() {
 
   return (
     <ClientMessages namespaces={["organisation"]}>
+      <ContentStatusNote locale={locale} loaded={() => officesLoaded(locale)} />
       <div style={accentStyle("green")}>
         <PageHero
           locale={locale}

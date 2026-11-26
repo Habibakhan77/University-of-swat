@@ -1514,3 +1514,28 @@ consistency). Content, data and colours unchanged.
   centres an odd last card
 - Checked on a production build at 1440, 1024 and 375 px, English and Urdu, light and dark: no overflow, no
   console errors, axe (WCAG 2.1 AA) zero violations on 48 page/width/language/theme combinations
+
+## Fix: "Content is temporarily unavailable" only when a page's main data failed
+
+- Cause: the note was driven by one process-wide "Strapi is down" flag. Any failed or timed-out request set it
+  for 15 s (an optional header teaser, a sidebar list, a slow request on the dev laptop with the old 10 s
+  timeout), so the note appeared on pages whose content had loaded. The empty fallback was also cached for
+  minutes, so a failure could outlive the outage
+- Every Strapi request failure is now logged with its path and reason (`[strapi] GET /posts failed: ECONNREFUSED`,
+  or the HTTP status; 404s are expected answers and are not logged). The request timeout is 20 s, so a slow
+  answer is still an answer
+- Cached loaders never throw (an error leaving a "use cache" function makes Next.js answer 500 even when the
+  caller catches it) and never cache a failure as data: they return a `StrapiFailure` marker with a 1-second
+  cache life, which also makes any page rendered from it rebuild on the next request. Getters (`safely`) turn it
+  into empty data; nested loaders and the search index `unwrap` it, so a partial result is never cached. The
+  search index answers 503 until every source loads; a sitemap missing a section is rebuilt on the next request
+- The note moved from the layout into each page (`<ContentStatusNote loaded={…} />`) and checks only that page's
+  main data at request time (homepage entry, offices, department, admissions page, posts, tenders, jobs, …).
+  Optional sections that fail simply hide. The 404 page still tells "not found" from "couldn't be loaded"
+  through a health check that remembers only healthy answers
+- Tested on a production build talking to Strapi through a stoppable proxy: with Strapi up, no note and full
+  content on home, /administration, the Computer and Software Technology department, /admissions, /news and
+  /tenders (en/ur), all 200. With Strapi stopped and the caches expired: the note on every page, still 200, no
+  server errors; the department page shows "This page couldn't be loaded right now". After Strapi is back,
+  the first request still gets the page copy built during the outage (with the note) and rebuilds it; from the
+  next load content is back and the note is gone. `next build` with and without a reachable Strapi succeeds

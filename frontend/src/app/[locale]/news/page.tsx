@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import type { Locale } from "@/i18n/routing";
 import { pageMetadata } from "@/lib/seo";
-import { POST_CATEGORIES, getPosts, newsHref, type Post, type PostCategory } from "@/lib/strapi/notices";
+import { POST_CATEGORIES, getPosts, newsHref, type Post, type PostCategory, postsLoaded } from "@/lib/strapi/notices";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { PageHero } from "@/components/layout/page-hero";
 import { EmptyState } from "@/components/academics/program-explorer";
@@ -16,6 +16,7 @@ import { normalizeSearch } from "@/lib/search/model";
 import { Container } from "@/components/ui/container";
 import { Pagination } from "@/components/ui/pagination";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 const PAGE_SIZE = 9;
 
@@ -48,6 +49,7 @@ export default async function NewsPage({ searchParams }: PageProps<"/[locale]/ne
 
   return (
     <>
+      <ContentStatusNote locale={locale} loaded={() => postsLoaded(locale)} />
       <PageHero
         locale={locale}
         image={heroImage}

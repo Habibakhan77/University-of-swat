@@ -6,7 +6,7 @@ import { resolveLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { iconFor } from "@/lib/icons";
 import { pageMetadata } from "@/lib/seo";
-import { academicsHref, directoryHref, getAcademicIndex, getFacultyDetail, langAttr, programsHref } from "@/lib/strapi/academics";
+import { academicIndexLoaded, academicsHref, directoryHref, getAcademicIndex, getFacultyDetail, langAttr, programsHref } from "@/lib/strapi/academics";
 import { getPathwayPhoto } from "@/lib/strapi/home";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { FACULTY_ACCENTS, FacultyArt, FacultyPhoto, accentStyle } from "@/components/academics/faculty-art";
@@ -17,6 +17,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { RichText } from "@/components/ui/rich-text";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -63,6 +64,7 @@ export default async function AcademicsPage() {
 
   return (
     <>
+      <ContentStatusNote locale={locale} loaded={() => academicIndexLoaded(locale)} />
       <PageHero
         locale={locale}
         image={heroPhoto}

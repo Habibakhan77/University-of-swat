@@ -19,6 +19,12 @@ export class StrapiError extends Error {
 
 export type QueryValue = string | number | boolean;
 
+/**
+ * How long one request may take. Generous on purpose: a slow answer is still an answer (Strapi in
+ * development on a small laptop can take several seconds), and only a real failure may empty a page.
+ */
+const TIMEOUT_MS = 20_000;
+
 /** GET a Strapi REST endpoint. `query` keys are used verbatim, e.g. { "populate[logo]": true }. */
 export async function strapiGet<T>(path: string, query: Record<string, QueryValue> = {}): Promise<T> {
   const search = new URLSearchParams();
@@ -32,15 +38,17 @@ export async function strapiGet<T>(path: string, query: Record<string, QueryValu
         Accept: "application/json",
         ...(STRAPI_TOKEN ? { Authorization: `Bearer ${STRAPI_TOKEN}` } : {}),
       },
-      signal: AbortSignal.timeout(10_000),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
     });
   } catch (error) {
     // Unreachable or slower than the timeout. Status 0 tells callers this is an outage, not a 404.
-    markUnavailable();
-    throw new StrapiError(`Strapi unreachable for ${path}: ${errorMessage(error)}`, 0);
+    const reason = errorMessage(error);
+    console.error(`[strapi] GET ${path} failed: ${reason}`);
+    throw new StrapiError(`Strapi unreachable for ${path}: ${reason}`, 0);
   }
   if (!response.ok) {
-    if (response.status >= 500) markUnavailable();
+    // 404 is an expected answer (an unpublished single type, an unknown slug); callers handle it.
+    if (response.status !== 404) console.error(`[strapi] GET ${path} failed: HTTP ${response.status}`);
     throw new StrapiError(`Strapi ${response.status} for ${path}`, response.status);
   }
   return (await response.json()) as T;
@@ -60,56 +68,29 @@ function errorMessage(error: unknown): string {
 /** True while `next build` prerenders pages. CI builds run without a Strapi server. */
 export const isBuildTime = process.env.NEXT_PHASE === "phase-production-build";
 
-/**
- * Error handling for code inside a "use cache" loader. When Strapi is down, slow or failing, the
- * error is logged and `fallback` (empty data) is returned, so a page shows its empty states and the
- * "content is temporarily unavailable" note instead of the error page. The fallback gets a short
- * cache life, so real content comes back within a minute or two of Strapi recovering.
- */
-export function strapiFallback<T>(error: unknown, what: string, fallback: T, setShortLife: () => void): T {
-  console.error(`[strapi] ${what} unavailable, using empty data: ${errorMessage(error)}`);
-  setShortLife();
-  return fallback;
-}
-
-/* ---------- Availability ---------- */
+/* ---------- Availability (404 page only) ---------- */
 
 /**
- * Process-wide record of Strapi's health, kept outside every "use cache" function (cached functions
- * must not read mutable module state). Failed requests mark Strapi down at once; a quick /_health
- * ping, at most every 15 seconds, decides when it is back.
+ * Whether Strapi answers its health check right now, so the 404 page can tell "this page doesn't
+ * exist" from "this page couldn't be loaded". Only call it from request-time code (after
+ * `connection()`). It never throws and waits at most 2.5 seconds. Only a healthy answer is
+ * remembered (15 seconds, process-wide): a failure is checked again on the next request.
  */
-interface Health {
-  ok: boolean;
-  checkedAt: number;
-  pending: Promise<boolean> | null;
-}
 const HEALTH_TTL_MS = 15_000;
-const healthKey = Symbol.for("uswat.strapiHealth");
-const store = globalThis as typeof globalThis & { [healthKey]?: Health };
-const health = (): Health => (store[healthKey] ??= { ok: true, checkedAt: 0, pending: null });
+const healthKey = Symbol.for("uswat.strapiHealthyAt");
+const store = globalThis as typeof globalThis & { [healthKey]?: number };
 
-function markUnavailable() {
-  const h = health();
-  h.ok = false;
-  h.checkedAt = Date.now();
-}
-
-/**
- * Whether Strapi is answering right now. Only call it from request-time code (after `connection()`,
- * inside a Suspense boundary). It never throws and waits at most 2.5 seconds.
- */
 export async function isStrapiAvailable(): Promise<boolean> {
-  const h = health();
-  if (Date.now() - h.checkedAt < HEALTH_TTL_MS) return h.ok;
-  h.pending ??= fetch(`${STRAPI_URL}/_health`, { cache: "no-store", signal: AbortSignal.timeout(2_500) })
-    .then((r) => r.ok)
-    .catch(() => false)
-    .then((ok) => {
-      Object.assign(h, { ok, checkedAt: Date.now(), pending: null });
-      return ok;
-    });
-  return h.pending;
+  if (Date.now() - (store[healthKey] ?? 0) < HEALTH_TTL_MS) return true;
+  try {
+    const response = await fetch(`${STRAPI_URL}/_health`, { cache: "no-store", signal: AbortSignal.timeout(2_500) });
+    if (response.ok) store[healthKey] = Date.now();
+    else console.error(`[strapi] health check failed: HTTP ${response.status}`);
+    return response.ok;
+  } catch (error) {
+    console.error(`[strapi] health check failed: ${errorMessage(error)}`);
+    return false;
+  }
 }
 
 /** Absolute URL for a Strapi media file. */

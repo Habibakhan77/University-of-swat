@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { blocksToText } from "@/lib/strapi/blocks";
 import { OFFLINE_SLUG, langAttr } from "@/lib/strapi/academics-model";
-import { administrationHref, getOffice, getOffices } from "@/lib/strapi/organisation";
+import { administrationHref, getOffice, getOffices, officesLoaded } from "@/lib/strapi/organisation";
 import type { OfficeType } from "@/lib/strapi/organisation-model";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
@@ -23,6 +23,7 @@ import { SmartLink } from "@/components/layout/smart-link";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
 import { buttonVariants } from "@/components/ui/button";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 /** The hero pattern's icon, by kind of office (offices carry no icon of their own in Strapi). */
 const TYPE_ICON: Record<OfficeType, LucideIcon> = {
@@ -107,6 +108,7 @@ export default async function OfficePage({ params }: Props) {
 
   return (
     <div style={accentStyle("green")}>
+      <ContentStatusNote locale={locale} loaded={() => officesLoaded(locale)} />
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
       <PageHero
         locale={locale}

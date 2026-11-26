@@ -19,6 +19,7 @@ import {
   langAttr,
   memberHref,
   type FacultyMember,
+  facultyMembersLoaded,
 } from "@/lib/strapi/academics";
 import { getMemberProfile } from "@/lib/strapi/department";
 import { GandharaPattern, GoldWave, MountainRidge, Swoosh } from "@/components/brand/motifs";
@@ -31,6 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 type Props = PageProps<"/[locale]/faculty/[slug]">;
 
@@ -181,6 +183,7 @@ export default async function FacultyProfilePage({ params }: Props) {
 
   return (
     <div style={accentStyle(faculty?.accent ?? "green")}>
+      <ContentStatusNote locale={locale} loaded={() => facultyMembersLoaded(locale)} />
       {structured ? <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} /> : null}
 
       <Container size="wide" className="pt-6 sm:pt-8">

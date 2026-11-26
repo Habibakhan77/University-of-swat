@@ -29,6 +29,7 @@ import {
   langAttr,
   levelGroupOf,
   programsHref,
+  programLoaded,
 } from "@/lib/strapi/academics";
 import { CMS_PORTAL_FALLBACK, getAdmissionsPage } from "@/lib/strapi/admissions";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
@@ -40,6 +41,7 @@ import { Badge } from "@/components/ui/badge";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 type Props = PageProps<"/[locale]/academics/programs/[program]">;
 
@@ -139,6 +141,7 @@ export default async function ProgramPage({ params }: Props) {
 
   return (
     <div style={accentStyle(faculty.accent)}>
+      <ContentStatusNote locale={locale} loaded={() => programLoaded(program.slug, locale)} />
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
       <AcademicHero
         compact

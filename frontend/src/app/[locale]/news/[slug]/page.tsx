@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr, OFFLINE_SLUG } from "@/lib/strapi/academics-model";
 import { blocksToText } from "@/lib/strapi/blocks";
-import { formatDateTime, formatDay, getPosts, newsHref, schemaDateTime } from "@/lib/strapi/notices";
+import { formatDateTime, formatDay, getPosts, newsHref, schemaDateTime, postsLoaded } from "@/lib/strapi/notices";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { EnglishOnlyNote } from "@/components/academics/panels";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
@@ -22,6 +22,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 type Props = PageProps<"/[locale]/news/[slug]">;
 
@@ -166,6 +167,7 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <ClientMessages namespaces={["notices"]}>
+      <ContentStatusNote locale={locale} loaded={() => postsLoaded(locale)} />
       <>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
         {/* The headline spans the green band; the article's own photo follows uncropped. */}

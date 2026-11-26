@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Suspense, ViewTransition } from "react";
+import { ViewTransition } from "react";
 import { getTranslations } from "next-intl/server";
 import { ClientMessages } from "@/i18n/client-messages";
 import { resolveLocale } from "@/i18n/locale";
 import { PAGE_TRANSITION } from "@/i18n/navigation";
 import { localeDirection, routing } from "@/i18n/routing";
 import { ThemeScript } from "@/components/theme/theme-script";
-import { ContentStatusNote } from "@/components/layout/content-status-note";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { RevealObserver } from "@/components/ui/reveal-observer";
@@ -65,9 +64,6 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
         </a>
         <ClientMessages>
           <SiteHeader locale={locale} chrome={chrome} />
-          <Suspense fallback={null}>
-            <ContentStatusNote locale={locale} />
-          </Suspense>
           <main id="main" tabIndex={-1} className="flex-1 outline-none">
             {/* Page transitions on client navigation only (Link tags them; View Transitions API, see globals.css). */}
             <ViewTransition default="none" update={{ [PAGE_TRANSITION]: "page", default: "none" }}>

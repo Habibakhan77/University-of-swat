@@ -5,7 +5,7 @@ import { resolveLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
 import { pageMetadata } from "@/lib/seo";
 import { getPosts, newsHref } from "@/lib/strapi/notices";
-import { getResearchPage, getResearchProjects, researchHref } from "@/lib/strapi/organisation";
+import { getResearchPage, getResearchProjects, researchHref, researchPageLoaded } from "@/lib/strapi/organisation";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { accentStyle } from "@/components/academics/faculty-art";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
@@ -18,6 +18,7 @@ import { SmartLink } from "@/components/layout/smart-link";
 import { Container } from "@/components/ui/container";
 import { SectionNav } from "@/components/ui/section-nav";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -72,6 +73,7 @@ export default async function ResearchPage() {
 
   return (
     <ClientMessages namespaces={["organisation"]}>
+      <ContentStatusNote locale={locale} loaded={() => researchPageLoaded(locale)} />
       <div style={accentStyle("green")}>
         <PageHero
           locale={locale}

@@ -2,10 +2,11 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { createTranslator } from "next-intl";
 import { routing, type Locale } from "@/i18n/routing";
-import { getAcademicIndex, getFacultyMembers, memberHref } from "@/lib/strapi/academics";
-import { formatDay, getDownloads, getJobs, getPosts, getTenders, noticeStatus, type Notice } from "@/lib/strapi/notices";
-import { getFacilities, getOffices, getResearchProjects, researchHref } from "@/lib/strapi/organisation";
-import { getSiteChrome } from "@/lib/strapi/site";
+import { loadAcademicIndex, loadFacultyMembers, memberHref } from "@/lib/strapi/academics";
+import { formatDay, loadDownloads, loadJobs, loadPosts, loadTenders, noticeStatus, type Notice } from "@/lib/strapi/notices";
+import { loadFacilities, loadOffices, loadResearchProjects, researchHref } from "@/lib/strapi/organisation";
+import { guarded, unwrap, type Loaded } from "@/lib/strapi/query";
+import { loadSiteChrome } from "@/lib/strapi/site";
 import type enMessages from "../../../messages/en.json";
 import type { SearchDoc, SearchIndex } from "./model";
 
@@ -19,39 +20,42 @@ const join = (...parts: (string | null | undefined | false)[]) => parts.filter(B
 /**
  * The search index for one language, built from the same cached loaders the pages use (so it costs
  * no extra Strapi requests once the pages are warm). Cached until an editor publishes; the webhook
- * expires the tags above.
+ * expires the tags above. If any source fails, the result is a short-lived StrapiFailure instead of a
+ * partial index (the search route answers 503 and the dialog tries again on its next open).
  */
-async function buildIndex(locale: Locale): Promise<SearchIndex> {
+async function buildIndex(locale: Locale): Promise<Loaded<SearchIndex>> {
   "use cache";
   cacheTag("search", ...TAGS);
   cacheLife("max");
 
-  const docs = await collect(locale);
-  if (locale === en) return { locale, docs };
+  return guarded(`search index (${locale})`, async () => {
+    const docs = await collect(locale);
+    if (locale === en) return { locale, docs };
 
-  // Urdu: also find entries by their English name ("physics" finds شعبہ طبیعیات).
-  const english = new Map((await collect(en)).map((doc) => [doc.id, doc]));
-  return {
-    locale,
-    docs: docs.map((doc) => {
-      const other = english.get(doc.id);
-      return other && other.title !== doc.title ? { ...doc, text: join(doc.text, other.title) } : doc;
-    }),
-  };
+    // Urdu: also find entries by their English name ("physics" finds شعبہ طبیعیات).
+    const english = new Map((await collect(en)).map((doc) => [doc.id, doc]));
+    return {
+      locale,
+      docs: docs.map((doc) => {
+        const other = english.get(doc.id);
+        return other && other.title !== doc.title ? { ...doc, text: join(doc.text, other.title) } : doc;
+      }),
+    };
+  });
 }
 
 async function collect(locale: Locale): Promise<SearchDoc[]> {
   const [chrome, posts, tenders, jobs, downloads, academics, members, offices, projects, facilities] = await Promise.all([
-    getSiteChrome(locale),
-    getPosts(locale),
-    getTenders(locale),
-    getJobs(locale),
-    getDownloads(locale),
-    getAcademicIndex(locale),
-    getFacultyMembers(locale),
-    getOffices(locale),
-    getResearchProjects(locale),
-    getFacilities(locale),
+    loadSiteChrome(locale),
+    loadPosts(locale).then(unwrap),
+    loadTenders(locale).then(unwrap),
+    loadJobs(locale).then(unwrap),
+    loadDownloads(locale).then(unwrap),
+    loadAcademicIndex(locale).then(unwrap),
+    loadFacultyMembers(locale).then(unwrap),
+    loadOffices(locale).then(unwrap),
+    loadResearchProjects(locale).then(unwrap),
+    loadFacilities(locale).then(unwrap),
   ]);
   // Pure translators (no request scope), so the index can be cached.
   const messages = (await import(`../../../messages/${locale}.json`)).default as typeof enMessages;
@@ -222,4 +226,5 @@ async function collect(locale: Locale): Promise<SearchDoc[]> {
   return docs;
 }
 
-export const getSearchIndex = (locale: Locale) => buildIndex(locale);
+/** The index, or a throw when Strapi failed (outside the cache, so callers can catch it). */
+export const getSearchIndex = async (locale: Locale): Promise<SearchIndex> => unwrap(await buildIndex(locale));

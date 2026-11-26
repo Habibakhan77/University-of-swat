@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { jsonLd, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr } from "@/lib/strapi/academics-model";
-import { contactHref, getContactPage, getPhoneDirectory, phoneNumber } from "@/lib/strapi/organisation";
+import { contactHref, getContactPage, getPhoneDirectory, phoneNumber, contactPageLoaded } from "@/lib/strapi/organisation";
 import { getSiteChrome } from "@/lib/strapi/site";
 import { AcademicHero } from "@/components/academics/academic-hero";
 import { SectionTitle } from "@/components/academics/panels";
@@ -16,6 +16,7 @@ import { SourceNote } from "@/components/notices/shared";
 import { OfficeCard, OnThisPage } from "@/components/organisation/parts";
 import { Container } from "@/components/ui/container";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -64,6 +65,7 @@ export default async function ContactPage() {
 
   return (
     <ClientMessages namespaces={["contact"]}>
+      <ContentStatusNote locale={locale} loaded={() => contactPageLoaded(locale)} />
       <>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
         <AcademicHero

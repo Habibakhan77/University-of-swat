@@ -4,12 +4,13 @@ import { Building2, GraduationCap, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
-import { academicsHref, directoryHref, getExplorerOptions, getFacultyMembers, programsHref } from "@/lib/strapi/academics";
+import { academicsHref, directoryHref, getExplorerOptions, getFacultyMembers, programsHref, facultyMembersLoaded } from "@/lib/strapi/academics";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
 import { DirectoryExplorer, DirectoryExplorerFromUrl } from "@/components/academics/directory-explorer";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -31,6 +32,7 @@ export default async function FacultyDirectoryPage() {
 
   return (
     <ClientMessages namespaces={["academics"]}>
+      <ContentStatusNote locale={locale} loaded={() => facultyMembersLoaded(locale)} />
       <>
         <AcademicHero
           id="directory"

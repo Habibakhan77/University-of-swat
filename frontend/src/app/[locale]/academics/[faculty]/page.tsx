@@ -18,6 +18,7 @@ import {
   langAttr,
   OFFLINE_SLUG,
   programsHref,
+  facultyLoaded,
 } from "@/lib/strapi/academics";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { DepartmentCard } from "@/components/academics/cards";
@@ -28,6 +29,7 @@ import { PageHero } from "@/components/layout/page-hero";
 import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 /**
  * Every slug that exists at build time is fully prerendered (generateStaticParams). A page published
@@ -78,6 +80,7 @@ export default async function FacultyPage({ params }: PageProps<"/[locale]/acade
 
   return (
     <div style={accentStyle(faculty.accent)}>
+      <ContentStatusNote locale={locale} loaded={() => facultyLoaded(faculty.slug, locale)} />
       <PageHero
         locale={locale}
         image={faculty.image}

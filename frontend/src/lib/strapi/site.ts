@@ -1,7 +1,8 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
-import { StrapiError, strapiFallback, strapiGet, strapiMediaUrl } from "./client";
+import { StrapiError, strapiGet, strapiMediaUrl } from "./client";
+import { guarded, safely, unwrap, type Loaded } from "./query";
 import type { StrapiCta, StrapiLink, StrapiMedia, StrapiSingleResponse, StrapiSiteSettings, StrapiSocialPlatform } from "./types";
 
 /* ---------- View models used by the header and footer ---------- */
@@ -174,23 +175,27 @@ const SITE_SETTINGS_QUERY = {
 /**
  * Cached per locale. Tagged so the Strapi publish webhook can revalidate it on demand. Returns null
  * when the locale has no published translation (404). That is handled in here because errors leave
- * a "use cache" function as an opaque error in production, so the caller can't read the status.
+ * a "use cache" function as an opaque error in production, so the caller can't read the status (and
+ * errors are never thrown out of a "use cache" function, see `guarded`).
  */
-async function fetchSiteSettings(locale: Locale): Promise<StrapiSiteSettings | null> {
+async function fetchSiteSettings(locale: Locale): Promise<Loaded<StrapiSiteSettings | null>> {
   "use cache";
   cacheTag("site-settings", `site-settings:${locale}`);
   cacheLife("hours");
 
-  try {
-    const response = await strapiGet<StrapiSingleResponse<StrapiSiteSettings>>("/site-setting", {
-      ...SITE_SETTINGS_QUERY,
-      locale,
-    });
-    return response.data;
-  } catch (error) {
-    if (error instanceof StrapiError && error.status === 404) return null;
-    return strapiFallback(error, `site settings (${locale})`, null, () => cacheLife("minutes"));
-  }
+  return guarded(`site settings (${locale})`, async () => {
+    try {
+      const response = await strapiGet<StrapiSingleResponse<StrapiSiteSettings>>("/site-setting", {
+        ...SITE_SETTINGS_QUERY,
+        locale,
+      });
+      return response.data;
+    } catch (error) {
+      // Not published yet: cached like any answer. Other failures become a short-lived StrapiFailure.
+      if (error instanceof StrapiError && error.status === 404) return null;
+      throw error;
+    }
+  });
 }
 
 /**
@@ -199,12 +204,12 @@ async function fetchSiteSettings(locale: Locale): Promise<StrapiSiteSettings | n
  * so a CMS outage never takes the whole website down. Errors are not cached.
  */
 export async function getSiteChrome(locale: Locale): Promise<SiteChrome | null> {
-  try {
-    let settings = await fetchSiteSettings(locale);
-    if (!settings && locale !== routing.defaultLocale) settings = await fetchSiteSettings(routing.defaultLocale);
-    return settings ? toChrome(locale, settings) : null;
-  } catch (error) {
-    console.error(`[strapi] site settings unavailable for "${locale}":`, error instanceof Error ? error.message : error);
-    return null;
-  }
+  return safely(`site settings (${locale})`, null, () => loadSiteChrome(locale));
+}
+
+/** Like getSiteChrome, but a Strapi failure is thrown (for cached aggregates such as the search index). */
+export async function loadSiteChrome(locale: Locale): Promise<SiteChrome | null> {
+  let settings = unwrap(await fetchSiteSettings(locale));
+  if (!settings && locale !== routing.defaultLocale) settings = unwrap(await fetchSiteSettings(routing.defaultLocale));
+  return settings ? toChrome(locale, settings) : null;
 }

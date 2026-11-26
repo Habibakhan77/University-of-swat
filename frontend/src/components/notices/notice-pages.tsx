@@ -8,7 +8,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr, OFFLINE_SLUG } from "@/lib/strapi/academics-model";
 import { blocksToText } from "@/lib/strapi/blocks";
-import { getJobs, getTenders, type Notice, type NoticeKind } from "@/lib/strapi/notices";
+import { getJobs, getTenders, type Notice, type NoticeKind, jobsLoaded, tendersLoaded } from "@/lib/strapi/notices";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
 import { EnglishOnlyNote } from "@/components/academics/panels";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -20,6 +20,7 @@ import { NoticeList, NoticeListFromUrl, listHref, noticeFacts } from "./notice-v
 import { ShareButtons } from "./share-buttons";
 import { Documents, SourceNote } from "./shared";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 /**
  * Tenders and Jobs share one layout: a filterable, paginated list and a detail page per notice.
@@ -71,6 +72,7 @@ export async function NoticeListPage({
   const c = copy(kind);
   return (
     <ClientMessages namespaces={["notices"]}>
+      <ContentStatusNote locale={locale} loaded={() => (kind === "job" ? jobsLoaded : tendersLoaded)(locale)} />
       <>
         <AcademicHero
           compact
@@ -170,6 +172,7 @@ export async function NoticeDetailPage({ kind, params }: { kind: NoticeKind; par
 
   return (
     <ClientMessages namespaces={["notices"]}>
+      <ContentStatusNote locale={locale} loaded={() => (kind === "job" ? jobsLoaded : tendersLoaded)(locale)} />
       <>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
         <Container size="wide" className="pt-5 sm:pt-6">

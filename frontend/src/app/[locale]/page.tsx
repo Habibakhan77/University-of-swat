@@ -6,7 +6,7 @@ import { searchHref } from "@/lib/search/model";
 import { homeSocialImage, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { buildPathways } from "@/lib/pathways";
 import { getAdmissionsPage } from "@/lib/strapi/admissions";
-import { getHomepageData, getHomepageSeo } from "@/lib/strapi/home";
+import { getHomepageData, getHomepageSeo, homepageLoaded } from "@/lib/strapi/home";
 import { getDownloads } from "@/lib/strapi/notices";
 import { getSiteChrome, type SiteChrome } from "@/lib/strapi/site";
 import { AdmissionsBand } from "@/components/home/admissions-band";
@@ -21,6 +21,7 @@ import { PartnersSection } from "@/components/home/partners-section";
 import { QuickActions } from "@/components/home/quick-actions";
 import { StatsBand } from "@/components/home/stats-band";
 import { VcMessage } from "@/components/home/vc-message";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 /*
  * Rendering: static (ISR). Every Strapi read is a "use cache" function with a cache tag, so this page
@@ -114,6 +115,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <ContentStatusNote locale={locale} loaded={() => homepageLoaded(locale)} />
       {jsonLd ? (
         <script
           type="application/ld+json"

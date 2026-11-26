@@ -17,7 +17,7 @@ import {
   type ResearchPage,
   type ResearchProject,
 } from "./organisation-model";
-import { fetchPairs, guarded, localizedSingle, pick, populateImage, selectFields, toImage, toRealImage, type Doc, type Pair } from "./query";
+import { fetchPairs, guarded, unwrap, loads, localizedSingle, safely, pick, populateImage, selectFields, toImage, toRealImage, type Doc, type Pair, type Loaded } from "./query";
 import { contactOf, httpsOrNull, seoOf, seoPopulate, type StrapiSeo } from "./shared";
 import { toNavLink } from "./site";
 import type { StrapiContact, StrapiLink, StrapiMedia } from "./types";
@@ -200,12 +200,12 @@ const contactPopulate = { "populate[contact]": true };
 
 /* ---------- Loaders ---------- */
 
-async function loadOffices(locale: Locale): Promise<Office[]> {
+async function loadOffices(locale: Locale): Promise<Loaded<Office[]>> {
   "use cache";
   cacheTag("offices", `offices:${locale}`);
   cacheLife("max");
 
-  return guarded(`offices (${locale})`, [], async () => {
+  return guarded(`offices (${locale})`, async () => {
     const pairs = await fetchPairs<StrapiOffice>(
       "/offices",
       {
@@ -226,12 +226,12 @@ async function loadOffices(locale: Locale): Promise<Office[]> {
   });
 }
 
-async function loadAbout(locale: Locale): Promise<AboutPage | null> {
+async function loadAbout(locale: Locale): Promise<Loaded<AboutPage | null>> {
   "use cache";
   cacheTag("about", `about:${locale}`);
   cacheLife("max");
 
-  return guarded(`about (${locale})`, null, async () => {
+  return guarded(`about (${locale})`, async () => {
     const about = await localizedSingle<StrapiAbout>(
       "/about",
       {
@@ -264,12 +264,12 @@ async function loadAbout(locale: Locale): Promise<AboutPage | null> {
   });
 }
 
-async function loadCampuses(locale: Locale): Promise<Campus[]> {
+async function loadCampuses(locale: Locale): Promise<Loaded<Campus[]>> {
   "use cache";
   cacheTag("campuses", `campuses:${locale}`);
   cacheLife("max");
 
-  return guarded(`campuses (${locale})`, [], async () => {
+  return guarded(`campuses (${locale})`, async () => {
     const pairs = await fetchPairs<StrapiCampus>(
       "/campuses",
       {
@@ -301,12 +301,12 @@ function officesBySlug(refs: SlugRef[] | null, offices: Office[]): Office[] {
   return (refs ?? []).map((r) => bySlug.get(r.slug)).filter((o): o is Office => Boolean(o));
 }
 
-async function loadResearchPage(locale: Locale): Promise<ResearchPage | null> {
+async function loadResearchPage(locale: Locale): Promise<Loaded<ResearchPage | null>> {
   "use cache";
   cacheTag("research", `research:${locale}`, "offices");
   cacheLife("max");
 
-  return guarded(`research page (${locale})`, null, async () => {
+  return guarded(`research page (${locale})`, async () => {
     const [page, offices] = await Promise.all([
       localizedSingle<StrapiResearchPage>(
         "/research-page",
@@ -322,7 +322,7 @@ async function loadResearchPage(locale: Locale): Promise<ResearchPage | null> {
         },
         locale,
       ),
-      loadOffices(locale),
+      loadOffices(locale).then(unwrap),
     ]);
     if (!page) return null;
     return {
@@ -357,12 +357,12 @@ async function loadResearchPage(locale: Locale): Promise<ResearchPage | null> {
   });
 }
 
-async function loadProjects(locale: Locale): Promise<ResearchProject[]> {
+async function loadProjects(locale: Locale): Promise<Loaded<ResearchProject[]>> {
   "use cache";
   cacheTag("research", `research:${locale}`);
   cacheLife("max");
 
-  return guarded(`research projects (${locale})`, [], async () => {
+  return guarded(`research projects (${locale})`, async () => {
     const pairs = await fetchPairs<StrapiProject>(
       "/research-projects",
       {
@@ -385,12 +385,12 @@ async function loadProjects(locale: Locale): Promise<ResearchProject[]> {
   });
 }
 
-async function loadFacilities(locale: Locale): Promise<Facility[]> {
+async function loadFacilities(locale: Locale): Promise<Loaded<Facility[]>> {
   "use cache";
   cacheTag("campus-life", `campus-life:${locale}`, "offices");
   cacheLife("max");
 
-  return guarded(`campus life (${locale})`, [], async () => {
+  return guarded(`campus life (${locale})`, async () => {
     const [pairs, offices] = await Promise.all([
       fetchPairs<StrapiFacility>(
         "/facilities",
@@ -406,7 +406,7 @@ async function loadFacilities(locale: Locale): Promise<Facility[]> {
         },
         locale,
       ),
-      loadOffices(locale),
+      loadOffices(locale).then(unwrap),
     ]);
     const bySlug = new Map(offices.map((o) => [o.slug, o]));
     return pairs
@@ -433,12 +433,12 @@ async function loadFacilities(locale: Locale): Promise<Facility[]> {
   });
 }
 
-async function loadContactPage(locale: Locale): Promise<ContactPage | null> {
+async function loadContactPage(locale: Locale): Promise<Loaded<ContactPage | null>> {
   "use cache";
   cacheTag("contact", `contact:${locale}`, "offices");
   cacheLife("max");
 
-  return guarded(`contact page (${locale})`, null, async () => {
+  return guarded(`contact page (${locale})`, async () => {
     const [page, offices] = await Promise.all([
       localizedSingle<StrapiContactPage>(
         "/contact-page",
@@ -450,7 +450,7 @@ async function loadContactPage(locale: Locale): Promise<ContactPage | null> {
         },
         locale,
       ),
-      loadOffices(locale),
+      loadOffices(locale).then(unwrap),
     ]);
     if (!page) return null;
     return {
@@ -467,12 +467,12 @@ async function loadContactPage(locale: Locale): Promise<ContactPage | null> {
   });
 }
 
-async function loadPhoneDirectory(locale: Locale): Promise<PhoneEntry[]> {
+async function loadPhoneDirectory(locale: Locale): Promise<Loaded<PhoneEntry[]>> {
   "use cache";
   cacheTag("contact", `contact:${locale}`);
   cacheLife("max");
 
-  return guarded(`phone directory (${locale})`, [], async () => {
+  return guarded(`phone directory (${locale})`, async () => {
     const pairs = await fetchPairs<StrapiPhoneEntry>(
       "/phone-entries",
       { ...selectFields("fields", ["name", "number", "group", "featured", "order"]), "sort[0]": "order:asc" },
@@ -491,14 +491,24 @@ async function loadPhoneDirectory(locale: Locale): Promise<PhoneEntry[]> {
   });
 }
 
-export const getOffices = (locale: Locale) => loadOffices(locale);
-export const getAbout = (locale: Locale) => loadAbout(locale);
-export const getCampuses = (locale: Locale) => loadCampuses(locale);
-export const getResearchPage = (locale: Locale) => loadResearchPage(locale);
-export const getResearchProjects = (locale: Locale) => loadProjects(locale);
-export const getFacilities = (locale: Locale) => loadFacilities(locale);
-export const getContactPage = (locale: Locale) => loadContactPage(locale);
-export const getPhoneDirectory = (locale: Locale) => loadPhoneDirectory(locale);
+/* Getters return empty data when Strapi fails (see `safely`); the *Loaded checks drive the
+   "content is temporarily unavailable" note; the raw loaders are for other cached loaders. */
+export const getOffices = (locale: Locale) => safely(`offices (${locale})`, [], () => loadOffices(locale));
+export const getAbout = (locale: Locale) => safely(`about (${locale})`, null, () => loadAbout(locale));
+export const getCampuses = (locale: Locale) => safely(`campuses (${locale})`, [], () => loadCampuses(locale));
+export const getResearchPage = (locale: Locale) => safely(`research page (${locale})`, null, () => loadResearchPage(locale));
+export const getResearchProjects = (locale: Locale) => safely(`research projects (${locale})`, [], () => loadProjects(locale));
+export const getFacilities = (locale: Locale) => safely(`campus life (${locale})`, [], () => loadFacilities(locale));
+export const getContactPage = (locale: Locale) => safely(`contact page (${locale})`, null, () => loadContactPage(locale));
+export const getPhoneDirectory = (locale: Locale) => safely(`phone directory (${locale})`, [], () => loadPhoneDirectory(locale));
+
+export const officesLoaded = (locale: Locale) => loads(() => loadOffices(locale));
+export const aboutLoaded = (locale: Locale) => loads(() => loadAbout(locale));
+export const researchPageLoaded = (locale: Locale) => loads(() => loadResearchPage(locale));
+export const facilitiesLoaded = (locale: Locale) => loads(() => loadFacilities(locale));
+export const contactPageLoaded = (locale: Locale) => loads(() => loadContactPage(locale));
+
+export { loadOffices, loadProjects as loadResearchProjects, loadFacilities };
 
 export async function getOffice(slug: string, locale: Locale): Promise<Office | null> {
   return (await getOffices(locale)).find((o) => o.slug === slug) ?? null;

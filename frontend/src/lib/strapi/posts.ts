@@ -1,7 +1,8 @@
 import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
-import { strapiFallback, strapiGet, strapiMediaUrl } from "./client";
+import { strapiGet, strapiMediaUrl } from "./client";
+import { guarded, safely, unwrap, type Loaded } from "./query";
 import type { StrapiMedia } from "./types";
 
 interface StrapiPostSummary {
@@ -34,14 +35,13 @@ export interface PostTeaser {
   image: { src: string; alt: string; width: number; height: number } | null;
 }
 
-async function fetchLatest(locale: Locale, category: StrapiPostSummary["category"]): Promise<StrapiPostSummary | null> {
+async function fetchLatest(locale: Locale, category: StrapiPostSummary["category"]): Promise<Loaded<StrapiPostSummary | null>> {
   "use cache";
   cacheTag("posts", `posts:${locale}`);
   cacheLife("minutes");
 
-  let response: StrapiCollectionResponse<StrapiPostSummary>;
-  try {
-    response = await strapiGet<StrapiCollectionResponse<StrapiPostSummary>>("/posts", {
+  return guarded(`latest ${category} (${locale})`, async () => {
+    const response = await strapiGet<StrapiCollectionResponse<StrapiPostSummary>>("/posts", {
       locale,
       "filters[category][$eq]": category,
       "sort[0]": "date:desc",
@@ -58,10 +58,8 @@ async function fetchLatest(locale: Locale, category: StrapiPostSummary["category
       "populate[coverImage][fields][3]": "height",
       "populate[coverImage][fields][4]": "name",
     });
-  } catch (error) {
-    return strapiFallback(error, `latest ${category} (${locale})`, null, () => cacheLife("minutes"));
-  }
-  return response.data[0] ?? null;
+    return response.data[0] ?? null;
+  });
 }
 
 const dateFormats: Record<Locale, Intl.DateTimeFormat> = {
@@ -74,11 +72,11 @@ const dateFormats: Record<Locale, Intl.DateTimeFormat> = {
  * Falls back to English when no Urdu translation exists; returns null if Strapi is unreachable.
  */
 export async function getLatestPost(locale: Locale, category: StrapiPostSummary["category"]): Promise<PostTeaser | null> {
-  try {
-    let post = await fetchLatest(locale, category);
+  return safely(`latest ${category} (${locale})`, null, async () => {
+    let post = unwrap(await fetchLatest(locale, category));
     let lang = locale;
     if (!post && locale !== routing.defaultLocale) {
-      post = await fetchLatest(routing.defaultLocale, category);
+      post = unwrap(await fetchLatest(routing.defaultLocale, category));
       lang = routing.defaultLocale;
     }
     if (!post) return null;
@@ -98,8 +96,5 @@ export async function getLatestPost(locale: Locale, category: StrapiPostSummary[
           }
         : null,
     };
-  } catch (error) {
-    console.error(`[strapi] latest ${category} unavailable for "${locale}":`, error instanceof Error ? error.message : error);
-    return null;
-  }
+  });
 }

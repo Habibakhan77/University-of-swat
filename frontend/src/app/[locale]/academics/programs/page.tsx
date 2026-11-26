@@ -4,12 +4,13 @@ import { GraduationCap, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
-import { academicsHref, directoryHref, getExplorerOptions, programsHref } from "@/lib/strapi/academics";
+import { academicsHref, directoryHref, getExplorerOptions, programsHref, academicIndexLoaded } from "@/lib/strapi/academics";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
 import { ProgramExplorer, ProgramExplorerFromUrl } from "@/components/academics/program-explorer";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -32,6 +33,7 @@ export default async function ProgramsPage() {
 
   return (
     <ClientMessages namespaces={["academics"]}>
+      <ContentStatusNote locale={locale} loaded={() => academicIndexLoaded(locale)} />
       <>
         <AcademicHero
           id="programs"

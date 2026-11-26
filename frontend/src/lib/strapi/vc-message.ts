@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type { Locale } from "@/i18n/routing";
 import type { Block } from "./blocks";
-import { guarded, localizedSingle, populateImage, toImage, type Doc } from "./query";
+import { guarded, loads, localizedSingle, safely, populateImage, toImage, type Doc, type Loaded } from "./query";
 import type { SiteImage } from "./site";
 import type { StrapiMedia } from "./types";
 
@@ -40,12 +40,16 @@ interface StrapiVc extends Doc {
   seo: { metaTitle: string | null; metaDescription: string | null } | null;
 }
 
-export async function getVcMessage(locale: Locale): Promise<VcMessage | null> {
+/** The VC's message, or null when it isn't published or Strapi fails. */
+export const getVcMessage = (locale: Locale) => safely(`VC message (${locale})`, null, () => loadVcMessage(locale));
+export const vcMessageLoaded = (locale: Locale) => loads(() => loadVcMessage(locale));
+
+async function loadVcMessage(locale: Locale): Promise<Loaded<VcMessage | null>> {
   "use cache";
   cacheTag("vc-message", `vc-message:${locale}`);
   cacheLife("max");
 
-  return guarded(`VC message (${locale})`, null, async () => {
+  return guarded(`VC message (${locale})`, async () => {
     const vc = await localizedSingle<StrapiVc>(
       "/vc-message",
       {

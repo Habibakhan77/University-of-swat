@@ -2,9 +2,12 @@ import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing } from "@/i18n/routing";
 import { languageAlternates, localePath, SITE_URL } from "@/lib/seo";
-import { getAcademicIndex, getFacultyMembers, memberHref } from "@/lib/strapi/academics";
-import { getJobs, getPosts, getTenders } from "@/lib/strapi/notices";
-import { getFacilities, getOffices } from "@/lib/strapi/organisation";
+import { loadAcademicIndex, loadFacultyMembers, memberHref } from "@/lib/strapi/academics";
+import { loadJobs, loadPosts, loadTenders } from "@/lib/strapi/notices";
+import { loadFacilities, loadOffices } from "@/lib/strapi/organisation";
+import { isFailure, shortLivedIfFailed, type Loaded } from "@/lib/strapi/query";
+
+const orEmpty = <T,>(value: Loaded<T[]>): T[] => (isFailure(value) ? [] : value);
 
 const en = routing.defaultLocale;
 
@@ -39,15 +42,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   cacheTag("sitemap");
   cacheLife("hours");
 
-  const [academics, members, posts, tenders, jobs, offices, facilities] = await Promise.all([
-    getAcademicIndex(en),
-    getFacultyMembers(en),
-    getPosts(en),
-    getTenders(en),
-    getJobs(en),
-    getOffices(en),
-    getFacilities(en),
+  const loaded = await Promise.all([
+    loadAcademicIndex(en),
+    loadFacultyMembers(en),
+    loadPosts(en),
+    loadTenders(en),
+    loadJobs(en),
+    loadOffices(en),
+    loadFacilities(en),
   ]);
+  // A sitemap missing a section (Strapi failed) is rebuilt on the next request, not kept for an hour.
+  shortLivedIfFailed(loaded);
+  const [academicsResult, membersResult, postsResult, tendersResult, jobsResult, officesResult, facilitiesResult] = loaded;
+  const academics = isFailure(academicsResult) ? { faculties: [], departments: [], programs: [] } : academicsResult;
+  const members = orEmpty(membersResult);
+  const posts = orEmpty(postsResult);
+  const tenders = orEmpty(tendersResult);
+  const jobs = orEmpty(jobsResult);
+  const offices = orEmpty(officesResult);
+  const facilities = orEmpty(facilitiesResult);
+
 
   type Entry = { path: string; priority: number; changeFrequency?: MetadataRoute.Sitemap[number]["changeFrequency"]; lastModified?: string };
   const pages: Entry[] = [

@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import type { Locale } from "@/i18n/routing";
 import type { FacultyAccent } from "./academics";
-import { guarded, localizedList, localizedSingle, populateImage, safely, toImage, toRealImage, type Doc } from "./query";
+import { guarded, loads, localizedList, localizedSingle, populateImage, safely, toImage, toRealImage, type Doc, type Loaded } from "./query";
 import { normalizeHref, isExternalHref, toNavLink, type NavLink, type SiteImage } from "./site";
 import type { StrapiLink, StrapiMedia } from "./types";
 import { getVcMessage } from "./vc-message";
@@ -303,12 +303,12 @@ function toNotice(post: StrapiPost & { lang: Locale }, locale: Locale): Notice {
 
 /* ---------- Loaders (cached, tagged) ---------- */
 
-async function loadHome(locale: Locale): Promise<HomeContent | null> {
+async function loadHome(locale: Locale): Promise<Loaded<HomeContent | null>> {
   "use cache";
   cacheTag("homepage", `homepage:${locale}`);
   cacheLife("max");
 
-  return guarded(`homepage (${locale})`, null, async () => {
+  return guarded(`homepage (${locale})`, async () => {
     const data = await localizedSingle<StrapiHomepage>(
       "/homepage",
       {
@@ -397,12 +397,12 @@ export function splitHighlight(title: string): TitlePart[] {
   return parts.filter((p) => p.text.length > 0);
 }
 
-async function loadHeroSlides(locale: Locale): Promise<HeroSlide[]> {
+async function loadHeroSlides(locale: Locale): Promise<Loaded<HeroSlide[]>> {
   "use cache";
   cacheTag("hero-slides", `hero-slides:${locale}`);
   cacheLife("max");
 
-  return guarded(`hero slides (${locale})`, [], async () => {
+  return guarded(`hero slides (${locale})`, async () => {
     const slides = await localizedList<StrapiHeroSlide>(
       "/hero-slides",
       { "sort[0]": "order:asc", ...populateImage("image") },
@@ -423,13 +423,13 @@ async function loadHeroSlides(locale: Locale): Promise<HeroSlide[]> {
   });
 }
 
-async function loadStats(locale: Locale): Promise<StatItem[]> {
+async function loadStats(locale: Locale): Promise<Loaded<StatItem[]>> {
   "use cache";
   // Counts change when campuses, faculties, departments or programs change; the webhook expires "stats" then.
   cacheTag("stats", `stats:${locale}`);
   cacheLife("max");
 
-  return guarded(`stats (${locale})`, [], async () => {
+  return guarded(`stats (${locale})`, async () => {
     const stats = await localizedList<StrapiStat>("/stats", { "sort[0]": "order:asc" }, locale, 8);
     return stats
       .filter((s) => typeof s.value === "number")
@@ -437,12 +437,12 @@ async function loadStats(locale: Locale): Promise<StatItem[]> {
   });
 }
 
-async function loadNews(locale: Locale): Promise<NewsItem[]> {
+async function loadNews(locale: Locale): Promise<Loaded<NewsItem[]>> {
   "use cache";
   cacheTag("posts", `posts:${locale}`);
   cacheLife("max");
 
-  return guarded(`news (${locale})`, [], async () => {
+  return guarded(`news (${locale})`, async () => {
     const query = {
       "filters[category][$eq]": "news",
       "sort[0]": "date:desc",
@@ -470,12 +470,12 @@ async function loadNews(locale: Locale): Promise<NewsItem[]> {
   });
 }
 
-async function loadTicker(locale: Locale): Promise<Notice[]> {
+async function loadTicker(locale: Locale): Promise<Loaded<Notice[]>> {
   "use cache";
   cacheTag("posts", `posts:${locale}`);
   cacheLife("max");
 
-  return guarded(`notices ticker (${locale})`, [], async () => {
+  return guarded(`notices ticker (${locale})`, async () => {
     const query = { "sort[0]": "date:desc", ...postFields };
     let posts = await localizedList<StrapiPost>("/posts", { ...query, "filters[showInTicker][$eq]": true }, locale, 8);
     // Nothing flagged for the ticker: show the latest announcements instead of an empty bar.
@@ -491,12 +491,12 @@ async function loadTicker(locale: Locale): Promise<Notice[]> {
  * empty. "Now" is read inside the cache, so it is the time the section was last rendered (at most an
  * hour ago, via cacheLife "hours").
  */
-async function loadEventsAndNotices(locale: Locale): Promise<EventsAndNotices> {
+async function loadEventsAndNotices(locale: Locale): Promise<Loaded<EventsAndNotices>> {
   "use cache";
   cacheTag("posts", `posts:${locale}`);
   cacheLife("hours");
 
-  return guarded(`events (${locale})`, { events: [], announcements: [] }, async () => {
+  return guarded(`events (${locale})`, async () => {
     const [events, announcements] = await Promise.all([
       localizedList<StrapiPost>(
         "/posts",
@@ -556,12 +556,12 @@ async function loadEventsAndNotices(locale: Locale): Promise<EventsAndNotices> {
   });
 }
 
-async function loadFaculties(locale: Locale): Promise<FacultyCard[]> {
+async function loadFaculties(locale: Locale): Promise<Loaded<FacultyCard[]>> {
   "use cache";
   cacheTag("faculties", `faculties:${locale}`);
   cacheLife("max");
 
-  return guarded(`faculties (${locale})`, [], async () => {
+  return guarded(`faculties (${locale})`, async () => {
     const faculties = await localizedList<StrapiFaculty>(
       "/faculties",
       {
@@ -597,12 +597,12 @@ async function loadFaculties(locale: Locale): Promise<FacultyCard[]> {
   });
 }
 
-async function loadCampuses(locale: Locale): Promise<CampusCard[]> {
+async function loadCampuses(locale: Locale): Promise<Loaded<CampusCard[]>> {
   "use cache";
   cacheTag("campuses", `campuses:${locale}`);
   cacheLife("max");
 
-  return guarded(`campuses (${locale})`, [], async () => {
+  return guarded(`campuses (${locale})`, async () => {
     const campuses = await localizedList<StrapiCampus>(
       "/campuses",
       {
@@ -639,7 +639,7 @@ export async function getHomepageData(locale: Locale) {
     safely("news", [], () => loadNews(locale)),
     safely("notices ticker", [], () => loadTicker(locale)),
     safely("events", { events: [], announcements: [] }, () => loadEventsAndNotices(locale)),
-    safely("VC message", null, () => getVcMessage(locale)),
+    getVcMessage(locale),
     safely("faculties", [], () => loadFaculties(locale)),
     safely("campuses", [], () => loadCampuses(locale)),
   ]);
@@ -647,6 +647,9 @@ export async function getHomepageData(locale: Locale) {
 }
 
 export type HomepageData = Awaited<ReturnType<typeof getHomepageData>>;
+
+/** The homepage entry itself is the page's main data; the other sections are optional. */
+export const homepageLoaded = (locale: Locale) => loads(() => loadHome(locale));
 
 /** Metadata only (title, description, Open Graph image); shares the homepage cache entry. */
 export async function getHomepageSeo(locale: Locale) {

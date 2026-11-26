@@ -4,11 +4,12 @@ import { FolderDown } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
-import { downloadsHref, getDownloads } from "@/lib/strapi/notices";
+import { downloadsHref, getDownloads, downloadsLoaded } from "@/lib/strapi/notices";
 import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
 import { DownloadsExplorer, DownloadsExplorerFromUrl } from "@/components/notices/downloads-explorer";
 import { Container } from "@/components/ui/container";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -33,6 +34,7 @@ export default async function DownloadsPage() {
 
   return (
     <ClientMessages namespaces={["notices"]}>
+      <ContentStatusNote locale={locale} loaded={() => downloadsLoaded(locale)} />
       <>
         <AcademicHero
           compact

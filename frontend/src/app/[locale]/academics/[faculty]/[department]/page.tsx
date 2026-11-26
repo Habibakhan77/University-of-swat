@@ -21,6 +21,7 @@ import {
   langAttr,
   levelGroupOf,
   type LevelGroup,
+  departmentLoaded,
 } from "@/lib/strapi/academics";
 import { getDepartmentSections } from "@/lib/strapi/department";
 import { getPosts, newsHref } from "@/lib/strapi/notices";
@@ -44,6 +45,7 @@ import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
 import { SectionNav } from "@/components/ui/section-nav";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 type Props = PageProps<"/[locale]/academics/[faculty]/[department]">;
 
@@ -170,6 +172,7 @@ export default async function DepartmentPage({ params }: Props) {
 
   return (
     <div style={accentStyle(faculty.accent)}>
+      <ContentStatusNote locale={locale} loaded={() => departmentLoaded(department.slug, locale)} />
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
       <PageHero
         locale={locale}

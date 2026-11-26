@@ -3,7 +3,7 @@ import { Trees } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
-import { campusLifeHref, getFacilities } from "@/lib/strapi/organisation";
+import { campusLifeHref, getFacilities, facilitiesLoaded } from "@/lib/strapi/organisation";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
@@ -11,6 +11,7 @@ import { PageHero } from "@/components/layout/page-hero";
 import { EmptyState } from "@/components/academics/program-explorer";
 import { FacilityCard } from "@/components/organisation/facility-card";
 import { Container } from "@/components/ui/container";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -32,6 +33,7 @@ export default async function CampusLifePage() {
 
   return (
     <div style={accentStyle("green")}>
+      <ContentStatusNote locale={locale} loaded={() => facilitiesLoaded(locale)} />
       <PageHero
         locale={locale}
         image={heroImage}

@@ -1,7 +1,7 @@
 import "server-only";
 import { cacheLife } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
-import { StrapiError, strapiFallback, strapiGet, strapiMediaUrl, type QueryValue } from "./client";
+import { StrapiError, strapiGet, strapiMediaUrl, type QueryValue } from "./client";
 import { parseImageCredit, type SiteImage } from "./site";
 import type { StrapiMedia } from "./types";
 import type { Localized } from "./academics-model";
@@ -129,21 +129,72 @@ export function pick<T, K extends keyof T>(pair: Pair<T>, key: K, locale: Locale
   return isEmpty(english) ? null : { value: english as NonNullable<T[K]>, lang: routing.defaultLocale };
 }
 
-/** Inside a "use cache" loader: empty data when Strapi is down or failing (see strapiFallback). */
-export async function guarded<T>(what: string, fallback: T, load: () => Promise<T>): Promise<T> {
+/* ---------- Failures ---------- */
+
+/**
+ * What a cached loader returns when Strapi failed. Errors are never thrown out of a "use cache"
+ * function (Next.js would report them as server errors and answer 500 even when the caller catches
+ * them); the loader returns this marker instead, with a 1-second cache life, so it is not reused:
+ * production's cache drops it after a second, and any page rendered from it is rebuilt on the next
+ * request. (`next dev` keeps short entries a few minutes and refreshes them in the background.)
+ */
+export interface StrapiFailure {
+  strapiFailure: string;
+}
+export type Loaded<T> = T | StrapiFailure;
+
+export function isFailure(value: unknown): value is StrapiFailure {
+  return typeof value === "object" && value !== null && "strapiFailure" in value;
+}
+
+/** Stale is kept at 30 s and expire at 5 min, so a failure never turns a page into a dynamic hole. */
+const FAILURE_LIFE = { stale: 30, revalidate: 1, expire: 300 };
+
+/** Inside another loader's body: the value, or a throw (caught by that loader's `guarded`). */
+export function unwrap<T>(value: Loaded<T>): T {
+  if (isFailure(value)) throw new StrapiError(value.strapiFailure, 0);
+  return value;
+}
+
+/**
+ * Wraps the body of a "use cache" loader: the data, or a short-lived `StrapiFailure` when Strapi
+ * failed (the reason is logged). Pages read loaders through `safely`, which turns it into empty data.
+ */
+export async function guarded<T>(what: string, load: () => Promise<T>): Promise<Loaded<T>> {
   try {
     return await load();
   } catch (error) {
-    return strapiFallback(error, what, fallback, () => cacheLife("minutes"));
+    const reason = error instanceof Error ? error.message : String(error);
+    console.error(`[strapi] ${what} failed: ${reason}`);
+    cacheLife(FAILURE_LIFE);
+    return { strapiFailure: `${what}: ${reason}` };
   }
 }
 
-/** Outside the cache: a Strapi outage hides one section instead of breaking the page. Not cached. */
-export async function safely<T>(what: string, fallback: T, load: () => Promise<T>): Promise<T> {
+/** Outside the cache: a loader's data, or `fallback` when Strapi failed. Never throws. */
+export async function safely<T>(what: string, fallback: T, load: () => Promise<Loaded<T>>): Promise<T> {
   try {
-    return await load();
+    const value = await load();
+    return isFailure(value) ? fallback : value;
   } catch (error) {
     console.error(`[strapi] ${what} unavailable:`, error instanceof Error ? error.message : error);
     return fallback;
   }
+}
+
+/**
+ * Whether a page's main data loads, for the "content is temporarily unavailable" note. Call it at
+ * request time; a healthy loader answers from the cache, a failed one asks Strapi again.
+ */
+export async function loads(load: () => Promise<unknown>): Promise<boolean> {
+  try {
+    return !isFailure(await load());
+  } catch {
+    return false;
+  }
+}
+
+/** Inside a cached aggregate (sitemap): marks it short-lived when any of its sources failed. */
+export function shortLivedIfFailed(values: unknown[]): void {
+  if (values.some(isFailure)) cacheLife(FAILURE_LIFE);
 }

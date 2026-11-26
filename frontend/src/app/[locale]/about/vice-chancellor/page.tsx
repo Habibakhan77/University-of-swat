@@ -4,7 +4,7 @@ import { ArrowUpRight, Info, Languages } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata, SITE_URL } from "@/lib/seo";
-import { getVcMessage, VC_WORDS_LANG } from "@/lib/strapi/vc-message";
+import { getVcMessage, VC_WORDS_LANG, vcMessageLoaded } from "@/lib/strapi/vc-message";
 import { blocksToText } from "@/lib/strapi/blocks";
 import { buttonVariants } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -13,6 +13,7 @@ import { RichText } from "@/components/ui/rich-text";
 import { SmartLink } from "@/components/layout/smart-link";
 import { Rosette } from "@/components/brand/motifs";
 import { cn } from "@/lib/cn";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 const PATH = "/about/vice-chancellor";
 
@@ -45,6 +46,7 @@ export default async function VcMessagePage() {
 
   return (
     <article className="pb-section">
+      <ContentStatusNote locale={locale} loaded={() => vcMessageLoaded(locale)} />
       <Container size="wide" className="pt-5 sm:pt-6">
         <Breadcrumbs
           items={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb") }]}

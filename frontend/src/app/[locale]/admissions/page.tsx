@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { blocksToText } from "@/lib/strapi/blocks";
 import { getExplorerOptions, langAttr, type ProgramSummary } from "@/lib/strapi/academics";
-import { CMS_PORTAL_FALLBACK, FAQ_CATEGORIES, getAdmissionsPage, type AdmissionsPage } from "@/lib/strapi/admissions";
+import { CMS_PORTAL_FALLBACK, FAQ_CATEGORIES, getAdmissionsPage, type AdmissionsPage, admissionsLoaded } from "@/lib/strapi/admissions";
 import { HeroChip } from "@/components/academics/academic-hero";
 import { EnglishOnlyNote } from "@/components/academics/panels";
 import { AdmissionDates } from "@/components/admissions/dates-timeline";
@@ -35,6 +35,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
 import { ClientMessages } from "@/i18n/client-messages";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 const PATH = "/admissions";
 const intlLocale: Record<Locale, string> = { en: "en-PK", ur: "ur-PK" };
@@ -107,6 +108,7 @@ export default async function AdmissionsHubPage() {
 
   return (
     <ClientMessages namespaces={["academics", "admissions"]}>
+      <ContentStatusNote locale={locale} loaded={() => admissionsLoaded(locale)} />
       <>
         {faqLd ? <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(faqLd)} /> : null}
         <PageHero

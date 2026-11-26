@@ -2,10 +2,10 @@ import "server-only";
 import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
 import type { Block } from "./blocks";
-import { getAcademicIndex } from "./academics";
+import { loadAcademicIndex } from "./academics";
 import { strapiMediaUrl } from "./client";
 import { normalizeHref } from "./site";
-import { fetchPairs, guarded, pick, populateImage, selectFields, toImage, toRealImage, type Doc, type Pair } from "./query";
+import { fetchPairs, guarded, unwrap, loads, safely, pick, populateImage, selectFields, toImage, toRealImage, type Doc, type Pair, type Loaded } from "./query";
 import type { StrapiMedia } from "./types";
 import {
   DOWNLOAD_CATEGORIES,
@@ -151,7 +151,7 @@ const byDateDesc = <T extends { date: string; title: { value: string } }>(a: T, 
 
 /** Department name and page for a relation, from the (cached) academics index. */
 async function departmentLookup(locale: Locale): Promise<(slug: string | undefined) => RelatedUnit | null> {
-  const { departments } = await getAcademicIndex(locale);
+  const { departments } = unwrap(await loadAcademicIndex(locale));
   const bySlug = new Map(departments.map((d) => [d.slug, d]));
   return (slug) => {
     const d = slug ? bySlug.get(slug) : undefined;
@@ -161,12 +161,12 @@ async function departmentLookup(locale: Locale): Promise<(slug: string | undefin
 
 /* ---------- Loaders (cached, tagged) ---------- */
 
-async function loadPosts(locale: Locale): Promise<Post[]> {
+async function loadPosts(locale: Locale): Promise<Loaded<Post[]>> {
   "use cache";
   cacheTag("posts", `posts:${locale}`);
   cacheLife("max");
 
-  return guarded(`posts (${locale})`, [], async () => {
+  return guarded(`posts (${locale})`, async () => {
     const [pairs, department] = await Promise.all([
       fetchPairs<StrapiPost>(
         "/posts",
@@ -252,12 +252,12 @@ const noticeFields = ["title", "slug", "referenceNumber", "state", "summary", "d
 
 const sortNotices = (a: Notice, b: Notice) => b.publishDate.localeCompare(a.publishDate) || a.title.value.localeCompare(b.title.value);
 
-async function loadTenders(locale: Locale): Promise<Notice[]> {
+async function loadTenders(locale: Locale): Promise<Loaded<Notice[]>> {
   "use cache";
   cacheTag("tenders", `tenders:${locale}`);
   cacheLife("max");
 
-  return guarded(`tenders (${locale})`, [], async () => {
+  return guarded(`tenders (${locale})`, async () => {
     const pairs = await fetchPairs<StrapiNotice>(
       "/tenders",
       {
@@ -273,12 +273,12 @@ async function loadTenders(locale: Locale): Promise<Notice[]> {
   });
 }
 
-async function loadJobs(locale: Locale): Promise<Notice[]> {
+async function loadJobs(locale: Locale): Promise<Loaded<Notice[]>> {
   "use cache";
   cacheTag("jobs", `jobs:${locale}`);
   cacheLife("max");
 
-  return guarded(`jobs (${locale})`, [], async () => {
+  return guarded(`jobs (${locale})`, async () => {
     const [pairs, department] = await Promise.all([
       fetchPairs<StrapiNotice>(
         "/jobs",
@@ -297,12 +297,12 @@ async function loadJobs(locale: Locale): Promise<Notice[]> {
   });
 }
 
-async function loadDownloads(locale: Locale): Promise<DownloadItem[]> {
+async function loadDownloads(locale: Locale): Promise<Loaded<DownloadItem[]>> {
   "use cache";
   cacheTag("downloads", `downloads:${locale}`);
   cacheLife("max");
 
-  return guarded(`downloads (${locale})`, [], async () => {
+  return guarded(`downloads (${locale})`, async () => {
     const pairs = await fetchPairs<StrapiDownload>(
       "/downloads",
       {
@@ -327,7 +327,15 @@ async function loadDownloads(locale: Locale): Promise<DownloadItem[]> {
 
 /* ---------- Public API ---------- */
 
-export const getPosts = (locale: Locale) => loadPosts(locale);
-export const getTenders = (locale: Locale) => loadTenders(locale);
-export const getJobs = (locale: Locale) => loadJobs(locale);
-export const getDownloads = (locale: Locale) => loadDownloads(locale);
+/* Getters return empty data when Strapi fails; the *Loaded checks drive the unavailable note. */
+export const getPosts = (locale: Locale) => safely(`posts (${locale})`, [], () => loadPosts(locale));
+export const getTenders = (locale: Locale) => safely(`tenders (${locale})`, [], () => loadTenders(locale));
+export const getJobs = (locale: Locale) => safely(`jobs (${locale})`, [], () => loadJobs(locale));
+export const getDownloads = (locale: Locale) => safely(`downloads (${locale})`, [], () => loadDownloads(locale));
+
+export const postsLoaded = (locale: Locale) => loads(() => loadPosts(locale));
+export const tendersLoaded = (locale: Locale) => loads(() => loadTenders(locale));
+export const jobsLoaded = (locale: Locale) => loads(() => loadJobs(locale));
+export const downloadsLoaded = (locale: Locale) => loads(() => loadDownloads(locale));
+
+export { loadPosts, loadTenders, loadJobs, loadDownloads };

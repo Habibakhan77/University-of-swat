@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn";
 import { pageMetadata } from "@/lib/seo";
 import { blocksToText } from "@/lib/strapi/blocks";
 import { OFFLINE_SLUG, langAttr } from "@/lib/strapi/academics-model";
-import { campusLifeHref, getFacilities, getFacility } from "@/lib/strapi/organisation";
+import { campusLifeHref, getFacilities, getFacility, facilitiesLoaded } from "@/lib/strapi/organisation";
 import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
 import { ContactDetails, EnglishOnlyNote, SidePanel } from "@/components/academics/panels";
 import { FacilityLinks, HeadProfile, MoreCampusLife, StaffGrid } from "@/components/organisation/campus-life";
@@ -20,6 +20,7 @@ import { SourceNote } from "@/components/notices/shared";
 import { Container } from "@/components/ui/container";
 import { ImageCredit } from "@/components/ui/image-credit";
 import { RichText } from "@/components/ui/rich-text";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 type Props = PageProps<"/[locale]/campus-life/[slug]">;
 
@@ -70,6 +71,7 @@ export default async function FacilityPage({ params }: Props) {
 
   return (
     <div style={accentStyle("green")}>
+      <ContentStatusNote locale={locale} loaded={() => facilitiesLoaded(locale)} />
       <PageHero
         locale={locale}
         image={facility.image}

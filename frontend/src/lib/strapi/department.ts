@@ -3,7 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
 import type { Block } from "./blocks";
 import type { Localized } from "./academics-model";
-import { fetchAll, fetchPairs, guarded, pick, populateImage, selectFields, toRealImage, type Doc } from "./query";
+import { fetchAll, fetchPairs, guarded, loads, safely, pick, populateImage, selectFields, toRealImage, type Doc, type Loaded } from "./query";
 import { normalizeHref, type SiteImage } from "./site";
 import type { StrapiMedia } from "./types";
 
@@ -159,12 +159,12 @@ const toPublication = (p: StrapiPublication): Publication => ({
 
 const EMPTY: DepartmentSections = { publications: [], labs: [], alumni: [], achievements: [], gallery: [] };
 
-async function loadSections(slug: string, locale: Locale): Promise<DepartmentSections> {
+async function loadSections(slug: string, locale: Locale): Promise<Loaded<DepartmentSections>> {
   "use cache";
   cacheTag("academics", `academics:${locale}`);
   cacheLife("max");
 
-  return guarded(`department sections ${slug} (${locale})`, EMPTY, async () => {
+  return guarded(`department sections ${slug} (${locale})`, async () => {
     const [publications, labs, alumni, achievements, gallery] = await Promise.all([
       // Not localized: titles stay in the language they were published in.
       fetchAll<StrapiPublication>("/publications", { ...byDepartment(slug), ...PUBLICATION_QUERY }),
@@ -260,7 +260,8 @@ async function loadSections(slug: string, locale: Locale): Promise<DepartmentSec
   });
 }
 
-export const getDepartmentSections = (slug: string, locale: Locale) => loadSections(slug, locale);
+export const getDepartmentSections = (slug: string, locale: Locale) =>
+  safely(`department sections ${slug} (${locale})`, EMPTY, () => loadSections(slug, locale));
 
 /* ---------- Faculty member profile ---------- */
 
@@ -276,12 +277,12 @@ interface StrapiMemberBio extends Doc {
 const EMPTY_PROFILE: MemberProfile = { bio: null, publications: [] };
 
 /** The parts of a profile page the directory listing doesn't load: the biography and publications. */
-async function loadMemberProfile(slug: string, locale: Locale): Promise<MemberProfile> {
+async function loadMemberProfile(slug: string, locale: Locale): Promise<Loaded<MemberProfile>> {
   "use cache";
   cacheTag("academics", `academics:${locale}`);
   cacheLife("max");
 
-  return guarded(`member profile ${slug} (${locale})`, EMPTY_PROFILE, async () => {
+  return guarded(`member profile ${slug} (${locale})`, async () => {
     const [bio, publications] = await Promise.all([
       fetchPairs<StrapiMemberBio>("/faculty-members", { "filters[slug][$eq]": slug, ...selectFields("fields", ["bio"]) }, locale),
       fetchAll<StrapiPublication>("/publications", { "filters[facultyMember][slug][$eq]": slug, ...PUBLICATION_QUERY }),
@@ -290,4 +291,6 @@ async function loadMemberProfile(slug: string, locale: Locale): Promise<MemberPr
   });
 }
 
-export const getMemberProfile = (slug: string, locale: Locale) => loadMemberProfile(slug, locale);
+export const getMemberProfile = (slug: string, locale: Locale) =>
+  safely(`member profile ${slug} (${locale})`, EMPTY_PROFILE, () => loadMemberProfile(slug, locale));
+export const memberProfileLoaded = (slug: string, locale: Locale) => loads(() => loadMemberProfile(slug, locale));

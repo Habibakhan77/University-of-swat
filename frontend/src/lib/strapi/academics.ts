@@ -24,7 +24,7 @@ import {
   type Shift,
 } from "./academics-model";
 import { contactOf, seoOf, seoPopulate, type StrapiSeo } from "./shared";
-import { fetchPairs, guarded, isPlaceholderMedia, pick, populateImage, selectFields, toRealImage, type Doc, type Pair } from "./query";
+import { fetchPairs, guarded, unwrap, isPlaceholderMedia, loads, safely, pick, populateImage, selectFields, toRealImage, type Doc, type Pair, type Loaded } from "./query";
 
 export * from "./academics-model";
 import { normalizeHref, isExternalHref } from "./site";
@@ -189,12 +189,12 @@ export const ACTIVE_DEPARTMENT_FILTER = {
   "filters[$or][1][isActive][$null]": "true",
 } as const;
 
-async function loadIndex(locale: Locale): Promise<AcademicIndex> {
+async function loadIndex(locale: Locale): Promise<Loaded<AcademicIndex>> {
   "use cache";
   cacheTag("academics", `academics:${locale}`);
   cacheLife("max");
 
-  return guarded(`academics index (${locale})`, EMPTY_INDEX, async () => {
+  return guarded(`academics index (${locale})`, async () => {
     const [faculties, departments, programs] = await Promise.all([
       fetchPairs<StrapiFaculty>(
         "/faculties",
@@ -298,12 +298,12 @@ async function loadIndex(locale: Locale): Promise<AcademicIndex> {
   });
 }
 
-async function loadFaculty(slug: string, locale: Locale): Promise<FacultyDetail | null> {
+async function loadFaculty(slug: string, locale: Locale): Promise<Loaded<FacultyDetail | null>> {
   "use cache";
   cacheTag("academics", `academics:${locale}`);
   cacheLife("max");
 
-  return guarded(`faculty ${slug} (${locale})`, null, async () => {
+  return guarded(`faculty ${slug} (${locale})`, async () => {
     const pair = await bySlug<StrapiFacultyFull>(
       "/faculties",
       slug,
@@ -322,12 +322,12 @@ async function loadFaculty(slug: string, locale: Locale): Promise<FacultyDetail 
   });
 }
 
-async function loadDepartment(slug: string, locale: Locale): Promise<DepartmentDetail | null> {
+async function loadDepartment(slug: string, locale: Locale): Promise<Loaded<DepartmentDetail | null>> {
   "use cache";
   cacheTag("academics", `academics:${locale}`);
   cacheLife("max");
 
-  return guarded(`department ${slug} (${locale})`, null, async () => {
+  return guarded(`department ${slug} (${locale})`, async () => {
     const pair = await bySlug<StrapiDepartmentFull>(
       "/departments",
       slug,
@@ -360,12 +360,12 @@ async function loadDepartment(slug: string, locale: Locale): Promise<DepartmentD
   });
 }
 
-async function loadProgram(slug: string, locale: Locale): Promise<ProgramDetail | null> {
+async function loadProgram(slug: string, locale: Locale): Promise<Loaded<ProgramDetail | null>> {
   "use cache";
   cacheTag("academics", `academics:${locale}`);
   cacheLife("max");
 
-  return guarded(`program ${slug} (${locale})`, null, async () => {
+  return guarded(`program ${slug} (${locale})`, async () => {
     const pair = await bySlug<StrapiProgramFull>(
       "/programs",
       slug,
@@ -427,14 +427,14 @@ async function loadProgram(slug: string, locale: Locale): Promise<ProgramDetail 
   });
 }
 
-async function loadMembers(locale: Locale): Promise<FacultyMember[]> {
+async function loadMembers(locale: Locale): Promise<Loaded<FacultyMember[]>> {
   "use cache";
   cacheTag("academics", `academics:${locale}`);
   cacheLife("max");
 
-  return guarded(`faculty members (${locale})`, [], async () => {
+  return guarded(`faculty members (${locale})`, async () => {
     // Members of a department hidden by a Super Admin are hidden with it.
-    const active = new Set((await loadIndex(locale)).departments.map((d) => d.slug));
+    const active = new Set(unwrap(await loadIndex(locale)).departments.map((d) => d.slug));
     const pairs = await fetchPairs<StrapiMember>(
       "/faculty-members",
       {
@@ -494,20 +494,32 @@ async function loadMembers(locale: Locale): Promise<FacultyMember[]> {
 
 /* ---------- Public API ---------- */
 
-export const getAcademicIndex = (locale: Locale) => loadIndex(locale);
-export const getFacultyDetail = (slug: string, locale: Locale) => loadFaculty(slug, locale);
-export const getDepartmentDetail = (slug: string, locale: Locale) => loadDepartment(slug, locale);
-export const getProgramDetail = (slug: string, locale: Locale) => loadProgram(slug, locale);
-export const getFacultyMembers = (locale: Locale) => loadMembers(locale);
+/* Getters return empty data when Strapi fails (see `safely`); the *Loaded checks drive the
+   "content is temporarily unavailable" note; the raw loaders are for other cached loaders. */
+
+export const getAcademicIndex = (locale: Locale) => safely(`academics index (${locale})`, EMPTY_INDEX, () => loadIndex(locale));
+export const getFacultyDetail = (slug: string, locale: Locale) => safely(`faculty ${slug} (${locale})`, null, () => loadFaculty(slug, locale));
+export const getDepartmentDetail = (slug: string, locale: Locale) =>
+  safely(`department ${slug} (${locale})`, null, () => loadDepartment(slug, locale));
+export const getProgramDetail = (slug: string, locale: Locale) => safely(`program ${slug} (${locale})`, null, () => loadProgram(slug, locale));
+export const getFacultyMembers = (locale: Locale) => safely(`faculty members (${locale})`, [], () => loadMembers(locale));
+
+export const academicIndexLoaded = (locale: Locale) => loads(() => loadIndex(locale));
+export const facultyLoaded = (slug: string, locale: Locale) => loads(() => loadFaculty(slug, locale));
+export const departmentLoaded = (slug: string, locale: Locale) => loads(() => loadDepartment(slug, locale));
+export const programLoaded = (slug: string, locale: Locale) => loads(() => loadProgram(slug, locale));
+export const facultyMembersLoaded = (locale: Locale) => loads(() => loadMembers(locale));
+
+export { loadIndex as loadAcademicIndex, loadMembers as loadFacultyMembers };
 
 /** Members of one department, head first. */
 export async function getDepartmentMembers(slug: string, locale: Locale) {
-  return (await loadMembers(locale)).filter((m) => m.departmentSlug === slug);
+  return (await getFacultyMembers(locale)).filter((m) => m.departmentSlug === slug);
 }
 
 /** Faculty and department options for the client-side explorers (programs, directory). */
 export async function getExplorerOptions(locale: Locale) {
-  const [index, english] = await Promise.all([loadIndex(locale), locale === en ? null : loadIndex(en)]);
+  const [index, english] = await Promise.all([getAcademicIndex(locale), locale === en ? null : getAcademicIndex(en)]);
   const englishNames = new Map((english ?? index).departments.map((d) => [d.slug, d.name.value]));
   return {
     index,

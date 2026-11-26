@@ -3,7 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { routing, type Locale } from "@/i18n/routing";
 import type { Block } from "./blocks";
 import { StrapiError, strapiGet } from "./client";
-import { fetchPairs, guarded, pick, populateImage, selectFields, toRealImage, type Doc, type Localized, type Pair } from "./query";
+import { fetchPairs, guarded, loads, safely, pick, populateImage, selectFields, toRealImage, type Doc, type Localized, type Pair, type Loaded } from "./query";
 import { isExternalHref, normalizeHref, toNavLink, type NavLink, type SiteImage } from "./site";
 import type { StrapiContact, StrapiLink, StrapiMedia } from "./types";
 
@@ -269,12 +269,12 @@ async function getSingle(locale: Locale): Promise<StrapiAdmissionsPage | null> {
 
 const isFaqCategory = (c: string): c is FaqCategory => (FAQ_CATEGORIES as readonly string[]).includes(c);
 
-async function loadAdmissions(locale: Locale): Promise<AdmissionsPage | null> {
+async function loadAdmissions(locale: Locale): Promise<Loaded<AdmissionsPage | null>> {
   "use cache";
   cacheTag("admissions", `admissions:${locale}`);
   cacheLife("max");
 
-  return guarded(`admissions page (${locale})`, null, async () => {
+  return guarded(`admissions page (${locale})`, async () => {
     const [base, translated, faqs, programs] = await Promise.all([
       getSingle(en),
       locale === en ? Promise.resolve(null) : getSingle(locale),
@@ -374,4 +374,5 @@ async function loadAdmissions(locale: Locale): Promise<AdmissionsPage | null> {
   });
 }
 
-export const getAdmissionsPage = (locale: Locale) => loadAdmissions(locale);
+export const getAdmissionsPage = (locale: Locale) => safely(`admissions page (${locale})`, null, () => loadAdmissions(locale));
+export const admissionsLoaded = (locale: Locale) => loads(() => loadAdmissions(locale));

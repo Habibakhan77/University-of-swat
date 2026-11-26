@@ -7,7 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { jsonLd, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr } from "@/lib/strapi/academics-model";
 import { getPartners, getStats } from "@/lib/strapi/home";
-import { aboutHref, administrationHref, contactHref, getAbout, getCampuses, getOffices } from "@/lib/strapi/organisation";
+import { aboutHref, administrationHref, contactHref, getAbout, getCampuses, getOffices, aboutLoaded } from "@/lib/strapi/organisation";
 import { accentStyle } from "@/components/academics/faculty-art";
 import { PageHero } from "@/components/layout/page-hero";
 import { AtAGlance, CoreValues, FoundingFact, type GlanceItem, MilestoneTimeline, Motto, OfficerCard, StatementCard } from "@/components/about/about-parts";
@@ -21,6 +21,7 @@ import { Container } from "@/components/ui/container";
 import { ImageCredit } from "@/components/ui/image-credit";
 import { RichText } from "@/components/ui/rich-text";
 import { SectionNav } from "@/components/ui/section-nav";
+import { ContentStatusNote } from "@/components/layout/content-status-note";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await resolveLocale();
@@ -101,6 +102,7 @@ export default async function AboutPage() {
   return (
     // The green accent drives the tab bar's current tab. The bar is a direct child, so it stays stuck.
     <div style={accentStyle("green")}>
+      <ContentStatusNote locale={locale} loaded={() => aboutLoaded(locale)} />
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
       <PageHero
         locale={locale}
