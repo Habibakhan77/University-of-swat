@@ -15,7 +15,7 @@ export function FacilityCard({ facility, priority = false }: { facility: Facilit
   const locale = useLocale();
   const t = useTranslations("organisation");
   return (
-    <article className="group/facility relative flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xs transition-shadow hover:shadow-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring">
+    <article className="group/facility relative flex h-full flex-col overflow-hidden rounded-3xl border border-line/70 bg-surface shadow-xs transition-[border-color,box-shadow] hover:border-gold-400/70 hover:shadow-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring">
       <div className="relative isolate aspect-video overflow-hidden bg-forest-800">
         {facility.image ? (
           <>
@@ -38,12 +38,12 @@ export function FacilityCard({ facility, priority = false }: { facility: Facilit
         )}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-5">
-        <h2 className="flex items-center gap-2 text-heading-md text-fg" lang={langAttr(facility.title, locale)}>
+        <h3 className="flex items-center gap-2 text-heading-md text-fg" lang={langAttr(facility.title, locale)}>
           <NamedIcon iconName={facility.icon} aria-hidden className="size-5 shrink-0 text-primary-text" />
           <Link href={facility.href} className="outline-none after:absolute after:inset-0">
             {facility.title.value}
           </Link>
-        </h2>
+        </h3>
         {facility.summary ? (
           <p className="text-body-sm text-fg-muted" lang={langAttr(facility.summary, locale)}>
             {facility.summary.value}

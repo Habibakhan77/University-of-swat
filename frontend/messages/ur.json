@@ -717,6 +717,23 @@
       "projects": "فنڈنگ",
       "conferences": "تقریبات",
       "resources": "دستاویزات"
+    },
+    "campusLifeEyebrow": "کیمپس لائف",
+    "exploreCampusLife": "کلاس روم سے آگے کی زندگی",
+    "facilitiesCount": "{count, plural, one {# صفحہ} other {# صفحات}}",
+    "facilityEyebrows": {
+      "explore": "دیکھیے",
+      "overview": "ایک نظر میں",
+      "gallery": "تصویروں میں",
+      "staff": "ٹیم",
+      "documents": "وسائل",
+      "more": "مزید دیکھیے"
+    },
+    "linkKinds": {
+      "pdf": "پی ڈی ایف دستاویز",
+      "news": "خبر",
+      "page": "اس ویب سائٹ کا صفحہ",
+      "website": "ویب سائٹ"
     }
   },
   "contact": {

@@ -4,7 +4,10 @@ import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
 import { campusLifeHref, getFacilities } from "@/lib/strapi/organisation";
-import { AcademicHero } from "@/components/academics/academic-hero";
+import { HeroChip } from "@/components/academics/academic-hero";
+import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
 import { EmptyState } from "@/components/academics/program-explorer";
 import { FacilityCard } from "@/components/organisation/facility-card";
 import { Container } from "@/components/ui/container";
@@ -24,24 +27,29 @@ export default async function CampusLifePage() {
     getTranslations({ locale, namespace: "common" }),
   ]);
 
+  // No Campus Life landing entry in Strapi: the hero shows the first page's real (credited) photo.
+  const heroImage = facilities.find((f) => f.image)?.image ?? null;
+
   return (
-    <>
-      <AcademicHero
-        compact
-        id="campus-life"
-        accent="green"
-        icon={Trees}
+    <div style={accentStyle("green")}>
+      <PageHero
+        locale={locale}
+        image={heroImage}
+        art={<FacultyArt id="campus-life" accent="green" icon={Trees} />}
         breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("campusLifeTitle") }]}
-        eyebrow={tCommon("siteName")}
+        eyebrow={t("campusLifeEyebrow")}
         title={t("campusLifeTitle")}
-        summary={t("campusLifeIntro")}
+        intro={t("campusLifeIntro")}
+        meta={facilities.length ? <HeroChip icon={Trees}>{t("facilitiesCount", { count: facilities.length })}</HeroChip> : null}
       />
-      <Container size="wide" className="pt-8 pb-section">
+      {/* Small bottom padding: with the footer's apply card above it, about one section gap. */}
+      <Container as="section" size="wide" aria-labelledby="explore" className="flex flex-col gap-8 pt-section-sm pb-6 sm:pb-8">
+        <HomeSectionHeader id="explore" locale={locale} eyebrow={t("facilityEyebrows.explore")} title={t("exploreCampusLife")} />
         {facilities.length ? (
           <ul className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {facilities.map((f, i) => (
+            {facilities.map((f) => (
               <li key={f.slug}>
-                <FacilityCard facility={f} priority={i < 3} />
+                <FacilityCard facility={f} />
               </li>
             ))}
           </ul>
@@ -49,6 +57,6 @@ export default async function CampusLifePage() {
           <EmptyState title={t("unavailable")} hint={t("tryLater")} />
         )}
       </Container>
-    </>
+    </div>
   );
 }

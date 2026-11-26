@@ -1470,3 +1470,26 @@ consistency). Content, data and colours unchanged.
   axe now reports zero violations on all 28 page/width/language combinations
 - Note for future screenshots: homepage sections below the fold use `content-visibility: auto`, so headless
   full-page captures show them blank unless that is overridden for the capture. Not a bug in the page
+
+## Campus Life in the About design language
+
+- /campus-life and all six pages (Central Library, Sports, Hostels, Societies & YDC, Online Psychology Clinic,
+  Hunerkada) now use the shared `PageHero`: gold "Campus life" eyebrow, serif title with the gold swoosh, intro,
+  and the page's real credited photo. The landing hero uses the first page's photo; the clinic, which has no
+  published photo, gets the green icon artwork instead of an empty frame
+- Section headers (gold rule + eyebrow + serif heading) with standard section gaps; "Life beyond the
+  classroom" header over the landing cards; cards rounded like the About page
+- Sidebar head of office (`HeadProfile`): 96 px round photo with a thin gold ring, name, designation, email,
+  phone and a link to the office, replacing the large portrait. Pages without an office or contact drop the
+  sidebar column instead of leaving it empty
+- Staff (`StaffGrid`): even cards with icon avatars, 3 in a row from 768 px, a compact row on phones,
+  centred rows so no card is left alone; emails wrap before the "@" rather than mid-word
+- Documents and links (`FacilityLinks`): text cards that say what each link is (PDF document, news story,
+  page on this site, website) and which site it opens. The "(news)" suffix in Strapi labels becomes the kind
+  line. None of the linked files or stories has a photo, so all use the compact text variant
+- "More campus life" as icon pill links under its own section header
+- Emails and phone numbers in contact panels are marked `lang="en"`, so on Urdu pages they no longer
+  fall back to the Nastaliq font
+- Checked on a production build at 1440, 1024 and 375 px, English and Urdu, light and dark: no overflow, no
+  console or network errors, axe (WCAG 2.1 AA) zero violations on all 28 page/language/theme combinations
+- Removed the stray `home-restore-full-1440.png` screenshot from the repo root (it was never committed)

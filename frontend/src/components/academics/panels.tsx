@@ -58,7 +58,7 @@ export function ContactDetails({ contact }: { contact: ContactInfo }) {
       icon: Mail,
       label: t("email"),
       value: (
-        <a href={`mailto:${contact.email}`} dir="ltr" className="break-all text-primary-text hover:underline">
+        <a href={`mailto:${contact.email}`} lang="en" dir="ltr" className="break-all text-primary-text hover:underline">
           {contact.email}
         </a>
       ),
@@ -69,7 +69,7 @@ export function ContactDetails({ contact }: { contact: ContactInfo }) {
       label: t("phone"),
       value: (
         <>
-          <a href={tel(contact.phone)} dir="ltr" className="text-primary-text hover:underline">
+          <a href={tel(contact.phone)} lang="en" dir="ltr" className="text-primary-text hover:underline">
             {contact.phone}
           </a>
           {contact.extension ? <span className="font-normal text-fg-muted"> · {t("extension", { ext: contact.extension })}</span> : null}

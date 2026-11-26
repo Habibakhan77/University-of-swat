@@ -717,6 +717,23 @@
       "projects": "Funding",
       "conferences": "Events",
       "resources": "Documents"
+    },
+    "campusLifeEyebrow": "Campus life",
+    "exploreCampusLife": "Life beyond the classroom",
+    "facilitiesCount": "{count, plural, one {# page} other {# pages}}",
+    "facilityEyebrows": {
+      "explore": "Explore",
+      "overview": "At a glance",
+      "gallery": "In pictures",
+      "staff": "The team",
+      "documents": "Resources",
+      "more": "Keep exploring"
+    },
+    "linkKinds": {
+      "pdf": "PDF document",
+      "news": "News story",
+      "page": "Page on this site",
+      "website": "Website"
     }
   },
   "contact": {
