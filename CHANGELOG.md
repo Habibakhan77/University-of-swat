@@ -1458,3 +1458,15 @@ consistency). Content, data and colours unchanged.
   "use cache" warnings. Department pages return 200 with Strapi up and down
 - Tested on a production build: homepage, Computer and Software Technology department, a faculty profile and
   /admissions in English and Urdu, with Strapi running, stopped (warm cache and a fresh build), and restarted
+
+## Dark-mode QA: home, About, Admissions, Research, News & Events
+
+- Checked the production build in dark mode at 1440, 1024 and 375 px, English and Urdu: homepage, /about,
+  /admissions, /research, /news, a news story with a photo and one without. No layout overflow, no broken
+  images, no visual defects; axe (WCAG 2.1 AA) finds no colour-contrast problems on any of them
+- Fixed: the photo credit in the shared page hero is a link, but it sat inside an `aria-hidden` wrapper, so
+  keyboard users could tab to a link screen readers could not see (axe `aria-hidden-focus`, on every hero with
+  a linked credit, in both themes). Only the decorative overlays are hidden now; the photo keeps `alt=""`.
+  axe now reports zero violations on all 28 page/width/language combinations
+- Note for future screenshots: homepage sections below the fold use `content-visibility: auto`, so headless
+  full-page captures show them blank unless that is overridden for the capture. Not a bug in the page

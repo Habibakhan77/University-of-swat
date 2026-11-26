@@ -66,7 +66,9 @@ export function PageHero({ locale, breadcrumbs, eyebrow, title, titleLang, intro
             side && "md:grid md:min-h-72 md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]",
           )}>
           {image ? (
-            <div aria-hidden className="relative h-40 sm:h-52 md:order-2 md:h-auto">
+            // Not aria-hidden as a whole: the credit inside can be a link, and a hidden focusable link is a
+            // WCAG failure. The photo is decorative (alt="") and the overlays are hidden one by one.
+            <div className="relative h-40 sm:h-52 md:order-2 md:h-auto">
               <Image
                 src={image.src}
                 alt=""
@@ -77,7 +79,7 @@ export function PageHero({ locale, breadcrumbs, eyebrow, title, titleLang, intro
                 className="object-cover object-[50%_45%]"
               />
               {/* Melts into the green: from the bottom on phones, from the text side from 768px. */}
-              <span className="absolute inset-0 bg-linear-to-t from-forest-900 via-forest-900/25 to-transparent md:bg-linear-to-r md:via-forest-900/45 md:via-35% md:to-transparent md:to-75% rtl:md:bg-linear-to-l" />
+              <span aria-hidden className="absolute inset-0 bg-linear-to-t from-forest-900 via-forest-900/25 to-transparent md:bg-linear-to-r md:via-forest-900/45 md:via-35% md:to-transparent md:to-75% rtl:md:bg-linear-to-l" />
               <GoldWave className="absolute inset-x-0 -bottom-px h-6 text-gold-bright md:hidden" />
               {image.credit ? <ImageCredit credit={image.credit} className="absolute end-3 top-3 md:top-auto md:bottom-3" /> : null}
             </div>
