@@ -1539,3 +1539,14 @@ consistency). Content, data and colours unchanged.
   server errors; the department page shows "This page couldn't be loaded right now". After Strapi is back,
   the first request still gets the page copy built during the outage (with the note) and rebuilds it; from the
   next load content is back and the note is gone. `next build` with and without a reachable Strapi succeeds
+
+## Contact in the Campus Life design language
+
+- Shared PageHero with a gold "Get in touch" eyebrow, the message-pattern artwork and a chip with the number
+  count; the section nav from Research under the hero
+- Gold-eyebrow serif section headers (Visit or call, Key offices, Every number, Write to us), standard section
+  gaps and the short bottom padding used before the footer's apply card
+- Address, featured phone lines and email as typed cards (icon tile, label, value): one column beside the map,
+  two in a centred row on tablets. Numbers and emails are marked `lang="en"` / `dir="ltr"` on the Urdu page
+- Key offices in centred rows (3 + 3, 2 + 2 + 2), so no card is left alone; the form card sits beside a
+  sticky "Send a message" header from 1024px. `HomeSectionHeader` takes an optional `introLang`

@@ -1,20 +1,23 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Mail, MapPin, MessageSquare, Phone } from "lucide-react";
+import { Mail, MapPin, MessageSquare, Phone, type LucideIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { jsonLd, pageMetadata, SITE_URL } from "@/lib/seo";
-import { langAttr } from "@/lib/strapi/academics-model";
+import { langAttr, scriptLang } from "@/lib/strapi/academics-model";
 import { contactHref, getContactPage, getPhoneDirectory, phoneNumber, contactPageLoaded } from "@/lib/strapi/organisation";
 import { getSiteChrome } from "@/lib/strapi/site";
-import { AcademicHero } from "@/components/academics/academic-hero";
-import { SectionTitle } from "@/components/academics/panels";
+import { HeroChip } from "@/components/academics/academic-hero";
+import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
 import { ContactForm } from "@/components/contact/contact-form";
 import { MapEmbed } from "@/components/contact/map-embed";
 import { PhoneDirectory } from "@/components/contact/phone-directory";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
 import { SourceNote } from "@/components/notices/shared";
-import { OfficeCard, OnThisPage } from "@/components/organisation/parts";
+import { OfficeCard } from "@/components/organisation/parts";
 import { Container } from "@/components/ui/container";
+import { SectionNav } from "@/components/ui/section-nav";
 import { ClientMessages } from "@/i18n/client-messages";
 import { ContentStatusNote } from "@/components/layout/content-status-note";
 
@@ -30,6 +33,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const tel = (n: string) => `tel:${n.replace(/[^\d+]/g, "")}`;
+
+/** A link inside a contact card: numbers and emails always read left to right. */
+const valueLink = "font-semibold text-primary-text tabular hover:underline";
 
 /** General contacts and map, key offices, the searchable phone directory and the contact form. */
 export default async function ContactPage() {
@@ -65,113 +71,123 @@ export default async function ContactPage() {
 
   return (
     <ClientMessages namespaces={["contact"]}>
-      <ContentStatusNote locale={locale} loaded={() => contactPageLoaded(locale)} />
-      <>
+      <div style={accentStyle("green")}>
+        <ContentStatusNote locale={locale} loaded={() => contactPageLoaded(locale)} />
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
-        <AcademicHero
-          compact
-          id="contact"
-          accent="green"
-          icon={MessageSquare}
+        <PageHero
+          locale={locale}
+          art={<FacultyArt id="contact" accent="green" icon={MessageSquare} />}
           breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: page?.title ?? t("title") }]}
-          eyebrow={tCommon("siteName")}
+          eyebrow={t("eyebrow")}
           title={page?.title ?? t("title")}
           titleLang={lang}
-          summary={page?.intro ?? t("intro")}
-          summaryLang={lang}
+          intro={page?.intro ?? t("intro")}
+          introLang={lang}
+          meta={entries.length ? <HeroChip icon={Phone}>{t("entriesCount", { count: entries.length })}</HeroChip> : null}
         />
 
-        <Container size="wide" className="pt-6">
-          <OnThisPage label={t("onThisPage")} items={sections} />
-        </Container>
+        <SectionNav label={t("onThisPage")} items={sections} className="mt-6" />
 
-        <Container size="wide" className="flex flex-col gap-section-sm pt-8 pb-section [&>section]:scroll-mt-32">
-          <section aria-labelledby="reach" className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
-            <div className="flex flex-col gap-4">
-              <SectionTitle id="reach">{t("reachUs")}</SectionTitle>
-              <ul className="flex flex-col gap-3">
+        {/* Small bottom padding: with the footer's apply card above it, about one section gap. */}
+        <div className="flex flex-col gap-section pt-section-sm pb-6 sm:pb-8 [&>section]:scroll-mt-32">
+          <Container as="section" size="wide" aria-labelledby="reach" className="flex flex-col gap-8">
+            <HomeSectionHeader id="reach" locale={locale} eyebrow={t("eyebrows.reach")} title={t("reachUs")} />
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
+              {/* Two in a row on tablets (centred, so an odd last card is not left alone), one column beside the map. */}
+              <ul className="flex flex-wrap justify-center gap-3">
                 {address ? (
-                  <ContactRow icon={<MapPin className="size-5" />} label={t("address")}>
-                    {address}
-                  </ContactRow>
+                  <ContactCard icon={MapPin} label={t("address")}>
+                    <span lang={scriptLang(address, locale)} className="text-fg">
+                      {address}
+                    </span>
+                  </ContactCard>
                 ) : null}
                 {phone ? (
-                  <ContactRow icon={<Phone className="size-5" />} label={t("phone")}>
-                    <a href={tel(phone)} dir="ltr" className="font-sans tabular text-primary-text hover:underline">
+                  <ContactCard icon={Phone} label={t("phone")}>
+                    <a href={tel(phone)} lang="en" dir="ltr" className={valueLink}>
                       {phone}
                     </a>
-                  </ContactRow>
+                  </ContactCard>
                 ) : null}
                 {mainLines.map((line) => {
                   const n = phoneNumber(line.number, page?.areaCode ?? null);
                   return (
-                    <ContactRow key={line.id} icon={<Phone className="size-5" />} label={<span lang={langAttr(line.name, locale)}>{line.name.value}</span>}>
-                      <a href={n.tel} dir="ltr" className="font-sans tabular text-primary-text hover:underline">
+                    <ContactCard key={line.id} icon={Phone} label={<span lang={langAttr(line.name, locale)}>{line.name.value}</span>}>
+                      <a href={n.tel} lang="en" dir="ltr" className={valueLink}>
                         {n.display}
                       </a>
-                    </ContactRow>
+                    </ContactCard>
                   );
                 })}
                 {email ? (
-                  <ContactRow icon={<Mail className="size-5" />} label={t("email")}>
-                    <a href={`mailto:${email}`} dir="ltr" className="font-sans break-all text-primary-text hover:underline">
+                  <ContactCard icon={Mail} label={t("email")}>
+                    <a href={`mailto:${email}`} lang="en" dir="ltr" className={`${valueLink} wrap-anywhere`}>
                       {email}
                     </a>
-                  </ContactRow>
+                  </ContactCard>
                 ) : null}
               </ul>
+              {page?.mapQuery ? <MapEmbed query={page.mapQuery} title={t("mapTitle")} /> : null}
             </div>
-            {page?.mapQuery ? <MapEmbed query={page.mapQuery} title={t("mapTitle")} /> : null}
-          </section>
+          </Container>
 
           {page?.keyOffices.length ? (
-            <section aria-labelledby="offices">
-              <SectionTitle id="offices">{t("keyOffices")}</SectionTitle>
-              <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <Container as="section" size="wide" aria-labelledby="offices" className="flex flex-col gap-8">
+              <HomeSectionHeader id="offices" locale={locale} eyebrow={t("eyebrows.offices")} title={t("keyOffices")} />
+              {/* Centred rows, so a short last row never leaves a card alone at the start. */}
+              <ul className="flex flex-wrap justify-center gap-4">
                 {page.keyOffices.map((o) => (
-                  <li key={o.slug}>
+                  <li key={o.slug} className="w-full md:w-[calc((100%-1rem)/2)] xl:w-[calc((100%-2rem)/3)]">
                     <OfficeCard office={o} showType={false} />
                   </li>
                 ))}
               </ul>
-            </section>
+            </Container>
           ) : null}
 
           {entries.length ? (
-            <section aria-labelledby="directory" className="flex flex-col gap-4">
-              <SectionTitle id="directory">{t("directory")}</SectionTitle>
-              <p className="max-w-prose text-body text-fg-muted">{t("directoryIntro", { code: page?.areaCode ?? "" })}</p>
-              <PhoneDirectory entries={entries} areaCode={page?.areaCode ?? null} />
-              <SourceNote url={page?.directorySourceUrl ?? null} kind="page" />
-            </section>
+            <Container as="section" size="wide" aria-labelledby="directory" className="flex flex-col gap-8">
+              <HomeSectionHeader
+                id="directory"
+                locale={locale}
+                eyebrow={t("eyebrows.directory")}
+                title={t("directory")}
+                intro={t("directoryIntro", { code: page?.areaCode ?? "" })}
+              />
+              <div className="flex flex-col gap-4">
+                <PhoneDirectory entries={entries} areaCode={page?.areaCode ?? null} />
+                <SourceNote url={page?.directorySourceUrl ?? null} kind="page" />
+              </div>
+            </Container>
           ) : null}
 
-          <section aria-labelledby="message" className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-            <div>
-              <SectionTitle id="message">{t("sendMessage")}</SectionTitle>
-              <p className="max-w-prose text-body text-fg-muted" lang={lang}>
-                {page?.formIntro ?? t("formIntro")}
-              </p>
+          <Container as="section" size="wide" aria-labelledby="message" className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-14">
+            {/* Beside the form from 1024px: kept at the top of its column while the form scrolls past. */}
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <HomeSectionHeader id="message" locale={locale} eyebrow={t("eyebrows.message")} title={t("sendMessage")} intro={page?.formIntro ?? t("formIntro")} introLang={lang} />
             </div>
-            <div className="rounded-2xl border border-line bg-surface p-5 shadow-xs sm:p-8">
+            <div className="rounded-3xl border border-line bg-surface p-5 shadow-xs sm:p-8">
               <ContactForm />
             </div>
-          </section>
-        </Container>
-      </>
+          </Container>
+        </div>
+      </div>
     </ClientMessages>
   );
 }
 
-function ContactRow({ icon, label, children }: { icon: ReactNode; label: ReactNode; children: ReactNode }) {
+/** A typed contact card in the style of the Campus Life link cards: an icon for the kind, the label, then the value. */
+function ContactCard({ icon: Icon, label, children }: { icon: LucideIcon; label: ReactNode; children: ReactNode }) {
   return (
-    <li className="flex items-start gap-3 rounded-xl border border-line bg-surface p-4">
-      <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-text">
-        {icon}
-      </span>
-      <div className="min-w-0">
-        <p className="text-caption text-fg-subtle">{label}</p>
-        <div className="text-body-sm font-semibold text-fg">{children}</div>
+    <li className="w-full sm:w-[calc((100%-0.75rem)/2)] lg:w-full">
+      <div className="flex h-full items-start gap-4 rounded-2xl border border-line bg-surface p-5 shadow-xs">
+        <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-fg">
+          <Icon className="size-5" />
+        </span>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <p className="text-body-sm text-fg-subtle">{label}</p>
+          <div className="text-body">{children}</div>
+        </div>
       </div>
     </li>
   );

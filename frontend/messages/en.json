@@ -746,6 +746,13 @@
     }
   },
   "contact": {
+    "eyebrow": "Get in touch",
+    "eyebrows": {
+      "reach": "Visit or call",
+      "offices": "Key offices",
+      "directory": "Every number",
+      "message": "Write to us"
+    },
     "title": "Contact us",
     "intro": "Phone numbers, emails, the map and a contact form.",
     "onThisPage": "On this page",

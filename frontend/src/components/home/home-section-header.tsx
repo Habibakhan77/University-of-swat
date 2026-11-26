@@ -9,6 +9,8 @@ interface HomeSectionHeaderProps {
   eyebrow: string;
   title: string;
   intro?: string | null;
+  /** lang of the intro when it is not in the page language (e.g. an English fallback from Strapi). */
+  introLang?: string;
   /** Faint decorative art between the text and the action (shown from 1024px). */
   art?: ReactNode;
   action?: ReactNode;
@@ -20,7 +22,7 @@ interface HomeSectionHeaderProps {
  * Header of the redesigned homepage sections: gold rule + eyebrow, a Merriweather heading (English only;
  * Urdu stays in Nastaliq), an optional intro, faint art in the middle and an action at the end.
  */
-export function HomeSectionHeader({ id, locale, eyebrow, title, intro, art, action, size = "lg" }: HomeSectionHeaderProps) {
+export function HomeSectionHeader({ id, locale, eyebrow, title, intro, introLang, art, action, size = "lg" }: HomeSectionHeaderProps) {
   const serif = locale === "en" ? displaySerif.className : undefined;
   const md = size === "md";
   return (
@@ -33,7 +35,7 @@ export function HomeSectionHeader({ id, locale, eyebrow, title, intro, art, acti
         <h2 id={id} className={cn(md ? "text-heading-xl sm:text-[2rem] sm:leading-tight" : "text-display-lg", "text-balance text-forest-900 dark:text-sand-50", serif)}>
           {title}
         </h2>
-        {intro ? <p className={cn("text-pretty text-fg-muted", md ? "text-body" : "text-body-lg")}>{intro}</p> : null}
+        {intro ? <p lang={introLang} className={cn("text-pretty text-fg-muted", md ? "text-body" : "text-body-lg")}>{intro}</p> : null}
       </div>
       {art ? <div className="mx-auto hidden min-w-0 shrink items-end gap-6 lg:flex">{art}</div> : null}
       {action ? <div className="shrink-0 lg:ms-auto">{action}</div> : null}
