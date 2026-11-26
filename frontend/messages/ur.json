@@ -734,6 +734,15 @@
       "news": "خبر",
       "page": "اس ویب سائٹ کا صفحہ",
       "website": "ویب سائٹ"
+    },
+    "administrationEyebrow": "انتظامیہ",
+    "exploreOffices": "دفتر تلاش کیجیے",
+    "officeEyebrows": {
+      "explore": "ڈائریکٹری",
+      "about": "ہمارا کام",
+      "staff": "ٹیم",
+      "documents": "وسائل",
+      "related": "مزید دیکھیے"
     }
   },
   "contact": {

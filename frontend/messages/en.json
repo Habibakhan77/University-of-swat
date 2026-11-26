@@ -734,6 +734,15 @@
       "news": "News story",
       "page": "Page on this site",
       "website": "Website"
+    },
+    "administrationEyebrow": "Administration",
+    "exploreOffices": "Find an office",
+    "officeEyebrows": {
+      "explore": "Directory",
+      "about": "What we do",
+      "staff": "The team",
+      "documents": "Resources",
+      "related": "Keep exploring"
     }
   },
   "contact": {

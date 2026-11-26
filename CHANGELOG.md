@@ -1493,3 +1493,24 @@ consistency). Content, data and colours unchanged.
 - Checked on a production build at 1440, 1024 and 375 px, English and Urdu, light and dark: no overflow, no
   console or network errors, axe (WCAG 2.1 AA) zero violations on all 28 page/language/theme combinations
 - Removed the stray `home-restore-full-1440.png` screenshot from the repo root (it was never committed)
+
+## Administration in the Campus Life design language
+
+- /administration and all 23 office pages now use the shared `PageHero`: gold "Administration" eyebrow, serif
+  title with the gold swoosh, the office's one-line summary, and green icon artwork by kind of office (offices
+  have no photos of their own). The kind (Office, Directorate, Centre, Student services) moved from the eyebrow
+  to a chip in the hero, so it is still shown
+- Section headers (gold rule + eyebrow + serif heading): "What we do / About the office", "The team / Staff",
+  "Resources / Documents and links", "Keep exploring / Other …", and "Directory / Find an office" over the
+  searchable list on the index. Standard section gaps; the source note sits close under the last section
+- Sidebar head of office reuses Campus Life's `HeadProfile` (96 px round photo, thin gold ring), without the
+  link back to the office the reader is already on. The old large-portrait `HeadCard` and `StaffList` are removed
+- Staff use `StaffGrid` and documents use `FacilityLinks` (typed cards: PDF document, news story, page, website,
+  with the site they open). Nothing was dropped: overview, vision, mission, responsibilities, website button,
+  contacts, "On this page" links and the schema.org data are all still there
+- `StaffGrid` now sizes itself by its column (container queries) rather than the viewport: beside the sidebar
+  at 1024 px it shows 2 cards per row instead of 3 cramped ones, which also improves Campus Life pages
+- Index groups use centred rows, so a short last row never leaves one card alone at the start; "Other offices"
+  centres an odd last card
+- Checked on a production build at 1440, 1024 and 375 px, English and Urdu, light and dark: no overflow, no
+  console errors, axe (WCAG 2.1 AA) zero violations on 48 page/width/language/theme combinations

@@ -1,18 +1,16 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { ArrowRight, ExternalLink, FileText, Mail, Phone, UserRound } from "lucide-react";
+import { ArrowRight, ExternalLink, FileText, UserRound } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { iconFor } from "@/lib/icons";
 import { langAttr, scriptLang } from "@/lib/strapi/academics-model";
 import type { Locale } from "@/i18n/routing";
-import type { Office, StaffMember } from "@/lib/strapi/organisation-model";
+import type { Office } from "@/lib/strapi/organisation-model";
 import type { NavLink } from "@/lib/strapi/site";
 import { SmartLink } from "@/components/layout/smart-link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
-
-const tel = (n: string) => `tel:${n.replace(/[^\d+]/g, "")}`;
 
 export function OfficeTypeBadge({ type, className }: { type: Office["type"]; className?: string }) {
   const t = useTranslations("organisation");
@@ -67,79 +65,6 @@ export function OfficeCard({ office, headingLevel: Heading = "h3", showType = tr
         </span>
       </div>
     </article>
-  );
-}
-
-/** The head of an office: portrait, name, designation and direct contacts, as the office publishes them. */
-export function HeadCard({ office, title }: { office: Office; title: string }) {
-  const locale = useLocale();
-  if (!office.headName) return null;
-  const phone = office.contact?.phone;
-  return (
-    <section aria-labelledby="office-head" className="overflow-hidden rounded-2xl border border-line bg-surface">
-      <h2 id="office-head" className="sr-only">
-        {title}
-      </h2>
-      <div className="flex gap-4 p-5 sm:flex-col sm:p-0">
-        <Portrait office={office} sizes="(min-width: 1024px) 336px, (min-width: 640px) 50vw, 96px" className="size-24 shrink-0 rounded-xl sm:aspect-4/5 sm:size-auto sm:w-full sm:rounded-none" />
-        <div className="flex min-w-0 flex-col gap-1 sm:p-6">
-          <p className="text-overline text-primary-text uppercase">{title}</p>
-          <p className="text-heading-md text-pretty text-fg" lang={langAttr(office.headName, locale)}>
-            {office.headName.value}
-          </p>
-          {office.headDesignation ? (
-            <p className="text-body-sm text-fg-muted" lang={langAttr(office.headDesignation, locale)}>
-              {office.headDesignation.value}
-            </p>
-          ) : null}
-          <ul className="mt-2 flex flex-col gap-1.5 text-body-sm">
-            {office.headEmail ? (
-              <li>
-                <a href={`mailto:${office.headEmail}`} dir="ltr" className="inline-flex items-center gap-2 break-all text-primary-text hover:underline">
-                  <Mail aria-hidden className="size-4 shrink-0" />
-                  {office.headEmail}
-                </a>
-              </li>
-            ) : null}
-            {phone ? (
-              <li>
-                <a href={tel(phone)} dir="ltr" className="inline-flex items-center gap-2 text-primary-text hover:underline">
-                  <Phone aria-hidden className="size-4 shrink-0" />
-                  {phone}
-                </a>
-              </li>
-            ) : null}
-          </ul>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Staff named on the office's page. Names and designations are shown as published (English). */
-export function StaffList({ staff }: { staff: StaffMember[] }) {
-  const locale = useLocale();
-  const lang = locale === "en" ? undefined : "en";
-  if (!staff.length) return null;
-  return (
-    <ul className="grid gap-3 sm:grid-cols-2">
-      {staff.map((s) => (
-        <li key={`${s.name}-${s.designation ?? ""}`} className="flex items-start gap-3 rounded-xl border border-line bg-surface p-4">
-          <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary-text">
-            <UserRound className="size-5" />
-          </span>
-          <div className="min-w-0" lang={lang} dir={lang ? "ltr" : undefined}>
-            <p className="text-body-sm font-semibold text-fg">{s.name}</p>
-            {s.designation ? <p className="text-body-sm text-fg-muted">{s.designation}</p> : null}
-            {s.email ? (
-              <a href={`mailto:${s.email}`} className="mt-0.5 inline-block text-body-sm break-all text-primary-text hover:underline">
-                {s.email}
-              </a>
-            ) : null}
-          </div>
-        </li>
-      ))}
-    </ul>
   );
 }
 

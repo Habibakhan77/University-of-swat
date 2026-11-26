@@ -5,7 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
 import { administrationHref, getOffices } from "@/lib/strapi/organisation";
-import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import { HeroChip } from "@/components/academics/academic-hero";
+import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
 import { OfficeCard } from "@/components/organisation/parts";
 import { OfficeExplorer, OfficeExplorerFromUrl, type ExplorerOffice } from "@/components/organisation/office-explorer";
 import { Container } from "@/components/ui/container";
@@ -35,24 +38,24 @@ export default async function AdministrationPage() {
 
   return (
     <ClientMessages namespaces={["organisation"]}>
-      <>
-        <AcademicHero
-          compact
-          id="administration"
-          accent="green"
-          icon={Landmark}
+      <div style={accentStyle("green")}>
+        <PageHero
+          locale={locale}
+          art={<FacultyArt id="administration" accent="green" icon={Landmark} />}
           breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("administrationTitle") }]}
-          eyebrow={t("eyebrow")}
+          eyebrow={t("administrationEyebrow")}
           title={t("administrationTitle")}
-          summary={t("administrationIntro")}
+          intro={t("administrationIntro")}
           meta={offices.length ? <HeroChip icon={Building2}>{t("officesCount", { count: offices.length })}</HeroChip> : null}
         />
-        <Container size="wide" className="pt-6 pb-section sm:pt-8">
+        {/* Small bottom padding: with the footer's apply card above it, about one section gap. */}
+        <Container as="section" size="wide" aria-labelledby="explore" className="flex flex-col gap-8 pt-section-sm pb-6 sm:pb-8">
+          <HomeSectionHeader id="explore" locale={locale} eyebrow={t("officeEyebrows.explore")} title={t("exploreOffices")} />
           <Suspense fallback={<OfficeExplorer offices={items} />}>
             <OfficeExplorerFromUrl offices={items} />
           </Suspense>
         </Container>
-      </>
+      </div>
     </ClientMessages>
   );
 }

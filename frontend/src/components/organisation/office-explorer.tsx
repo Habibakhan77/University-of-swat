@@ -67,14 +67,18 @@ export function OfficeExplorer({ offices, initial }: { offices: ExplorerOffice[]
 
       {groups.length ? (
         groups.map(({ type, items }) => (
-          <section key={type} aria-labelledby={`group-${type}`} className="flex flex-col gap-4">
-            <h2 id={`group-${type}`} className="text-heading-lg text-fg">
-              <span aria-hidden className="mb-3 block h-1 w-10 rounded-full bg-accent" />
+          <section key={type} aria-labelledby={`group-${type}`} className="flex flex-col gap-5">
+            <h3 id={`group-${type}`} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-heading-lg text-forest-900 dark:text-sand-50">
+              <span aria-hidden className="h-0.5 w-8 self-center rounded-full bg-gold-400" />
               {t(`typesPlural.${type}`)}
-            </h2>
-            <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <span className="text-body-sm font-normal text-fg-muted">({items.length})</span>
+            </h3>
+            {/* Centred rows, so a short last row never leaves a card alone at the start. */}
+            <ul className="flex flex-wrap justify-center gap-4">
               {items.map((o) => (
-                <li key={o.slug}>{o.card}</li>
+                <li key={o.slug} className="w-full md:w-[calc((100%-1rem)/2)] xl:w-[calc((100%-2rem)/3)]">
+                  {o.card}
+                </li>
               ))}
             </ul>
           </section>

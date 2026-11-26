@@ -17,10 +17,10 @@ const CENTRE_ODD_LAST =
   "sm:[&>li:last-child:nth-child(odd):not(:first-child)]:col-span-2 sm:[&>li:last-child:nth-child(odd):not(:first-child)]:mx-auto sm:[&>li:last-child:nth-child(odd):not(:first-child)]:w-[calc(50%-0.5rem)]";
 
 /**
- * The head of the office behind a Campus Life page, for the sidebar: a small round photo with a thin gold
- * ring, name, designation, email and phone, and a link to the office's own page.
+ * The head of an office, for the sidebar of Campus Life and office pages: a small round photo with a thin
+ * gold ring, name, designation, email and phone, and (unless already on it) a link to the office's own page.
  */
-export function HeadProfile({ office, title }: { office: Office; title: string }) {
+export function HeadProfile({ office, title, showOfficeLink = true }: { office: Office; title: string; showOfficeLink?: boolean }) {
   const locale = useLocale();
   const t = useTranslations("organisation");
   const phone = office.contact?.phone;
@@ -75,14 +75,16 @@ export function HeadProfile({ office, title }: { office: Office; title: string }
       ) : (
         <p className="text-body-sm text-fg-subtle">{t("headNotPublished")}</p>
       )}
-      <Link
-        href={office.href}
-        lang={langAttr(office.name, locale)}
-        className="mt-1 inline-flex w-full items-center justify-center gap-1.5 border-t border-line pt-4 text-body-sm font-semibold text-primary-text hover:underline"
-      >
-        {office.name.value}
-        <ArrowRight aria-hidden className="size-4 shrink-0 rtl:-scale-x-100" />
-      </Link>
+      {showOfficeLink ? (
+        <Link
+          href={office.href}
+          lang={langAttr(office.name, locale)}
+          className="mt-1 inline-flex w-full items-center justify-center gap-1.5 border-t border-line pt-4 text-body-sm font-semibold text-primary-text hover:underline"
+        >
+          {office.name.value}
+          <ArrowRight aria-hidden className="size-4 shrink-0 rtl:-scale-x-100" />
+        </Link>
+      ) : null}
     </section>
   );
 }
@@ -101,36 +103,39 @@ function EmailText({ email }: { email: string }) {
 }
 
 /**
- * Staff named on the office's page as an even grid (3 in a row from 768px), each with an icon avatar.
+ * Staff named on the office's page as an even grid (2 in a row in a 512px column, 3 from 768px), each with an icon avatar.
  * Centred rows, so a short last row never leaves a card alone at the start. Names are shown as published.
  */
 export function StaffGrid({ staff }: { staff: StaffMember[] }) {
   const locale = useLocale();
   const lang = locale === "en" ? undefined : "en";
   if (!staff.length) return null;
+  // Sized by the column it sits in, not the viewport: beside a sidebar at 1024px, three cards would be cramped.
   return (
-    <ul className="flex flex-wrap justify-center gap-4">
-      {staff.map((s) => (
-        <li key={`${s.name}-${s.designation ?? ""}`} className="w-full sm:w-[calc((100%-1rem)/2)] md:w-[calc((100%-2rem)/3)]">
-          {/* A compact row on phones; a centred card from 640px. */}
-          <div className="flex h-full items-center gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs sm:flex-col sm:gap-3 sm:p-5 sm:text-center">
-            <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-soft-fg ring-1 ring-gold-400/40">
-              <UserRound className="size-6" />
-            </span>
-            {/* Names are published in English: on the Urdu page the text reads left to right (globals.css). */}
-            <div className="flex min-w-0 flex-1 flex-col gap-0.5 rtl:text-end sm:items-center sm:rtl:text-center" lang={lang}>
-              <p className="text-body font-semibold text-pretty text-fg">{s.name}</p>
-              {s.designation ? <p className="text-body-sm text-pretty text-fg-muted">{s.designation}</p> : null}
-              {s.email ? (
-                <a href={`mailto:${s.email}`} className="mt-auto pt-1 text-body-sm wrap-anywhere text-primary-text hover:underline">
-                  <EmailText email={s.email} />
-                </a>
-              ) : null}
+    <div className="@container">
+      <ul className="flex flex-wrap justify-center gap-4">
+        {staff.map((s) => (
+          <li key={`${s.name}-${s.designation ?? ""}`} className="w-full @lg:w-[calc((100%-1rem)/2)] @3xl:w-[calc((100%-2rem)/3)]">
+            {/* A compact row in a narrow column; a centred card from 512px. */}
+            <div className="flex h-full items-center gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs @lg:flex-col @lg:gap-3 @lg:p-5 @lg:text-center">
+              <span aria-hidden className="flex size-12 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-soft-fg ring-1 ring-gold-400/40">
+                <UserRound className="size-6" />
+              </span>
+              {/* Names are published in English: on the Urdu page the text reads left to right (globals.css). */}
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5 rtl:text-end @lg:items-center @lg:rtl:text-center" lang={lang}>
+                <p className="text-body font-semibold text-pretty text-fg">{s.name}</p>
+                {s.designation ? <p className="text-body-sm text-pretty text-fg-muted">{s.designation}</p> : null}
+                {s.email ? (
+                  <a href={`mailto:${s.email}`} className="mt-auto pt-1 text-body-sm wrap-anywhere text-primary-text hover:underline">
+                    <EmailText email={s.email} />
+                  </a>
+                ) : null}
+              </div>
             </div>
-          </div>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
