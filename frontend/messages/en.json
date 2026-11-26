@@ -595,7 +595,11 @@
     "viewOfficialPage": "View the official page",
     "downloadsEyebrow": "Official documents",
     "browseDownloads": "Browse the documents",
+    "tendersEyebrow": "Procurement",
+    "jobsEyebrow": "Careers",
     "eyebrows": {
+      "list": "Every notice",
+      "documents": "Official files",
       "downloads": "Find a file",
       "related": "Keep reading"
     },

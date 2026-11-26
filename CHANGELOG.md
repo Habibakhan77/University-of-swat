@@ -1560,3 +1560,22 @@ consistency). Content, data and colours unchanged.
   1024px; an odd last card is centred at half width, so no card is left alone
 - On the Urdu page, English titles and descriptions align to the end of the card like the Urdu metadata
 - Search, the category filter, `?q=` / `?category=` deep links and "Show more" are unchanged
+
+## Tenders and Jobs in the Campus Life design language
+
+- Lists: shared PageHero with a gold eyebrow (Procurement / Careers), the maroon (tenders) or gold (jobs)
+  pattern artwork and the item count; an "Every notice" eyebrow header over the status filter; each notice is a
+  typed card (kind icon tile, live status and job type, title, summary, reference / dates / documents) in an
+  even 2-column grid from 1024px with an odd last card centred. Status filter, pagination and live
+  open/closed badges are unchanged
+- Detail pages: compact PageHero like news (title across the band, summary, status badge, job type and closing
+  date chips), the closed note, description and documents, then a gold-eyebrow details card and share card in
+  a sticky sidebar. Standard section gaps and the short bottom padding before the footer's apply card
+- `Documents` (also used by news detail) gets an "Official files" eyebrow header; `FileRow` becomes a typed
+  card (accent icon tile, larger title)
+- Urdu pages: English titles and summaries in cards align right like the Urdu metadata (`rtl:text-right`,
+  which is also right for Urdu text; the earlier `rtl:text-end` on Downloads would have pushed an Urdu title
+  left). Contact: the sticky "Send a message" header now sits below the sticky section nav
+- QA on a production build (:3100): /tenders, /jobs and a tender and a job detail at 1440, 1024 and 375px,
+  English and Urdu, light and dark, all loaded with no horizontal overflow and no console errors; axe (WCAG 2.1
+  AA) 0 violations across 48 runs of Contact, Downloads, Tenders, Jobs and both detail pages

@@ -162,8 +162,8 @@ export default async function ContactPage() {
           ) : null}
 
           <Container as="section" size="wide" aria-labelledby="message" className="grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-14">
-            {/* Beside the form from 1024px: kept at the top of its column while the form scrolls past. */}
-            <div className="lg:sticky lg:top-28 lg:self-start">
+            {/* Beside the form from 1024px: kept at the top of its column, below the sticky section nav, while the form scrolls past. */}
+            <div className="lg:sticky lg:top-40 lg:self-start">
               <HomeSectionHeader id="message" locale={locale} eyebrow={t("eyebrows.message")} title={t("sendMessage")} intro={page?.formIntro ?? t("formIntro")} introLang={lang} />
             </div>
             <div className="rounded-3xl border border-line bg-surface p-5 shadow-xs sm:p-8">

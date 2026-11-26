@@ -156,13 +156,13 @@ function DownloadRow({ item, locale }: { item: DownloadItem; locale: Locale }) {
             target="_blank"
             rel="noopener"
             lang={lang}
-            className="text-body font-semibold text-pretty text-fg outline-none group-hover/file:text-primary-text rtl:text-end after:absolute after:inset-0 after:rounded-2xl after:content-['']"
+            className="text-body font-semibold text-pretty text-fg outline-none group-hover/file:text-primary-text rtl:text-right after:absolute after:inset-0 after:rounded-2xl after:content-['']"
           >
             {item.title.value}
             <span className="sr-only"> {tCommon("opensInNewTab")}</span>
           </a>
           {item.description ? (
-            <p lang={langAttr(item.description, locale)} className="line-clamp-2 text-body-sm text-fg-muted rtl:text-end">
+            <p lang={langAttr(item.description, locale)} className="line-clamp-2 text-body-sm text-fg-muted rtl:text-right">
               {item.description.value}
             </p>
           ) : null}

@@ -1,10 +1,11 @@
 import { connection } from "next/server";
 import type { ReactNode } from "react";
-import { ArrowRight, Building2, CalendarClock, CalendarDays, FileText, Gavel, Hash, Tag, Users } from "lucide-react";
+import { ArrowRight, Briefcase, Building2, CalendarClock, CalendarDays, FileStack, FileText, Gavel, Hash, Tag, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { cn } from "@/lib/cn";
 import { langAttr } from "@/lib/strapi/academics-model";
 import { formatDateTime, formatDay, jobsHref, noticeStatus, tendersHref, type Notice, type NoticeKind } from "@/lib/strapi/notices-model";
 import { EmptyState } from "@/components/academics/program-explorer";
@@ -16,6 +17,10 @@ import { LiveStatus } from "./live-status";
 export const NOTICE_PAGE_SIZE = 10;
 export const STATUS_FILTERS = ["open", "closed"] as const;
 export type StatusFilter = (typeof STATUS_FILTERS)[number];
+
+/** An odd last card spans the row and centres at half width, so the 2-column grid never ends on an orphan. */
+const CENTRE_ODD_LAST =
+  "lg:[&>li:last-child:nth-child(odd):not(:first-child)]:col-span-2 lg:[&>li:last-child:nth-child(odd):not(:first-child)]:mx-auto lg:[&>li:last-child:nth-child(odd):not(:first-child)]:w-[calc(50%-0.5rem)]";
 
 export const listHref = (kind: NoticeKind) => (kind === "tender" ? tendersHref : jobsHref);
 
@@ -93,42 +98,52 @@ export function noticeFacts(notice: Notice, locale: Locale, t: Awaited<ReturnTyp
   return facts;
 }
 
-/** One tender or job in a list: status, title, key dates and how many official files it has. */
+/**
+ * One tender or job as a typed card: an icon tile for the kind, status and job type, title, summary, then key
+ * dates and how many official files it has.
+ */
 async function NoticeRow({ notice, locale }: { notice: Notice; locale: Locale }) {
   const t = await getTranslations({ locale, namespace: "notices" });
   const facts = noticeFacts(notice, locale, t).filter((f) => ["ref", "published", "deadline"].includes(f.key));
+  const KindIcon = notice.kind === "tender" ? FileStack : Briefcase;
   return (
-    <li className="group relative flex flex-col gap-3 rounded-2xl border border-line bg-surface p-5 transition-colors hover:border-line-strong hover:bg-canvas-subtle has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring sm:p-6">
-      <div className="flex flex-wrap items-center gap-2">
-        <LiveStatus state={notice.state} deadline={notice.deadline} />
-        {notice.jobType ? <span className="text-caption font-semibold text-fg-subtle uppercase">{t(`jobTypes.${notice.jobType}`)}</span> : null}
-      </div>
-      <h2 lang={langAttr(notice.title, locale)} className="text-heading-sm text-pretty text-fg">
-        <Link href={notice.href} className="outline-none after:absolute after:inset-0 after:content-[''] group-hover:text-primary-text">
-          {notice.title.value}
-        </Link>
-      </h2>
-      {notice.summary ? (
-        <p lang={langAttr(notice.summary, locale)} className="line-clamp-2 max-w-prose text-body-sm text-fg-muted">
-          {notice.summary.value}
-        </p>
-      ) : null}
-      <dl className="flex flex-wrap gap-x-6 gap-y-2 text-caption text-fg-muted">
-        {facts.map(({ key, icon: Icon, label, value }) => (
-          <div key={key} className="flex min-w-0 items-center gap-1.5">
-            <Icon aria-hidden className="size-3.5 shrink-0 text-fg-subtle" />
-            <dt className="sr-only">{label}</dt>
-            <dd className="min-w-0 break-words">{value}</dd>
-          </div>
-        ))}
-        {notice.documents.length ? (
-          <div className="flex items-center gap-1.5">
-            <FileText aria-hidden className="size-3.5 text-fg-subtle" />
-            <dt className="sr-only">{t("documents")}</dt>
-            <dd>{t("documentsCount", { count: notice.documents.length })}</dd>
-          </div>
+    <li className="group relative flex h-full items-start gap-4 rounded-2xl border border-line bg-surface p-5 shadow-xs transition-[border-color,box-shadow] hover:border-primary-text/40 hover:shadow-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring sm:p-6">
+      <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-fg">
+        <KindIcon className="size-5" />
+      </span>
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        {/* Room at the end for the arrow; the row keeps its height before the live badge appears. */}
+        <div className="flex min-h-6 flex-wrap items-center gap-2 pe-7">
+          <LiveStatus state={notice.state} deadline={notice.deadline} />
+          {notice.jobType ? <span className="text-caption font-semibold text-fg-subtle uppercase">{t(`jobTypes.${notice.jobType}`)}</span> : null}
+        </div>
+        <h3 lang={langAttr(notice.title, locale)} className="text-heading-sm text-pretty text-fg rtl:text-right">
+          <Link href={notice.href} className="outline-none group-hover:text-primary-text after:absolute after:inset-0 after:rounded-2xl after:content-['']">
+            {notice.title.value}
+          </Link>
+        </h3>
+        {notice.summary ? (
+          <p lang={langAttr(notice.summary, locale)} className="line-clamp-2 text-body-sm text-fg-muted rtl:text-right">
+            {notice.summary.value}
+          </p>
         ) : null}
-      </dl>
+        <dl className="mt-auto flex flex-wrap gap-x-5 gap-y-1.5 pt-1 text-body-sm text-fg-muted">
+          {facts.map(({ key, icon: Icon, label, value }) => (
+            <div key={key} className="flex min-w-0 items-center gap-1.5">
+              <Icon aria-hidden className="size-4 shrink-0 text-fg-subtle" />
+              <dt className="sr-only">{label}</dt>
+              <dd className="min-w-0 break-words">{value}</dd>
+            </div>
+          ))}
+          {notice.documents.length ? (
+            <div className="flex items-center gap-1.5">
+              <FileText aria-hidden className="size-4 text-fg-subtle" />
+              <dt className="sr-only">{t("documents")}</dt>
+              <dd>{t("documentsCount", { count: notice.documents.length })}</dd>
+            </div>
+          ) : null}
+        </dl>
+      </div>
       <ArrowRight
         aria-hidden
         className="absolute end-5 top-5 size-5 text-fg-subtle transition-transform group-hover:translate-x-0.5 group-hover:text-primary-text rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5 sm:end-6 sm:top-6"
@@ -189,7 +204,7 @@ export async function NoticeList({
       <FilterLinks label={t("statusFilter")} options={options} />
       <OfficialLanguageNote show={shown.some((n) => n.title.lang !== locale)} className="-mb-4" />
       {shown.length ? (
-        <ul className="grid gap-4">
+        <ul className={cn("grid gap-4 lg:grid-cols-2", CENTRE_ODD_LAST)}>
           {shown.map((n) => (
             <NoticeRow key={n.id} notice={n} locale={locale} />
           ))}

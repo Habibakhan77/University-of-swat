@@ -2,7 +2,8 @@ import Image from "next/image";
 import { CalendarDays, Download, ExternalLink, FileSpreadsheet, FileText, Megaphone, Newspaper } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/cn";
 import type { FacultyAccent } from "@/lib/strapi/academics-model";
@@ -11,6 +12,7 @@ import { formatSize, type FileItem, type NoticeState, type PostCategory } from "
 import { Badge } from "@/components/ui/badge";
 import { ImageCredit } from "@/components/ui/image-credit";
 import { FacultyArt } from "@/components/academics/faculty-art";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
 
 /** Colour and icon per post category, used for the drawn cover of posts without a photo. */
 export const CATEGORY_STYLE: Record<
@@ -136,8 +138,8 @@ export function FileRow({ file, lang, meta, as: Tag = "li" }: { file: FileItem; 
   const tCommon = useTranslations("common");
   const size = formatSize(file.sizeKb);
   return (
-    <Tag className="group/file relative flex items-center gap-4 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-line-strong hover:bg-canvas-subtle has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring">
-      <span aria-hidden className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
+    <Tag className="group/file relative flex items-center gap-4 rounded-2xl border border-line bg-surface p-5 shadow-xs transition-[border-color,box-shadow] hover:border-primary-text/40 hover:shadow-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring">
+      <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-fg">
         <FormatIcon format={file.format} className="size-5" />
       </span>
       <div className="min-w-0 flex-1">
@@ -146,12 +148,12 @@ export function FileRow({ file, lang, meta, as: Tag = "li" }: { file: FileItem; 
           target="_blank"
           rel="noopener"
           lang={lang}
-          className="line-clamp-2 text-body-sm font-semibold text-fg outline-none after:absolute after:inset-0 after:content-['']"
+          className="line-clamp-2 text-body font-semibold text-fg outline-none group-hover/file:text-primary-text rtl:text-right after:absolute after:inset-0 after:rounded-2xl after:content-['']"
         >
           {file.title}
           <span className="sr-only"> {tCommon("opensInNewTab")}</span>
         </a>
-        <p className="mt-0.5 flex items-center gap-2 text-caption text-fg-subtle">
+        <p className="mt-0.5 flex items-center gap-2 text-body-sm text-fg-subtle">
           {meta ?? (
             <>
               <span lang="en" dir="ltr">
@@ -179,16 +181,21 @@ export function FileRow({ file, lang, meta, as: Tag = "li" }: { file: FileItem; 
 
 /** Documents: images (posters, advertisements) in full, then the other files as download rows. */
 export function Documents({ files, headingId, lang }: { files: FileItem[]; headingId: string; lang?: string }) {
+  const locale = useLocale() as Locale;
   const t = useTranslations("notices");
   const tCommon = useTranslations("common");
   if (!files.length) return null;
   const images = files.filter((f) => f.image);
   const others = files.filter((f) => !f.image);
   return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-5">
-      <h2 id={headingId} className="text-heading-lg text-fg">
-        {images.length && !others.length ? t("officialNotice") : t("documents")}
-      </h2>
+    <section aria-labelledby={headingId} className="flex flex-col gap-6">
+      <HomeSectionHeader
+        id={headingId}
+        locale={locale}
+        size="md"
+        eyebrow={t("eyebrows.documents")}
+        title={images.length && !others.length ? t("officialNotice") : t("documents")}
+      />
       {images.length ? (
         <div className="flex flex-col gap-6">
           {images.map((f) =>

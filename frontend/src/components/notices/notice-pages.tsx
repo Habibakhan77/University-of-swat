@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Briefcase, ExternalLink, FileStack, Info } from "lucide-react";
+import { ArrowLeft, Briefcase, CalendarClock, ExternalLink, FileStack, Info, Tag } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { routing, type Locale } from "@/i18n/routing";
 import { jsonLd, localePath, pageMetadata, SITE_URL } from "@/lib/seo";
 import { langAttr, OFFLINE_SLUG } from "@/lib/strapi/academics-model";
 import { blocksToText } from "@/lib/strapi/blocks";
-import { getJobs, getTenders, type Notice, type NoticeKind, jobsLoaded, tendersLoaded } from "@/lib/strapi/notices";
-import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import { formatDay, getJobs, getTenders, type Notice, type NoticeKind, jobsLoaded, tendersLoaded } from "@/lib/strapi/notices";
+import { HeroChip } from "@/components/academics/academic-hero";
+import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
 import { EnglishOnlyNote } from "@/components/academics/panels";
-import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ButtonLink, buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
@@ -34,12 +36,14 @@ const copy = (kind: NoticeKind) =>
     ? ({
         title: "tendersTitle",
         intro: "tendersIntro",
+        eyebrow: "tendersEyebrow",
         accent: "maroon",
         icon: FileStack,
       } as const)
     : ({
         title: "jobsTitle",
         intro: "jobsIntro",
+        eyebrow: "jobsEyebrow",
         accent: "gold",
         icon: Briefcase,
       } as const);
@@ -73,24 +77,24 @@ export async function NoticeListPage({
   return (
     <ClientMessages namespaces={["notices"]}>
       <ContentStatusNote locale={locale} loaded={() => (kind === "job" ? jobsLoaded : tendersLoaded)(locale)} />
-      <>
-        <AcademicHero
-          compact
-          id={kind}
-          accent={c.accent}
-          icon={c.icon}
+      <div style={accentStyle(c.accent)}>
+        <PageHero
+          locale={locale}
+          art={<FacultyArt id={kind} accent={c.accent} icon={c.icon} />}
           breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t(c.title) }]}
-          eyebrow={t("eyebrow")}
+          eyebrow={t(c.eyebrow)}
           title={t(c.title)}
-          summary={t(c.intro)}
+          intro={t(c.intro)}
           meta={notices.length ? <HeroChip icon={c.icon}>{t("itemsCount", { count: notices.length })}</HeroChip> : null}
         />
-        <Container size="wide" className="pt-6 pb-section sm:pt-8">
+        {/* Small bottom padding: with the footer's apply card above it, about one section gap. */}
+        <Container as="section" size="wide" aria-labelledby="notices" className="flex flex-col gap-8 pt-section-sm pb-6 sm:pb-8">
+          <HomeSectionHeader id="notices" locale={locale} eyebrow={t("eyebrows.list")} title={kind === "tender" ? t("allTenders") : t("allJobs")} />
           <Suspense fallback={<NoticeList kind={kind} notices={notices} status="" page={1} now={null} locale={locale} />}>
             <NoticeListFromUrl kind={kind} notices={notices} searchParams={searchParams} locale={locale} />
           </Suspense>
         </Container>
-      </>
+      </div>
     </ClientMessages>
   );
 }
@@ -175,34 +179,35 @@ export async function NoticeDetailPage({ kind, params }: { kind: NoticeKind; par
       <ContentStatusNote locale={locale} loaded={() => (kind === "job" ? jobsLoaded : tendersLoaded)(locale)} />
       <>
         <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} />
-        <Container size="wide" className="pt-5 sm:pt-6">
-          <Breadcrumbs
-            items={[{ label: tCommon("home"), href: "/" }, { label: t(c.title), href: base }, { label: notice.title.value }]}
-            siteUrl={SITE_URL}
-            label={tCommon("breadcrumb")}
-            backLabel={tCommon("backTo")}
-          />
-        </Container>
-
-        <Container size="wide" className="grid gap-10 pt-6 pb-section lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
-          <article className="flex min-w-0 flex-col gap-8">
-            <header className="flex max-w-3xl flex-col items-start gap-4">
-              <div className="flex min-h-7 flex-wrap items-center gap-2">
-                <LiveStatus state={notice.state} deadline={notice.deadline} />
-                <span className="text-caption font-semibold text-fg-subtle uppercase">
-                  {notice.jobType ? t(`jobTypes.${notice.jobType}`) : t(c.title)}
-                </span>
-              </div>
-              <h1 lang={langAttr(notice.title, locale)} className="text-heading-xl text-balance text-fg">
-                {notice.title.value}
-              </h1>
-              {notice.summary ? (
-                <p lang={langAttr(notice.summary, locale)} className="text-body-lg text-pretty text-fg-muted">
-                  {notice.summary.value}
-                </p>
+        {/* The title spans the green band (no side art): notice titles are long. */}
+        <PageHero
+          locale={locale}
+          size="compact"
+          art={null}
+          breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t(c.title), href: base }, { label: notice.title.value }]}
+          eyebrow={t(c.title)}
+          title={notice.title.value}
+          titleLang={langAttr(notice.title, locale)}
+          intro={notice.summary?.value}
+          introLang={langAttr(notice.summary, locale)}
+          meta={
+            <>
+              <LiveStatus state={notice.state} deadline={notice.deadline} className="h-8 px-3 shadow-sm" />
+              {notice.jobType ? <HeroChip icon={Tag}>{t(`jobTypes.${notice.jobType}`)}</HeroChip> : null}
+              {notice.deadline ? (
+                <HeroChip icon={CalendarClock}>
+                  {kind === "tender" ? t("closingDate") : t("lastDate")}:{" "}
+                  <time dateTime={notice.deadline}>{formatDay(notice.deadline, locale)}</time>
+                </HeroChip>
               ) : null}
-              <ClosedNote notice={notice} message={t("closedNote", { kind })} />
-            </header>
+            </>
+          }
+        />
+
+        {/* Small bottom padding: with the footer's apply card above it, about one section gap. */}
+        <Container size="wide" className="grid gap-section-sm pt-section-sm pb-6 sm:pb-8 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-14">
+          <article className="flex min-w-0 flex-col gap-8">
+            {notice.state !== "open" ? <ClosedNote message={t("closedNote", { kind })} /> : null}
 
             {description ? (
               <div className="flex flex-col gap-2">
@@ -226,9 +231,10 @@ export async function NoticeDetailPage({ kind, params }: { kind: NoticeKind; par
             </div>
           </article>
 
-          <aside className="flex flex-col gap-6 lg:sticky lg:top-28 lg:self-start">
-            <section aria-labelledby="notice-details" className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-5 sm:p-6">
-              <h2 id="notice-details" className="text-overline text-fg-subtle uppercase">
+          <aside className="flex flex-col gap-5 lg:sticky lg:top-28 lg:self-start">
+            <section aria-labelledby="notice-details" className="flex flex-col gap-4 rounded-3xl border border-line/70 bg-surface p-6 shadow-xs">
+              <h2 id="notice-details" className="inline-flex items-center gap-2 text-overline text-gold-700 uppercase dark:text-gold-200">
+                <span aria-hidden className="h-0.5 w-6 rounded-full bg-gold-400" />
                 {t("details")}
               </h2>
               <dl className="flex flex-col gap-4">
@@ -252,7 +258,7 @@ export async function NoticeDetailPage({ kind, params }: { kind: NoticeKind; par
                 </a>
               ) : null}
             </section>
-            <ShareButtons url={url} title={notice.title.value} className="rounded-2xl border border-line bg-surface p-5 sm:p-6" />
+            <ShareButtons url={url} title={notice.title.value} className="rounded-3xl border border-line/70 bg-surface p-6 shadow-xs" />
           </aside>
         </Container>
       </>
@@ -261,10 +267,9 @@ export async function NoticeDetailPage({ kind, params }: { kind: NoticeKind; par
 }
 
 /** Shown when an editor has closed or cancelled the notice (deadline-based closing is shown by the badge). */
-function ClosedNote({ notice, message }: { notice: Notice; message: string }) {
-  if (notice.state === "open") return null;
+function ClosedNote({ message }: { message: string }) {
   return (
-    <p className="inline-flex items-start gap-2 rounded-lg bg-canvas-subtle px-3 py-2 text-body-sm text-fg-muted">
+    <p className="inline-flex items-start gap-2 self-start rounded-xl bg-canvas-subtle px-4 py-3 text-body-sm text-fg-muted">
       <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
       {message}
     </p>

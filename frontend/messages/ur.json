@@ -595,7 +595,11 @@
     "viewOfficialPage": "سرکاری صفحہ دیکھیں",
     "downloadsEyebrow": "سرکاری دستاویزات",
     "browseDownloads": "دستاویزات دیکھیں",
+    "tendersEyebrow": "سرکاری خریداری",
+    "jobsEyebrow": "روزگار کے مواقع",
     "eyebrows": {
+      "list": "تمام نوٹس",
+      "documents": "سرکاری فائلیں",
       "downloads": "فائل تلاش کریں",
       "related": "مزید پڑھیں"
     },
