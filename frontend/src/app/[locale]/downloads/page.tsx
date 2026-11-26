@@ -5,7 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
 import { downloadsHref, getDownloads, downloadsLoaded } from "@/lib/strapi/notices";
-import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import { HeroChip } from "@/components/academics/academic-hero";
+import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
 import { DownloadsExplorer, DownloadsExplorerFromUrl } from "@/components/notices/downloads-explorer";
 import { Container } from "@/components/ui/container";
 import { ClientMessages } from "@/i18n/client-messages";
@@ -35,24 +38,24 @@ export default async function DownloadsPage() {
   return (
     <ClientMessages namespaces={["notices"]}>
       <ContentStatusNote locale={locale} loaded={() => downloadsLoaded(locale)} />
-      <>
-        <AcademicHero
-          compact
-          id="downloads"
-          accent="green"
-          icon={FolderDown}
+      <div style={accentStyle("green")}>
+        <PageHero
+          locale={locale}
+          art={<FacultyArt id="downloads" accent="green" icon={FolderDown} />}
           breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("downloadsTitle") }]}
-          eyebrow={t("eyebrow")}
+          eyebrow={t("downloadsEyebrow")}
           title={t("downloadsTitle")}
-          summary={t("downloadsIntro")}
+          intro={t("downloadsIntro")}
           meta={listed.length ? <HeroChip icon={FolderDown}>{t("resultsCount", { count: listed.length })}</HeroChip> : null}
         />
-        <Container size="wide" className="pt-6 pb-section sm:pt-8">
+        {/* Small bottom padding: with the footer's apply card above it, about one section gap. */}
+        <Container as="section" size="wide" aria-labelledby="browse" className="flex flex-col gap-8 pt-section-sm pb-6 sm:pb-8">
+          <HomeSectionHeader id="browse" locale={locale} eyebrow={t("eyebrows.downloads")} title={t("browseDownloads")} />
           <Suspense fallback={<DownloadsExplorer items={listed} />}>
             <DownloadsExplorerFromUrl items={listed} />
           </Suspense>
         </Container>
-      </>
+      </div>
     </ClientMessages>
   );
 }

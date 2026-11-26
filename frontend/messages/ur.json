@@ -593,7 +593,10 @@
     "englishOnly": "صرف انگریزی میں دستیاب",
     "sourcePageText": "تفصیلات جامعہ کی سرکاری ویب سائٹ uswat.edu.pk کے مطابق۔",
     "viewOfficialPage": "سرکاری صفحہ دیکھیں",
+    "downloadsEyebrow": "سرکاری دستاویزات",
+    "browseDownloads": "دستاویزات دیکھیں",
     "eyebrows": {
+      "downloads": "فائل تلاش کریں",
       "related": "مزید پڑھیں"
     },
     "newsEyebrow": "کیمپس سے",

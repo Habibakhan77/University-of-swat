@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { ExternalLink } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
 import { langAttr } from "@/lib/strapi/academics-model";
@@ -11,7 +11,12 @@ import { EmptyState } from "@/components/academics/program-explorer";
 import { ResultCount, SearchField, SelectField, matches, useUrlFilters } from "@/components/academics/filters";
 import { Button } from "@/components/ui/button";
 import { OfficialLanguageNote } from "@/components/ui/language-note";
-import { FileRow } from "./shared";
+import { cn } from "@/lib/cn";
+import { FormatIcon } from "./shared";
+
+/** An odd last card spans the row and centres at half width, so the 2-column grid never ends on an orphan. */
+const CENTRE_ODD_LAST =
+  "lg:[&>li:last-child:nth-child(odd):not(:first-child)]:col-span-2 lg:[&>li:last-child:nth-child(odd):not(:first-child)]:mx-auto lg:[&>li:last-child:nth-child(odd):not(:first-child)]:w-[calc(50%-0.5rem)]";
 
 type Filters = { q: string; category: string };
 
@@ -106,7 +111,7 @@ export function DownloadsExplorer({ items, initial }: { items: DownloadItem[]; i
       {results.length ? (
         <>
           <OfficialLanguageNote show={results.some((item) => item.title.lang !== locale)} />
-          <ul className="grid gap-3">
+          <ul className={cn("grid gap-4 lg:grid-cols-2", CENTRE_ODD_LAST)}>
             {results.slice(0, limit).map((item) => (
               <DownloadRow key={item.id} item={item} locale={locale} />
             ))}
@@ -126,7 +131,11 @@ export function DownloadsExplorer({ items, initial }: { items: DownloadItem[]; i
   );
 }
 
-/** A file row with its category and month; links to the uploaded file, else to the original on uswat.edu.pk. */
+/**
+ * A typed document card: an icon for the file format, the title and description, then category, month,
+ * format and size. Links to the uploaded file, else to the original on uswat.edu.pk; when both exist the
+ * original gets its own small link.
+ */
 function DownloadRow({ item, locale }: { item: DownloadItem; locale: Locale }) {
   const t = useTranslations("notices");
   const tCommon = useTranslations("common");
@@ -134,59 +143,64 @@ function DownloadRow({ item, locale }: { item: DownloadItem; locale: Locale }) {
   const href = item.file?.url ?? item.sourceUrl;
   if (!href) return null;
   const size = formatSize(item.file?.sizeKb ?? null);
-  const meta = (
-    <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-      <span className="font-semibold text-fg-muted">{t(`downloadCategories.${item.category}`)}</span>
-      {item.date ? (
-        <>
-          <span aria-hidden>·</span>
-          <time dateTime={item.date.slice(0, 7)}>{formatMonth(item.date, locale)}</time>
-        </>
-      ) : null}
-      {item.file ? (
-        <>
-          <span aria-hidden>·</span>
-          <span lang="en" dir="ltr">
-            {item.file.format}
-            {size ? ` · ${size}` : ""}
-          </span>
-        </>
-      ) : null}
-    </span>
-  );
 
   return (
-    <li className="flex flex-col gap-1">
-      <FileRow
-        as="div"
-        file={
-          item.file
-            ? { ...item.file, title: item.title.value }
-            : {
-                url: href,
-                title: item.title.value,
-                format: "",
-                sizeKb: null,
-                image: null,
-              }
-        }
-        lang={lang}
-        meta={meta}
-      />
-      {item.file && item.sourceUrl ? (
-        <a
-          href={item.sourceUrl}
-          target="_blank"
-          rel="noopener"
-          className="inline-flex items-center gap-1 self-end px-1 text-caption text-fg-subtle hover:text-primary-text hover:underline"
-        >
-          {t("original")}
-          <ExternalLink aria-hidden className="size-3" />
-          <span className="sr-only">
-            : {item.title.value} {tCommon("opensInNewTab")}
-          </span>
-        </a>
-      ) : null}
+    <li>
+      <div className="group/file relative flex h-full items-start gap-4 rounded-2xl border border-line bg-surface p-5 shadow-xs transition-[border-color,box-shadow] hover:border-primary-text/40 hover:shadow-md has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring">
+        <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-fg">
+          <FormatIcon format={item.file?.format ?? ""} className="size-5" />
+        </span>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener"
+            lang={lang}
+            className="text-body font-semibold text-pretty text-fg outline-none group-hover/file:text-primary-text rtl:text-end after:absolute after:inset-0 after:rounded-2xl after:content-['']"
+          >
+            {item.title.value}
+            <span className="sr-only"> {tCommon("opensInNewTab")}</span>
+          </a>
+          {item.description ? (
+            <p lang={langAttr(item.description, locale)} className="line-clamp-2 text-body-sm text-fg-muted rtl:text-end">
+              {item.description.value}
+            </p>
+          ) : null}
+          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-body-sm text-fg-subtle">
+            <span className="font-semibold text-fg-muted">{t(`downloadCategories.${item.category}`)}</span>
+            {item.date ? (
+              <>
+                <span aria-hidden>·</span>
+                <time dateTime={item.date.slice(0, 7)}>{formatMonth(item.date, locale)}</time>
+              </>
+            ) : null}
+            {item.file ? (
+              <>
+                <span aria-hidden>·</span>
+                <span lang="en" dir="ltr" className="tabular">
+                  {item.file.format}
+                  {size ? ` · ${size}` : ""}
+                </span>
+              </>
+            ) : null}
+          </p>
+          {item.file && item.sourceUrl ? (
+            <a
+              href={item.sourceUrl}
+              target="_blank"
+              rel="noopener"
+              className="relative z-10 mt-1 inline-flex items-center gap-1 self-start text-caption text-fg-subtle hover:text-primary-text hover:underline"
+            >
+              {t("original")}
+              <ExternalLink aria-hidden className="size-3" />
+              <span className="sr-only">
+                : {item.title.value} {tCommon("opensInNewTab")}
+              </span>
+            </a>
+          ) : null}
+        </div>
+        <Download aria-hidden className="mt-0.5 size-4 shrink-0 text-fg-subtle group-hover/file:text-primary-text" />
+      </div>
     </li>
   );
 }

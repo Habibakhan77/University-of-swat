@@ -1550,3 +1550,13 @@ consistency). Content, data and colours unchanged.
   two in a centred row on tablets. Numbers and emails are marked `lang="en"` / `dir="ltr"` on the Urdu page
 - Key offices in centred rows (3 + 3, 2 + 2 + 2), so no card is left alone; the form card sits beside a
   sticky "Send a message" header from 1024px. `HomeSectionHeader` takes an optional `introLang`
+
+## Downloads in the Campus Life design language
+
+- Shared PageHero with a gold "Official documents" eyebrow, the folder-pattern artwork and the file count; a
+  "Find a file" eyebrow header over the explorer; standard top gap and the short bottom padding
+- Every file is a typed document card: format icon tile (spreadsheet or document), title, description, then
+  category, month, format and size, and the "Original" link when an uploaded copy also exists. Two per row from
+  1024px; an odd last card is centred at half width, so no card is left alone
+- On the Urdu page, English titles and descriptions align to the end of the card like the Urdu metadata
+- Search, the category filter, `?q=` / `?category=` deep links and "Show more" are unchanged

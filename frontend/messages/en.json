@@ -593,7 +593,10 @@
     "englishOnly": "Available in English only",
     "sourcePageText": "Details as published on the official website, uswat.edu.pk.",
     "viewOfficialPage": "View the official page",
+    "downloadsEyebrow": "Official documents",
+    "browseDownloads": "Browse the documents",
     "eyebrows": {
+      "downloads": "Find a file",
       "related": "Keep reading"
     },
     "newsEyebrow": "From the campus",

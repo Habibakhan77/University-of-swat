@@ -125,7 +125,8 @@ export function FilterLinks({
   );
 }
 
-function FormatIcon({ format, className }: { format: string; className?: string }) {
+/** A spreadsheet icon for XLS/XLSX/CSV, a document icon for everything else. */
+export function FormatIcon({ format, className }: { format: string; className?: string }) {
   return ["XLS", "XLSX", "CSV"].includes(format) ? <FileSpreadsheet className={className} /> : <FileText className={className} />;
 }
 
