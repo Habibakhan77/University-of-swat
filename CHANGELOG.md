@@ -1579,3 +1579,17 @@ consistency). Content, data and colours unchanged.
 - QA on a production build (:3100): /tenders, /jobs and a tender and a job detail at 1440, 1024 and 375px,
   English and Urdu, light and dark, all loaded with no horizontal overflow and no console errors; axe (WCAG 2.1
   AA) 0 violations across 48 runs of Contact, Downloads, Tenders, Jobs and both detail pages
+
+## Faculty directory in the Campus Life design language
+
+- Shared PageHero with a gold "Our people" eyebrow, the people-pattern artwork, the member and department chips
+  and the "Browse all programs" action; a "Find a teacher" eyebrow header over the explorer; standard top gap and
+  the short bottom padding before the footer's apply card
+- Person cards in centred rows (2 from 768px, 3 from 1280px), so a filtered result never leaves a card alone at
+  the start of a row (e.g. 16 professors: 5 rows of 3, the 16th centred). Card names are now h3 under the h2
+- Filter panel: search on its own row above three even selects from 768px (it used to leave "Designation" alone
+  on a row), one row of four from 1280px. All four filters and their `?q=` / `?faculty=` / `?department=` /
+  `?designation=` deep links are unchanged
+- `PersonCard`: English names align right on Urdu pages like the rest of the card (also on department pages)
+- QA on a production build: 1440, 1024, 768 and 375px, English and Urdu, light and dark, unfiltered and
+  `?designation=professor`; no overflow, no console errors; axe 0 violations across 16 runs

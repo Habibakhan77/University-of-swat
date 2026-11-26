@@ -5,7 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { pageMetadata } from "@/lib/seo";
 import { academicsHref, directoryHref, getExplorerOptions, getFacultyMembers, programsHref, facultyMembersLoaded } from "@/lib/strapi/academics";
-import { AcademicHero, HeroChip } from "@/components/academics/academic-hero";
+import { HeroChip } from "@/components/academics/academic-hero";
+import { FacultyArt, accentStyle } from "@/components/academics/faculty-art";
+import { HomeSectionHeader } from "@/components/home/home-section-header";
+import { PageHero } from "@/components/layout/page-hero";
 import { DirectoryExplorer, DirectoryExplorerFromUrl } from "@/components/academics/directory-explorer";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -33,15 +36,14 @@ export default async function FacultyDirectoryPage() {
   return (
     <ClientMessages namespaces={["academics"]}>
       <ContentStatusNote locale={locale} loaded={() => facultyMembersLoaded(locale)} />
-      <>
-        <AcademicHero
-          id="directory"
-          accent="green"
-          icon={Users}
+      <div style={accentStyle("green")}>
+        <PageHero
+          locale={locale}
+          art={<FacultyArt id="directory" accent="green" icon={Users} />}
           breadcrumbs={[{ label: tCommon("home"), href: "/" }, { label: t("breadcrumb"), href: academicsHref }, { label: t("directoryTitle") }]}
-          eyebrow={t("breadcrumb")}
+          eyebrow={t("directoryEyebrow")}
           title={t("directoryTitle")}
-          summary={t("directoryIntro")}
+          intro={t("directoryIntro")}
           meta={
             members.length ? (
               <>
@@ -63,12 +65,14 @@ export default async function FacultyDirectoryPage() {
             ) : null
           }
         />
-        <Container size="wide" className="py-section-sm">
+        {/* Small bottom padding: with the footer's apply card above it, about one section gap. */}
+        <Container as="section" size="wide" aria-labelledby="find" className="flex flex-col gap-8 pt-section-sm pb-6 sm:pb-8">
+          <HomeSectionHeader id="find" locale={locale} eyebrow={t("directoryFind")} title={t("directorySearchTitle")} />
           <Suspense fallback={<DirectoryExplorer {...props} />}>
             <DirectoryExplorerFromUrl {...props} />
           </Suspense>
         </Container>
-      </>
+      </div>
     </ClientMessages>
   );
 }

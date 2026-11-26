@@ -165,7 +165,8 @@ export function PersonCard({ member, department, headingLevel: Heading = "h3", h
             </Badge>
           ) : null}
         </div>
-        <Heading className="text-heading-sm text-pretty text-fg" lang={nameLang}>
+        {/* English names on the Urdu page align right like the rest of the card (they read left to right). */}
+        <Heading className="text-heading-sm text-pretty text-fg rtl:text-right" lang={nameLang}>
           {/* The whole card opens the profile; the department and contact links sit above that hit area. */}
           <CardLink href={memberHref(member.slug)} className="group-hover/card:text-fac focus-visible:underline">
             {member.name.value}

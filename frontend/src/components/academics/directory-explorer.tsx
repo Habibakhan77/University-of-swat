@@ -96,9 +96,10 @@ export function DirectoryExplorer({ members, faculties, departments, initial }: 
       <div
         role="search"
         aria-label={t("filters.label")}
-        className="grid gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs sm:grid-cols-2 sm:p-5 xl:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))]"
+        className="grid gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs sm:p-5 md:grid-cols-3 xl:grid-cols-[minmax(0,1.5fr)_repeat(3,minmax(0,1fr))]"
       >
-        <div className="sm:col-span-2 xl:col-span-1">
+        {/* Search on its own row above three even selects from 768px; one row of four from 1280px. */}
+        <div className="md:col-span-3 xl:col-span-1">
           <SearchField
             id="directory-search"
             label={t("filters.searchPeople")}
@@ -147,17 +148,22 @@ export function DirectoryExplorer({ members, faculties, departments, initial }: 
       </ResultCount>
 
       {showPlaceholderNote ? (
-        <p className="rounded-lg border border-accent-text/20 bg-warning-soft px-4 py-3 text-body-sm text-warning-soft-fg">{t("placeholderNotice")}</p>
+        <p className="rounded-xl border border-accent-text/20 bg-warning-soft px-4 py-3 text-body-sm text-warning-soft-fg">{t("placeholderNotice")}</p>
       ) : null}
 
       {results.length ? (
         <>
-          <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {/* Centred rows (2 from 768px, 3 from 1280px), so a filtered result never leaves a card alone at the start. */}
+          <ul className="flex flex-wrap justify-center gap-4">
             {results.slice(0, limit).map((m) => {
               const d = m.departmentSlug ? deptBySlug.get(m.departmentSlug) : undefined;
               return (
-                <li key={m.id} style={accentStyle((d && accentOf.get(d.facultySlug)) || "green")}>
-                  <PersonCard member={m} department={d ? { name: d.name, href: d.href } : null} headingLevel="h2" highlightHead={false} />
+                <li
+                  key={m.id}
+                  style={accentStyle((d && accentOf.get(d.facultySlug)) || "green")}
+                  className="w-full md:w-[calc((100%-1rem)/2)] xl:w-[calc((100%-2rem)/3)]"
+                >
+                  <PersonCard member={m} department={d ? { name: d.name, href: d.href } : null} headingLevel="h3" highlightHead={false} />
                 </li>
               );
             })}
