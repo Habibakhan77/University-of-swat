@@ -86,20 +86,33 @@ export function ProgramCard({
           </p>
         ) : null}
       </CardBody>
-      <CardFooter className="flex-wrap gap-x-4 gap-y-1 py-3 text-caption">
-        {program.durationYears ? (
-          <span className="inline-flex items-center gap-1.5">
-            <Clock aria-hidden className="size-3.5 text-fac" />
-            {t("duration", { years: program.durationYears })}
-          </span>
-        ) : null}
-        {program.creditHours ? (
-          <span className="inline-flex items-center gap-1.5">
-            <BookOpenCheck aria-hidden className="size-3.5 text-fac" />
-            {t("creditHours", { count: program.creditHours })}
-          </span>
-        ) : null}
-      </CardFooter>
+      {/* Facts in the footer when Strapi has them; otherwise a small "View program" cue, never an empty strip.
+          Either way the title link covers the whole card. */}
+      {program.durationYears || program.creditHours ? (
+        <CardFooter className="flex-wrap gap-x-4 gap-y-1 py-3 text-caption">
+          {program.durationYears ? (
+            <span className="inline-flex items-center gap-1.5">
+              <Clock aria-hidden className="size-3.5 text-fac" />
+              {t("duration", { years: program.durationYears })}
+            </span>
+          ) : null}
+          {program.creditHours ? (
+            <span className="inline-flex items-center gap-1.5">
+              <BookOpenCheck aria-hidden className="size-3.5 text-fac" />
+              {t("creditHours", { count: program.creditHours })}
+            </span>
+          ) : null}
+          <ArrowRight
+            aria-hidden
+            className="ms-auto size-4 text-fac transition-transform duration-300 group-hover/card:translate-x-1 rtl:-scale-x-100 rtl:group-hover/card:-translate-x-1"
+          />
+        </CardFooter>
+      ) : (
+        <span aria-hidden className="mt-auto inline-flex items-center gap-1.5 px-(--card-pad) pb-(--card-pad) text-body-sm font-semibold text-fac">
+          {t("viewProgram")}
+          <ArrowRight className="size-4 transition-transform duration-300 group-hover/card:translate-x-1 rtl:-scale-x-100 rtl:group-hover/card:-translate-x-1" />
+        </span>
+      )}
     </Card>
   );
 }

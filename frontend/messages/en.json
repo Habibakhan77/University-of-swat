@@ -357,7 +357,8 @@
     "eyebrows": {
       "about": "Who we are",
       "departments": "Study with us"
-    }
+    },
+    "viewProgram": "View program"
   },
   "vcMessage": {
     "breadcrumb": "Vice Chancellor’s message",

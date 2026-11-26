@@ -1434,3 +1434,9 @@ consistency). Content, data and colours unchanged.
   large with its credit; one ~720px reading column with the facts (when/where/published/department), the story,
   documents, share buttons and "Originally published on uswat.edu.pk"; "Related news": 3 cards, same
   category first, filled from the newest others
+
+## Program cards: no empty footer
+
+- Program cards (department pages, All programs, Admissions program finder) show duration and credit hours in
+  the footer when Strapi has them, with an arrow; without them the footer is gone and a small
+  "View program →" cue (en/ur) sits at the bottom instead. The title link still covers the whole card
