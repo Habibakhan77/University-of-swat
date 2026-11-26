@@ -1593,3 +1593,16 @@ consistency). Content, data and colours unchanged.
 - `PersonCard`: English names align right on Urdu pages like the rest of the card (also on department pages)
 - QA on a production build: 1440, 1024, 768 and 375px, English and Urdu, light and dark, unfiltered and
   `?designation=professor`; no overflow, no console errors; axe 0 violations across 16 runs
+
+## Faculty profile adapted to the Campus Life design language
+
+- Kept the existing portrait design (department band with the Gandhara pattern, ridgeline and gold wave, the
+  gold-ring portrait, the serif name with the gold swoosh, role pills, contact chips and actions, the degree
+  timeline and the eyebrow section headers)
+- The breadcrumbs now sit in the same centred 60rem column as the profile card, as they line up with the band
+  on pages with the shared PageHero
+- The standard hero-to-content gap (`section-sm`) before Qualifications, then even section gaps
+- "View all faculty in …" is a typed link card like the document and office cards: icon tile, title, the
+  department's member count, colleague faces (from 640px) and an arrow
+- QA on a production build: a real profile and a placeholder at 1440, 1024 and 375px, English and Urdu, light
+  and dark; no overflow, no console errors; axe 0 violations across 16 runs

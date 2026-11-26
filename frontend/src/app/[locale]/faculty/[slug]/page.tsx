@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowRight, GraduationCap, UserRound } from "lucide-react";
+import { ArrowRight, GraduationCap, UserRound, Users } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { resolveLocale } from "@/i18n/locale";
 import { Link } from "@/i18n/navigation";
@@ -30,7 +30,6 @@ import { HomeSectionHeader } from "@/components/home/home-section-header";
 import { ProfileActions, ProfileChips } from "@/components/academics/profile-actions";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
-import { Container } from "@/components/ui/container";
 import { RichText } from "@/components/ui/rich-text";
 import { ContentStatusNote } from "@/components/layout/content-status-note";
 
@@ -186,7 +185,11 @@ export default async function FacultyProfilePage({ params }: Props) {
       <ContentStatusNote locale={locale} loaded={() => facultyMembersLoaded(locale)} />
       {structured ? <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(structured)} /> : null}
 
-      <Container size="wide" className="pt-6 sm:pt-8">
+      {/*
+       * One centred column (max 60rem): the person first, then their qualifications and work. The breadcrumbs
+       * line up with the profile card, as they line up with the band on pages with the shared PageHero.
+       */}
+      <div className="mx-auto w-full max-w-[60rem] px-gutter pt-5 pb-6 sm:pt-6 sm:pb-8">
         <Breadcrumbs
           items={[
             { label: tCommon("home"), href: "/" },
@@ -197,11 +200,7 @@ export default async function FacultyProfilePage({ params }: Props) {
           label={tCommon("breadcrumb")}
           backLabel={tCommon("backTo")}
         />
-      </Container>
-
-      {/* One centred column (max 60rem): the person first, then their qualifications and work. */}
-      <div className="mx-auto w-full max-w-[60rem] px-gutter pt-5 pb-6 sm:pb-8">
-        <header className="overflow-hidden rounded-3xl border border-line bg-surface shadow-[0_20px_50px_-30px_rgb(10_30_20/0.35)] dark:shadow-[0_20px_50px_-24px_rgb(0_0_0/0.8)]">
+        <header className="mt-4 overflow-hidden rounded-3xl sm:mt-5 border border-line bg-surface shadow-[0_20px_50px_-30px_rgb(10_30_20/0.35)] dark:shadow-[0_20px_50px_-24px_rgb(0_0_0/0.8)]">
           {/* Department band: deep green with the lotus-rosette pattern, the valley ridgeline and a gold wave. */}
           <div className="relative isolate h-36 overflow-hidden bg-forest-900 sm:h-48">
             <GandharaPattern className="-z-10 text-white/[0.08]" />
@@ -297,8 +296,8 @@ export default async function FacultyProfilePage({ params }: Props) {
           </div>
         </header>
 
-        {/* One even gap between sections, as on the other redesigned pages. */}
-        <div className="mt-section flex flex-col gap-section">
+        {/* The standard hero-to-content gap, then one even gap between sections, as on the other redesigned pages. */}
+        <div className="mt-section-sm flex flex-col gap-section">
           {member.isPlaceholder ? (
             <p className="rounded-2xl border border-accent-text/20 bg-warning-soft px-5 py-4 text-body-sm text-warning-soft-fg">{t("placeholderNotice")}</p>
           ) : null}
@@ -389,21 +388,28 @@ export default async function FacultyProfilePage({ params }: Props) {
         {/* Not a section: close under the last one. */}
         {department ? (
           <div className="mt-10">
+            {/* A typed link card, like the document and office cards: icon tile, title, count, then the faces. */}
             <Link
               href={`${department.href}#members`}
-              className="group flex flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-5 py-4 text-center shadow-xs transition-colors duration-150 hover:border-fac sm:flex-row sm:justify-between sm:text-start"
+              className="group flex items-center gap-4 rounded-2xl border border-line bg-surface p-5 shadow-xs transition-[border-color,box-shadow] duration-150 hover:border-fac hover:shadow-md"
             >
-              <span className="inline-flex items-center gap-2 text-body font-semibold text-fac">
-                <span>{t.rich("viewAllIn", { department: department.name.value, dept: (chunks) => <span lang={deptLang}>{chunks}</span> })}</span>
-                <ArrowRight aria-hidden className="size-4 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" />
+              <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-fg">
+                <Users className="size-5" />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="text-body font-semibold text-pretty text-fg group-hover:text-fac">
+                  {t.rich("viewAllIn", { department: department.name.value, dept: (chunks) => <span lang={deptLang}>{chunks}</span> })}
+                </span>
+                <span className="text-body-sm text-fg-subtle">{ta("membersCount", { count: colleagues.length + 1 })}</span>
               </span>
               {faces.length ? (
-                <span aria-hidden className="flex -space-x-2 rtl:space-x-reverse">
+                <span aria-hidden className="hidden shrink-0 -space-x-2 sm:flex rtl:space-x-reverse">
                   {faces.map((c) => (
                     <Avatar key={c.id} member={c} />
                   ))}
                 </span>
               ) : null}
+              <ArrowRight aria-hidden className="size-5 shrink-0 text-fg-subtle transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-fac rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5" />
             </Link>
           </div>
         ) : null}
