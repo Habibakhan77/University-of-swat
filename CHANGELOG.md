@@ -1686,3 +1686,20 @@ consistency). Content, data and colours unchanged.
   position after cards and typed questions (also after a multi-line question), Shift+Enter, focus after send,
   emoji insert and keyboard, "New answer" pill, keyboard open/Esc/focus return, axe 0 WCAG AA violations on
   the open panel, no console errors
+
+## "Ask the University" fixes (branch `help-assistant`)
+
+- Quick-action cards showed raw keys ("assistant.cards.apply" …) and the dev overlay had 6 errors
+  (`INSUFFICIENT_PATH: assistant.cards.<key>`): the panel's UI strings come with the knowledge response, which
+  browsers kept (5 min, stale-while-revalidate 1 day) from before the cards strings existed. The knowledge URL
+  now carries `?v=<hash of the assistant strings>` (computed in the layout), so a string change always fetches
+  a fresh copy; in development the response is `no-store`
+- One close button: the launcher is hidden at every width while the panel is open; the header ✕ (or Esc)
+  closes it and focus returns to the launcher
+- Panel size: 440×640 on desktop (above 1024px), 420 wide on tablets, max 90vw × 85vh, full screen below 640px
+- Cards: 2 columns, every label on one line in English and Urdu (tighter padding; in a narrow grid, phones,
+  the icon sits above the label)
+- No horizontal scrolling anywhere in the panel: the chips row wraps instead of scrolling, the message area
+  clips x-overflow, long words in bubbles break, the emoji picker is capped to the panel width
+- Checked in `next dev` on :3000 at 1440, 1024 and 375px, English and Urdu, light and dark (panel size, one
+  close button, focus return, label fit, no element outside the panel, no dev-overlay errors)

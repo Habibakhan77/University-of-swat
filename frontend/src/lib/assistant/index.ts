@@ -110,6 +110,22 @@ function admissionsOf(page: AdmissionsPage | null, docs: SearchDoc[]): Knowledge
   };
 }
 
+const assistantMessages = (locale: Locale): Promise<AssistantMessages> =>
+  import(`../../../messages/${locale}.json`).then((m: { default: { assistant: AssistantMessages } }) => m.default.assistant);
+
+/**
+ * A short hash of the assistant's UI strings, added to the knowledge URL (?v=). Browsers and the CDN
+ * keep the knowledge response for a while (and serve it stale while revalidating); without this, a
+ * deploy that renames or adds a string would meet a cached response that lacks it, and the panel
+ * would show raw keys such as "assistant.cards.apply".
+ */
+export async function assistantVersion(locale: Locale): Promise<string> {
+  const json = JSON.stringify(await assistantMessages(locale));
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < json.length; i += 1) hash = Math.imul(hash ^ json.charCodeAt(i), 0x01000193);
+  return (hash >>> 0).toString(36);
+}
+
 /**
  * Everything the assistant answers from, for one language. Throws when Strapi is unreachable (the
  * route answers 503 and the panel offers search and the contact page instead).
@@ -119,7 +135,7 @@ export async function getAssistantKnowledge(locale: Locale): Promise<AssistantKn
     getSearchIndex(locale),
     loadFaqs(locale).then(unwrap),
     getAdmissionsPage(locale),
-    import(`../../../messages/${locale}.json`).then((m: { default: { assistant: AssistantMessages } }) => m.default.assistant),
+    assistantMessages(locale),
   ]);
   return { locale, docs: index.docs, faqs, admissions: admissionsOf(page, index.docs), messages };
 }

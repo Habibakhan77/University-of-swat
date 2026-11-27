@@ -75,7 +75,7 @@ export function EmojiPicker({
         const next = event.relatedTarget as Node | null;
         if (next && !ref.current?.contains(next) && !ignore.current?.contains(next)) onClose(false);
       }}
-      className="absolute end-3 bottom-full z-10 mb-1 grid w-72 grid-cols-8 gap-0.5 rounded-2xl bg-surface-raised p-2 shadow-xl shadow-forest-950/20 ring-1 ring-line motion-safe:animate-fade-up motion-safe:[animation-duration:0.2s]"
+      className="absolute end-3 bottom-full z-10 mb-1 grid w-72 max-w-[calc(100%-1.5rem)] grid-cols-8 gap-0.5 rounded-2xl bg-surface-raised p-2 shadow-xl shadow-forest-950/20 ring-1 ring-line motion-safe:animate-fade-up motion-safe:[animation-duration:0.2s]"
     >
       {EMOJIS.map((emoji, index) => (
         <button

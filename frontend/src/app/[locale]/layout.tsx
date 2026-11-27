@@ -10,6 +10,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { RevealObserver } from "@/components/ui/reveal-observer";
 import { AssistantLauncher } from "@/components/assistant/assistant-launcher";
+import { assistantVersion } from "@/lib/assistant";
 import { getSiteChrome } from "@/lib/strapi/site";
 import { inter, nastaliq } from "@/lib/fonts";
 import { cn } from "@/lib/cn";
@@ -43,10 +44,11 @@ export const viewport: Viewport = {
 export default async function LocaleLayout({ children }: LayoutProps<"/[locale]">) {
   const locale = await resolveLocale();
 
-  const [chrome, t, tAssistant] = await Promise.all([
+  const [chrome, t, tAssistant, assistantKnowledgeVersion] = await Promise.all([
     getSiteChrome(locale),
     getTranslations({ locale, namespace: "common" }),
     getTranslations({ locale, namespace: "assistant" }),
+    assistantVersion(locale),
   ]);
 
   return (
@@ -78,6 +80,7 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
           <RevealObserver />
           <SiteFooter locale={locale} chrome={chrome} />
           <AssistantLauncher
+            version={assistantKnowledgeVersion}
             labels={{
               open: tAssistant("open"),
               close: tAssistant("close"),

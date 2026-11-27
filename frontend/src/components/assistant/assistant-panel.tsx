@@ -37,18 +37,20 @@ import { useSpeechRecognition, useSpeechSynthesis } from "./speech";
 
 /* ---------- Knowledge loading (once per language) ---------- */
 
-const loaded = new Map<Locale, Promise<AssistantKnowledge>>();
+const loaded = new Map<string, Promise<AssistantKnowledge>>();
 
-function loadKnowledge(locale: Locale): Promise<AssistantKnowledge> {
-  let promise = loaded.get(locale);
+/** `version` changes whenever the UI strings do, so a cached response never carries old ones. */
+function loadKnowledge(locale: Locale, version: string): Promise<AssistantKnowledge> {
+  const url = `/api/assistant/${locale}?v=${encodeURIComponent(version)}`;
+  let promise = loaded.get(url);
   if (!promise) {
-    promise = fetch(`/api/assistant/${locale}`).then((response) => {
+    promise = fetch(url).then((response) => {
       if (!response.ok) throw new Error(`Assistant ${response.status}`);
       return response.json() as Promise<AssistantKnowledge>;
     });
     // A failed load is tried again the next time the panel opens.
-    promise.catch(() => loaded.delete(locale));
-    loaded.set(locale, promise);
+    promise.catch(() => loaded.delete(url));
+    loaded.set(url, promise);
   }
   return promise;
 }
@@ -109,11 +111,13 @@ function replyText(reply: Reply, t: Translator): string {
 export default function AssistantPanel({
   id,
   open,
+  version,
   labels,
   onClose,
 }: {
   id: string;
   open: boolean;
+  version: string;
   labels: AssistantLabels;
   onClose: () => void;
 }) {
@@ -147,7 +151,7 @@ export default function AssistantPanel({
   useEffect(() => {
     if (!open || knowledge) return;
     let live = true;
-    loadKnowledge(locale).then(
+    loadKnowledge(locale, version).then(
       (k) => {
         if (!live) return;
         setKnowledge(k);
@@ -160,7 +164,7 @@ export default function AssistantPanel({
     return () => {
       live = false;
     };
-  }, [open, knowledge, locale]);
+  }, [open, knowledge, locale, version]);
 
   useEffect(() => {
     if (open) requestAnimationFrame(() => inputRef.current?.focus());
@@ -319,8 +323,10 @@ export default function AssistantPanel({
       }}
       className={cn(
         "fixed z-50 flex flex-col overflow-hidden bg-surface-raised text-fg print:hidden",
+        // Phones: the whole screen. Tablets: 420px. Desktops (above 1024px, in rem so it sorts after sm): 440px. Always within 90vw × 85vh.
         "max-sm:inset-0",
-        "sm:end-6 sm:bottom-24 sm:h-[min(37.5rem,calc(100dvh-8rem))] sm:w-[min(23.75rem,calc(100vw-3rem))] sm:rounded-2xl sm:shadow-2xl sm:shadow-forest-950/30 sm:ring-1 sm:ring-line",
+        "sm:end-6 sm:bottom-6 sm:h-[min(40rem,85dvh)] sm:w-[min(26.25rem,90vw)] min-[64.0625rem]:w-[min(27.5rem,90vw)]",
+        "sm:rounded-2xl sm:shadow-2xl sm:shadow-forest-950/30 sm:ring-1 sm:ring-line",
         "motion-safe:animate-fade-up motion-safe:[animation-duration:0.3s]",
       )}
     >
@@ -348,7 +354,7 @@ export default function AssistantPanel({
 
       {/* Messages */}
       <div className="relative flex min-h-0 flex-1 flex-col">
-        <div ref={scrollRef} onScroll={onScroll} className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain bg-canvas px-4 py-4">
+        <div ref={scrollRef} onScroll={onScroll} className="relative min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-canvas px-4 py-4">
           {!t ? (
             failed ? (
               <AssistantRow>
@@ -380,7 +386,7 @@ export default function AssistantPanel({
                   <h3 className={cn("text-heading-sm text-fg", locale === "en" && displaySerif.className)}>{t("welcomeTitle")}</h3>
                   <p className="text-body-sm text-fg-muted">{t("welcomeText")}</p>
                 </div>
-                <div role="group" aria-label={t("chipsLabel")} className="grid grid-cols-2 gap-2.5">
+                <div role="group" aria-label={t("chipsLabel")} className="@container grid grid-cols-2 gap-2">
                   {QUICK_REPLIES.map((key) => {
                     const Icon = cardIcon[key];
                     return (
@@ -389,15 +395,17 @@ export default function AssistantPanel({
                         type="button"
                         onClick={() => quick(key)}
                         className={cn(
-                          "flex items-center gap-2.5 rounded-xl bg-surface-raised px-3 py-2.5 text-start shadow-sm shadow-forest-950/5 ring-1 ring-line",
+                          "flex min-w-0 items-center gap-2 rounded-xl bg-surface-raised px-2 py-2.5 text-start shadow-sm shadow-forest-950/5 ring-1 ring-line",
+                          // In a narrow grid (phones) the icon sits above the label, so the label keeps one line.
+                          "@max-[24rem]:flex-col @max-[24rem]:items-start @max-[24rem]:gap-2",
                           "transition-[box-shadow,background-color] duration-150 hover:bg-primary-soft/60 hover:ring-primary-text/30",
                           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
                         )}
                       >
-                        <span aria-hidden className="inline-flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
+                        <span aria-hidden className="inline-flex size-7.5 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-soft-fg">
                           <Icon className="size-4.5" strokeWidth={1.9} />
                         </span>
-                        <span className="min-w-0 text-body-sm leading-tight font-semibold text-fg">{t(`cards.${key}`)}</span>
+                        <span className="min-w-0 text-body-sm leading-tight font-semibold whitespace-nowrap text-fg">{t(`cards.${key}`)}</span>
                       </button>
                     );
                   })}
@@ -418,7 +426,7 @@ export default function AssistantPanel({
                   >
                     <p
                       dir="auto"
-                      className="max-w-[85%] self-end rounded-2xl rounded-ee-md bg-forest-700 px-3.5 py-2 text-body-sm whitespace-pre-line text-sand-50 shadow-sm"
+                      className="max-w-[85%] self-end rounded-2xl rounded-ee-md bg-forest-700 px-3.5 py-2 text-body-sm whitespace-pre-line text-sand-50 shadow-sm [overflow-wrap:anywhere]"
                     >
                       <span className="sr-only">{t("you")}: </span>
                       {turn.question}
@@ -489,7 +497,7 @@ export default function AssistantPanel({
       {/* Input */}
       <div className="relative shrink-0 border-t border-line bg-surface-raised max-sm:pb-[env(safe-area-inset-bottom)]">
         {t && turns.length ? (
-          <div role="group" aria-label={t("chipsLabel")} className="flex gap-1.5 overflow-x-auto px-3 pt-2.5 [scrollbar-width:none]">
+          <div role="group" aria-label={t("chipsLabel")} className="flex flex-wrap gap-1.5 px-3 pt-2.5">
             {QUICK_REPLIES.map((key) => (
               <button
                 key={key}
@@ -620,7 +628,7 @@ function Bubble({ children, className }: { children: ReactNode; className?: stri
   return (
     <div
       className={cn(
-        "max-w-[calc(100%-2.25rem)] min-w-0 rounded-2xl rounded-ss-md bg-surface-raised px-3.5 py-2.5 text-body-sm text-fg shadow-sm shadow-forest-950/10 ring-1 ring-line/70",
+        "max-w-[calc(100%-2.25rem)] min-w-0 rounded-2xl rounded-ss-md [overflow-wrap:anywhere] bg-surface-raised px-3.5 py-2.5 text-body-sm text-fg shadow-sm shadow-forest-950/10 ring-1 ring-line/70",
         className,
       )}
     >

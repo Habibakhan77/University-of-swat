@@ -16,7 +16,12 @@ export async function GET(_request: Request, { params }: RouteContext<"/api/assi
   try {
     const knowledge = await getAssistantKnowledge(locale);
     return Response.json(knowledge, {
-      headers: { "Cache-Control": "public, max-age=300, s-maxage=300, stale-while-revalidate=86400" },
+      // The panel asks for ?v=<hash of its UI strings>, so a cached copy never outlives a string change.
+      // In development nothing is cached: code and messages change with every save.
+      headers: {
+        "Cache-Control":
+          process.env.NODE_ENV === "development" ? "no-store" : "public, max-age=300, s-maxage=300, stale-while-revalidate=86400",
+      },
     });
   } catch (error) {
     console.error("[assistant] knowledge unavailable:", error instanceof Error ? error.message : error);
