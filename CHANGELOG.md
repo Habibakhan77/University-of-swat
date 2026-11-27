@@ -1806,3 +1806,5 @@ consistency). Content, data and colours unchanged.
 - **Staff login** link (key icon) in the footer's bottom bar and at the end of the mobile menu, English and Urdu;
   a plain link to `/admin`, not a localised page
 - README, DEPLOY.md and docs/JUDGES_QA.md now give the admin address as `<site>/admin`
+- Renamed the link to **Admin login** (Urdu "ایڈمن لاگ ان"), same key icon; it opens `/admin` in a new tab
+  (`target="_blank" rel="noopener"`, with a screen-reader "opens in a new tab" note)

@@ -20,7 +20,7 @@ This guide sets up the site on an Ubuntu VPS: Docker Compose runs four container
 |---|---|
 | `https://uswat.edu.pk` (and `/ur`) | Next.js website |
 | `https://www.uswat.edu.pk` | 301 redirect to the address above |
-| `https://uswat.edu.pk/admin` | Strapi admin panel for staff (the footer's **Staff login** link); Nginx sends it, and the paths it calls, to Strapi |
+| `https://uswat.edu.pk/admin` | Strapi admin panel for staff (the footer's **Admin login** link); Nginx sends it, and the paths it calls, to Strapi |
 | `https://cms.uswat.edu.pk/uploads/…` | Media Library files (photos, PDFs) |
 | `https://cms.uswat.edu.pk/api/…` | Strapi REST API (the admin panel also still works at `cms.uswat.edu.pk/admin`) |
 

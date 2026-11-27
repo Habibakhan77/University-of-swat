@@ -22,7 +22,9 @@ export interface MobileMenuLabels {
   apply: string;
   quickLinks: string;
   preferences: string;
-  staffLogin: string;
+  adminLogin: string;
+  /** Screen-reader note for links that open a new tab, e.g. "(opens in a new tab)". */
+  newTab: string;
   homeLink: string;
   theme: ThemeToggleLabels;
   language: LanguageSwitcherLabels;
@@ -218,13 +220,16 @@ export default function MobileSheet({ groups, services, apply, brand, labels, op
             <ThemeToggle labels={labels.theme} showLabel />
           </section>
 
-          {/* The CMS admin panel at this same address; a plain link, as it is not a page of the website. */}
+          {/* The CMS admin panel at this same address, in a new tab; a plain link, as it is not a page of the website. */}
           <a
             href={ADMIN_PATH}
+            target="_blank"
+            rel="noopener"
             className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-lg text-body-sm text-fg-muted transition-colors hover:text-fg"
           >
             <KeyRound aria-hidden className="size-4 text-primary-text" />
-            {labels.staffLogin}
+            {labels.adminLogin}
+            <span className="sr-only"> {labels.newTab}</span>
           </a>
         </div>
 

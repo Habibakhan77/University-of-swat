@@ -269,8 +269,8 @@ replace.
 
 Staff never touch code. A Media Cell editor publishes a news story in about two minutes:
 
-1. Sign in at `https://<domain>/admin` (the **Staff login** link in the website footer) with the account the
-   Super Admin created.
+1. Sign in at `https://<domain>/admin` (the **Admin login** link in the website footer opens it in a new tab)
+   with the account the Super Admin created.
 2. Open **Content Manager › Post** and click **Create new entry**.
 
    ![Strapi admin: list of posts in the Content Manager, as the demo Department Editor sees it (only their department's posts)](docs/screenshots/strapi-posts-list-desktop.webp)

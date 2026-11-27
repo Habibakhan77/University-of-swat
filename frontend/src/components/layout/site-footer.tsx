@@ -342,13 +342,16 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
             <p className="text-body-sm text-forest-100">{chrome?.copyright}</p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
               {/* The CMS admin panel, served from this same address (Next.js rewrite in development,
-                  Nginx in production). A plain link: it is not a localised page of the website. */}
+                  Nginx in production), in a new tab. A plain link: it is not a localised page of the website. */}
               <a
                 href={ADMIN_PATH}
+                target="_blank"
+                rel="noopener"
                 className="inline-flex items-center gap-2 rounded-sm py-1 text-body-sm text-forest-100 transition-colors hover:text-gold-bright"
               >
                 <KeyRound aria-hidden className="size-4 text-gold-bright" />
-                {t("staffLogin")}
+                {t("adminLogin")}
+                <span className="sr-only"> {tCommon("opensInNewTab")}</span>
               </a>
               <a
                 href="#top"

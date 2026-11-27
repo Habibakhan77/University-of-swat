@@ -38,7 +38,7 @@
     "homeLink": "{siteName} — سرورق",
     "quickLinks": "فوری روابط",
     "preferences": "ترجیحات",
-    "staffLogin": "عملے کا لاگ اِن",
+    "adminLogin": "ایڈمن لاگ ان",
     "promoEyebrow": "داخلے",
     "promoTitle": "وادی میں اپنے سفر کا آغاز کریں",
     "promoText": "پروگرام، اہلیت، فیس اور میرٹ لسٹیں — سب ایک جگہ۔",
@@ -107,7 +107,7 @@
     "getDirections": "راستہ دیکھیں",
     "backToTop": "اوپر جائیں",
     "footerNavigation": "فوٹر",
-    "staffLogin": "عملے کا لاگ اِن"
+    "adminLogin": "ایڈمن لاگ ان"
   },
   "notFound": {
     "eyebrow": "خرابی ۴۰۴",

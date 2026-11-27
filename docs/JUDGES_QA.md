@@ -11,8 +11,8 @@ half lists 15 likely questions with short answers.
 The website has two halves that talk to each other:
 
 - **Strapi** (in `cms/`) is the *back office*. Staff sign in at the website's own address, `<site>/admin`
-  (the **Staff login** link in the footer and mobile menu), type news, upload photos and PDFs,
-  and press Publish. Strapi stores everything in a **PostgreSQL** database and offers it to the website
+  (the **Admin login** link in the footer and mobile menu opens it in a new tab), type news, upload photos
+  and PDFs, and press Publish. Strapi stores everything in a **PostgreSQL** database and offers it to the website
   through a REST API (web addresses that return data, for example `/api/posts`).
 - **Next.js** (in `frontend/`) is the *shop window*. It asks Strapi for the content, builds the pages
   visitors see, and keeps those pages ready in a cache so they open instantly.
