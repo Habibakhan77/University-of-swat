@@ -1623,3 +1623,29 @@ consistency). Content, data and colours unchanged.
 - Search, mega menu and phone menu shots retaken in the new design, English/light and Urdu/dark: the Ctrl+K
   dialog with results ("physics", فیس), the open Academics mega menu, and the full-screen phone menu. Added to
   the README Screenshots section
+
+## "Ask the University" help assistant (branch `help-assistant`)
+
+- A floating gold button (bottom-right; bottom-left in Urdu) opens a small help panel in English and Urdu, in
+  the site's design language: forest-green header with the Gandhara pattern and gold wave, gold quick-reply
+  chips, answers as cards with links
+- Answers only from Strapi content, with no external AI: keyword intents in both languages build structured
+  answers (application steps with the CMS portal link, advertised dates with open/upcoming/closed worked out on
+  Pakistan time, merit lists, fee structure and payment links, admissions office contacts, faculties and
+  departments, latest news, downloads); otherwise the closest FAQ (all categories, including examinations,
+  hostel and degree verification); otherwise the site search index. Every answer ends with links to the
+  pages it came from. With no match: "I couldn't find that. Try the search or contact the university",
+  with links to search and /contact. The fixed sentences around content are UI strings; nothing is made up
+- Quick replies: How do I apply?, Merit lists, Fee structure, Contact admissions, Find a department
+- `GET /api/assistant/[locale]`: search index, FAQs, admissions steps, dates, merit lists, fee links and
+  contacts, plus the assistant's strings (about 27 KB gzipped), cached until an editor publishes
+  (search and admissions tags). The page only ships the button: the panel code and the knowledge load on
+  first open, and the conversation is kept when the panel is closed and reopened
+- Accessibility: a labelled non-modal dialog; focus goes to the question field on open and back to the button
+  on Esc or close; the conversation is a polite live log; chips and links are buttons and links in tab order;
+  the opening animation is off with reduced motion. On phones the panel fills the screen and a followed link
+  closes it
+- The footer's bottom bar has end padding so "Back to top" stays clear of the button
+- QA on a production build at 1440 and 375px, English and Urdu, light and dark (110 scripted checks): code
+  and knowledge load only on open, keyboard open/chips/typing/Esc, focus return, answers and not-found
+  links, no overflow, no console errors, axe 0 violations on the open panel, reduced motion

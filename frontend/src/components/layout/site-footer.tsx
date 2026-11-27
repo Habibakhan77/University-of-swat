@@ -334,7 +334,8 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
         <div className="border-t-2 border-gold-400 bg-forest-950">
           <Container
             size="wide"
-            className="flex flex-col-reverse items-start gap-3 py-5 sm:flex-row sm:items-center sm:justify-between"
+            // End padding keeps "Back to top" and the copyright clear of the floating assistant button.
+            className="flex flex-col-reverse items-start gap-3 py-5 pe-20 sm:flex-row sm:items-center sm:justify-between sm:pe-24"
           >
             <p className="text-body-sm text-forest-100">{chrome?.copyright}</p>
             <a

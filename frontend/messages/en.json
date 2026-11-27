@@ -945,5 +945,76 @@
       "biography": "About",
       "publications": "Research output"
     }
+  },
+  "assistant": {
+    "open": "Ask the University",
+    "title": "Ask the University",
+    "subtitle": "Answers from this website's own pages",
+    "close": "Close the assistant",
+    "loading": "Loading answers…",
+    "unavailable": "The assistant can't load right now. You can still search the site or contact the university.",
+    "welcome": "Assalam-o-Alaikum! Ask me about admissions, fees, merit lists, departments or contacts. I answer only from this website.",
+    "chipsLabel": "Suggested questions",
+    "inputLabel": "Your question",
+    "placeholder": "Type a question…",
+    "send": "Send",
+    "you": "You",
+    "assistant": "Assistant",
+    "conversation": "Conversation",
+    "thinking": "Looking it up…",
+    "disclaimer": "Answers come from published university pages. For anything official, open the linked page.",
+    "shortened": "Shortened. The full answer is on the linked page.",
+    "until": "to",
+    "email": "Email",
+    "phone": "Phone",
+    "inEnglish": "In English",
+    "opensInNewTab": "opens in a new tab",
+    "chips": {
+      "apply": "How do I apply?",
+      "merit": "Merit lists",
+      "fees": "Fee structure",
+      "contactAdmissions": "Contact admissions",
+      "departments": "Find a department"
+    },
+    "status": {
+      "open": "Open now",
+      "upcoming": "Upcoming",
+      "closed": "Closed"
+    },
+    "replies": {
+      "greeting": "Wa-alaikum assalam! What would you like to know? You can pick one of the suggestions below.",
+      "apply": "Applications are made online. These are the steps the university published:",
+      "dates": "Important dates for {title}:",
+      "datesClosed": "The last advertised dates ({title}) have passed. The next intake's dates will appear on the admissions page:",
+      "merit": "Merit lists are published here:",
+      "fees": "The university's published fee structure and payment options:",
+      "feesNone": "No official fee figures are published yet. Check the program's page and the admissions hub:",
+      "contactGeneral": "The contact page has the university's phone directory, addresses and a message form:",
+      "contactAdmissions": "For admission questions, contact:",
+      "contactOffice": "These offices and departments match your question. Their pages list the contacts:",
+      "departmentMatches": "Here is what matches:",
+      "departments": "The university has {departments} departments in {faculties} faculties and centres:",
+      "news": "The latest news, announcements and events:",
+      "newsMatches": "News and events that match:",
+      "downloadMatches": "Documents that match:",
+      "downloads": "Forms, rules and policies are on the downloads page, where you can search them:",
+      "results": "I found these pages:",
+      "faq": "{question}",
+      "notFound": "I couldn't find that. Try the search or contact the university."
+    },
+    "links": {
+      "contact": "Contact the university",
+      "search": "Search the site",
+      "admissionsFaqs": "Admissions FAQs",
+      "howToApply": "How to apply",
+      "importantDates": "Important dates",
+      "meritLists": "Merit lists on the admissions page",
+      "feeStructure": "Fees on the admissions page",
+      "admissionsContact": "Admissions contacts",
+      "academics": "All faculties and departments",
+      "facultyDirectory": "Faculty directory",
+      "news": "All news and events",
+      "downloads": "Downloads"
+    }
   }
 }
