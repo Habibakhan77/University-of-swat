@@ -1778,3 +1778,31 @@ consistency). Content, data and colours unchanged.
   editor and Super Admin workbooks, an Urdu test workbook and the CSV
 - `exceljs` brings in `uuid@8`, which has a moderate advisory (missing buffer bounds check when a `buf`
   argument is passed); exceljs doesn't use that argument
+
+## Admin panel at the website's own address, branded as the University
+
+- **`<site>/admin`**: staff open the Strapi admin at the website's address (in development
+  `http://localhost:3000/admin`); Strapi itself keeps running on :1337 (the `cms` container in production)
+  - Development: Next.js rewrites the admin's paths to Strapi (`frontend/next.config.ts`, prefix list in
+    `frontend/src/lib/cms-admin.ts`: `/admin`, `/content-manager`, `/content-type-builder`, `/upload`, `/uploads`,
+    `/i18n`, `/users-permissions`, `/email`, `/uswat`). The language middleware skips them (matcher ends each
+    prefix at `/` or the end, so `/administration` is still a website page). Request bodies through the proxy are
+    allowed up to 50 MB (`experimental.proxyClientMaxBodySize`, Next's default of 10 MB cut large uploads off)
+  - Strapi's dev Vite server gets a small plugin (`cms/src/admin/vite.config.ts`): Next re-encodes `?raw` as
+    `?raw=`, which made Vite answer a module import with HTML and left the admin blank
+  - Production: Nginx sends the same prefixes on the main domain to Strapi (login rate limit, 50 MB uploads,
+    cached `/uploads/`, Strapi's own CSP via `nginx/snippets/cms-admin-headers.conf`). `cms.<domain>` stays for the
+    REST API and media. The production admin is built with a relative backend URL, so one build works on both
+  - Strapi's public REST API is not proxied under the website's `/api`: that path belongs to the website's own
+    route handlers, and the admin doesn't use it
+- **Branding** (`cms/src/admin/app.tsx`): crest on the login page, in the menu and as the tab icon
+  (`cms/favicon.png` too); tab title "University of Swat — Admin" (Strapi's "<page> | Strapi" titles rewritten);
+  forest green primary colour and gold accent in light and dark themes; login welcome "Welcome to the
+  University of Swat / Staff sign-in to manage the university website"; menu brand "University of Swat — Website
+  admin"; homepage subtitle
+- **Strapi marketing removed**: guided tour ("Discover your application!"), Media Library "read blog post"
+  banner, release notifications, Strapi Cloud "Deploy" widget; survey, Enterprise promotion and documentation
+  links now default to off (`config/admin.ts`, `.env.example`, `docker-compose.yml`)
+- **Staff login** link (key icon) in the footer's bottom bar and at the end of the mobile menu, English and Urdu;
+  a plain link to `/admin`, not a localised page
+- README, DEPLOY.md and docs/JUDGES_QA.md now give the admin address as `<site>/admin`

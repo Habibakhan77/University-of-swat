@@ -43,6 +43,7 @@ x-cms-env: &cms-env
   SYNC_ADMIN_ROLES: ${SYNC_ADMIN_ROLES:-false}
   FLAG_NPS: "false"
   FLAG_PROMOTE_EE: "false"
+  FLAG_DOC_LINKS: "false"
   STRAPI_TELEMETRY_DISABLED: "true"
 
 services:

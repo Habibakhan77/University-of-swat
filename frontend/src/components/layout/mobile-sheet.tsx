@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowRight, ArrowUpRight, ChevronDown, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronDown, KeyRound, X } from "lucide-react";
 import { useEffect, useId, useRef } from "react";
 import { usePathname } from "@/i18n/navigation";
+import { ADMIN_PATH } from "@/lib/cms-admin";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
 import type { NavGroup, NavLink, SiteImage } from "@/lib/strapi/site";
@@ -21,6 +22,7 @@ export interface MobileMenuLabels {
   apply: string;
   quickLinks: string;
   preferences: string;
+  staffLogin: string;
   homeLink: string;
   theme: ThemeToggleLabels;
   language: LanguageSwitcherLabels;
@@ -215,6 +217,15 @@ export default function MobileSheet({ groups, services, apply, brand, labels, op
             <LanguageSwitcher variant="segmented" labels={labels.language} onNavigate={hide} />
             <ThemeToggle labels={labels.theme} showLabel />
           </section>
+
+          {/* The CMS admin panel at this same address; a plain link, as it is not a page of the website. */}
+          <a
+            href={ADMIN_PATH}
+            className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-lg text-body-sm text-fg-muted transition-colors hover:text-fg"
+          >
+            <KeyRound aria-hidden className="size-4 text-primary-text" />
+            {labels.staffLogin}
+          </a>
         </div>
 
         {apply ? (

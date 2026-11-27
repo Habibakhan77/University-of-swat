@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { STRAPI_ADMIN_PREFIXES } from "./src/lib/cms-admin";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+
+/** Where Strapi runs (server side): http://localhost:1337 in development, http://cms:1337 in Docker. */
+const STRAPI_ORIGIN = (process.env.STRAPI_URL ?? "http://localhost:1337").replace(/\/+$/, "");
 
 /** Strapi media hosts that next/image may optimise (local dev + whatever STRAPI_URL points at). */
 function strapiImagePatterns(): NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]> {
@@ -32,6 +36,10 @@ const nextConfig: NextConfig = {
     // Two pre-render workers (override with `BUILD_CPUS=n npm run build`). The default (one per core) fires
     // enough parallel Strapi requests to exhaust its database connection pool (10) and hang it.
     cpus: process.env.BUILD_CPUS ? Number(process.env.BUILD_CPUS) : 2,
+    // Because the app has a proxy (src/proxy.ts), Next.js buffers request bodies, by default only 10 MB,
+    // even for the Strapi admin paths it forwards (rewrites below). Staff upload PDFs and photos through
+    // <site>/admin, so allow what Nginx allows in production (client_max_body_size 50m).
+    proxyClientMaxBodySize: "50mb",
   },
   turbopack: {
     rules: {
@@ -40,6 +48,21 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  // Strapi admin panel at <site>/admin (src/lib/cms-admin.ts). Strapi keeps running on its own port;
+  // these proxy the panel and every path it calls. In production Nginx serves the same paths, so they
+  // only matter for `npm run dev` / `next start`.
+  // Strapi's public REST API (/api/…) is not proxied: /api belongs to the website's own route handlers,
+  // the admin panel doesn't use it, and the website's server reaches Strapi directly (STRAPI_URL).
+  async rewrites() {
+    return {
+      beforeFiles: STRAPI_ADMIN_PREFIXES.flatMap((prefix) => [
+        { source: `/${prefix}`, destination: `${STRAPI_ORIGIN}/${prefix}` },
+        { source: `/${prefix}/:path*`, destination: `${STRAPI_ORIGIN}/${prefix}/:path*` },
+      ]),
+      afterFiles: [],
+      fallback: [],
+    };
   },
   // The old WordPress site and printed material use the singular "/admission".
   async redirects() {

@@ -38,6 +38,7 @@
     "homeLink": "{siteName} — home",
     "quickLinks": "Quick links",
     "preferences": "Preferences",
+    "staffLogin": "Staff login",
     "promoEyebrow": "Admissions",
     "promoTitle": "Begin your journey in the valley",
     "promoText": "Programs, eligibility, fees and merit lists — all in one place.",
@@ -105,7 +106,8 @@
     "contact": "Contact",
     "getDirections": "Get directions",
     "backToTop": "Back to top",
-    "footerNavigation": "Footer"
+    "footerNavigation": "Footer",
+    "staffLogin": "Staff login"
   },
   "notFound": {
     "eyebrow": "Error 404",

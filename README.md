@@ -173,10 +173,10 @@ flowchart LR
   gh[GitHub Actions<br/>lint, typecheck, build,<br/>Docker images, nginx -t]
 
   visitor -->|HTTPS| dns
-  editor -->|HTTPS cms.domain/admin| dns
+  editor -->|HTTPS domain/admin| dns
   dns -->|HTTPS, Origin Certificate| nginx
   nginx -->|website| next
-  nginx -->|cms.domain| strapi
+  nginx -->|/admin, cms.domain| strapi
   next -->|REST, cached by tag| strapi
   strapi --> pg
   strapi --> media
@@ -235,8 +235,8 @@ docker compose --profile seed run --rm cms-seed   # once: fill Strapi with Unive
 ```
 
 On a laptop, `docker-compose.override.yml` is merged automatically: the website is on
-<http://localhost:8080>, the Strapi admin on <http://cms.localhost:8081/admin> (create the first administrator
-there), PostgreSQL on port 5433, and there is no Nginx. On a server, follow [DEPLOY.md](DEPLOY.md) (Ubuntu,
+<http://localhost:8080>, the Strapi admin on the website's own address, <http://localhost:8080/admin>
+(create the first administrator there; Strapi itself is on <http://cms.localhost:8081>), PostgreSQL on port 5433, and there is no Nginx. On a server, follow [DEPLOY.md](DEPLOY.md) (Ubuntu,
 Cloudflare DNS and SSL, backups, updates).
 
 ### Option B: local development (no Docker)
@@ -248,7 +248,7 @@ Needs Node.js 22 LTS and PostgreSQL 17 with a database `uswat` owned by a role `
 cd cms
 cp .env.example .env            # set DATABASE_PASSWORD and the secrets
 npm install
-npm run dev                     # http://localhost:1337/admin — create the first administrator
+npm run dev                     # Strapi on :1337 (its admin opens at http://localhost:3000/admin once the website runs)
 npm run seed                    # in a second terminal: fill the empty database
 npm run demo-accounts           # optional: demo Department Editor + Faculty logins (see below)
 npm run faculty-photos          # optional: attach faculty photos the seed could not download
@@ -257,7 +257,7 @@ npm run faculty-photos          # optional: attach faculty photos the seed could
 cd ../frontend
 cp .env.example .env.local      # STRAPI_URL=http://localhost:1337 and the same REVALIDATE_SECRET as the CMS
 npm install
-npm run dev                     # http://localhost:3000  (Urdu: http://localhost:3000/ur)
+npm run dev                     # http://localhost:3000  (Urdu: /ur; staff admin: /admin — create the first administrator there)
 ```
 
 Useful scripts: `npm run lint`, `npm run typecheck` and `npm run build` in each app; `npm run seed -- --reset`
@@ -269,7 +269,8 @@ replace.
 
 Staff never touch code. A Media Cell editor publishes a news story in about two minutes:
 
-1. Sign in at `https://cms.<domain>/admin` with the account the Super Admin created.
+1. Sign in at `https://<domain>/admin` (the **Staff login** link in the website footer) with the account the
+   Super Admin created.
 2. Open **Content Manager › Post** and click **Create new entry**.
 
    ![Strapi admin: list of posts in the Content Manager, as the demo Department Editor sees it (only their department's posts)](docs/screenshots/strapi-posts-list-desktop.webp)

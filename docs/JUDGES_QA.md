@@ -10,7 +10,8 @@ half lists 15 likely questions with short answers.
 
 The website has two halves that talk to each other:
 
-- **Strapi** (in `cms/`) is the *back office*. Staff sign in at `/admin`, type news, upload photos and PDFs,
+- **Strapi** (in `cms/`) is the *back office*. Staff sign in at the website's own address, `<site>/admin`
+  (the **Staff login** link in the footer and mobile menu), type news, upload photos and PDFs,
   and press Publish. Strapi stores everything in a **PostgreSQL** database and offers it to the website
   through a REST API (web addresses that return data, for example `/api/posts`).
 - **Next.js** (in `frontend/`) is the *shop window*. It asks Strapi for the content, builds the pages
@@ -143,7 +144,9 @@ their publications.
   and have health checks. The database is on an internal network that only Strapi can reach.
 - **Nginx** is the front door on the server. It handles HTTPS, compresses pages (gzip and Brotli), caches
   optimised images and media, adds security headers (CSP, HSTS, no framing), limits login attempts, and sends
-  `cms.<domain>` to Strapi and everything else to the website.
+  the admin panel (`<site>/admin` and the paths it calls) and `cms.<domain>` to Strapi, everything else to the
+  website. So staff sign in on the university's own address, and the panel carries the university's crest,
+  colours and name, not Strapi's.
 - **Cloudflare** is in front of the server: it runs the DNS, serves cached files from data centres close to the
   visitor, provides the public SSL certificate and absorbs attacks. Between Cloudflare and the server, traffic
   is encrypted too ("Full (strict)" mode with a Cloudflare Origin Certificate). Nginx reads the visitor's real IP

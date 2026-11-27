@@ -3,6 +3,7 @@ import {
   ArrowUp,
   ArrowUpRight,
   GraduationCap,
+  KeyRound,
   Landmark,
   Layers,
   Mail,
@@ -28,6 +29,7 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { cn } from "@/lib/cn";
+import { ADMIN_PATH } from "@/lib/cms-admin";
 import { SmartLink } from "./smart-link";
 
 interface SiteFooterProps {
@@ -338,13 +340,24 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
             className="flex flex-col-reverse items-start gap-3 py-5 pe-20 sm:flex-row sm:items-center sm:justify-between sm:pe-24"
           >
             <p className="text-body-sm text-forest-100">{chrome?.copyright}</p>
-            <a
-              href="#top"
-              className="inline-flex items-center gap-2 rounded-sm py-1 text-body font-semibold text-white transition-colors hover:text-gold-bright sm:border-s sm:border-white/20 sm:ps-6"
-            >
-              <ArrowUp aria-hidden className="size-5 text-gold-bright" />
-              {t("backToTop")}
-            </a>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              {/* The CMS admin panel, served from this same address (Next.js rewrite in development,
+                  Nginx in production). A plain link: it is not a localised page of the website. */}
+              <a
+                href={ADMIN_PATH}
+                className="inline-flex items-center gap-2 rounded-sm py-1 text-body-sm text-forest-100 transition-colors hover:text-gold-bright"
+              >
+                <KeyRound aria-hidden className="size-4 text-gold-bright" />
+                {t("staffLogin")}
+              </a>
+              <a
+                href="#top"
+                className="inline-flex items-center gap-2 rounded-sm py-1 text-body font-semibold text-white transition-colors hover:text-gold-bright sm:border-s sm:border-white/20 sm:ps-6"
+              >
+                <ArrowUp aria-hidden className="size-5 text-gold-bright" />
+                {t("backToTop")}
+              </a>
+            </div>
           </Container>
         </div>
       </div>

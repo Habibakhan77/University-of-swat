@@ -180,6 +180,7 @@ export async function SiteHeader({ locale, chrome }: SiteHeaderProps) {
                 apply: t("applyNow"),
                 quickLinks: t("quickLinks"),
                 preferences: t("preferences"),
+                staffLogin: t("staffLogin"),
                 homeLink: homeLabel,
                 theme: themeLabels,
                 language: languageLabels,

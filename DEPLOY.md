@@ -20,8 +20,9 @@ This guide sets up the site on an Ubuntu VPS: Docker Compose runs four container
 |---|---|
 | `https://uswat.edu.pk` (and `/ur`) | Next.js website |
 | `https://www.uswat.edu.pk` | 301 redirect to the address above |
-| `https://cms.uswat.edu.pk/admin` | Strapi admin panel (staff) |
+| `https://uswat.edu.pk/admin` | Strapi admin panel for staff (the footer's **Staff login** link); Nginx sends it, and the paths it calls, to Strapi |
 | `https://cms.uswat.edu.pk/uploads/…` | Media Library files (photos, PDFs) |
+| `https://cms.uswat.edu.pk/api/…` | Strapi REST API (the admin panel also still works at `cms.uswat.edu.pk/admin`) |
 
 The Nginx config has no domain written into it, so a staging domain works the same way. The domain is set
 once in `.env`.
@@ -185,7 +186,8 @@ Cloudflare's free plan does not vary on. Nginx already caches each format at the
 - **Scrape Shield:** Email Address Obfuscation **off**. It rewrites e-mail addresses in the HTML, which
   breaks React hydration on the Contact and Administration pages.
 - **Security → WAF:** the free managed ruleset is fine. Optionally add a rate-limiting rule for
-  `cms.uswat.edu.pk/admin/login`. Nginx limits it too (5 POSTs per minute per IP).
+  `uswat.edu.pk/admin/login` (and `cms.uswat.edu.pk/admin/login`). Nginx limits both too (5 POSTs per minute
+  per IP).
 - **Caching → Configuration → Purge Everything** after a deploy that changes `public/` files (logo, icons).
   `/_next/static` files have new names on every build, so they never need purging.
 
@@ -203,7 +205,7 @@ docker compose logs -f cms    # Ctrl+C to stop following
 
 ### 4.1 Create the first administrator
 
-Open `https://cms.uswat.edu.pk/admin` straight away and register the **Super Admin** account: the first
+Open `https://uswat.edu.pk/admin` straight away and register the **Super Admin** account: the first
 person to open a fresh admin panel creates it. Use a university e-mail address and a long password.
 
 ### 4.2 Content
@@ -408,4 +410,5 @@ docker compose up -d --build
 docker compose --profile seed run --rm cms-seed
 ```
 
-Website: <http://localhost:8080>. Strapi admin: <http://cms.localhost:8081/admin>.
+Website: <http://localhost:8080>. Strapi admin: <http://localhost:8080/admin> (the website proxies it to
+Strapi on <http://cms.localhost:8081>).
