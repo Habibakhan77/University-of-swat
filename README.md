@@ -60,6 +60,21 @@ every below-the-fold section rendered. All files are in [`docs/screenshots`](doc
 | **Campus life** | [![Campus life on a desktop screen](docs/screenshots/campus-life-desktop-en-light.webp)](docs/screenshots/campus-life-desktop-en-light-full.webp) | [![Campus life on a phone](docs/screenshots/campus-life-mobile-en-light.webp)](docs/screenshots/campus-life-mobile-en-light-full.webp) |
 | **Homepage in Urdu, dark** | [![Homepage in Urdu, dark theme, on a desktop screen](docs/screenshots/home-desktop-ur-dark.webp)](docs/screenshots/home-desktop-ur-dark-full.webp) | [![Homepage in Urdu, dark theme, on a phone](docs/screenshots/home-mobile-ur-dark.webp)](docs/screenshots/home-mobile-ur-dark-full.webp) |
 
+**Search, menus and phone navigation.** Ctrl/⌘ + K opens the global search from any page; the desktop mega
+menu opens on hover, click or keyboard; on a phone the menu is a full-screen panel with quick links.
+
+| Global search (Ctrl/⌘ + K) | Search in Urdu |
+|---|---|
+| ![Search dialog with results for "physics": programs, departments, faculties and faculty members](docs/screenshots/search-desktop-en-light.webp) | ![Urdu search dialog, dark theme, with results for فیس](docs/screenshots/search-desktop-ur-dark.webp) |
+
+| Mega menu | Mega menu in Urdu |
+|---|---|
+| ![Open Academics mega menu](docs/screenshots/megamenu-desktop-en-light.webp) | ![Open Academics mega menu in Urdu, dark theme](docs/screenshots/megamenu-desktop-ur-dark.webp) |
+
+| Phone menu | Phone menu in Urdu |
+|---|---|
+| <img src="docs/screenshots/menu-mobile-en-light.webp" alt="Full-screen menu on a phone, English" width="300"> | <img src="docs/screenshots/menu-mobile-ur-dark.webp" alt="Full-screen menu on a phone, Urdu, dark theme" width="300"> |
+
 **Strapi admin**, signed in as the demo Department Editor for Computer and Software Technology: the dashboard
 shows only their department, and the Content Manager lists only its own entries.
 

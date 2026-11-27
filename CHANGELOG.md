@@ -1620,3 +1620,6 @@ consistency). Content, data and colours unchanged.
 - The previous top-level screenshots (old design, including search, menu and mega menu shots) are removed; the
   `inner-pages/` and `pro-polish/` before/after sets stay as history
 - README: one Screenshots table (page × desktop/phone, each linking to its full page) and a Strapi admin row
+- Search, mega menu and phone menu shots retaken in the new design, English/light and Urdu/dark: the Ctrl+K
+  dialog with results ("physics", فیس), the open Academics mega menu, and the full-screen phone menu. Added to
+  the README Screenshots section
