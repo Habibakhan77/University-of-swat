@@ -129,14 +129,14 @@ const log = (msg: string): void => console.log(`[seed] ${msg}`);
 const DESIGNATIONS = ['professor', 'associate_professor', 'assistant_professor', 'assistant_professor', 'lecturer'] as const;
 
 /**
- * Links to an official document kept in assets/documents (data/documents.ts) get that file attached: the
- * website opens our copy and shows the link's URL (the original on uswat.edu.pk) as its source.
+ * Links (and accreditations) to an official document kept in assets/documents (data/documents.ts) get that
+ * file attached: the website opens our copy and shows the URL (the original on uswat.edu.pk) as its source.
  */
-export async function withLocalCopies<T extends { url: string }>(links: T[], media: MediaFactory): Promise<(T & { file?: number })[]> {
+export async function withLocalCopies<T extends { url?: string | null }>(links: T[], media: MediaFactory): Promise<(T & { file?: number })[]> {
   const out: (T & { file?: number })[] = [];
   for (const link of links) {
-    const doc = LOCAL_DOCUMENTS[link.url];
-    const file = doc ? await media.remote({ url: link.url, alt: doc.title, source: doc.source }) : null;
+    const doc = link.url ? LOCAL_DOCUMENTS[link.url] : undefined;
+    const file = doc && link.url ? await media.remote({ url: link.url, alt: doc.title, source: doc.source }) : null;
     out.push(file === null ? link : { ...link, file });
   }
   return out;
@@ -242,10 +242,13 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           staff: o.staff ?? [],
           contact: Object.keys(contact).length ? contact : undefined,
           websiteUrl: o.websiteUrl,
-          links: (o.links ?? []).map((link) => {
-            const url = link.url.startsWith('https://') ? link.url : `${UPLOADS}${link.url}`;
-            return { label: link.label, url, isExternal: true };
-          }),
+          links: await withLocalCopies(
+            (o.links ?? []).map((link) => {
+              const url = link.url.startsWith('https://') ? link.url : `${UPLOADS}${link.url}`;
+              return { label: link.label, url, isExternal: true };
+            }),
+            media,
+          ),
           sourceUrl,
           isPrincipal: o.isPrincipal ?? false,
           order: i + 1,
@@ -551,7 +554,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     });
     await w.single(
       'api::research-page.research-page',
-      { ...RESEARCH_PAGE.shared, ...RESEARCH_PAGE.en, offices: researchOffices },
+      { ...RESEARCH_PAGE.shared, ...RESEARCH_PAGE.en, resources: await withLocalCopies(RESEARCH_PAGE.shared.resources, media), offices: researchOffices },
       { ...RESEARCH_PAGE.ur, offices: researchOffices },
     );
 
@@ -578,7 +581,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
           gallery,
           office: officeId,
           contact: f.contact,
-          links: f.links ?? [],
+          links: await withLocalCopies(f.links ?? [], media),
           sourceUrl: f.source,
           order: i + 1,
           seo: seo(f.title, f.summary),
@@ -656,7 +659,11 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
 
     // Principal officers on the About page come from the offices marked isPrincipal.
     const aboutHero = await media.photo('mainCampus', 'cover');
-    await w.single('api::about.about', { ...ABOUT.shared, ...ABOUT.en, heroImage: aboutHero }, ABOUT.ur);
+    await w.single(
+      'api::about.about',
+      { ...ABOUT.shared, ...ABOUT.en, rankings: await withLocalCopies(ABOUT.en.rankings, media), heroImage: aboutHero },
+      { ...ABOUT.ur, rankings: await withLocalCopies(ABOUT.ur.rankings, media) },
+    );
 
     const admissionsHero = await media.photo('campusMountains');
     const contactOffices = ['directorate-of-admissions', 'university-advancement-financial-aid'].map((slug) => {

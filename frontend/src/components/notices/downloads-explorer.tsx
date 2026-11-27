@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Download, ExternalLink } from "lucide-react";
+import { Download } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import type { Locale } from "@/i18n/routing";
 import { langAttr } from "@/lib/strapi/academics-model";
@@ -12,7 +12,7 @@ import { ResultCount, SearchField, SelectField, matches, useUrlFilters } from "@
 import { Button } from "@/components/ui/button";
 import { OfficialLanguageNote } from "@/components/ui/language-note";
 import { cn } from "@/lib/cn";
-import { sourceHost } from "@/lib/source-host";
+import { SourceLink } from "@/components/ui/source-link";
 import { FormatIcon } from "./shared";
 
 /** An odd last card spans the row and centres at half width, so the 2-column grid never ends on an orphan. */
@@ -185,20 +185,8 @@ function DownloadRow({ item, locale }: { item: DownloadItem; locale: Locale }) {
               </>
             ) : null}
           </p>
-          {item.file && item.sourceUrl ? (
-            <a
-              href={item.sourceUrl}
-              target="_blank"
-              rel="noopener"
-              className="relative z-10 mt-1 inline-flex items-center gap-1 self-start text-caption text-fg-subtle hover:text-primary-text hover:underline"
-            >
-              {t("sourceFrom", { host: sourceHost(item.sourceUrl) })}
-              <ExternalLink aria-hidden className="size-3" />
-              <span className="sr-only">
-                : {item.title.value} {tCommon("opensInNewTab")}
-              </span>
-            </a>
-          ) : null}
+          {/* Above the card's stretched link, so it stays clickable. */}
+          {item.file && item.sourceUrl ? <SourceLink href={item.sourceUrl} name={item.title.value} className="relative z-10 mt-1" /> : null}
         </div>
         <Download aria-hidden className="mt-0.5 size-4 shrink-0 text-fg-subtle group-hover/file:text-primary-text" />
       </div>

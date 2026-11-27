@@ -63,6 +63,8 @@ export interface Recognition {
   rank: string;
   year: number | null;
   url: string | null;
+  /** When `url` is our copy: the official original on uswat.edu.pk. */
+  source: string | null;
 }
 
 export interface AboutPage {

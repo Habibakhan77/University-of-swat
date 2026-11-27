@@ -63,19 +63,25 @@ from uswat.edu.pk (about 75 MB the first time, cached in `cms/.seed-cache/`, git
 
 Some documents matter too much to depend on uswat.edu.pk being up at seed time, or at all. Their official
 files are kept in `assets/documents/` and listed in `data/documents.ts`, keyed by their official URL. Wherever
-the seed meets that URL (a download, a notice attachment, a Link) it uploads the kept file instead of fetching
-it. A **Link** (e.g. Admissions → Fee links) gets the file in its optional `file` field: the website opens our
-copy and shows the link's URL as a small "Source: uswat.edu.pk" link to the original. Editors can do the same
-for any link by attaching a file to it.
+the seed meets that URL (a download, a notice attachment, a link, an accreditation) it uploads the kept file
+instead of fetching it. A **Link** (Admissions fee links, office and campus life documents, Research page
+resources) or an **accreditation** on the About page gets the file in its optional `file` field: the website
+opens our copy and shows the URL as a small "Source: uswat.edu.pk ↗" link to the original. Editors can do the
+same for any link or accreditation by attaching a file to it.
 
-| File | Official URL | Used in |
+| File | Official URL (under `https://uswat.edu.pk/wp-content/uploads/`) | Used in |
 | --- | --- | --- |
-| `Fee-Structure-2025.pdf` | `wp-content/uploads/2025/09/Fee-Structure-2025.pdf` | Admissions fee links (and so the assistant's fee answer), Downloads |
+| `Fee-Structure-2025.pdf` | `2025/09/` | Admissions fee links (and so the assistant's fee answer), Downloads |
+| `ID-Card-Form-for-Fresh-Admitted-Students.pdf`, `Student-ID-Card-Renewal.pdf`, `Students-ID-Card-Lost.pdf`, `Course-Registration-Form.pdf`, `Clearance-for-Internal-Examination.pdf` | `2022/12/` | Office of the Provost |
+| `Final-Transcript-Clearance-Form.pdf` | `2025/07/` | Office of the Provost |
+| `Synopsis-Format.pdf`, `Thesis-Format.pdf` | `2025/11/` | DASR office, Research page resources |
+| `Student-Code-of-Conduct.pdf` | `2019/11/` | Proctorial Board |
+| `CSaccreditation3.pdf` (`2025/05/`), `Forestry2026XCategoryCertificate.pdf` (`2026/07/`), `456-1.pdf` and `Accreditation-of-LLBProgram-by-Pakistan-Bar-Council-28-2017.pdf` (`2024/08/`) | see file | About → Accreditation and recognition |
 
 To add one: save the official file in `assets/documents/`, add it to `data/documents.ts`, then run
 `npm run local-documents` (applies it to the existing content without a reseed: uploads it once, attaches it to
-matching Admissions fee links and Downloads entries, publishes and refreshes the website; a locale with
-unpublished edits is skipped). A full seed picks it up too.
+every matching link and accreditation (Admissions, offices, campus life, Research, About) and Downloads entry,
+publishes and refreshes the website; an entry with unpublished edits is skipped). A full seed picks it up too.
 
 ## Still needs real data (checklist for staff)
 

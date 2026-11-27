@@ -15,6 +15,7 @@ import { HomeSectionHeader } from "@/components/home/home-section-header";
 import { PartnersList } from "@/components/organisation/partners-list";
 import { SourceNote } from "@/components/notices/shared";
 import { SmartLink } from "@/components/layout/smart-link";
+import { SourceLink } from "@/components/ui/source-link";
 import { MountainRidge } from "@/components/brand/motifs";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -287,9 +288,13 @@ export default async function AboutPage() {
                         {r.body}
                       </p>
                       {r.url ? (
-                        <SmartLink href={r.url} external className="mt-auto pt-1 text-body-sm font-semibold text-primary-text hover:underline">
-                          {t("viewEvidence")}
-                        </SmartLink>
+                        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-1">
+                          <SmartLink href={r.url} external className="text-body-sm font-semibold text-primary-text hover:underline">
+                            {t("viewEvidence")}
+                          </SmartLink>
+                          {/* Evidence opens our copy; this is the original on uswat.edu.pk. */}
+                          {r.source ? <SourceLink href={r.source} name={r.rank} /> : null}
+                        </div>
                       ) : null}
                     </li>
                   ))}

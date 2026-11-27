@@ -361,19 +361,27 @@ export const VC_MESSAGE = {
 const ABOUT_SOURCE = 'https://uswat.edu.pk/about-university/';
 const QEC_UPLOADS = 'https://uswat.edu.pk/wp-content/uploads/';
 
+/**
+ * Wording strictly as the linked documents state it (each read November 2026; copies in assets/documents):
+ * - NCEAC letter NCEAC/HEC/ASC-54/Zero/1-57 of 30 April 2025: approval (after a zero visit) to START the BS
+ *   Computer Science program, one section of at most 50 students a year, subject to a compliance report. It is
+ *   not an accreditation and covers no other program.
+ * - NACTE certificate of 11 July 2024: "Y" level accreditation of the B.Ed (Hons) 4 years program, valid until
+ *   20 September 2026, so expired since then (re-accreditation not published).
+ */
 const RECOGNITION = [
-  { body: 'National Computing Education Accreditation Council (NCEAC)', category: 'Accreditation', rank: 'BS Computer Science, BS Information Technology and BS Software Engineering accredited', year: 2025, url: `${QEC_UPLOADS}2025/05/CSaccreditation3.pdf` },
+  { body: 'National Computing Education Accreditation Council (NCEAC)', category: 'Program approval', rank: 'Approval to start the BS Computer Science program (zero visit, 30 April 2025)', year: 2025, url: `${QEC_UPLOADS}2025/05/CSaccreditation3.pdf` },
   { body: 'National Agricultural Education Accreditation Council (NAEAC)', category: 'Accreditation', rank: 'BS Forestry accredited, 2026–28', year: 2026, url: `${QEC_UPLOADS}2026/07/Forestry2026XCategoryCertificate.pdf` },
-  { body: 'National Accreditation Council for Teacher Education (NACTE)', category: 'Accreditation', rank: 'B.Ed (Hons) accredited, 2024–2026', year: 2024, url: `${QEC_UPLOADS}2024/08/456-1.pdf` },
+  { body: 'National Accreditation Council for Teacher Education (NACTE)', category: 'Accreditation', rank: 'B.Ed (Hons) 4 years: “Y” level accreditation, 11 July 2024. Valid until 20 September 2026 (expired)', year: 2024, url: `${QEC_UPLOADS}2024/08/456-1.pdf` },
   { body: 'Pakistan Bar Council', category: 'Accreditation', rank: 'LLB program accredited', year: 2017, url: `${QEC_UPLOADS}2024/08/Accreditation-of-LLBProgram-by-Pakistan-Bar-Council-28-2017.pdf` },
   { body: 'Higher Education Commission (HEC)', category: 'Research', rank: 'ORIC recognised in the highest category', year: 2022, url: `${QEC_UPLOADS}2024/10/ORIC-UoS-Recognition-Letter.pdf` },
   { body: 'Higher Education Commission (HEC)', category: 'Journal', rank: 'SUJRIS approved in "Y" category', year: 2025, url: 'https://uswat.edu.pk/2025/03/higher-education-commission-approves-sujris/' },
 ];
 
 const RECOGNITION_UR = [
-  { rank: 'بی ایس کمپیوٹر سائنس، بی ایس انفارمیشن ٹیکنالوجی اور بی ایس سافٹ ویئر انجینئرنگ کی ایکریڈیٹیشن', category: 'ایکریڈیٹیشن' },
+  { rank: 'بی ایس کمپیوٹر سائنس پروگرام شروع کرنے کی منظوری (زیرو وزٹ، ۳۰ اپریل ۲۰۲۵)', category: 'پروگرام کی منظوری' },
   { rank: 'بی ایس فاریسٹری کی ایکریڈیٹیشن، ۲۰۲۶–۲۸', category: 'ایکریڈیٹیشن' },
-  { rank: 'بی ایڈ (آنرز) کی ایکریڈیٹیشن، ۲۰۲۴–۲۰۲۶', category: 'ایکریڈیٹیشن' },
+  { rank: 'بی ایڈ (آنرز) چار سالہ: “Y” درجے کی ایکریڈیٹیشن، ۱۱ جولائی ۲۰۲۴۔ ۲۰ ستمبر ۲۰۲۶ تک مؤثر (میعاد ختم ہو چکی)', category: 'ایکریڈیٹیشن' },
   { rank: 'ایل ایل بی پروگرام کی ایکریڈیٹیشن', category: 'ایکریڈیٹیشن' },
   { rank: 'اورک اعلیٰ ترین درجے میں تسلیم شدہ', category: 'تحقیق' },
   { rank: 'سُجرس "Y" کیٹیگری میں منظور', category: 'جریدہ' },

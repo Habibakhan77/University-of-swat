@@ -1717,3 +1717,24 @@ consistency). Content, data and colours unchanged.
 - `npm run local-documents` (cms): applies kept documents to existing content without a reseed (upload once,
   attach to matching fee links and Downloads entries, publish, refresh the website; skips a locale with
   unpublished edits). Run once on the dev database
+
+## Our own copies of the most-used forms and certificates
+
+- 13 more official PDFs kept in `cms/scripts/seed/assets/documents/` (saved in a browser on 27 November 2026;
+  each checked to be a well-formed PDF without scripts, actions, forms or embedded files, and read to match its
+  title): the three ID card forms, Course Registration, Clearance for Internal Examination and Final
+  Transcript Clearance (Office of the Provost); Synopsis and Thesis formats (DASR, Research page); Students'
+  Code of Conduct (Proctorial Board); the NCEAC, NAEAC, NACTE and Pakistan Bar Council letters and
+  certificates (About → Accreditation and recognition)
+- Shared **Ranking** component: optional `file`, like Link. The About page's "View certificate or notice"
+  opens our copy, with "Source: uswat.edu.pk ↗" beside it
+- One shared `SourceLink` component ("Source: uswat.edu.pk ↗") under every document card that opens our copy:
+  Admissions, Downloads, office and campus life documents, Research resources, About accreditations
+- `npm run local-documents` now covers office and campus life links, Research resources and About
+  accreditations as well as the Admissions fee links (run on the dev database: 13 files, 19 links)
+- Not yet mirrored: the two hostel forms and the Synopsis/Thesis Word files (still link to uswat.edu.pk)
+- About → Accreditation wording corrected to match the documents (seed and live, en + ur): NCEAC is the
+  30 April 2025 approval to *start* BS Computer Science (category "Program approval"; BS IT and BS SE were not
+  in the letter); NACTE B.Ed (Hons) shows "Valid until 20 September 2026 (expired)"
+- `BUILD_CPUS=2 npm run build`: optional cap on pre-render workers, so a local build doesn't exhaust
+  `strapi develop`'s connection pool on the 8 GB dev laptop

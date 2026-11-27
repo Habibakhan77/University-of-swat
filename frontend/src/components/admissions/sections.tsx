@@ -3,7 +3,6 @@ import { ArrowRight, Award, BadgeCheck, CalendarCheck, ChevronDown, ExternalLink
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
-import { sourceHost } from "@/lib/source-host";
 import type { Locale } from "@/i18n/routing";
 import { ActionAnchor } from "./action-anchor";
 import { HubNavList } from "./hub-nav-list";
@@ -12,6 +11,7 @@ import type { Block, InlineNode } from "@/lib/strapi/blocks";
 import type { AdmissionsCallout, ApplicationStep, Faq, FaqCategory, OfficeContact } from "@/lib/strapi/admissions";
 import type { NavLink } from "@/lib/strapi/site";
 import { SmartLink } from "@/components/layout/smart-link";
+import { SourceLink } from "@/components/ui/source-link";
 import { buttonVariants } from "@/components/ui/button";
 import { HomeSectionHeader } from "@/components/home/home-section-header";
 import { RichText } from "@/components/ui/rich-text";
@@ -271,8 +271,6 @@ export function SchemeGrid({ items, lang }: { items: string[]; lang?: string }) 
 
 /** Large link cards (merit lists, fee documents). */
 export function LinkCards({ links, lang }: { links: NavLink[]; lang?: string }) {
-  const t = useTranslations("admissions");
-  const tCommon = useTranslations("common");
   return (
     <ul className="grid gap-3 sm:grid-cols-2">
       {links.map((link) => {
@@ -300,20 +298,7 @@ export function LinkCards({ links, lang }: { links: NavLink[]; lang?: string }) 
               )}
             </SmartLink>
             {/* The card opens our copy; this is the official original. */}
-            {link.source ? (
-              <a
-                href={link.source}
-                target="_blank"
-                rel="noopener"
-                className="inline-flex items-center gap-1 self-start px-1 text-caption text-fg-subtle hover:text-primary-text hover:underline"
-              >
-                {t("source", { label: sourceHost(link.source) })}
-                <ExternalLink aria-hidden className="size-3" />
-                <span className="sr-only">
-                  : {link.label} {tCommon("opensInNewTab")}
-                </span>
-              </a>
-            ) : null}
+            {link.source ? <SourceLink href={link.source} name={link.label} className="px-1" /> : null}
           </li>
         );
       })}

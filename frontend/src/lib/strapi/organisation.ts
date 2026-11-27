@@ -18,6 +18,7 @@ import {
   type ResearchProject,
 } from "./organisation-model";
 import { fetchPairs, guarded, unwrap, loads, localizedSingle, safely, pick, populateImage, selectFields, toImage, toRealImage, type Doc, type Pair, type Loaded } from "./query";
+import { strapiMediaUrl } from "./client";
 import { contactOf, httpsOrNull, seoOf, seoPopulate, type StrapiSeo } from "./shared";
 import { toNavLink } from "./site";
 import type { StrapiContact, StrapiLink, StrapiMedia } from "./types";
@@ -75,7 +76,7 @@ interface StrapiAbout extends Doc {
   mission: string | null;
   coreValues: { title: string; description: string | null; icon: string | null }[] | null;
   motto: string | null;
-  rankings: { body: string; category: string | null; rank: string; year: number | null; url: string | null }[] | null;
+  rankings: { body: string; category: string | null; rank: string; year: number | null; url: string | null; file?: { url: string } | null }[] | null;
   sourceUrl: string | null;
   seo: { metaTitle: string | null; metaDescription: string | null } | null;
 }
@@ -215,7 +216,7 @@ async function loadOffices(locale: Locale): Promise<Loaded<Office[]>> {
         ]),
         ...populateImage("headPhoto"),
         "populate[staff]": true,
-        "populate[links]": true,
+        "populate[links][populate][file][fields][0]": "url",
         ...contactPopulate,
         ...seoPopulate,
         "sort[0]": "order:asc",
@@ -239,7 +240,7 @@ async function loadAbout(locale: Locale): Promise<Loaded<AboutPage | null>> {
         ...populateImage("heroImage"),
         "populate[milestones]": true,
         "populate[coreValues]": true,
-        "populate[rankings]": true,
+        "populate[rankings][populate][file][fields][0]": "url",
         "populate[seo][fields][0]": "metaTitle",
         "populate[seo][fields][1]": "metaDescription",
       },
@@ -257,7 +258,15 @@ async function loadAbout(locale: Locale): Promise<Loaded<AboutPage | null>> {
       mission: about.mission,
       coreValues: (about.coreValues ?? []).map((v) => ({ title: v.title, description: v.description || null, icon: v.icon || null })),
       motto: about.motto,
-      recognition: (about.rankings ?? []).map((r) => ({ body: r.body, category: r.category || null, rank: r.rank, year: r.year ?? null, url: httpsOrNull(r.url) })),
+      // Evidence opens our copy when one is attached (Ranking.file); the official URL becomes its source.
+      recognition: (about.rankings ?? []).map((r) => ({
+        body: r.body,
+        category: r.category || null,
+        rank: r.rank,
+        year: r.year ?? null,
+        url: r.file?.url ? strapiMediaUrl(r.file.url) : httpsOrNull(r.url),
+        source: r.file?.url ? httpsOrNull(r.url) : null,
+      })),
       sourceUrl: httpsOrNull(about.sourceUrl),
       seo: plainSeo(about.seo),
     };
@@ -316,7 +325,7 @@ async function loadResearchPage(locale: Locale): Promise<Loaded<ResearchPage | n
           "populate[offices][fields][0]": "slug",
           "populate[journals]": true,
           "populate[conferences]": true,
-          "populate[resources]": true,
+          "populate[resources][populate][file][fields][0]": "url",
           "populate[seo][fields][0]": "metaTitle",
           "populate[seo][fields][1]": "metaDescription",
         },
@@ -399,7 +408,7 @@ async function loadFacilities(locale: Locale): Promise<Loaded<Facility[]>> {
           ...populateImage("image"),
           ...populateImage("gallery"),
           "populate[office][fields][0]": "slug",
-          "populate[links]": true,
+          "populate[links][populate][file][fields][0]": "url",
           ...contactPopulate,
           ...seoPopulate,
           "sort[0]": "order:asc",

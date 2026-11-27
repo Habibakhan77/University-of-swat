@@ -9,6 +9,7 @@ import { langAttr, scriptLang } from "@/lib/strapi/academics-model";
 import type { Facility, Office, StaffMember } from "@/lib/strapi/organisation-model";
 import type { NavLink } from "@/lib/strapi/site";
 import { SmartLink } from "@/components/layout/smart-link";
+import { SourceLink } from "@/components/ui/source-link";
 
 const tel = (n: string) => `tel:${n.replace(/[^\d+]/g, "")}`;
 
@@ -146,7 +147,8 @@ const NEWS_LABEL = /\s*\(news\)\s*$/i;
 const NEWS_URL = /^https?:\/\/(www\.)?uswat\.edu\.pk\/\d{4}\/\d{2}\//i;
 
 function classify(link: NavLink): { kind: LinkKind; label: string; host: string | null } {
-  const host = link.external ? (URL.canParse(link.href) ? new URL(link.href).hostname.replace(/^www\./, "") : null) : null;
+  // Our copy of an official document: the "Source" line under the card names uswat.edu.pk instead.
+  const host = link.external && !link.source ? (URL.canParse(link.href) ? new URL(link.href).hostname.replace(/^www\./, "") : null) : null;
   const news = NEWS_LABEL.test(link.label) || NEWS_URL.test(link.href);
   const label = link.label.replace(NEWS_LABEL, "");
   if (link.href.toLowerCase().split(/[?#]/)[0].endsWith(".pdf")) return { kind: "pdf", label, host };
@@ -170,12 +172,12 @@ export function FacilityLinks({ links }: { links: NavLink[] }) {
         const { kind, label, host } = classify(link);
         const Icon = link.icon ? iconFor(link.icon) : KIND_ICON[kind];
         return (
-          <li key={link.href}>
+          <li key={link.href} className="flex flex-col gap-1.5">
             <SmartLink
               href={link.href}
               external={link.external}
               externalIcon={false}
-              className="group/link flex h-full items-start gap-4 rounded-2xl border border-line bg-surface p-5 shadow-xs transition-[border-color,box-shadow] hover:border-primary-text/40 hover:shadow-md"
+              className="group/link flex flex-1 items-start gap-4 rounded-2xl border border-line bg-surface p-5 shadow-xs transition-[border-color,box-shadow] hover:border-primary-text/40 hover:shadow-md"
             >
               <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent-soft-fg">
                 <Icon className={cn("size-5", !link.icon && kind === "page" && "rtl:-scale-x-100")} />
@@ -201,6 +203,7 @@ export function FacilityLinks({ links }: { links: NavLink[] }) {
               </span>
               {link.external ? <ExternalLink aria-hidden className="mt-0.5 size-4 shrink-0 text-fg-subtle" /> : null}
             </SmartLink>
+            {link.source ? <SourceLink href={link.source} name={label} className="px-1" /> : null}
           </li>
         );
       })}

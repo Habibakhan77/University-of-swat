@@ -9,6 +9,7 @@ import type { Locale } from "@/i18n/routing";
 import type { Office } from "@/lib/strapi/organisation-model";
 import type { NavLink } from "@/lib/strapi/site";
 import { SmartLink } from "@/components/layout/smart-link";
+import { SourceLink } from "@/components/ui/source-link";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/cn";
 
@@ -77,12 +78,12 @@ export function LinkList({ links, className }: { links: NavLink[]; className?: s
       {links.map((link) => {
         const Icon = link.icon ? iconFor(link.icon) : link.href.toLowerCase().endsWith(".pdf") ? FileText : ExternalLink;
         return (
-          <li key={link.href}>
+          <li key={link.href} className="flex flex-col gap-1.5">
             <SmartLink
               href={link.href}
               external={link.external}
               externalIcon={false}
-              className="group/link flex h-full items-start gap-3 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-primary-text/40 hover:bg-primary-soft/40"
+              className="group/link flex flex-1 items-start gap-3 rounded-xl border border-line bg-surface p-4 transition-colors hover:border-primary-text/40 hover:bg-primary-soft/40"
             >
               <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-primary-text">
                 <Icon className="size-5" />
@@ -99,6 +100,7 @@ export function LinkList({ links, className }: { links: NavLink[]; className?: s
               </span>
               {link.external ? <ExternalLink aria-hidden className="ms-auto size-4 shrink-0 text-fg-subtle" /> : null}
             </SmartLink>
+            {link.source ? <SourceLink href={link.source} name={link.label} className="px-1" /> : null}
           </li>
         );
       })}

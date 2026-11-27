@@ -3,11 +3,12 @@
  * full reseed (run with `npm run local-documents`, see scripts/local-documents.js):
  *
  * - uploads each document to the Media Library (or reuses the copy already there under its seed name);
- * - attaches it to every Admissions page fee link (English and Urdu) that points at the official URL, so the
- *   website, and the assistant, open our copy and show the official URL as the source;
+ * - attaches it to every link that points at the official URL (Admissions fee links, office and campus life
+ *   documents, Research page resources) and to About accreditations, in English and Urdu, so the website
+ *   (and the assistant) open our copy and show the official URL as the source;
  * - gives the matching Downloads entry the file, creating the entry (from DOWNLOADS) when it is missing.
  *
- * A locale of the Admissions page with unpublished edits is left alone (publishing would publish those
+ * An entry (locale) with unpublished edits is left alone (publishing would publish those
  * edits too): publish or discard them, then run this again. Safe to run again.
  */
 import type { Core, UID } from '@strapi/strapi';
@@ -22,13 +23,70 @@ const FILE = 'plugin::upload.file' satisfies UID.Schema;
 
 const log = (msg: string): void => console.log(`[documents] ${msg}`);
 
-interface LinkRow {
-  label: string;
-  url: string;
-  description?: string | null;
-  icon?: string | null;
-  isExternal?: boolean | null;
-  file?: { id: number } | null;
+/** Repeatable components with a `url` and an optional `file` (shared.link, shared.ranking). */
+interface Target {
+  uid: UID.ContentType;
+  field: string;
+  /** What to call it in the log. */
+  name: string;
+}
+
+const TARGETS: Target[] = [
+  { uid: ADMISSIONS, field: 'feeLinks', name: 'Admissions page fee links' },
+  { uid: 'api::office.office', field: 'links', name: 'Office documents' },
+  { uid: 'api::facility.facility', field: 'links', name: 'Campus life documents' },
+  { uid: 'api::research-page.research-page', field: 'resources', name: 'Research page resources' },
+  { uid: 'api::about.about', field: 'rankings', name: 'About accreditations' },
+];
+
+/** The document service calls used here, for any of the target types. */
+interface Docs {
+  findMany(params: { locale: string; status: 'draft'; populate: Record<string, unknown> }): Promise<(Versioned & Record<string, unknown>)[]>;
+  findOne(params: { documentId: string; locale: string; status: 'published'; fields: string[] }): Promise<Versioned | null>;
+  update(params: { documentId: string; locale: string; data: Record<string, unknown> }): Promise<unknown>;
+  publish(params: { documentId: string; locale: string }): Promise<unknown>;
+}
+
+type Row = Record<string, unknown> & { url?: string | null; file?: { id: number } | null };
+
+/** A populated component as update data: no id, media and relations as ids. */
+function asData(row: Row): Record<string, unknown> {
+  const data: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(row)) {
+    if (key === 'id' || key === '__component') continue;
+    if (Array.isArray(value)) data[key] = value.map((v: unknown) => (v && typeof v === 'object' && 'id' in v ? (v as { id: number }).id : v));
+    else data[key] = value && typeof value === 'object' && 'id' in value ? (value as { id: number }).id : value;
+  }
+  return data;
+}
+
+/**
+ * Attaches kept documents to `target.field` in every entry and locale that links one without a file yet,
+ * and publishes. A locale with unpublished edits is skipped (publishing would publish them too).
+ */
+async function attach(strapi: Core.Strapi, target: Target, fileIds: Map<string, number>): Promise<boolean> {
+  const docs = strapi.documents(target.uid) as unknown as Docs;
+  let changed = false;
+  for (const locale of ['en', 'ur']) {
+    const drafts = await docs.findMany({ locale, status: 'draft', populate: { [target.field]: { populate: '*' } } });
+    for (const draft of drafts) {
+      const rows = (draft[target.field] as Row[] | null) ?? [];
+      const missing = rows.filter((r) => r.url && fileIds.has(r.url) && !r.file);
+      if (!missing.length) continue;
+      const label = `${target.name} (${locale}, ${String(draft.title ?? draft.name ?? draft.documentId)})`;
+      const published = await docs.findOne({ documentId: draft.documentId, locale, status: 'published', fields: ['updatedAt'] });
+      if (published && new Date(draft.updatedAt).getTime() > new Date(published.updatedAt).getTime() + 1000) {
+        log(`${label}: has unpublished edits, skipped. Publish or discard them, then run this again.`);
+        continue;
+      }
+      const data = rows.map((r) => ({ ...asData(r), file: (r.url && fileIds.get(r.url)) ?? r.file?.id ?? null }));
+      await docs.update({ documentId: draft.documentId, locale, data: { [target.field]: data } });
+      await docs.publish({ documentId: draft.documentId, locale });
+      changed = true;
+      log(`${label}: ${missing.length} now open our copy; published.`);
+    }
+  }
+  return changed;
 }
 
 interface Versioned {
@@ -56,38 +114,9 @@ export async function runLocalDocuments(strapi: Core.Strapi): Promise<void> {
       log(`${doc.title}: ${existing[0] ? 'already in the Media Library' : 'uploaded'} (file ${id})`);
     }
 
-    // 2. Admissions page fee links.
-    const pages = strapi.documents(ADMISSIONS);
-    for (const locale of ['en', 'ur']) {
-      const draft = (await pages.findFirst({ locale, status: 'draft', populate: { feeLinks: { populate: ['file'] } } })) as
-        | (Versioned & { feeLinks: LinkRow[] | null })
-        | null;
-      if (!draft) {
-        log(`Admissions page (${locale}): none yet, run npm run seed first.`);
-        continue;
-      }
-      const links = draft.feeLinks ?? [];
-      if (!links.some((l) => fileIds.has(l.url) && !l.file)) {
-        log(`Admissions page (${locale}): fee links already use our copies.`);
-        continue;
-      }
-      const published = (await pages.findFirst({ locale, status: 'published', fields: ['updatedAt'] })) as Versioned | null;
-      if (published && new Date(draft.updatedAt).getTime() > new Date(published.updatedAt).getTime() + 1000) {
-        log(`Admissions page (${locale}): has unpublished edits, skipped. Publish or discard them, then run this again.`);
-        continue;
-      }
-      const feeLinks = links.map((l) => ({
-        label: l.label,
-        url: l.url,
-        description: l.description ?? null,
-        icon: l.icon ?? null,
-        isExternal: l.isExternal ?? false,
-        file: fileIds.get(l.url) ?? l.file?.id ?? null,
-      }));
-      await pages.update({ documentId: draft.documentId, locale, data: { feeLinks } as never });
-      await pages.publish({ documentId: draft.documentId, locale });
-      changed.add(ADMISSIONS);
-      log(`Admissions page (${locale}): fee links now open our copy; published.`);
+    // 2. Every link (and accreditation) that points at a kept document: open our copy.
+    for (const target of TARGETS) {
+      if (await attach(strapi, target, fileIds)) changed.add(target.uid);
     }
 
     // 3. Downloads entries (English only, like the seed).
@@ -106,10 +135,8 @@ export async function runLocalDocuments(strapi: Core.Strapi): Promise<void> {
         log(`Download ${url}: file attached; published.`);
       } else {
         const seed = DOWNLOADS.find((d) => uploadUrl(d.file) === url);
-        if (!seed) {
-          log(`Download ${url}: not in DOWNLOADS (data/notices.ts), no entry created.`);
-          continue;
-        }
+        // Not a Downloads document (e.g. an office form or a certificate): the links above cover it.
+        if (!seed) continue;
         await downloads.create({
           locale: 'en',
           status: 'published',
