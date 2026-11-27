@@ -9,6 +9,8 @@ import { ThemeScript } from "@/components/theme/theme-script";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { RevealObserver } from "@/components/ui/reveal-observer";
+import { AssistantLauncher } from "@/components/assistant/assistant-launcher";
+import { assistantVersion } from "@/lib/assistant";
 import { getSiteChrome } from "@/lib/strapi/site";
 import { inter, nastaliq } from "@/lib/fonts";
 import { cn } from "@/lib/cn";
@@ -42,7 +44,12 @@ export const viewport: Viewport = {
 export default async function LocaleLayout({ children }: LayoutProps<"/[locale]">) {
   const locale = await resolveLocale();
 
-  const [chrome, t] = await Promise.all([getSiteChrome(locale), getTranslations({ locale, namespace: "common" })]);
+  const [chrome, t, tAssistant, assistantKnowledgeVersion] = await Promise.all([
+    getSiteChrome(locale),
+    getTranslations({ locale, namespace: "common" }),
+    getTranslations({ locale, namespace: "assistant" }),
+    assistantVersion(locale),
+  ]);
 
   return (
     <html
@@ -72,6 +79,18 @@ export default async function LocaleLayout({ children }: LayoutProps<"/[locale]"
           </main>
           <RevealObserver />
           <SiteFooter locale={locale} chrome={chrome} />
+          <AssistantLauncher
+            version={assistantKnowledgeVersion}
+            labels={{
+              open: tAssistant("open"),
+              close: tAssistant("close"),
+              title: tAssistant("title"),
+              loading: tAssistant("loading"),
+              unavailable: tAssistant("unavailable"),
+              search: tAssistant("links.search"),
+              contact: tAssistant("links.contact"),
+            }}
+          />
         </ClientMessages>
       </body>
     </html>

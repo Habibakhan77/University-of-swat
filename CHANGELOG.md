@@ -1623,3 +1623,83 @@ consistency). Content, data and colours unchanged.
 - Search, mega menu and phone menu shots retaken in the new design, English/light and Urdu/dark: the Ctrl+K
   dialog with results ("physics", فیس), the open Academics mega menu, and the full-screen phone menu. Added to
   the README Screenshots section
+
+## "Ask the University" help assistant (branch `help-assistant`)
+
+- A floating gold button (bottom-right; bottom-left in Urdu) opens a small help panel in English and Urdu, in
+  the site's design language: forest-green header with the Gandhara pattern and gold wave, gold quick-reply
+  chips, answers as cards with links
+- Answers only from Strapi content, with no external AI: keyword intents in both languages build structured
+  answers (application steps with the CMS portal link, advertised dates with open/upcoming/closed worked out on
+  Pakistan time, merit lists, fee structure and payment links, admissions office contacts, faculties and
+  departments, latest news, downloads); otherwise the closest FAQ (all categories, including examinations,
+  hostel and degree verification); otherwise the site search index. Every answer ends with links to the
+  pages it came from. With no match: "I couldn't find that. Try the search or contact the university",
+  with links to search and /contact. The fixed sentences around content are UI strings; nothing is made up
+- Quick replies: How do I apply?, Merit lists, Fee structure, Contact admissions, Find a department
+- `GET /api/assistant/[locale]`: search index, FAQs, admissions steps, dates, merit lists, fee links and
+  contacts, plus the assistant's strings (about 27 KB gzipped), cached until an editor publishes
+  (search and admissions tags). The page only ships the button: the panel code and the knowledge load on
+  first open, and the conversation is kept when the panel is closed and reopened
+- Accessibility: a labelled non-modal dialog; focus goes to the question field on open and back to the button
+  on Esc or close; the conversation is a polite live log; chips and links are buttons and links in tab order;
+  the opening animation is off with reduced motion. On phones the panel fills the screen and a followed link
+  closes it
+- The footer's bottom bar has end padding so "Back to top" stays clear of the button
+- QA on a production build at 1440 and 375px, English and Urdu, light and dark (110 scripted checks): code
+  and knowledge load only on open, keyboard open/chips/typing/Esc, focus return, answers and not-found
+  links, no overflow, no console errors, axe 0 violations on the open panel, reduced motion
+
+## "Ask the University" redesign: chat-style panel, voice, emoji, read-aloud (branch `help-assistant`)
+
+- Launcher: deep-green round button with a chat-bubble icon and a thin gold ring; on hover or keyboard focus
+  it widens into an "Ask the University" pill (instant, no slide, with reduced motion). The label is the
+  button's accessible name in both states
+- Panel (380×600 on desktop, full screen on phones with safe-area padding): slim deep-green header with the
+  round university logo, title, "Answers from official university pages" and close; thin gold line below
+- Welcome screen: "Assalam o Alaikum! How can I help you?" (Urdu: السلام علیکم! میں آپ کی کیا مدد کر سکتا
+  ہوں؟) and a 2-column grid of icon cards: Apply, Merit lists, Fee structure, Departments, Admissions contact,
+  Downloads. After the first question the same six stay available as a compact chip row above the input.
+  New "downloads" quick reply (the existing downloads answer); all answer logic is unchanged
+- Messages: user bubbles in brand green at the end side (right in English, left in Urdu RTL); assistant
+  bubbles white (dark: raised ink) with a soft shadow and a small logo avatar. Links are compact green pills
+  (→ internal, ↗ external, mirrored in RTL); result, date and contact rows are light list rows instead of
+  filled cards; e-mail and phone are pills too
+- Flow: the question shows at once and is scrolled to the top of the message area (the latest turn is kept at
+  least one screen tall, measured after the input shrinks back, so it always can); a three-dot typing
+  indicator shows for 500 ms, then the answer appears below. Nothing scrolls past the question. If the reader
+  has scrolled away when the answer arrives, a "↓ New answer" pill jumps back to it
+- Input: auto-growing textarea "Type your message…" / "اپنا سوال لکھیں…"; Enter sends (not during IME
+  composition), Shift+Enter adds a line, focus stays in the field. Green circular send button, dimmed and
+  disabled while empty. No attachment button
+- Emoji: a 24-emoji popover (no library) that inserts at the cursor; focus starts on the first emoji, arrow
+  keys/Home/End move (mirrored in RTL), Esc returns to the button, a click or Tab elsewhere closes it
+- Voice input: Web Speech API recognition (en-US on English pages, ur-PK on Urdu), interim text streamed into
+  the field for the user to edit and send; red pulsing mic and a "Listening…" status while recording, clear
+  messages when the microphone is blocked or nothing was heard; Esc stops listening. Hidden where the browser
+  has no SpeechRecognition (e.g. Firefox). The site never records, stores or uploads audio; on-device
+  recognition is requested where the browser reports it available, otherwise the browser's own speech
+  service is used (in Chrome that is Google's server)
+- Read-aloud: a speaker button on each answer (SpeechSynthesis), shown only when the browser has an English or
+  Urdu voice for the page's language; press again to stop
+- QA on a production build at 1440 and 375px, English and Urdu, light and dark: typing indicator, question
+  position after cards and typed questions (also after a multi-line question), Shift+Enter, focus after send,
+  emoji insert and keyboard, "New answer" pill, keyboard open/Esc/focus return, axe 0 WCAG AA violations on
+  the open panel, no console errors
+
+## "Ask the University" fixes (branch `help-assistant`)
+
+- Quick-action cards showed raw keys ("assistant.cards.apply" …) and the dev overlay had 6 errors
+  (`INSUFFICIENT_PATH: assistant.cards.<key>`): the panel's UI strings come with the knowledge response, which
+  browsers kept (5 min, stale-while-revalidate 1 day) from before the cards strings existed. The knowledge URL
+  now carries `?v=<hash of the assistant strings>` (computed in the layout), so a string change always fetches
+  a fresh copy; in development the response is `no-store`
+- One close button: the launcher is hidden at every width while the panel is open; the header ✕ (or Esc)
+  closes it and focus returns to the launcher
+- Panel size: 440×640 on desktop (above 1024px), 420 wide on tablets, max 90vw × 85vh, full screen below 640px
+- Cards: 2 columns, every label on one line in English and Urdu (tighter padding; in a narrow grid, phones,
+  the icon sits above the label)
+- No horizontal scrolling anywhere in the panel: the chips row wraps instead of scrolling, the message area
+  clips x-overflow, long words in bubbles break, the emoji picker is capped to the panel width
+- Checked in `next dev` on :3000 at 1440, 1024 and 375px, English and Urdu, light and dark (panel size, one
+  close button, focus return, label fit, no element outside the panel, no dev-overlay errors)
