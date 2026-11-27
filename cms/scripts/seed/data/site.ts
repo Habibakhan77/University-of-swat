@@ -368,12 +368,15 @@ const QEC_UPLOADS = 'https://uswat.edu.pk/wp-content/uploads/';
  *   not an accreditation and covers no other program.
  * - NACTE certificate of 11 July 2024: "Y" level accreditation of the B.Ed (Hons) 4 years program, valid until
  *   20 September 2026, so expired since then (re-accreditation not published).
+ * - Pakistan Bar Council letter 184/PBC/SEC/2017 of 28 February 2017: in its 219th meeting (21 January 2017) the
+ *   Council approved RECOGNITION of the University of Swat and its LL.B. degree under Sections 13(1)(k) and
+ *   26(c)(iii) of the Legal Practitioners and Bar Councils Act, 1973. It is a recognition, not an accreditation.
  */
 const RECOGNITION = [
   { body: 'National Computing Education Accreditation Council (NCEAC)', category: 'Program approval', rank: 'Approval to start the BS Computer Science program (zero visit, 30 April 2025)', year: 2025, url: `${QEC_UPLOADS}2025/05/CSaccreditation3.pdf` },
   { body: 'National Agricultural Education Accreditation Council (NAEAC)', category: 'Accreditation', rank: 'BS Forestry accredited, 2026–28', year: 2026, url: `${QEC_UPLOADS}2026/07/Forestry2026XCategoryCertificate.pdf` },
   { body: 'National Accreditation Council for Teacher Education (NACTE)', category: 'Accreditation', rank: 'B.Ed (Hons) 4 years: “Y” level accreditation, 11 July 2024. Valid until 20 September 2026 (expired)', year: 2024, url: `${QEC_UPLOADS}2024/08/456-1.pdf` },
-  { body: 'Pakistan Bar Council', category: 'Accreditation', rank: 'LLB program accredited', year: 2017, url: `${QEC_UPLOADS}2024/08/Accreditation-of-LLBProgram-by-Pakistan-Bar-Council-28-2017.pdf` },
+  { body: 'Pakistan Bar Council', category: 'Recognition', rank: 'Recognition of the University of Swat and its LL.B. degree (approved at the Council’s 219th meeting, 21 January 2017)', year: 2017, url: `${QEC_UPLOADS}2024/08/Accreditation-of-LLBProgram-by-Pakistan-Bar-Council-28-2017.pdf` },
   { body: 'Higher Education Commission (HEC)', category: 'Research', rank: 'ORIC recognised in the highest category', year: 2022, url: `${QEC_UPLOADS}2024/10/ORIC-UoS-Recognition-Letter.pdf` },
   { body: 'Higher Education Commission (HEC)', category: 'Journal', rank: 'SUJRIS approved in "Y" category', year: 2025, url: 'https://uswat.edu.pk/2025/03/higher-education-commission-approves-sujris/' },
 ];
@@ -382,7 +385,7 @@ const RECOGNITION_UR = [
   { rank: 'بی ایس کمپیوٹر سائنس پروگرام شروع کرنے کی منظوری (زیرو وزٹ، ۳۰ اپریل ۲۰۲۵)', category: 'پروگرام کی منظوری' },
   { rank: 'بی ایس فاریسٹری کی ایکریڈیٹیشن، ۲۰۲۶–۲۸', category: 'ایکریڈیٹیشن' },
   { rank: 'بی ایڈ (آنرز) چار سالہ: “Y” درجے کی ایکریڈیٹیشن، ۱۱ جولائی ۲۰۲۴۔ ۲۰ ستمبر ۲۰۲۶ تک مؤثر (میعاد ختم ہو چکی)', category: 'ایکریڈیٹیشن' },
-  { rank: 'ایل ایل بی پروگرام کی ایکریڈیٹیشن', category: 'ایکریڈیٹیشن' },
+  { rank: 'یونیورسٹی آف سوات اور اس کی ایل ایل بی ڈگری تسلیم شدہ (کونسل کا ۲۱۹واں اجلاس، ۲۱ جنوری ۲۰۱۷)', category: 'تسلیم شدگی' },
   { rank: 'اورک اعلیٰ ترین درجے میں تسلیم شدہ', category: 'تحقیق' },
   { rank: 'سُجرس "Y" کیٹیگری میں منظور', category: 'جریدہ' },
 ];

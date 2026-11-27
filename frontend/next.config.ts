@@ -29,9 +29,9 @@ const nextConfig: NextConfig = {
     // app/global-not-found.tsx: the root layout is app/[locale]/layout.tsx, so there is no single
     // layout to build a 404 for URLs outside every route from.
     globalNotFound: true,
-    // Optional cap on pre-render workers (`BUILD_CPUS=2 npm run build`). On the 8 GB dev laptop the default
-    // seven workers can exhaust a `strapi develop` connection pool (10) and hang it; unset elsewhere.
-    ...(process.env.BUILD_CPUS ? { cpus: Number(process.env.BUILD_CPUS) } : {}),
+    // Two pre-render workers (override with `BUILD_CPUS=n npm run build`). The default (one per core) fires
+    // enough parallel Strapi requests to exhaust its database connection pool (10) and hang it.
+    cpus: process.env.BUILD_CPUS ? Number(process.env.BUILD_CPUS) : 2,
   },
   turbopack: {
     rules: {

@@ -1738,3 +1738,8 @@ consistency). Content, data and colours unchanged.
   in the letter); NACTE B.Ed (Hons) shows "Valid until 20 September 2026 (expired)"
 - `BUILD_CPUS=2 npm run build`: optional cap on pre-render workers, so a local build doesn't exhaust
   `strapi develop`'s connection pool on the 8 GB dev laptop
+- About → Pakistan Bar Council entry reworded to match its letter of 28 February 2017 (seed and live, en + ur):
+  category "Recognition", "Recognition of the University of Swat and its LL.B. degree (approved at the
+  Council's 219th meeting, 21 January 2017)", not "LLB program accredited"
+- `next.config`: pre-render workers now default to 2 (`experimental.cpus`; `BUILD_CPUS=n` still overrides), so
+  a build no longer overloads Strapi
