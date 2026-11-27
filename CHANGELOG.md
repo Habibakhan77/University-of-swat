@@ -1743,3 +1743,22 @@ consistency). Content, data and colours unchanged.
   Council's 219th meeting, 21 January 2017)", not "LLB program accredited"
 - `next.config`: pre-render workers now default to 2 (`experimental.cpus`; `BUILD_CPUS=n` still overrides), so
   a build no longer overloads Strapi
+
+## Admin "Reports" page (department content report + CSV)
+
+- New **Reports** item in the Strapi admin menu (`cms/src/admin/pages/Reports.tsx`): one row per department
+  with programs, faculty members, faculty with / without photo, placeholder faculty, publications, news posts,
+  events, alumni stories, gallery items and pending drafts, plus a totals row. Live from Strapi, with Refresh
+- **Download CSV** downloads exactly that table: UTF-8 with BOM and CRLF (opens correctly in Excel, Urdu
+  included), quoted per RFC 4180, formula-looking names neutralised. File name `uswat-report-2026-11-27.csv`
+  (Pakistan date); an editor's file carries the department slug
+- Scope is decided on the server (`cms/src/bootstrap/reports.ts`, `GET /uswat/reports/departments` and
+  `/departments/csv`, no department parameter): Super Admin sees every active department; a Department Editor
+  only the departments assigned to them; Faculty Members, Media Cell and anyone else get 403. The menu item is
+  shown only to users who can edit a department page
+- Counts are published documents (each once, not per language); a photo counts only if it is a real upload,
+  not a seeded placeholder; pending drafts cover the department page and everything its editors manage
+- The dashboard's per-department "pending drafts" now also counts downloads and research projects, so it
+  matches the report
+- Tested: cs.editor (own department only, page + CSV, query-parameter tampering ignored), faculty user (no menu
+  item, 403), Super Admin handler in-process (28 active departments; faculty totals match SQL)

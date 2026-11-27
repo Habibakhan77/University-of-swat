@@ -2,6 +2,7 @@ import type { Core } from '@strapi/strapi';
 import { ensureLocales } from './bootstrap/locales';
 import { registerDashboardRoutes } from './bootstrap/dashboard';
 import { registerDepartmentGuard } from './bootstrap/department-guard';
+import { registerReportRoutes } from './bootstrap/reports';
 import { ensurePublicPermissions } from './bootstrap/public-permissions';
 import { ensureAdminRoles, registerConditions } from './bootstrap/roles';
 import { ensureRevalidateWebhook } from './bootstrap/revalidate-webhook';
@@ -10,11 +11,12 @@ export default {
   /**
    * - Department Editors can only create or move entries into their own departments; Faculty Members
    *   can only change their own profile and publications (document-service middleware)
-   * - Admin API for the dashboard widgets on the admin homepage (/uswat/*)
+   * - Admin API for the dashboard widgets on the admin homepage and the Reports page (/uswat/*)
    */
   register({ strapi }: { strapi: Core.Strapi }) {
     registerDepartmentGuard(strapi);
     registerDashboardRoutes(strapi);
+    registerReportRoutes(strapi);
   },
 
   /**

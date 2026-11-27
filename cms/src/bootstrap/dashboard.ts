@@ -1,5 +1,5 @@
 import type { Core, UID } from '@strapi/strapi';
-import { ROLE_CODES, SUPER_ADMIN_CODE } from './constants';
+import { DEPARTMENT_SCOPED_TYPES, ROLE_CODES, SUPER_ADMIN_CODE } from './constants';
 import { departmentsFor, parseEmails, profilesFor } from './roles';
 
 /*
@@ -12,7 +12,7 @@ import { departmentsFor, parseEmails, profilesFor } from './roles';
  * Routes are admin-type, so they need a valid admin session; roles are checked in each handler.
  */
 
-interface AdminCtxUser {
+export interface AdminCtxUser {
   id: number;
   email: string;
   firstname?: string | null;
@@ -20,17 +20,19 @@ interface AdminCtxUser {
   roles?: Array<{ code?: string }>;
 }
 
-interface Ctx {
+export interface Ctx {
   state: { user?: AdminCtxUser };
   request: { body?: unknown };
   body: unknown;
   status: number;
+  type: string;
+  set(field: string, value: string): void;
   badRequest(message: string): void;
   forbidden(message: string): void;
   notFound(message: string): void;
 }
 
-type Row = Record<string, unknown> & { documentId: string };
+export type Row = Record<string, unknown> & { documentId: string };
 
 const DEPARTMENT = 'api::department.department';
 const MEMBER = 'api::faculty-member.faculty-member';
@@ -53,7 +55,7 @@ const editUrl = (uid: string, documentId: string) =>
   `/content-manager/collection-types/${uid}/${documentId}?plugins[i18n][locale]=en`;
 const listUrl = (uid: string) => `/content-manager/collection-types/${uid}`;
 
-const roleCodes = (user: AdminCtxUser | undefined) => new Set((user?.roles ?? []).map((r) => r.code));
+export const roleCodes = (user: AdminCtxUser | undefined) => new Set((user?.roles ?? []).map((r) => r.code));
 
 /** Content types on the website that use draft & publish (the "pending drafts" are counted over these). */
 function draftTypes(strapi: Core.Strapi): UID.ContentType[] {
@@ -62,7 +64,7 @@ function draftTypes(strapi: Core.Strapi): UID.ContentType[] {
     .map(([uid]) => uid);
 }
 
-const isLocalized = (strapi: Core.Strapi, uid: UID.ContentType) =>
+export const isLocalized = (strapi: Core.Strapi, uid: UID.ContentType) =>
   Boolean((strapi.contentType(uid).pluginOptions as { i18n?: { localized?: boolean } } | undefined)?.i18n?.localized);
 
 /** Published documents of a type (each document once), optionally limited to some departments. */
@@ -78,7 +80,14 @@ async function countPublished(strapi: Core.Strapi, uid: UID.ContentType, where: 
  */
 async function pendingDrafts(strapi: Core.Strapi, uid: UID.ContentType, where: Record<string, unknown> = {}) {
   const select = ['documentId', 'updatedAt', 'publishedAt', ...(isLocalized(strapi, uid) ? ['locale'] : [])];
-  const rows = (await strapi.db.query(uid).findMany({ where, select })) as Array<Row & { updatedAt: string; publishedAt: string | null; locale?: string }>;
+  const rows = (await strapi.db.query(uid).findMany({ where, select })) as VersionRow[];
+  return pendingDocumentIds(rows).size;
+}
+
+export type VersionRow = Row & { updatedAt: string; publishedAt: string | null; locale?: string | null };
+
+/** documentIds among these rows (draft and published versions of documents) with unpublished changes. */
+export function pendingDocumentIds(rows: VersionRow[]): Set<string> {
   const published = new Map<string, number>();
   for (const r of rows) if (r.publishedAt) published.set(`${r.documentId}:${r.locale ?? ''}`, new Date(r.updatedAt).getTime());
   const pending = new Set<string>();
@@ -88,11 +97,11 @@ async function pendingDrafts(strapi: Core.Strapi, uid: UID.ContentType, where: R
     // A second of slack: publishing writes both rows a few milliseconds apart.
     if (at === undefined || new Date(r.updatedAt).getTime() > at + 1000) pending.add(r.documentId);
   }
-  return pending.size;
+  return pending;
 }
 
 /** Real (not seeded placeholder) media. */
-const isRealMedia = (file: unknown) => {
+export const isRealMedia = (file: unknown) => {
   const name = (file as { name?: string } | null)?.name;
   return Boolean(name) && !String(name).startsWith('placeholder-');
 };
@@ -113,8 +122,9 @@ async function departmentCard(strapi: Core.Strapi, documentId: string) {
   let drafts = await pendingDrafts(strapi, DEPARTMENT, { documentId });
   for (const [key, uid] of Object.entries(DEPARTMENT_CONTENT) as Array<[ContentKey, UID.ContentType]>) {
     counts[key] = await countPublished(strapi, uid, where);
-    drafts += await pendingDrafts(strapi, uid, where);
   }
+  // Over everything the editor manages (downloads and research projects too), like the Reports page.
+  for (const uid of DEPARTMENT_SCOPED_TYPES) drafts += await pendingDrafts(strapi, uid, where);
   const contact = d.contact as { email?: string | null; phone?: string | null } | null;
   const checklist = [
     { key: 'overview', label: 'Overview', done: hasBlocks(d.overview) },
