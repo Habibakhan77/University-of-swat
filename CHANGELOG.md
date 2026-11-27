@@ -1808,3 +1808,15 @@ consistency). Content, data and colours unchanged.
 - README, DEPLOY.md and docs/JUDGES_QA.md now give the admin address as `<site>/admin`
 - Renamed the link to **Admin login** (Urdu "ایڈمن لاگ ان"), same key icon; it opens `/admin` in a new tab
   (`target="_blank" rel="noopener"`, with a screen-reader "opens in a new tab" note)
+
+## Compact footer
+
+- The green footer is about a quarter shorter on desktop (1440px: green area 634 → 490px, the part above the
+  bottom bar 558 → 414px) with the same content and design: the mountains-and-pines silhouette is half as tall
+  (8rem on desktop) and sits behind the lower part of the columns instead of adding empty space below "Follow
+  the University"; less top/bottom padding and smaller gaps between the crest block, the link columns and their
+  items; the crest is 80px at every size
+- Homepage: Partners & MoUs → "Ready to apply?" is now one standard section gap (82px at 1440, 48px on phones;
+  was 138px), since the footer's card already brings its own top space
+- Unchanged: the card still overlaps the footer's top edge; the bottom bar (copyright, Admin login, Back to
+  top) is as before. Checked at 1440, 1024 and 375px, English and Urdu, light and dark (no horizontal scroll)

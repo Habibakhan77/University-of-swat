@@ -151,14 +151,14 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
 
       <div className="bg-forest-900 [--ring:var(--color-gold-300)]">
         <div className="relative isolate overflow-hidden">
-          <ValleySilhouette className="absolute inset-x-0 bottom-0 -z-10 h-48 text-forest-200 opacity-80 sm:h-56 lg:h-64" />
+          <ValleySilhouette className="absolute inset-x-0 bottom-0 -z-10 h-24 text-forest-200 opacity-80 sm:h-28 lg:h-32" />
 
           <Container
             size="wide"
-            className="grid gap-12 pt-12 pb-16 sm:pt-14 xl:grid-cols-[minmax(0,28rem)_1px_minmax(0,1fr)] xl:gap-12 xl:pb-24 2xl:gap-14"
+            className="grid gap-8 pt-8 pb-6 xl:grid-cols-[minmax(0,28rem)_1px_minmax(0,1fr)] xl:gap-12 2xl:gap-14"
           >
             {/* Identity, contact and social. */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4">
               <Link
                 href="/"
                 aria-label={homeLabel}
@@ -169,13 +169,13 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
                   alt=""
                   width={crest.width}
                   height={crest.height}
-                  sizes="96px"
+                  sizes="80px"
                   quality={90}
-                  className="size-20 shrink-0 rounded-full object-contain ring-1 ring-white/25 sm:size-24"
+                  className="size-20 shrink-0 rounded-full object-contain ring-1 ring-white/25"
                 />
                 <span
                   aria-hidden
-                  className="h-16 w-px shrink-0 bg-gold-400 sm:h-20"
+                  className="h-16 w-px shrink-0 bg-gold-400"
                 />
                 <span className="flex min-w-0 flex-col gap-1.5">
                   <span
@@ -196,7 +196,7 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
                 </span>
               </Link>
 
-              <address className="flex flex-col gap-3 text-body text-forest-50 not-italic">
+              <address className="flex flex-col gap-2 text-body text-forest-50 not-italic">
                 {chrome?.contact.address ? (
                   <p className="flex items-start gap-3">
                     <MapPin
@@ -250,7 +250,7 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
               </address>
 
               {chrome?.socialLinks.length ? (
-                <div className="flex flex-col gap-4 border-t border-white/15 pt-6 xl:max-w-sm">
+                <div className="flex flex-col gap-3 border-t border-white/15 pt-4 xl:max-w-sm">
                   <h2 className="text-body-lg font-semibold text-white">
                     {t("followUs")}
                   </h2>
@@ -288,7 +288,7 @@ export async function SiteFooter({ locale, chrome }: SiteFooterProps) {
             {/* Strapi link columns + online services: 2 columns on phones, 4 from 640px. */}
             <nav
               aria-label={t("footerNavigation")}
-              className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 xl:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,1.2fr)] xl:gap-x-6"
+              className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-4 xl:grid-cols-[repeat(3,minmax(0,1fr))_minmax(0,1.2fr)] xl:gap-x-6"
             >
               {(chrome?.footerColumns ?? []).map((column, i) => (
                 <FooterColumn
@@ -378,7 +378,7 @@ function FooterColumn({
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-4">
+    <div className="flex min-w-0 flex-col gap-3">
       <h2 className="flex items-center gap-2 text-[0.9375rem] leading-snug font-bold tracking-[0.05em] text-gold-bright uppercase xl:whitespace-nowrap">
         <Icon aria-hidden className="size-6 shrink-0" strokeWidth={1.75} />
         {title}

@@ -168,8 +168,10 @@ export default async function HomePage() {
       </div>
 
       {/* Below the fold: rendered when scrolled near (content-visibility), see .home-below in globals.css.
-          Sections carry no vertical padding of their own: the one gap-section here spaces them all evenly. */}
-      <div className="home-below flex flex-col gap-section py-section">
+          Sections carry no vertical padding of their own: the one gap-section here spaces them all evenly.
+          The footer's apply card brings its own top space (2.5rem, 3.5rem from sm), so the bottom padding
+          only tops it up to one standard section gap after Partners & MoUs. */}
+      <div className="home-below flex flex-col gap-section pt-section pb-[max(0px,calc(var(--spacing-section)_-_2.5rem))] sm:pb-[max(0px,calc(var(--spacing-section)_-_3.5rem))]">
         <NewsSection
           news={news}
           locale={locale}
