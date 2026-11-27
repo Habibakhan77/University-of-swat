@@ -1762,3 +1762,19 @@ consistency). Content, data and colours unchanged.
   matches the report
 - Tested: cs.editor (own department only, page + CSV, query-parameter tampering ignored), faculty user (no menu
   item, 403), Super Admin handler in-process (28 active departments; faculty totals match SQL)
+
+## Reports polish: table layout and Excel download
+
+- Reports table rebuilt so every column fits: compact padding, wrapped header labels, the department column
+  sticky on the left, the header row sticky on top and the **Total** row sticky at the bottom (heavier rule,
+  tinted). It scrolls inside its own box only when needed (at 800 px wide; 1024 px and up fit without
+  scrolling), with a "scroll sideways" hint and keyboard focus so it can be scrolled from the keyboard
+- **Download Excel (.xlsx)** next to Download CSV (`GET /uswat/reports/departments/xlsx`, same server-side
+  scope as the CSV, built with `exceljs` 4.4.0): bold white header on crest green (#0F4D32), frozen header row
+  and department column, department column wide enough for the longest name, number columns right-aligned
+  with thousands separators, bold tinted totals row; Arabic-script (Urdu) names are right-aligned, right to left
+- The CSV and the workbook both end with the totals row
+- Tested as cs.editor (page at 800/1024/1280/1600 px, both downloads) and opened every file in Microsoft Excel:
+  editor and Super Admin workbooks, an Urdu test workbook and the CSV
+- `exceljs` brings in `uuid@8`, which has a moderate advisory (missing buffer bounds check when a `buf`
+  argument is passed); exceljs doesn't use that argument

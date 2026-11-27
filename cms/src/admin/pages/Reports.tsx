@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { styled } from 'styled-components';
 import { Layouts, Page, useFetchClient, useNotification } from '@strapi/strapi/admin';
-import { Box, Button, EmptyStateLayout, Flex, Table, Tbody, Td, Th, Thead, Tr, Typography } from '@strapi/design-system';
+import { Box, Button, EmptyStateLayout, Flex, Typography } from '@strapi/design-system';
 import { ArrowClockwise, Download } from '@strapi/icons';
 
 /** Shape of GET /uswat/reports/departments (cms/src/bootstrap/reports.ts). */
@@ -23,6 +24,7 @@ interface DepartmentReport {
   rows: ReportRow[];
   totals: Record<string, number>;
   csvFilename: string;
+  xlsxFilename: string;
 }
 
 const editUrl = (documentId: string) =>
@@ -43,13 +45,203 @@ function errorStatus(err: unknown) {
   return typeof err === 'object' && err !== null && 'status' in err ? Number((err as { status: unknown }).status) : 0;
 }
 
+/* ---------- Table ---------- */
+
+/**
+ * Scrolls inside its own box only when the table is wider (or taller) than the page; the header row,
+ * the department column and the totals row stay in view while scrolling.
+ */
+const Scroller = styled.div`
+  overflow: auto;
+  max-height: max(24rem, calc(100vh - 22rem));
+  border: 1px solid ${({ theme }) => theme.colors.neutral150};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  background: ${({ theme }) => theme.colors.neutral0};
+  box-shadow: ${({ theme }) => theme.shadows.tableShadow};
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.primary600};
+    outline-offset: 2px;
+  }
+`;
+
+const Grid = styled.table`
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 1.3rem;
+  font-variant-numeric: tabular-nums;
+  color: ${({ theme }) => theme.colors.neutral800};
+
+  th,
+  td {
+    padding: 0.6rem 0.9rem;
+    text-align: right;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
+  }
+
+  /* Header: wrapped labels, kept narrow so every column fits on a laptop screen. */
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    vertical-align: bottom;
+    min-width: 6.4rem;
+    max-width: 9rem;
+    white-space: normal;
+    overflow-wrap: normal;
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-transform: uppercase;
+    color: ${({ theme }) => theme.colors.neutral600};
+    background: ${({ theme }) => theme.colors.neutral100};
+  }
+
+  tbody tr:hover > * {
+    background: ${({ theme }) => theme.colors.primary100};
+  }
+  tbody td,
+  tbody th {
+    background: ${({ theme }) => theme.colors.neutral0};
+  }
+
+  /* Department column stays on the left while scrolling sideways. */
+  th:first-child,
+  td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    text-align: left;
+    min-width: 18rem;
+    max-width: 30rem;
+    white-space: normal;
+    box-shadow: inset -1px 0 0 ${({ theme }) => theme.colors.neutral150};
+  }
+  thead th:first-child,
+  tfoot td:first-child {
+    z-index: 3;
+  }
+
+  /* Totals: always visible at the bottom, set apart with a heavier rule. */
+  tfoot td {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    font-weight: 700;
+    border-bottom: 0;
+    border-top: 2px solid ${({ theme }) => theme.colors.primary600};
+    background: ${({ theme }) => theme.colors.neutral100};
+  }
+`;
+
+const Muted = styled.span`
+  color: ${({ theme }) => theme.colors.neutral500};
+`;
+const Attention = styled.span`
+  color: ${({ theme }) => theme.colors.warning600};
+  font-weight: 600;
+`;
+const NameLink = styled(RouterLink)`
+  color: ${({ theme }) => theme.colors.primary600};
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+`;
+const visuallyHidden = { position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap' } as const;
+
+function Cell({ column, value }: { column: string; value: number }) {
+  if (value === 0) return <Muted>0</Muted>;
+  if (ATTENTION.has(column)) return <Attention>{num(value)}</Attention>;
+  return <>{num(value)}</>;
+}
+
+/** True while the element is wider than its box (so the table scrolls sideways). */
+function useOverflowsX() {
+  const [el, setEl] = useState<HTMLDivElement | null>(null);
+  const [overflows, setOverflows] = useState(false);
+  useEffect(() => {
+    if (!el) return undefined;
+    const check = () => setOverflows(el.scrollWidth > el.clientWidth + 1);
+    check();
+    const observer = new ResizeObserver(check);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [el]);
+  return [setEl, overflows] as const;
+}
+
+function ReportTable({ report }: { report: DepartmentReport }) {
+  const [ref, overflows] = useOverflowsX();
+  return (
+    <>
+      {overflows ? (
+        <Typography variant="pi" textColor="neutral600">
+          Scroll the table sideways to see every column.
+        </Typography>
+      ) : null}
+      {/* Focusable so keyboard users can scroll it sideways. */}
+      <Scroller ref={ref} tabIndex={0} role="region" aria-label="Department report table">
+        <Grid>
+          <caption style={visuallyHidden}>Department report: one row per department, totals in the last row</caption>
+          <thead>
+            <tr>
+              <th scope="col">Department</th>
+              {report.columns.map((c) => (
+                <th key={c.key} scope="col">
+                  {c.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {report.rows.map((r) => (
+              <tr key={r.documentId}>
+                <th scope="row" style={{ fontWeight: 400 }}>
+                  <NameLink to={editUrl(r.documentId)}>{r.name}</NameLink>
+                  {!r.isActive ? (
+                    <Typography variant="pi" textColor="neutral500" tag="span" style={{ display: 'block' }}>
+                      hidden on the website
+                    </Typography>
+                  ) : null}
+                </th>
+                {report.columns.map((c) => (
+                  <td key={c.key}>
+                    <Cell column={c.key} value={r.counts[c.key] ?? 0} />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>Total</td>
+              {report.columns.map((c) => (
+                <td key={c.key}>{num(report.totals[c.key] ?? 0)}</td>
+              ))}
+            </tr>
+          </tfoot>
+        </Grid>
+      </Scroller>
+    </>
+  );
+}
+
+/* ---------- Page ---------- */
+
+type Format = 'csv' | 'xlsx';
+
 function ReportsPage() {
   const { get } = useFetchClient();
   const { toggleNotification } = useNotification();
   const [report, setReport] = useState<DepartmentReport | null>(null);
   const [error, setError] = useState<'forbidden' | 'failed' | null>(null);
   const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState(false);
+  const [downloading, setDownloading] = useState<Format | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -58,7 +250,7 @@ function ReportsPage() {
       setReport(res.data);
       setError(null);
     } catch (err) {
-      // Strapi's fetch client puts the HTTP status on the error's response.
+      // Strapi's fetch client puts the HTTP status on the error or on its response.
       const status = errorStatus(err) || errorStatus((err as { response?: unknown }).response);
       setError(status === 403 ? 'forbidden' : 'failed');
     } finally {
@@ -70,24 +262,24 @@ function ReportsPage() {
     void load();
   }, [load]);
 
-  const download = async () => {
+  const download = async (format: Format) => {
     if (!report) return;
-    setDownloading(true);
+    setDownloading(format);
     try {
-      // The server builds the CSV from the same scoped data, so it is exactly the table on screen.
-      const res = await get<Blob>('/uswat/reports/departments/csv', { responseType: 'blob' });
+      // The server builds the file from the same scoped data, so it is exactly the table on screen.
+      const res = await get<Blob>(`/uswat/reports/departments/${format}`, { responseType: 'blob' });
       const url = URL.createObjectURL(res.data);
       const a = document.createElement('a');
       a.href = url;
-      a.download = filenameFrom(res.headers as Headers | undefined, report.csvFilename);
+      a.download = filenameFrom(res.headers as Headers | undefined, format === 'csv' ? report.csvFilename : report.xlsxFilename);
       document.body.appendChild(a);
       a.click();
       a.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
-      toggleNotification({ type: 'danger', message: 'Could not download the CSV. Please try again.' });
+      toggleNotification({ type: 'danger', message: `Could not download the ${format === 'csv' ? 'CSV' : 'Excel'} file. Please try again.` });
     } finally {
-      setDownloading(false);
+      setDownloading(null);
     }
   };
 
@@ -109,8 +301,9 @@ function ReportsPage() {
     ? new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Karachi' }).format(new Date(report.generatedAt))
     : '';
   const subtitle = report
-    ? `${report.scope === 'university' ? 'Every active department' : report.rows.length === 1 ? 'Your department' : 'Your departments'} · live from Strapi · ${generated} PKT`
+    ? `${report.scope === 'university' ? `Every active department (${report.rows.length})` : report.rows.length === 1 ? 'Your department' : 'Your departments'} · live from Strapi · ${generated} PKT`
     : undefined;
+  const canDownload = Boolean(report && report.rows.length > 0);
 
   return (
     <Page.Main aria-busy={loading}>
@@ -119,9 +312,25 @@ function ReportsPage() {
         title="Department report"
         subtitle={subtitle}
         primaryAction={
-          <Button startIcon={<Download />} onClick={() => void download()} loading={downloading} disabled={!report || report.rows.length === 0}>
-            Download CSV
-          </Button>
+          <Flex gap={2}>
+            <Button
+              variant="secondary"
+              startIcon={<Download />}
+              onClick={() => void download('csv')}
+              loading={downloading === 'csv'}
+              disabled={!canDownload || downloading !== null}
+            >
+              Download CSV
+            </Button>
+            <Button
+              startIcon={<Download />}
+              onClick={() => void download('xlsx')}
+              loading={downloading === 'xlsx'}
+              disabled={!canDownload || downloading !== null}
+            >
+              Download Excel (.xlsx)
+            </Button>
+          </Flex>
         }
         secondaryAction={
           <Button variant="tertiary" startIcon={<ArrowClockwise />} onClick={() => void load()} loading={loading}>
@@ -142,65 +351,12 @@ function ReportsPage() {
           />
         ) : report ? (
           <Flex direction="column" alignItems="stretch" gap={3}>
-            <Table colCount={report.columns.length + 1} rowCount={report.rows.length + 2}>
-              <Thead>
-                <Tr>
-                  <Th>
-                    <Typography variant="sigma">Department</Typography>
-                  </Th>
-                  {report.columns.map((c) => (
-                    <Th key={c.key} style={{ textAlign: 'right' }}>
-                      <Typography variant="sigma" style={{ whiteSpace: 'normal', textAlign: 'right', display: 'block', width: '100%' }}>
-                        {c.label}
-                      </Typography>
-                    </Th>
-                  ))}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {report.rows.map((r) => (
-                  <Tr key={r.documentId}>
-                    <Td>
-                      <RouterLink to={editUrl(r.documentId)} style={{ textDecoration: 'none' }}>
-                        <Typography textColor="primary600" fontWeight="semiBold">
-                          {r.name}
-                        </Typography>
-                      </RouterLink>
-                      {!r.isActive ? (
-                        <Typography variant="pi" textColor="neutral500" tag="p">
-                          hidden on the website
-                        </Typography>
-                      ) : null}
-                    </Td>
-                    {report.columns.map((c) => {
-                      const v = r.counts[c.key] ?? 0;
-                      return (
-                        <Td key={c.key} style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
-                          <Typography textColor={ATTENTION.has(c.key) && v > 0 ? 'warning700' : v === 0 ? 'neutral500' : 'neutral800'}>
-                            {num(v)}
-                          </Typography>
-                        </Td>
-                      );
-                    })}
-                  </Tr>
-                ))}
-                {/* A translucent tint reads in both the light and dark admin themes. */}
-                <Tr style={{ background: 'rgba(128, 128, 160, 0.14)' }}>
-                  <Td>
-                    <Typography fontWeight="bold">Total</Typography>
-                  </Td>
-                  {report.columns.map((c) => (
-                    <Td key={c.key} style={{ textAlign: 'right', fontVariantNumeric: 'tabular-nums' }}>
-                      <Typography fontWeight="bold">{num(report.totals[c.key] ?? 0)}</Typography>
-                    </Td>
-                  ))}
-                </Tr>
-              </Tbody>
-            </Table>
+            <ReportTable report={report} />
             <Box>
               <Typography variant="pi" textColor="neutral600">
                 Counts are published entries (each counted once, not per language). A photo counts when it is a real upload, not
-                the seeded placeholder. Pending drafts are entries with unpublished changes, including the department page.
+                the seeded placeholder. Pending drafts are entries with unpublished changes, including the department page. The
+                CSV and Excel files contain exactly this table, totals row included.
               </Typography>
             </Box>
           </Flex>

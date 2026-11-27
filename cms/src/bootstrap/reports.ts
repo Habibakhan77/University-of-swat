@@ -1,4 +1,5 @@
 import type { Core, UID } from '@strapi/strapi';
+import ExcelJS from 'exceljs';
 import { DEPARTMENT_SCOPED_TYPES, ROLE_CODES, SUPER_ADMIN_CODE } from './constants';
 import { isLocalized, isRealMedia, pendingDocumentIds, roleCodes, type Ctx, type VersionRow } from './dashboard';
 import { departmentsFor } from './roles';
@@ -7,7 +8,8 @@ import { departmentsFor } from './roles';
  * Department report on the admin "Reports" page (src/admin/pages/Reports.tsx):
  *
  *   GET /uswat/reports/departments      the table as JSON
- *   GET /uswat/reports/departments/csv  exactly the same table as a UTF-8 CSV download
+ *   GET /uswat/reports/departments/csv  exactly the same table as a UTF-8 CSV download (ends with the totals row)
+ *   GET /uswat/reports/departments/xlsx the same table as a formatted Excel workbook
  *
  * Neither route takes a department parameter: the scope comes only from the signed-in user.
  * A Super Admin gets every active department; a Department Editor gets only the departments a
@@ -57,6 +59,7 @@ export interface DepartmentReport {
   rows: ReportRow[];
   totals: Counts;
   csvFilename: string;
+  xlsxFilename: string;
 }
 
 type DeptRow = VersionRow & { department?: { documentId: string } | null };
@@ -159,13 +162,15 @@ export async function buildDepartmentReport(strapi: Core.Strapi, scope: { all: t
 
   const now = new Date();
   const own = 'all' in scope ? '' : rows.length === 1 ? `${rows[0].slug}-` : 'my-departments-';
+  const base = `uswat-report-${own}${pktDate(now)}`;
   return {
     scope: 'all' in scope ? 'university' : 'department',
     generatedAt: now.toISOString(),
     columns: REPORT_COLUMNS,
     rows,
     totals,
-    csvFilename: `uswat-report-${own}${pktDate(now)}.csv`,
+    csvFilename: `${base}.csv`,
+    xlsxFilename: `${base}.xlsx`,
   };
 }
 
@@ -186,6 +191,67 @@ export function toCsv(report: DepartmentReport): string {
   ];
   // BOM so Excel opens it as UTF-8 (Urdu and other non-Latin text), CRLF line ends.
   return `﻿${lines.map((l) => l.map(csvCell).join(',')).join('\r\n')}\r\n`;
+}
+
+/* ---------- Excel ---------- */
+
+/** Crest green (frontend forest-700) and its lightest tint (forest-50), as Excel ARGB. */
+const BRAND_GREEN = 'FF0F4D32';
+const BRAND_TINT = 'FFEFF7F2';
+/** Arabic-script letters (Urdu included): such names are right-aligned and read right to left. */
+const RTL_SCRIPT = /[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]/;
+
+/** The same table as the CSV: header row, one row per department, totals row last. */
+export async function toXlsx(report: DepartmentReport): Promise<Buffer> {
+  const wb = new ExcelJS.Workbook();
+  wb.creator = 'University of Swat CMS';
+  wb.title = 'Department report';
+  wb.created = new Date(report.generatedAt);
+  const ws = wb.addWorksheet('Department report', {
+    // Header row and department column stay in view while scrolling.
+    views: [{ state: 'frozen', xSplit: 1, ySplit: 1, activeCell: 'B2' }],
+  });
+
+  const header = ws.addRow(['Department', ...report.columns.map((c) => c.label)]);
+  for (const r of report.rows) ws.addRow([r.name, ...report.columns.map((c) => r.counts[c.key] ?? 0)]);
+  const totals = ws.addRow(['Total', ...report.columns.map((c) => report.totals[c.key] ?? 0)]);
+
+  header.height = 32;
+  header.eachCell((cell, col) => {
+    cell.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_GREEN } };
+    cell.alignment = { vertical: 'middle', wrapText: true, horizontal: col === 1 ? 'left' : 'right' };
+  });
+
+  ws.eachRow((row, n) => {
+    if (n === 1) return;
+    row.eachCell((cell, col) => {
+      if (col === 1) {
+        const rtl = RTL_SCRIPT.test(String(cell.value));
+        cell.alignment = { vertical: 'middle', horizontal: rtl ? 'right' : 'left', readingOrder: rtl ? 'rtl' : 'ltr' };
+      } else {
+        cell.numFmt = '#,##0';
+        cell.alignment = { vertical: 'middle', horizontal: 'right' };
+      }
+    });
+  });
+
+  totals.eachCell((cell) => {
+    cell.font = { bold: true };
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: BRAND_TINT } };
+    cell.border = { top: { style: 'medium', color: { argb: BRAND_GREEN } } };
+  });
+
+  // Widths in characters: the department column fits the longest name; number columns fit the longest word
+  // of their (wrapped) label or their largest number.
+  ws.getColumn(1).width = Math.min(80, Math.max(12, ...report.rows.map((r) => r.name.length)) + 2);
+  report.columns.forEach((c, i) => {
+    const word = Math.max(...c.label.split(' ').map((w) => w.length));
+    const digits = Math.max(String(report.totals[c.key] ?? 0).length + 1, 3);
+    ws.getColumn(i + 2).width = Math.max(10, word, digits) + 3;
+  });
+
+  return Buffer.from(await wb.xlsx.writeBuffer());
 }
 
 /* ---------- Handlers ---------- */
@@ -222,6 +288,15 @@ async function reportCsv(strapi: Core.Strapi, ctx: Ctx) {
   ctx.body = toCsv(report);
 }
 
+async function reportXlsx(strapi: Core.Strapi, ctx: Ctx) {
+  const report = await reportFor(strapi, ctx);
+  if (!report) return;
+  ctx.set('Cache-Control', 'no-store');
+  ctx.set('Content-Disposition', `attachment; filename="${report.xlsxFilename}"`);
+  ctx.type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  ctx.body = await toXlsx(report);
+}
+
 export function registerReportRoutes(strapi: Core.Strapi): void {
   const policies = ['admin::isAuthenticatedAdmin'];
   const wrap = (fn: (strapi: Core.Strapi, ctx: Ctx) => Promise<void>) => (ctx: Ctx) => fn(strapi, ctx);
@@ -231,6 +306,7 @@ export function registerReportRoutes(strapi: Core.Strapi): void {
     routes: [
       { method: 'GET', path: '/reports/departments', handler: wrap(reportJson), config: { policies } },
       { method: 'GET', path: '/reports/departments/csv', handler: wrap(reportCsv), config: { policies } },
+      { method: 'GET', path: '/reports/departments/xlsx', handler: wrap(reportXlsx), config: { policies } },
     ],
   } as unknown as Parameters<Core.Strapi['server']['routes']>[0]);
 }
