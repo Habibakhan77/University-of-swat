@@ -1649,3 +1649,40 @@ consistency). Content, data and colours unchanged.
 - QA on a production build at 1440 and 375px, English and Urdu, light and dark (110 scripted checks): code
   and knowledge load only on open, keyboard open/chips/typing/Esc, focus return, answers and not-found
   links, no overflow, no console errors, axe 0 violations on the open panel, reduced motion
+
+## "Ask the University" redesign: chat-style panel, voice, emoji, read-aloud (branch `help-assistant`)
+
+- Launcher: deep-green round button with a chat-bubble icon and a thin gold ring; on hover or keyboard focus
+  it widens into an "Ask the University" pill (instant, no slide, with reduced motion). The label is the
+  button's accessible name in both states
+- Panel (380×600 on desktop, full screen on phones with safe-area padding): slim deep-green header with the
+  round university logo, title, "Answers from official university pages" and close; thin gold line below
+- Welcome screen: "Assalam o Alaikum! How can I help you?" (Urdu: السلام علیکم! میں آپ کی کیا مدد کر سکتا
+  ہوں؟) and a 2-column grid of icon cards: Apply, Merit lists, Fee structure, Departments, Admissions contact,
+  Downloads. After the first question the same six stay available as a compact chip row above the input.
+  New "downloads" quick reply (the existing downloads answer); all answer logic is unchanged
+- Messages: user bubbles in brand green at the end side (right in English, left in Urdu RTL); assistant
+  bubbles white (dark: raised ink) with a soft shadow and a small logo avatar. Links are compact green pills
+  (→ internal, ↗ external, mirrored in RTL); result, date and contact rows are light list rows instead of
+  filled cards; e-mail and phone are pills too
+- Flow: the question shows at once and is scrolled to the top of the message area (the latest turn is kept at
+  least one screen tall, measured after the input shrinks back, so it always can); a three-dot typing
+  indicator shows for 500 ms, then the answer appears below. Nothing scrolls past the question. If the reader
+  has scrolled away when the answer arrives, a "↓ New answer" pill jumps back to it
+- Input: auto-growing textarea "Type your message…" / "اپنا سوال لکھیں…"; Enter sends (not during IME
+  composition), Shift+Enter adds a line, focus stays in the field. Green circular send button, dimmed and
+  disabled while empty. No attachment button
+- Emoji: a 24-emoji popover (no library) that inserts at the cursor; focus starts on the first emoji, arrow
+  keys/Home/End move (mirrored in RTL), Esc returns to the button, a click or Tab elsewhere closes it
+- Voice input: Web Speech API recognition (en-US on English pages, ur-PK on Urdu), interim text streamed into
+  the field for the user to edit and send; red pulsing mic and a "Listening…" status while recording, clear
+  messages when the microphone is blocked or nothing was heard; Esc stops listening. Hidden where the browser
+  has no SpeechRecognition (e.g. Firefox). The site never records, stores or uploads audio; on-device
+  recognition is requested where the browser reports it available, otherwise the browser's own speech
+  service is used (in Chrome that is Google's server)
+- Read-aloud: a speaker button on each answer (SpeechSynthesis), shown only when the browser has an English or
+  Urdu voice for the page's language; press again to stop
+- QA on a production build at 1440 and 375px, English and Urdu, light and dark: typing indicator, question
+  position after cards and typed questions (also after a multi-line question), Shift+Enter, focus after send,
+  emoji insert and keyboard, "New answer" pill, keyboard open/Esc/focus return, axe 0 WCAG AA violations on
+  the open panel, no console errors

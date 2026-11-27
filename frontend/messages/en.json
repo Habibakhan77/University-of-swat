@@ -949,14 +949,13 @@
   "assistant": {
     "open": "Ask the University",
     "title": "Ask the University",
-    "subtitle": "Answers from this website's own pages",
+    "subtitle": "Answers from official university pages",
     "close": "Close the assistant",
     "loading": "Loading answers…",
     "unavailable": "The assistant can't load right now. You can still search the site or contact the university.",
-    "welcome": "Assalam-o-Alaikum! Ask me about admissions, fees, merit lists, departments or contacts. I answer only from this website.",
     "chipsLabel": "Suggested questions",
     "inputLabel": "Your question",
-    "placeholder": "Type a question…",
+    "placeholder": "Type your message…",
     "send": "Send",
     "you": "You",
     "assistant": "Assistant",
@@ -974,7 +973,8 @@
       "merit": "Merit lists",
       "fees": "Fee structure",
       "contactAdmissions": "Contact admissions",
-      "departments": "Find a department"
+      "departments": "Find a department",
+      "downloads": "Downloads"
     },
     "status": {
       "open": "Open now",
@@ -1014,6 +1014,26 @@
       "academics": "All faculties and departments",
       "facultyDirectory": "Faculty directory",
       "news": "All news and events",
+      "downloads": "Downloads"
+    },
+    "welcomeTitle": "Assalam o Alaikum! How can I help you?",
+    "welcomeText": "Pick a topic or type your question.",
+    "newAnswer": "New answer",
+    "emoji": "Insert an emoji",
+    "emojiPicker": "Emojis",
+    "voiceStart": "Speak your question",
+    "voiceStop": "Stop listening",
+    "listening": "Listening…",
+    "voiceBlocked": "Microphone access is blocked. Allow it in your browser to speak a question.",
+    "voiceFailed": "I couldn't hear that. Please try again or type your question.",
+    "readAloud": "Read this answer aloud",
+    "stopReading": "Stop reading",
+    "cards": {
+      "apply": "Apply",
+      "merit": "Merit lists",
+      "fees": "Fee structure",
+      "departments": "Departments",
+      "contactAdmissions": "Admissions contact",
       "downloads": "Downloads"
     }
   }

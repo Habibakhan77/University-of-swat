@@ -17,7 +17,7 @@ export const INTENTS = ["apply", "dates", "merit", "fees", "contact", "departmen
 export type Intent = (typeof INTENTS)[number];
 
 /** The quick-reply chips, in order. "contactAdmissions" is the contact intent for the admissions office. */
-export const QUICK_REPLIES = ["apply", "merit", "fees", "contactAdmissions", "departments"] as const;
+export const QUICK_REPLIES = ["apply", "merit", "fees", "departments", "contactAdmissions", "downloads"] as const;
 export type QuickReply = (typeof QUICK_REPLIES)[number];
 
 export type ReplyStatus = "open" | "upcoming" | "closed";
@@ -192,7 +192,9 @@ export class Assistant {
             ? this.fees([])
             : chip === "contactAdmissions"
               ? this.contactAdmissions()
-              : this.departments([]);
+              : chip === "downloads"
+                ? this.downloads([], [])
+                : this.departments([]);
     return reply ?? this.notFound("");
   }
 
