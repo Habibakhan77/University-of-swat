@@ -43,26 +43,32 @@ all of that content and its structure, and focuses on how it is presented, found
 
 ## Screenshots
 
-All screenshots are of the production build with the seeded content (November 2026). The full set (8 pages ×
-desktop/mobile × English/Urdu × light/dark) is in [`docs/screenshots`](docs/screenshots).
+Production build with the seeded content, captured November 2026 in English, light theme (plus the homepage in
+Urdu, dark). Desktop is 1440 px wide, phone 390 px. Each image links to the whole page, top to bottom, with
+every below-the-fold section rendered. All files are in [`docs/screenshots`](docs/screenshots).
 
-| Desktop, English, light | Desktop, Urdu, dark |
-|---|---|
-| ![Homepage, English, light](docs/screenshots/home-desktop-en-light.webp) | ![Homepage, Urdu, dark](docs/screenshots/home-desktop-ur-dark.webp) |
-| ![Admissions hub, English, light](docs/screenshots/admissions-desktop-en-light.webp) | ![Admissions hub, Urdu, dark](docs/screenshots/admissions-desktop-ur-dark.webp) |
-| ![Department page, English, light](docs/screenshots/department-desktop-en-light.webp) | ![Department page, Urdu, dark](docs/screenshots/department-desktop-ur-dark.webp) |
-| ![News and events, English, light](docs/screenshots/news-desktop-en-light.webp) | ![News and events, Urdu, dark](docs/screenshots/news-desktop-ur-dark.webp) |
-
-| Phone, English, light | Phone, English, dark | Phone, Urdu, light | Phone, Urdu, dark |
-|---|---|---|---|
-| ![Homepage on a phone, English, light](docs/screenshots/home-mobile-en-light.webp) | ![Homepage on a phone, English, dark](docs/screenshots/home-mobile-en-dark.webp) | ![Homepage on a phone, Urdu, light](docs/screenshots/home-mobile-ur-light.webp) | ![Homepage on a phone, Urdu, dark](docs/screenshots/home-mobile-ur-dark.webp) |
-| ![Menu on a phone, English](docs/screenshots/menu-mobile-en-light.webp) | ![Faculty directory on a phone, English, dark](docs/screenshots/directory-mobile-en-dark.webp) | ![Admissions on a phone, Urdu, light](docs/screenshots/admissions-mobile-ur-light.webp) | ![Menu on a phone, Urdu, dark](docs/screenshots/menu-mobile-ur-dark.webp) |
-
-| Global search (Ctrl/⌘ + K) | Search in Urdu | Mega menu |
+| Page | Desktop | Phone |
 |---|---|---|
-| ![Search dialog with results for "physics"](docs/screenshots/search-desktop-en-light.webp) | ![Urdu search dialog with results for فیس](docs/screenshots/search-desktop-ur-dark.webp) | ![Open Academics mega menu](docs/screenshots/megamenu-desktop-en-light.webp) |
+| **Homepage** | [![Homepage on a desktop screen](docs/screenshots/home-desktop-en-light.webp)](docs/screenshots/home-desktop-en-light-full.webp) | [![Homepage on a phone](docs/screenshots/home-mobile-en-light.webp)](docs/screenshots/home-mobile-en-light-full.webp) |
+| **About** | [![About on a desktop screen](docs/screenshots/about-desktop-en-light.webp)](docs/screenshots/about-desktop-en-light-full.webp) | [![About on a phone](docs/screenshots/about-mobile-en-light.webp)](docs/screenshots/about-mobile-en-light-full.webp) |
+| **Academics** | [![Academics on a desktop screen](docs/screenshots/academics-desktop-en-light.webp)](docs/screenshots/academics-desktop-en-light-full.webp) | [![Academics on a phone](docs/screenshots/academics-mobile-en-light.webp)](docs/screenshots/academics-mobile-en-light-full.webp) |
+| **Department of Computer and Software Technology** | [![Department of Computer and Software Technology on a desktop screen](docs/screenshots/department-desktop-en-light.webp)](docs/screenshots/department-desktop-en-light-full.webp) | [![Department of Computer and Software Technology on a phone](docs/screenshots/department-mobile-en-light.webp)](docs/screenshots/department-mobile-en-light-full.webp) |
+| **Faculty profile** | [![Faculty profile on a desktop screen](docs/screenshots/faculty-profile-desktop-en-light.webp)](docs/screenshots/faculty-profile-desktop-en-light-full.webp) | [![Faculty profile on a phone](docs/screenshots/faculty-profile-mobile-en-light.webp)](docs/screenshots/faculty-profile-mobile-en-light-full.webp) |
+| **Admissions hub** | [![Admissions hub on a desktop screen](docs/screenshots/admissions-desktop-en-light.webp)](docs/screenshots/admissions-desktop-en-light-full.webp) | [![Admissions hub on a phone](docs/screenshots/admissions-mobile-en-light.webp)](docs/screenshots/admissions-mobile-en-light-full.webp) |
+| **Research** | [![Research on a desktop screen](docs/screenshots/research-desktop-en-light.webp)](docs/screenshots/research-desktop-en-light-full.webp) | [![Research on a phone](docs/screenshots/research-mobile-en-light.webp)](docs/screenshots/research-mobile-en-light-full.webp) |
+| **News & Events** | [![News & Events on a desktop screen](docs/screenshots/news-desktop-en-light.webp)](docs/screenshots/news-desktop-en-light-full.webp) | [![News & Events on a phone](docs/screenshots/news-mobile-en-light.webp)](docs/screenshots/news-mobile-en-light-full.webp) |
+| **Campus life** | [![Campus life on a desktop screen](docs/screenshots/campus-life-desktop-en-light.webp)](docs/screenshots/campus-life-desktop-en-light-full.webp) | [![Campus life on a phone](docs/screenshots/campus-life-mobile-en-light.webp)](docs/screenshots/campus-life-mobile-en-light-full.webp) |
+| **Homepage in Urdu, dark** | [![Homepage in Urdu, dark theme, on a desktop screen](docs/screenshots/home-desktop-ur-dark.webp)](docs/screenshots/home-desktop-ur-dark-full.webp) | [![Homepage in Urdu, dark theme, on a phone](docs/screenshots/home-mobile-ur-dark.webp)](docs/screenshots/home-mobile-ur-dark-full.webp) |
 
-The whole homepage, top to bottom: [home-desktop-en-light-full.webp](docs/screenshots/home-desktop-en-light-full.webp).
+**Strapi admin**, signed in as the demo Department Editor for Computer and Software Technology: the dashboard
+shows only their department, and the Content Manager lists only its own entries.
+
+| Dashboard | Department entry | Department's posts |
+|---|---|---|
+| ![Strapi dashboard for a department editor](docs/screenshots/strapi-dashboard-desktop.webp) | ![Editing the department in Strapi](docs/screenshots/strapi-department-edit-desktop.webp) | ![Posts list in Strapi, filtered to the department](docs/screenshots/strapi-posts-list-desktop.webp) |
+
+The same admin screens on a phone: [dashboard](docs/screenshots/strapi-dashboard-mobile.webp),
+[department](docs/screenshots/strapi-department-edit-mobile.webp), [posts](docs/screenshots/strapi-posts-list-mobile.webp), [editing a post](docs/screenshots/strapi-post-edit-mobile.webp).
 
 ## Features
 
@@ -251,14 +257,14 @@ Staff never touch code. A Media Cell editor publishes a news story in about two 
 1. Sign in at `https://cms.<domain>/admin` with the account the Super Admin created.
 2. Open **Content Manager › Post** and click **Create new entry**.
 
-   ![Strapi admin: list of posts in the Content Manager](docs/screenshots/strapi-posts-list.webp)
+   ![Strapi admin: list of posts in the Content Manager, as the demo Department Editor sees it (only their department's posts)](docs/screenshots/strapi-posts-list-desktop.webp)
 
 3. Fill in **title** (the **slug**, the web address, is made from it), choose a **category** (news,
    announcement or event), write a short **excerpt** and the **content**. Add a **coverImage** from the Media
    Library; its caption becomes the photo credit. For an event, add **eventStart**, **eventEnd** and
    **eventLocation**; to show it in the homepage notices ticker, switch on **showInTicker**.
 
-   ![Strapi admin: editing a post](docs/screenshots/strapi-post-edit.webp)
+   ![Strapi admin: editing a post](docs/screenshots/strapi-post-edit-desktop.webp)
 
 4. Optional: switch the locale at the top to **Urdu** and add the Urdu title and excerpt. Fields left empty
    fall back to English on the Urdu site, clearly marked.

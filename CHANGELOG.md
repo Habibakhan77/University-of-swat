@@ -1606,3 +1606,17 @@ consistency). Content, data and colours unchanged.
   department's member count, colleague faces (from 640px) and an arrow
 - QA on a production build: a real profile and a placeholder at 1440, 1024 and 375px, English and Urdu, light
   and dark; no overflow, no console errors; axe 0 violations across 16 runs
+
+## README screenshots retaken from the final design
+
+- New `docs/screenshots` set from a production build with the seeded content: Home, About, Academics, the
+  Computer and Software Technology department, a faculty profile, Admissions, Research, News & Events and Campus
+  Life at 1440px (desktop) and 390px @2x (phone), English and light, plus the homepage in Urdu and dark. Each has
+  a first-screen shot and a full-page shot (`-full.webp`)
+- Full-page captures force the lazy parts to render: `content-visibility` overridden, lazy images made eager,
+  a scroll through the page for streamed sections, reduced motion so nothing waits behind a scroll reveal
+- Strapi admin as the demo Department Editor (dashboard, department entry, the department's posts, editing a
+  post), desktop and phone
+- The previous top-level screenshots (old design, including search, menu and mega menu shots) are removed; the
+  `inner-pages/` and `pro-polish/` before/after sets stay as history
+- README: one Screenshots table (page × desktop/phone, each linking to its full page) and a Strapi admin row
