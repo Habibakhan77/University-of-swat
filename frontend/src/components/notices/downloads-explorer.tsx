@@ -12,6 +12,7 @@ import { ResultCount, SearchField, SelectField, matches, useUrlFilters } from "@
 import { Button } from "@/components/ui/button";
 import { OfficialLanguageNote } from "@/components/ui/language-note";
 import { cn } from "@/lib/cn";
+import { sourceHost } from "@/lib/source-host";
 import { FormatIcon } from "./shared";
 
 /** An odd last card spans the row and centres at half width, so the 2-column grid never ends on an orphan. */
@@ -191,7 +192,7 @@ function DownloadRow({ item, locale }: { item: DownloadItem; locale: Locale }) {
               rel="noopener"
               className="relative z-10 mt-1 inline-flex items-center gap-1 self-start text-caption text-fg-subtle hover:text-primary-text hover:underline"
             >
-              {t("original")}
+              {t("sourceFrom", { host: sourceHost(item.sourceUrl) })}
               <ExternalLink aria-hidden className="size-3" />
               <span className="sr-only">
                 : {item.title.value} {tCommon("opensInNewTab")}

@@ -13,6 +13,8 @@ export interface NavLink {
   description: string | null;
   icon: string | null;
   external: boolean;
+  /** When the link opens our copy of an official document: the original, shown as "Source: uswat.edu.pk". */
+  source?: string | null;
 }
 
 /** Level 1 of the navigation. Its `links` are level 2; there is no level 3 by design. */
@@ -96,6 +98,18 @@ export function isExternalHref(href: string): boolean {
 
 export function toNavLink(link: StrapiLink): NavLink {
   const href = normalizeHref(link.url);
+  // A Link with a file opens that file (served by us, so it works when uswat.edu.pk is slow or down);
+  // its URL is the official original, kept as the source.
+  if (link.file?.url) {
+    return {
+      label: link.label,
+      href: strapiMediaUrl(link.file.url),
+      description: link.description || null,
+      icon: link.icon || null,
+      external: true,
+      source: href,
+    };
+  }
   return {
     label: link.label,
     href,

@@ -20,6 +20,8 @@ export interface AnswerLink {
   labelKey?: LinkKey;
   /** Language of `label` when it differs from the page (an English-only title on the Urdu site). */
   lang?: Locale;
+  /** When `href` is our copy of an official document: the original on uswat.edu.pk. */
+  source?: string;
 }
 
 export interface KnowledgeFaq {

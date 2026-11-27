@@ -593,6 +593,7 @@
     "resetFilters": "Reset filters",
     "showMore": "Show more",
     "original": "Original",
+    "sourceFrom": "Source: {host}",
     "englishOnly": "Available in English only",
     "sourcePageText": "Details as published on the official website, uswat.edu.pk.",
     "viewOfficialPage": "View the official page",
@@ -968,6 +969,7 @@
     "phone": "Phone",
     "inEnglish": "In English",
     "opensInNewTab": "opens in a new tab",
+    "sourceFrom": "Source: {host}",
     "chips": {
       "apply": "How do I apply?",
       "merit": "Merit lists",

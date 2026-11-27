@@ -593,6 +593,7 @@
     "resetFilters": "فلٹر ختم کریں",
     "showMore": "مزید دکھائیں",
     "original": "اصل",
+    "sourceFrom": "ماخذ: {host}",
     "englishOnly": "صرف انگریزی میں دستیاب",
     "sourcePageText": "تفصیلات جامعہ کی سرکاری ویب سائٹ uswat.edu.pk کے مطابق۔",
     "viewOfficialPage": "سرکاری صفحہ دیکھیں",
@@ -968,6 +969,7 @@
     "phone": "فون",
     "inEnglish": "انگریزی میں",
     "opensInNewTab": "نئے ٹیب میں کھلتا ہے",
+    "sourceFrom": "ماخذ: {host}",
     "chips": {
       "apply": "داخلے کے لیے درخواست کیسے دیں؟",
       "merit": "میرٹ لسٹیں",

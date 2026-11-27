@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import sharp from 'sharp';
 import type { Core } from '@strapi/strapi';
+import { LOCAL_DOCUMENTS } from '../data/documents';
 import { LOGO, PHOTOS, photoCaption, type PhotoKey, type SeedPhoto } from '../data/photos';
 
 export const PLACEHOLDER_PREFIX = 'placeholder-';
@@ -40,6 +41,25 @@ const MIME: Record<string, string> = {
   '.webp': 'image/webp',
 };
 
+/** The base of a copied file's Media Library name: the official file name, lower-case, hyphenated. */
+function remoteBase(url: string): { base: string; ext: string } {
+  const original = decodeURIComponent(new URL(url).pathname.split('/').pop() ?? 'file');
+  const ext = path.extname(original).toLowerCase();
+  const base = original
+    .slice(0, -ext.length)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+  return { base, ext };
+}
+
+/** Media Library name of an official document copied by `remote()` (images are renamed to .webp). */
+export const documentFileName = (url: string): string => {
+  const { base, ext } = remoteBase(url);
+  return `${FILE_PREFIX}${base}${ext}`;
+};
+
 export interface RemoteFile {
   /** Official URL on uswat.edu.pk. */
   url: string;
@@ -52,6 +72,8 @@ export interface RemoteFile {
 /** Relative to the Strapi app root: the seed runs compiled from dist/, where these files are not copied. */
 const PHOTO_DIR = path.join('scripts', 'seed', 'assets', 'photos');
 const BRAND_DIR = path.join('scripts', 'seed', 'assets', 'brand');
+/** Official documents kept in the repository (data/documents.ts): used instead of downloading them. */
+const DOCUMENT_DIR = path.join('scripts', 'seed', 'assets', 'documents');
 
 /** Fixed sizes: the frontend uses the same ratios in next/image. */
 export const RATIOS = {
@@ -303,7 +325,8 @@ export class MediaFactory {
   /**
    * Copies an official file from uswat.edu.pk into the Media Library, so the website serves the real
    * document or notice image itself (no placeholders). Images are re-encoded to WebP (max 1600px wide);
-   * documents are uploaded as published. Downloads are cached in `.seed-cache/`.
+   * documents are uploaded as published. Downloads are cached in `.seed-cache/`; a document kept in
+ * assets/documents (data/documents.ts) is read from there and never fetched.
    *
    * Returns null (with a warning) when the file can't be fetched, so one dead link on the old site
    * doesn't stop the seed; entries keep their `sourceUrl` to the original.
@@ -315,20 +338,13 @@ export class MediaFactory {
     const hit = this.cache.get(cacheKey);
     if (hit) return hit.id;
 
-    const original = decodeURIComponent(new URL(file.url).pathname.split('/').pop() ?? 'file');
-    const ext = path.extname(original).toLowerCase();
+    const { base, ext } = remoteBase(file.url);
     const mimetype = MIME[ext];
     if (!mimetype) throw new Error(`Unsupported file type for ${file.url}`);
 
     const buffer = await this.fetchCached(file.url);
     if (!buffer) return null;
 
-    const base = original
-      .slice(0, -ext.length)
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 80);
     const isImage = mimetype.startsWith('image/');
     const caption = `${isImage ? 'Image' : 'Source'}: University of Swat | ${file.source}`;
     const uploaded = isImage
@@ -339,7 +355,7 @@ export class MediaFactory {
           file.alt,
           caption,
         )
-      : await this.push(`${FILE_PREFIX}${base}${ext}`, buffer, mimetype, file.alt, caption);
+      : await this.push(documentFileName(file.url), buffer, mimetype, file.alt, caption);
     this.files += 1;
     this.cache.set(cacheKey, uploaded);
     return uploaded.id;
@@ -376,6 +392,8 @@ export class MediaFactory {
   }
 
   private async fetchCached(url: string, quiet = false): Promise<Buffer | null> {
+    const local = LOCAL_DOCUMENTS[url];
+    if (local) return readFile(path.join(this.strapi.dirs.app.root, DOCUMENT_DIR, local.file));
     const dir = path.join(this.strapi.dirs.app.root, CACHE_DIR);
     const cached = path.join(dir, encodeURIComponent(url).replace(/%/g, '_').slice(-180));
     try {

@@ -3,6 +3,7 @@ import { ArrowRight, Award, BadgeCheck, CalendarCheck, ChevronDown, ExternalLink
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import { iconFor } from "@/lib/icons";
+import { sourceHost } from "@/lib/source-host";
 import type { Locale } from "@/i18n/routing";
 import { ActionAnchor } from "./action-anchor";
 import { HubNavList } from "./hub-nav-list";
@@ -270,18 +271,20 @@ export function SchemeGrid({ items, lang }: { items: string[]; lang?: string }) 
 
 /** Large link cards (merit lists, fee documents). */
 export function LinkCards({ links, lang }: { links: NavLink[]; lang?: string }) {
+  const t = useTranslations("admissions");
+  const tCommon = useTranslations("common");
   return (
     <ul className="grid gap-3 sm:grid-cols-2">
       {links.map((link) => {
         const Icon = iconFor(link.icon);
         return (
-          <li key={link.href}>
+          <li key={link.href} className="flex flex-col gap-1.5">
             <SmartLink
               href={link.href}
               external={link.external}
               externalIcon={false}
               lang={lang}
-              className="group flex h-full items-center gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs transition-colors hover:border-primary-text/40 hover:bg-primary-soft sm:p-5"
+              className="group flex flex-1 items-center gap-4 rounded-2xl border border-line bg-surface p-4 shadow-xs transition-colors hover:border-primary-text/40 hover:bg-primary-soft sm:p-5"
             >
               <span aria-hidden className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-primary-text group-hover:bg-surface">
                 <Icon className="size-5" />
@@ -296,6 +299,21 @@ export function LinkCards({ links, lang }: { links: NavLink[]; lang?: string }) 
                 <ArrowRight aria-hidden className="size-4 shrink-0 text-fg-subtle rtl:-scale-x-100" />
               )}
             </SmartLink>
+            {/* The card opens our copy; this is the official original. */}
+            {link.source ? (
+              <a
+                href={link.source}
+                target="_blank"
+                rel="noopener"
+                className="inline-flex items-center gap-1 self-start px-1 text-caption text-fg-subtle hover:text-primary-text hover:underline"
+              >
+                {t("source", { label: sourceHost(link.source) })}
+                <ExternalLink aria-hidden className="size-3" />
+                <span className="sr-only">
+                  : {link.label} {tCommon("opensInNewTab")}
+                </span>
+              </a>
+            ) : null}
           </li>
         );
       })}

@@ -86,7 +86,12 @@ async function loadFaqs(locale: Locale): Promise<Loaded<KnowledgeFaq[]>> {
   });
 }
 
-const navLink = (link: NavLink): AnswerLink => ({ href: link.href, external: link.external, label: link.label });
+const navLink = (link: NavLink): AnswerLink => ({
+  href: link.href,
+  external: link.external,
+  label: link.label,
+  ...(link.source ? { source: link.source } : {}),
+});
 
 function admissionsOf(page: AdmissionsPage | null, docs: SearchDoc[]): KnowledgeAdmissions | null {
   if (!page) return null;

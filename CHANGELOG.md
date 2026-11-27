@@ -1703,3 +1703,17 @@ consistency). Content, data and colours unchanged.
   clips x-overflow, long words in bubbles break, the emoji picker is capped to the panel width
 - Checked in `next dev` on :3000 at 1440, 1024 and 375px, English and Urdu, light and dark (panel size, one
   close button, focus return, label fit, no element outside the panel, no dev-overlay errors)
+
+## Our own copy of the Fee Structure 2025 PDF
+
+- The official Fee Structure 2025 PDF (same size as the file on uswat.edu.pk, 1.6 MB) is kept in
+  `cms/scripts/seed/assets/documents/` and listed in `cms/scripts/seed/data/documents.ts`. The seed uploads
+  kept documents instead of fetching them, so they survive reseeds and don't depend on uswat.edu.pk
+- Shared **Link** component: new optional `file` (media). A link with a file opens that file (our copy) and
+  keeps its `url` as the official original. Admissions fee links populate it
+- "Fee Structure 2025 (PDF)" now opens our copy on the Admissions page, in the assistant's fee answer and in a
+  new Downloads entry (Fees, Sept 2025), each with a small "Source: uswat.edu.pk ↗" link to the original
+  (English and Urdu). Downloads cards say "Source: uswat.edu.pk" instead of "Original" for every copied file
+- `npm run local-documents` (cms): applies kept documents to existing content without a reseed (upload once,
+  attach to matching fee links and Downloads entries, publish, refresh the website; skips a locale with
+  unpublished edits). Run once on the dev database

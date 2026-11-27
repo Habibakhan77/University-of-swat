@@ -27,6 +27,7 @@ import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useSta
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { cn } from "@/lib/cn";
+import { sourceHost } from "@/lib/source-host";
 import { displaySerif } from "@/lib/hero-font";
 import { Assistant, QUICK_REPLIES, todayInPakistan, type QuickReply, type Reply, type ReplyItem, type ReplyStatus } from "@/lib/assistant/answer";
 import type { AnswerLink, AssistantKnowledge, AssistantMessages } from "@/lib/assistant/knowledge";
@@ -711,12 +712,31 @@ function Answer({
 function AnswerAnchor({ link, t, lang, onFollow }: { link: AnswerLink; t: Translator; lang?: Locale; onFollow: () => void }) {
   const label = link.labelKey ? t(`links.${link.labelKey}`) : (link.label ?? link.href);
   if (link.external) {
-    return (
+    const anchor = (
       <a href={link.href} target="_blank" rel="noopener noreferrer" className={pill} lang={lang}>
         <span className="truncate">{label}</span>
         <ArrowUpRight aria-hidden className="size-3.5 shrink-0 rtl:-scale-x-100" />
         <span className="sr-only">({t("opensInNewTab")})</span>
       </a>
+    );
+    if (!link.source) return anchor;
+    // Our copy of an official document, then a small link to the original.
+    return (
+      <span className="inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1">
+        {anchor}
+        <a
+          href={link.source}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-0.5 text-[0.6875rem] text-fg-subtle hover:text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-ring"
+        >
+          {t("sourceFrom", { host: sourceHost(link.source) })}
+          <ArrowUpRight aria-hidden className="size-3 shrink-0 rtl:-scale-x-100" />
+          <span className="sr-only">
+            : {label} ({t("opensInNewTab")})
+          </span>
+        </a>
+      </span>
     );
   }
   return (

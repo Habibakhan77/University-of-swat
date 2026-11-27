@@ -244,7 +244,8 @@ const PAGE_QUERY = {
   ...linkPopulate("eligibilityRules"),
   ...linkPopulate("howToApply"),
   ...linkPopulate("meritLists"),
-  ...linkPopulate("feeLinks"),
+  // Fee links can carry our copy of the document (Link.file).
+  "populate[feeLinks][populate][file][fields][0]": "url",
   "populate[contactOffices][fields][0]": "slug",
   "populate[contactOffices][fields][1]": "name",
   "populate[contactOffices][fields][2]": "headName",

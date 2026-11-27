@@ -23,6 +23,11 @@
     "isExternal": {
       "type": "boolean",
       "default": false
+    },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["files"]
     }
   }
 }

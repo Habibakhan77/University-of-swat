@@ -12,6 +12,7 @@ import { Writer } from './lib/docs';
 import { MediaFactory } from './lib/media';
 import { linkDemoAccounts } from './demo-accounts';
 import { CAMPUS_PHOTOS, FACULTY_PHOTOS, POST_PHOTOS, type PhotoKey } from './data/photos';
+import { LOCAL_DOCUMENTS } from './data/documents';
 import { FACULTIES, LEVEL_LABELS, type DepartmentSeed, type ProgramSeed } from './data/academics';
 import { CAMPUSES, MAIN_ADDRESS, OFFICES, PHONE_DIRECTORY, PHONE_DIRECTORY_UR, UPLOADS } from './data/organisation';
 import { CONTACT_PAGE, FACILITIES, RESEARCH_PAGE, RESEARCH_PROJECTS } from './data/pages';
@@ -126,6 +127,20 @@ const seo = (title: string, description: string): { metaTitle: string; metaDescr
 const log = (msg: string): void => console.log(`[seed] ${msg}`);
 
 const DESIGNATIONS = ['professor', 'associate_professor', 'assistant_professor', 'assistant_professor', 'lecturer'] as const;
+
+/**
+ * Links to an official document kept in assets/documents (data/documents.ts) get that file attached: the
+ * website opens our copy and shows the link's URL (the original on uswat.edu.pk) as its source.
+ */
+export async function withLocalCopies<T extends { url: string }>(links: T[], media: MediaFactory): Promise<(T & { file?: number })[]> {
+  const out: (T & { file?: number })[] = [];
+  for (const link of links) {
+    const doc = LOCAL_DOCUMENTS[link.url];
+    const file = doc ? await media.remote({ url: link.url, alt: doc.title, source: doc.source }) : null;
+    out.push(file === null ? link : { ...link, file });
+  }
+  return out;
+}
 
 function programName(p: ProgramSeed): string {
   if (p.name) return p.name;
@@ -503,7 +518,7 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
         slug: slugify((titleCount.get(dl.title) ?? 0) > 1 ? `${dl.title} ${ext}` : dl.title),
         category: dl.category,
         description: dl.description,
-        file: await media.remote({ url, alt: dl.title, source: `${SITE_URL}/downloads/` }),
+        file: await media.remote({ url, alt: dl.title, source: LOCAL_DOCUMENTS[url]?.source ?? `${SITE_URL}/downloads/` }),
         sourceUrl: url,
         publishDate: uploadMonth(dl.file),
       });
@@ -651,8 +666,8 @@ export async function runSeed(strapi: Core.Strapi, options: SeedOptions): Promis
     });
     await w.single(
       'api::admissions-page.admissions-page',
-      { ...ADMISSIONS.en, heroImage: admissionsHero, contactOffices },
-      { ...ADMISSIONS.ur, contactOffices },
+      { ...ADMISSIONS.en, feeLinks: await withLocalCopies(ADMISSIONS.en.feeLinks, media), heroImage: admissionsHero, contactOffices },
+      { ...ADMISSIONS.ur, feeLinks: await withLocalCopies(ADMISSIONS.ur.feeLinks, media), contactOffices },
     );
   } finally {
     await media.dispose();

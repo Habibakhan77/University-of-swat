@@ -20,6 +20,8 @@ export interface StrapiLink {
   description: string | null;
   icon: string | null;
   isExternal: boolean | null;
+  /** Our copy of the document `url` points at (populated only where a query asks for it). */
+  file?: Pick<StrapiMedia, "url"> | null;
 }
 
 export interface StrapiMenuItem {

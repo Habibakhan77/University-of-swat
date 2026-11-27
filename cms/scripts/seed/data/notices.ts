@@ -379,6 +379,8 @@ export const DOWNLOADS: DownloadSeed[] = [
   d('University Statutes 2025', 'rules_policies', '2026/07/PDF-Approved-Final-Statutes-2025-Searchable-1.pdf', 'The approved statutes of the University of Swat (searchable PDF).'),
   d('Relaxation in upper age limit for various positions advertised by the University', 'notification', '2026/06/request-for-relaxation-in-upper-age-limit-for-various-position-duly-advertisement-by-the-UoS.pdf'),
   d('Application Form for Affiliation of Degree Program', 'forms', '2026/07/Application-Form-for-Affiliation-of-Degree-Program.docx'),
+  // Not on the /downloads page itself (linked from admissions); a copy is kept in the repository (data/documents.ts).
+  d('Fee Structure 2025', 'fee_structure', '2025/09/Fee-Structure-2025.pdf', 'The fee structure published on uswat.edu.pk in September 2025.'),
   d('Implementation of Technology Transfer Policy', 'rules_policies', '2025/03/Implementation-of-Technology-Transfer-Policy.pdf'),
   d('University of Swat Semester Regulations for Undergraduate', 'rules_policies', '2025/03/University-of-Swat-Semester-Regulations-For-Undergraduate.pdf'),
   d('Adoption of 5% Minority Quota in Recruitment', 'rules_policies', '2025/03/Adoption-of-5-Minority-Quota-in-Recruitment.pdf'),

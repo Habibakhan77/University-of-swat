@@ -27,7 +27,7 @@ server, so it can run while `npm run dev` is running.
 | Publications / Alumni stories / Achievements | 0 | No department page publishes any; the website shows an empty state |
 | Posts | 26 | Real news, announcements and events (Sep–Nov 2026), rewritten text, a link to each original; real event photos as covers, posters and notices attached in full; Urdu title, excerpt and venue (the body stays in English, shown with an "in English" note) |
 | Tenders / Jobs | 10 / 10 | The latest items on uswat.edu.pk with their official PDFs and advertisements; all `closed` (deadlines from the documents) |
-| Downloads | 67 | Every working file on uswat.edu.pk/downloads (policies, regulations, fee notifications, forms, reports) |
+| Downloads | 68 | Every working file on uswat.edu.pk/downloads (policies, regulations, fee notifications, forms, reports), plus the Fee Structure 2025 |
 | Research projects | 21 | ORIC's list of approved projects (PDF, updated 24.10.2024): title, PI, funder, amount, duration |
 | Research page | 1 | ORIC, QEC, DASR, R&TD, PQR; SUJRIS (ISSN 2959-5509, HEC "Y" category); ORIC's 2024 conferences; ORIC policies and formats |
 | Campus Life pages | 6 | Library, Sports, Hostels, Societies (YDC), Psychology Clinic, Hunerkada, each linked to the office in charge |
@@ -58,6 +58,24 @@ Tender, job and download files, and the posters attached to posts, are the offic
 from uswat.edu.pk (about 75 MB the first time, cached in `cms/.seed-cache/`, git-ignored) and uploads them as
 `seed-file-*`. A file that can't be fetched is skipped and listed at the end of the seed; the entry keeps its
 `sourceUrl` link to the original.
+
+### Official documents kept in the repository
+
+Some documents matter too much to depend on uswat.edu.pk being up at seed time, or at all. Their official
+files are kept in `assets/documents/` and listed in `data/documents.ts`, keyed by their official URL. Wherever
+the seed meets that URL (a download, a notice attachment, a Link) it uploads the kept file instead of fetching
+it. A **Link** (e.g. Admissions → Fee links) gets the file in its optional `file` field: the website opens our
+copy and shows the link's URL as a small "Source: uswat.edu.pk" link to the original. Editors can do the same
+for any link by attaching a file to it.
+
+| File | Official URL | Used in |
+| --- | --- | --- |
+| `Fee-Structure-2025.pdf` | `wp-content/uploads/2025/09/Fee-Structure-2025.pdf` | Admissions fee links (and so the assistant's fee answer), Downloads |
+
+To add one: save the official file in `assets/documents/`, add it to `data/documents.ts`, then run
+`npm run local-documents` (applies it to the existing content without a reseed: uploads it once, attaches it to
+matching Admissions fee links and Downloads entries, publishes and refreshes the website; a locale with
+unpublished edits is skipped). A full seed picks it up too.
 
 ## Still needs real data (checklist for staff)
 
